@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "collider",
+  "version": "0.1.0",
+  "summary": "FIXTURE ONLY. A capability whose sole purpose is to install where another capability already installs, so that the shadow refusal is measured against a real declaration instead of a deformed one.",
+  "requires": [],
+  "provides": ["collision-fixture"],
+  "conflicts": [],
+  "declares": {},
+  "installs": [
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/laws.md",
+      "source": "seeds/laws.md"
+    }
+  ],
+  "gates": []
+}

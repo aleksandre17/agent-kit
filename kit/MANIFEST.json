@@ -2,7 +2,7 @@
   "schema_version": 1,
   "kit": {
     "id": "agent-kit",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "classes": [
     "vendor",
@@ -21,6 +21,10 @@
       "id": "governance",
       "declaration": "capabilities/governance/capability.json",
       "never_disabled": true
+    },
+    {
+      "id": "knowledge",
+      "declaration": "capabilities/knowledge/capability.json"
     }
   ],
   "detectors": [

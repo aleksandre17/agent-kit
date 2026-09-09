@@ -72,14 +72,20 @@ class InstallError(KitError):
 
 def run(ctx, args) -> int:
     reading = ctx.take_reading()
-    enabled, unavailable = ctx.resolve(reading["facts"])
-    state = {"reading": reading, "enabled": enabled, "unavailable": unavailable}
+    candidates, unavailable, blocked = ctx.classify(reading["facts"])
 
+    # The reading is REPORTED before the set is composed, and therefore before any refusal the
+    # composition may raise. A measured absence is the cause; an unmet provision downstream of it
+    # is the consequence -- and a run that prints only the consequence leaves the reader looking
+    # for a declaration defect that is really a host they never measured.
     print(f"reading taken at {reading['taken_at']} on {reading['boundary']['os']}")
     for fact, value in reading["facts"].items():
         print(f"  fact  {fact} = {value}")
     for entry in unavailable:
         print(f"  unavailable  {entry['id']}: {entry['reason']}")
+
+    enabled = ctx.compose(candidates, blocked)
+    state = {"reading": reading, "enabled": enabled, "unavailable": unavailable}
 
     for capability in enabled:
         scoped = ctx.workspace.scoped(capability.targets())

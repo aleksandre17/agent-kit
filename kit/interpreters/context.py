@@ -7,6 +7,7 @@ import platform
 import sys
 from pathlib import Path
 
+import resolver
 from errors import KitError
 from ports.clock import Clock
 from ports.manifest import Manifest
@@ -52,25 +53,16 @@ class Context:
             "detectors": results,
         }
 
-    def resolve(self, facts: dict) -> tuple[list, list]:
-        """Split declared capabilities into satisfied and unavailable. The reason is recorded,
-        because an absent capability is a DECLARED state, not a silent omission."""
-        enabled, unavailable = [], []
-        for capability in self.manifest.capabilities:
-            missing = [
-                need for need in capability.requires
-                if need["kind"] != "fact" or facts.get(need["id"], None) != need.get("equals", True)
-            ]
-            if missing:
-                unavailable.append({
-                    "id": capability.id,
-                    "reason": "unmet requirement: " + ", ".join(
-                        f"{need['kind']}:{need['id']}" for need in missing
-                    ),
-                })
-            else:
-                enabled.append(capability)
-        return enabled, unavailable
+    def classify(self, facts: dict) -> tuple[list, list, dict]:
+        """What the MEASUREMENT decides: candidates, the unavailable with their reasons, and the
+        provisions those absences take with them. Never refuses -- so a caller can report the
+        measured absence before anything is refused on account of it."""
+        return resolver.classify(self.manifest.capabilities, facts)
+
+    def compose(self, candidates, blocked=None) -> list:
+        """What the DECLARED SET decides: order, or refusal. The composition semantics live in
+        `resolver`, which holds no port and no state; this only hands it declarations."""
+        return resolver.compose(candidates, blocked)
 
     def binding(self, rel: str, schema: str) -> dict:
         """Read a host truth THROUGH its schema. An unvalidated read is how a malformed file
@@ -90,7 +82,7 @@ class Context:
         """The host's declaration is the source of truth once it exists."""
         project = self.binding(".agents/project/project.json", "project")
         wanted = set(project["capabilities"])
-        return [c for c in self.manifest.capabilities if c.id in wanted]
+        return resolver.arrange([c for c in self.manifest.capabilities if c.id in wanted])
 
     def class_declarations(self) -> list:
         """Every DECLARED path→class statement: plane roots from the manifest, exact targets

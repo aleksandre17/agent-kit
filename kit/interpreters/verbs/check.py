@@ -8,6 +8,8 @@ here knows the name of any capability, path, stack or runtime.
 
 from __future__ import annotations
 
+import re
+
 import render as render_verb
 from errors import KitError
 
@@ -67,7 +69,41 @@ def _reading_current(ctx, params):
     return []
 
 
+def _title_claim_within_authority(ctx, params):
+    """A NAME is a claim; a LOCATION is a grant. This gate compares the two and never reads a
+    word of the content, because authority was never a property of prose.
+
+    Both halves arrive as data: which locations grant declaring authority, and which name shapes
+    claim it. The interpreter knows no kind, no prefix and no document. A file that claims nothing
+    is not judged at all -- the gate exists to catch a claim that outruns its grant, not to
+    police what a host may keep on its shelves.
+    """
+    grants = {k["path"].rstrip("/"): k["declares"] for k in params["kinds"]}
+    claims = [(c["id"], re.compile(c["pattern"])) for c in params["claims"]]
+    failures = []
+    for rel in ctx.workspace.files_under(params["root"]):
+        name = rel.rsplit("/", 1)[-1]
+        claimed = [cid for cid, pattern in claims if pattern.search(name)]
+        if not claimed:
+            continue
+        granting = [
+            path for path in grants
+            if rel.startswith(path + "/") and grants[path]
+        ]
+        if granting:
+            continue
+        located = sorted(path for path in grants if rel.startswith(path + "/"))
+        where = f"kind {located[0]!r}, which cannot declare" if located else "no declared kind"
+        failures.append(
+            f"{rel}: the name claims DECLARING authority ({', '.join(sorted(claimed))}), "
+            f"but it lives in {where}. Move it, promote it, or rename it -- "
+            f"a rule whose location cannot grant its claim binds no one, and the reader cannot tell."
+        )
+    return failures
+
+
 GATE_KINDS = {
+    "title-claim-within-authority": _title_claim_within_authority,
     "schema-valid": _schema_valid,
     "path-class-total": _path_class_total,
     "projection-reproducible": _projection_reproducible,

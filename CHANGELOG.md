@@ -5,6 +5,30 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade`, which is not built yet.
 
+## 0.1.1 — unreleased
+
+The second capability, and therefore the first time composition is exercised rather than designed.
+
+**Added**
+- `resolver.py`: composition semantics as a pure function over declarations — no port, no state,
+  no capability's name. `classify` measures and never refuses; `compose` refuses and never
+  measures. `requires` of kind `capability` is matched against what capabilities **provide**;
+  ordering is topological with a sorted frontier, so it cannot depend on declaration order;
+  `conflicts` and shadowed install paths are refused before the first byte.
+- `capabilities/knowledge/`: a document's KIND decides whether it may declare a rule. Diátaxis
+  crossed with MADR (canonical `docs/decisions/`, adopted rather than invented) and the Kind Law.
+- Gate kind `title-claim-within-authority` (`FF-KIND-AUTHORITY`): compares a name's CLAIM with a
+  location's GRANT, both arriving as declaration data. It reads no content, because authority
+  was never a property of prose.
+- Eight composition assertions, each negative case built from a throwaway copy of the real kit
+  with its declarations patched — no real capability was deformed to manufacture a failure.
+
+**Changed**
+- `init` reports the reading and every unavailable capability BEFORE the set is composed. Adding
+  capability-level requirements had made the refusal fire first, so the honest report of a
+  measured absence — slice A's `unavailable governance` — was swallowed by its own consequence.
+  The assertion that caught it was right; the design was wrong, and the design moved.
+
 ## 0.1.0 — unreleased
 
 The walking skeleton: one capability, three verbs, four ports, and an acceptance test that
