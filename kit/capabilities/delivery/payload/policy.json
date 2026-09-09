@@ -1,9 +1,5 @@
 {
   "schema_version": 1,
-  "wip_limit": {
-    "in-flight": 1
-  },
-  "max_age_days": {
-    "shaped": 14
-  }
+  "wip_limit": {},
+  "max_age_days": {}
 }

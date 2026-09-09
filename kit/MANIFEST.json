@@ -49,6 +49,7 @@
     "lifecycle": "schemas/lifecycle.schema.json",
     "card": "schemas/card.schema.json",
     "delivery-policy": "schemas/delivery-policy.schema.json",
-    "residence": "schemas/residence.schema.json"
+    "residence": "schemas/residence.schema.json",
+    "boundary": "schemas/boundary.schema.json"
   }
 }

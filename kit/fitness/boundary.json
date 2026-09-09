@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "id": "boundary",
+  "summary": "Where this framework stops. ADR-001 point 2 declares the line and names three measurements for it: T1 the name test, T2 the blank test, T3 the two-host test -- which that ADR calls the only decisive one, because the first two can be satisfied by a framework that is merely careful, and the third cannot. Each is a row here rather than a paragraph somewhere: a boundary described in prose is a boundary nobody can be shown to have crossed. Every row carries the specimen it must flag and the lookalike it must admit, so the sensor is measured before the tree is.",
+  "rules": [
+    {
+      "id": "a-runtime-named-in-the-open",
+      "kind": "absent-pattern",
+      "where": ["interpreters", "emitted"],
+      "pattern": "\\b(Claude|Codex|Copilot|Cursor|ChatGPT|Gemini|Anthropic|OpenAI)\\b",
+      "because": "a runtime is a thing a host RUNS, and the moment the machinery or the blank it lays names one, the framework has taken a side in a choice that belongs to the host -- and taken it silently, in a file nobody re-reads.",
+      "instead": "in a runtime descriptor the host selects, where the name is data and the choice is visible, revisable and reversible.",
+      "proves": "the Claude adapter is loaded here",
+      "admits": "the runtime adapter the host declared is loaded here"
+    },
+    {
+      "id": "a-stack-named-in-the-open",
+      "kind": "absent-pattern",
+      "where": ["interpreters", "emitted"],
+      "pattern": "\\b(React|Vue|Angular|Django|Rails|Postgres|Kubernetes|Docker|TypeScript)\\b",
+      "because": "a stack is measured, never assumed: a detector reads the host and emits a fact. A stack spelled in the machinery is the same claim with the measurement removed, and it goes on reading as true in every host where it is false.",
+      "instead": "as a detector that states its evidence, and a fact the profile carries with the moment it was taken.",
+      "proves": "the projection is rendered by React",
+      "admits": "the projection is rendered by the declared template"
+    },
+    {
+      "id": "a-project-named-in-the-open",
+      "kind": "absent-pattern",
+      "where": ["interpreters", "emitted"],
+      "pattern": "\\b([Nn]ational[- ]accounts|[Ss]tatdash|[Gg]eostat|SDMX|Eurostat)\\b",
+      "because": "this framework was built beside a particular repository, and that is exactly the condition under which the universal is indistinguishable from the familiar: everything works, so nothing is measured. A first tenant's name inside the kit is the erosion, arriving as a convenience.",
+      "instead": "nowhere in the kit at all. A host is met through its measured profile and its own answers, never by being known.",
+      "proves": "seeded for the national-accounts board",
+      "admits": "seeded for the board this host declares"
+    },
+    {
+      "id": "a-role-named-in-the-open",
+      "kind": "absent-pattern",
+      "where": ["interpreters", "emitted"],
+      "pattern": "\\b([Aa]rchitect|[Oo]rchestrator|[Ss]cribe|[Ff]rontend|[Bb]ackend)\\b",
+      "because": "which roles exist is a domain decision -- it follows from what the work IS -- and a framework that ships a cast has decided how the host is organised before meeting it.",
+      "instead": "as an archetype the host composes into roles of its own naming, in a plane the host owns.",
+      "proves": "escalate to the architect",
+      "admits": "escalate to the role the host declared for this"
+    },
+    {
+      "id": "instance-vocabulary-inside-the-machine",
+      "kind": "absent-instance-term",
+      "where": ["interpreters"],
+      "because": "a proper noun is only the loud half of this. The quiet half is a term that some INSTANCE declaration invented -- a state, a genre, a collection -- spelled inside the machinery, where it becomes a second home for a judgement the host thought it owned. The one a host can change then stops being the one that decides, and both remain internally correct.",
+      "instead": "read from the declaration that invented it. A term the interpreter may legitimately name is one the SCHEMAS declare -- that is the contract between a declaration and its reader -- or one the interpreter itself PROVIDES as an extension point. Naming what you provide is a promise; naming what you consume is a policy.",
+      "proves": "if card[\"state\"] == \"in-flight\":",
+      "admits": "if card[spec[\"state_field\"]] == params[\"state\"]:"
+    },
+    {
+      "id": "a-seed-that-arrives-with-rows",
+      "kind": "empty-seeded-declaration",
+      "where": ["emitted"],
+      "because": "a seed is written once and owned by the host forever after, so whatever it arrives holding is an answer the host will never be asked to give. A row in a seeded declaration is the framework's opinion wearing the host's signature -- and it is wrong in exactly the way ADR-001 names: only someone who knows this domain would ever notice.",
+      "instead": "as structure with no rows: the schema states the shape, the file states that it is empty, and the first row is authored by whoever will live with it.",
+      "proves": {
+        "instance": { "schema_version": 1, "limit": { "some-state": 1 }, "genres": [] },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "schema_version": { "type": "integer" },
+            "limit": { "type": "object" },
+            "genres": { "type": "array" }
+          }
+        }
+      },
+      "admits": {
+        "instance": { "schema_version": 1, "limit": {}, "genres": [] },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "schema_version": { "type": "integer" },
+            "limit": { "type": "object" },
+            "genres": { "type": "array" }
+          }
+        }
+      }
+    },
+    {
+      "id": "a-difference-without-an-ancestor",
+      "kind": "attributed-difference",
+      "where": ["two-hosts"],
+      "because": "the decisive one. A framework can pass every test above and still be shaped by one repository -- the leak is not a name, it is a VARIATION with no declared cause. Install into two maximally different hosts and the surfaces will differ; each difference must trace to something the framework was TOLD, a fact it measured or an answer the host gave. A difference nobody can trace is the framework speaking about a domain it was never given.",
+      "instead": "derived from a declared value and traceable to it. If a host is to differ, the reason must be readable in the host's own documents -- otherwise the framework knows something about this repository that the repository never told it.",
+      "proves": { "emits": "a-basename-cut-out-of-a-stated-path" },
+      "admits": { "emits": "a-path-the-host-stated-whole" },
+      "ancestors": [
+        {
+          "id": "a-profile-fact",
+          "document": ".agents/project/profile.json",
+          "because": "everything the framework MEASURED about this host arrives here, with the moment it was taken. A reading is the only honest way the framework may know anything about a repository."
+        },
+        {
+          "id": "a-p3-answer",
+          "document": ".agents/project/project.json",
+          "chooses": "capabilities",
+          "because": "everything the host CHOSE arrives here, signed. What it chose brings the declarations of the chosen with it, so those are ancestors by descent -- the choice is the cause, and the capability's own declaration is what the choice carried in."
+        }
+      ],
+      "hosts": [
+        {
+          "id": "a-bare-repository",
+          "because": "the floor: a repository with nothing in it but its own version control. Whatever the framework emits here it emitted knowing almost nothing, which is the only honest baseline.",
+          "material": {}
+        },
+        {
+          "id": "a-polyglot-workspace",
+          "because": "as far from the floor as the kit's own detectors can currently carry it: two stacks present, a workspace layout, prose of its own, and a host that answered P3 with a narrower set than the default. Two hosts that resemble each other measure nothing.",
+          "material": {
+            "package.json": "{\n  \"name\": \"a-workspace-that-was-here-first\",\n  \"workspaces\": [\"packages/*\"]\n}\n",
+            "pyproject.toml": "[project]\nname = \"a-workspace-that-was-here-first\"\n",
+            "README.md": "# a repository with a life before the kit\n"
+          },
+          "enables": "governance,hygiene"
+        }
+      ]
+    }
+  ]
+}

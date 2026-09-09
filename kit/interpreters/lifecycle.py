@@ -29,13 +29,13 @@ class LifecycleError(KitError):
 class Governed:
     """A collection and the lifecycle it moves through, found by DECLARATION."""
 
-    __slots__ = ("capability", "spec", "doc", "cards", "policy")
+    __slots__ = ("capability", "spec", "doc", "members", "policy")
 
-    def __init__(self, capability, spec, doc, cards, policy) -> None:
+    def __init__(self, capability, spec, doc, members, policy) -> None:
         self.capability = capability
         self.spec = spec
         self.doc = doc
-        self.cards = cards
+        self.members = members
         self.policy = policy
 
     @property
@@ -110,7 +110,7 @@ def columns(governed: Governed) -> list:
     limits = governed.policy.get("wip_limit", {})
     field = governed.state_field
     declared = set(governed.state_ids)
-    for card in governed.cards.value:
+    for card in governed.members.value:
         if card[field] not in declared:
             raise LifecycleError(
                 f"card {card['id']!r} is in state {card[field]!r}, which lifecycle "
@@ -126,7 +126,7 @@ def columns(governed: Governed) -> list:
                  **{"class": card.get("class", "-")},
                  entered_at=entered_at(card),
                  last_by=last_mover(card))
-            for card in governed.cards.value if card[field] == state["id"]
+            for card in governed.members.value if card[field] == state["id"]
         ]
         built.append(dict(state, items=items, count=len(items),
                           limit=limits.get(state["id"], "-")))
@@ -134,14 +134,14 @@ def columns(governed: Governed) -> list:
 
 
 # -- the gates' rules, shared with the verb that would break them ------------------------------
-def capacity_failures(governed: Governed, cards=None) -> list:
-    """A limit the HOST declared, applied to a card set. The same function answers `check` and
+def capacity_failures(governed: Governed, members=None) -> list:
+    """A limit the HOST declared, applied to a member set. The same function answers `check` and
     `move`, so a host cannot be refused a move it would then pass a gate with."""
-    cards = governed.cards.value if cards is None else cards
+    members = governed.members.value if members is None else members
     limits = governed.policy.get("wip_limit", {})
     failures = []
     for state_id, limit in sorted(limits.items()):
-        held = [c["id"] for c in cards if c[governed.state_field] == state_id]
+        held = [c["id"] for c in members if c[governed.state_field] == state_id]
         if len(held) > limit:
             failures.append(
                 f"state {state_id!r} holds {len(held)} card(s) -- {sorted(held)} -- and this host "
@@ -156,7 +156,7 @@ def age_failures(governed: Governed, now: str) -> list:
     parked a card would be a machine deciding -- which is the one thing an interpreter may not do."""
     ages = governed.policy.get("max_age_days", {})
     failures = []
-    for card in governed.cards.value:
+    for card in governed.members.value:
         limit = ages.get(card[governed.state_field])
         if limit is None:
             continue

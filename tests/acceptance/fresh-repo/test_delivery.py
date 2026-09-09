@@ -249,8 +249,16 @@ class Delivery(Fixtures, unittest.TestCase):
         reverses both outcomes with every interpreter byte untouched."""
         before = interpreter_digest()
         host = self.installed()
+        # The limit is authored HERE, by the host, because the kit seeds none -- a number arriving
+        # in a create-once file is an answer this host would never be asked to give, and reading
+        # it back out of the seed would be this test agreeing with the kit instead of measuring
+        # it. The state comes from the lifecycle, which is where states are declared.
+        state = next(passage["to"] for passage in LIFECYCLE["transitions"]
+                     if passage["from"] == "bet" and "door" not in passage)
+        limit = 1
         policy = json.loads((host / POLICY).read_text(encoding="utf-8"))
-        state, limit = next(iter(policy["wip_limit"].items()))
+        policy["wip_limit"][state] = limit
+        (host / POLICY).write_text(json.dumps(policy, indent=2) + "\n", encoding="utf-8")
 
         # fill the state to exactly its declared limit, by authoring -- the host's own act
         for index in range(limit):
@@ -294,8 +302,13 @@ class Delivery(Fixtures, unittest.TestCase):
         was taken is a claim about the present that will go on sounding true. It is never moved:
         a passage records who made it, and no machine may be that who."""
         host = self.installed()
+        # Authored by the host, for the same reason as the limit above: how long this host will
+        # let a card sit is a thing only this host knows, and the kit that seeded a number would
+        # have answered it in a file nothing will ever revisit.
+        state, days = state_ids()[0], 7
         policy = json.loads((host / POLICY).read_text(encoding="utf-8"))
-        state, days = next(iter(policy["max_age_days"].items()))
+        policy["max_age_days"][state] = days
+        (host / POLICY).write_text(json.dumps(policy, indent=2) + "\n", encoding="utf-8")
         stale = datetime.now(timezone.utc) - timedelta(days=days + 1)
         self.card(host, "long-sat", state, created_at=stale.isoformat(timespec="seconds"))
         self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)

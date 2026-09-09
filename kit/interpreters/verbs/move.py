@@ -46,11 +46,11 @@ def run(ctx, args) -> int:
     capabilities = ctx.enabled_capabilities()
     governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
 
-    rel, card = governed.cards.record_of(card_id)
+    rel, card = governed.members.record_of(card_id)
     if card is None:
         raise MoveError(
             f"no card {card_id!r} in {governed.spec['collection']}; this host holds "
-            f"{governed.cards.identities()}"
+            f"{governed.members.identities()}"
         )
 
     edge = lifecycle_module.resolve(governed, card, target, approver)
@@ -59,7 +59,7 @@ def run(ctx, args) -> int:
 
     # The host's own capacity declaration, applied to the board this move WOULD produce -- so a
     # limit is refused before the byte, not reported by a gate after it.
-    prospective = [updated if c["id"] == card_id else c for c in governed.cards.value]
+    prospective = [updated if c["id"] == card_id else c for c in governed.members.value]
     over = lifecycle_module.capacity_failures(governed, prospective)
     if over:
         raise MoveError(
