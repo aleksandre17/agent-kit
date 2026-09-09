@@ -1,0 +1,11 @@
+{
+  "id": "node-workspace",
+  "evidence": [
+    { "kind": "file_exists", "path": "package.json" },
+    { "kind": "json_path", "path": "package.json", "pointer": "workspaces", "optional": true }
+  ],
+  "emits": {
+    "stack.node": true,
+    "stack.node.workspaces": "$2"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "kit": {
+    "id": "agent-kit",
+    "version": "0.1.0"
+  },
+  "classes": [
+    "vendor",
+    "binding",
+    "projection",
+    "ephemeral"
+  ],
+  "planes": [
+    { "class": "vendor", "root": ".agents/kit" },
+    { "class": "binding", "root": ".agents/project" },
+    { "class": "projection", "root": ".agents/generated" },
+    { "class": "ephemeral", "root": ".agents/runtime" }
+  ],
+  "capabilities": [
+    {
+      "id": "governance",
+      "declaration": "capabilities/governance/capability.json",
+      "never_disabled": true
+    }
+  ],
+  "detectors": [
+    "detectors/git-repository.json",
+    "detectors/node-workspace.json",
+    "detectors/python-project.json"
+  ],
+  "schemas": {
+    "manifest": "schemas/manifest.schema.json",
+    "capability": "schemas/capability.schema.json",
+    "detector": "schemas/detector.schema.json",
+    "project": "schemas/project.schema.json",
+    "profile": "schemas/profile.schema.json"
+  }
+}

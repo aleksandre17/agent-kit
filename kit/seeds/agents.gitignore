@@ -1,0 +1,2 @@
+# EPHEMERAL plane: observed state. Never committed, never upgraded, safely deletable.
+runtime/

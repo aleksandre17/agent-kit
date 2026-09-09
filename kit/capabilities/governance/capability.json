@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "id": "governance",
+  "version": "0.1.0",
+  "summary": "Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the vendored doctrine and the index projection, plus the gates that hold them.",
+  "requires": [
+    { "kind": "fact", "id": "vcs.git", "equals": true }
+  ],
+  "provides": ["governance"],
+  "conflicts": [],
+  "declares": {
+    "detectors": ["git-repository", "node-workspace", "python-project"],
+    "schemas": ["project", "profile"]
+  },
+  "installs": [
+    {
+      "mode": "reading",
+      "class": "binding",
+      "target": ".agents/project/profile.json",
+      "validates": "profile"
+    },
+    {
+      "mode": "declaration",
+      "class": "binding",
+      "target": ".agents/project/project.json",
+      "validates": "project"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/laws.md",
+      "source": "seeds/laws.md"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/.gitignore",
+      "source": "seeds/agents.gitignore"
+    },
+    {
+      "mode": "vendor",
+      "class": "vendor",
+      "target": ".agents/kit/doctrine/governance.md",
+      "source": "capabilities/governance/payload/governance.md"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/governance/INDEX.md",
+      "source": "capabilities/governance/payload/INDEX.md.mustache"
+    }
+  ],
+  "gates": [
+    {
+      "id": "FF-BINDING-SCHEMA-PROJECT",
+      "kind": "schema-valid",
+      "params": { "file": ".agents/project/project.json", "schema": "project" }
+    },
+    {
+      "id": "FF-BINDING-SCHEMA-PROFILE",
+      "kind": "schema-valid",
+      "params": { "file": ".agents/project/profile.json", "schema": "profile" }
+    },
+    {
+      "id": "FF-KIT-CLASS",
+      "kind": "path-class-total",
+      "params": { "root": ".agents" }
+    },
+    {
+      "id": "FF-KIT-PROJECTION",
+      "kind": "projection-reproducible",
+      "params": {}
+    },
+    {
+      "id": "FF-READING-FRESH",
+      "kind": "reading-current",
+      "params": { "file": ".agents/project/profile.json" }
+    }
+  ]
+}
