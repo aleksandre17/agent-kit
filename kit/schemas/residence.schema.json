@@ -1,0 +1,41 @@
+{
+  "$id": "residence",
+  "title": "Residence rules -- genres of document that have no home in an installed surface",
+  "description": "A residence rule NAMES a genre and says where it belongs instead. It never removes: removal is a human act. Every genre carries its own calibration -- one path it MUST see and one lookalike it MUST tolerate -- because a sensor that cannot prove what it sees is not evidence, it is an opinion with a good record.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "genres"],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "summary": { "type": "string" },
+    "genres": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "pattern", "because", "instead", "proves", "admits"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "pattern": {
+            "description": "One regular expression over the host-relative POSIX path. One matcher, one meaning: a set of matcher KINDS would be a closed discriminant the interpreter would have to switch on, and a new way of naming a genre would then cost an interpreter edit.",
+            "type": "string",
+            "minLength": 1
+          },
+          "because": { "type": "string", "minLength": 1 },
+          "instead": { "type": "string", "minLength": 1 },
+          "proves": {
+            "description": "A path this pattern MUST match. The genre's evidence that it can see the thing it claims to catch, carried in the declaration rather than in somebody's memory of a test.",
+            "type": "string",
+            "minLength": 1
+          },
+          "admits": {
+            "description": "A lookalike path this pattern MUST NOT match. A genre that cannot state what it tolerates has no measured edge, and a rule with no edge eventually names everything.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -53,8 +54,18 @@ class Composition(Fixtures, unittest.TestCase):
         def alias_both(kit: Path):
             self.edit_json(kit, "capabilities/governance/capability.json",
                            lambda c: c.__setitem__("provides", ["authority"]))
-            self.edit_json(kit, "capabilities/knowledge/capability.json",
-                           lambda c: c.__setitem__("requires", [{"kind": "capability", "id": "authority"}]))
+            # Every requirer is re-pointed, and WHICH capabilities those are is asked of the
+            # declarations. A test that named one requirer would stop measuring the kit the day a
+            # second capability required the same provision -- it would still pass, and it would
+            # be agreeing with a snapshot rather than reading the set in front of it.
+            for entry in json.loads((kit / "MANIFEST.json").read_text(encoding="utf-8"))["capabilities"]:
+                self.edit_json(kit, entry["declaration"], lambda c: c.__setitem__(
+                    "requires", [
+                        {"kind": "capability", "id": "authority"}
+                        if requirement["kind"] == "capability" and requirement["id"] == "governance"
+                        else requirement
+                        for requirement in c["requires"]
+                    ]))
         result = self.run_kit(self.fixture_kit("provision-aliased", alias_both), self.host(),
                               "init", "--approve", "acceptance-suite")
         self.assertEqual(0, result.returncode, result.stderr)
@@ -88,11 +99,16 @@ class Composition(Fixtures, unittest.TestCase):
             ".agents/project/laws.md",
             ".agents/.gitignore",
             ".agents/kit/doctrine/governance.md",
+            # `hygiene` and `knowledge` both require what governance provides, so neither may
+            # precede it; the tie between the two is broken by id, and hygiene lands first.
+            ".agents/project/hygiene/residence.json",
+            ".agents/kit/doctrine/hygiene.md",
             ".agents/kit/doctrine/knowledge.md",
             "docs/decisions/ADR-0001-a-documents-kind-decides-its-authority.md",
             "docs/reference/README.md",
             ".agents/generated/delivery/BOARD.md",
             ".agents/generated/governance/INDEX.md",
+            ".agents/generated/hygiene/RESIDENCE.md",
         ], install_order(straight.stdout))
 
         def reverse_manifest(kit: Path):
