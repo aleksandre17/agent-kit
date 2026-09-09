@@ -10,8 +10,11 @@ projection of an answer nobody accepted would be a surface stating a decision as
 
 from __future__ import annotations
 
+import collection
+import lifecycle as lifecycle_module
 import plan as plan_module
 import template
+from errors import KitError
 
 SUMMARY = "recompute every projection from VENDOR + BINDING"
 MUTATES = True
@@ -31,12 +34,38 @@ def view_model(ctx, capabilities=None) -> dict:
             "installs": [dict(item) for item in capability.installs],
             "gates": [dict(gate) for gate in capability.gates],
         })
-    return {
+    view = {
         "kit_version": ctx.manifest.version,
         "project": project,
         "capabilities": described,
         "facts": [{"key": k, "value": v} for k, v in sorted(profile["facts"].items())],
+        "documents": {},
     }
+    # What the capabilities DECLARE and what the host AUTHORED both reach the view model by the
+    # same generic route: a shipped document by its id, a readable install by its `reads_as` name,
+    # and a governed collection as the columns its lifecycle declares. No capability, path or
+    # state is named here -- a new board is a declaration, not an edit to this function.
+    readings = collection.read_all(ctx, capabilities)
+    view["reads"] = {name: reading.value for name, reading in readings.items()}
+    for capability in capabilities:
+        for identity, document in capability.documents.items():
+            _claim(view["documents"], identity, document, capability.id)
+        governed = lifecycle_module.governed_of(capability, readings)
+        if governed:
+            _claim(view, governed.spec["board"], lifecycle_module.columns(governed), capability.id)
+    return view
+
+
+def _claim(where: dict, name: str, value, owner: str) -> None:
+    """One name, one meaning. Two capabilities claiming one name in the view model is the same
+    defect as two capabilities installing to one path, and gets the same answer: refused, both
+    named -- never last-writer-wins, which would leave the loser's declaration reading as true."""
+    if name in where:
+        raise KitError(
+            f"capability {owner!r} claims the view-model name {name!r}, which is already taken; "
+            f"a name that resolves to two things is not a name"
+        )
+    where[name] = value
 
 
 def _plane(ctx) -> str:

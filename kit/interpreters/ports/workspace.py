@@ -107,6 +107,12 @@ class Workspace:
     def write_json(self, rel: str, value) -> None:
         self.write_text(rel, json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n")
 
+    def make_dir(self, rel: str) -> None:
+        """A directory the host will fill. Declared and scope-checked like any other write: a
+        space a capability owns is still a write scope, and an unowned one is how files appear
+        that resolve to no class."""
+        (self._root / self._permit(rel)).mkdir(parents=True, exist_ok=True)
+
     def remove_tree(self, rel: str) -> None:
         norm = self._permit(rel)
         target = self._root / norm

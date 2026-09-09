@@ -90,10 +90,15 @@ class Selection(Fixtures, unittest.TestCase):
 
     def test_34_a_selection_may_not_contradict_a_host_that_has_already_answered(self):
         host = self.installed()
+        answered = self.answers(host)["capabilities"]
         result = self.run_kit(KIT, host, "init", "--disable", "knowledge")
         self.assertNotEqual(0, result.returncode)
         self.assertIn("already declared its set", result.stderr)
-        self.assertEqual(["governance", "knowledge"], self.answers(host)["capabilities"],
+        # What the host answered is READ, never restated here: a test carrying its own copy of the
+        # kit's default set is a second home for it, and would have to be edited every time a
+        # capability is declared -- which is the moment a test stops measuring and starts agreeing.
+        self.assertIn("knowledge", answered, "the flag named a capability the host had chosen")
+        self.assertEqual(answered, self.answers(host)["capabilities"],
                          "the answers file is the host's, and a flag may not rewrite it")
 
     # -- the plan -----------------------------------------------------------------------------

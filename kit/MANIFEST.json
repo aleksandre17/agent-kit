@@ -25,6 +25,10 @@
     {
       "id": "knowledge",
       "declaration": "capabilities/knowledge/capability.json"
+    },
+    {
+      "id": "delivery",
+      "declaration": "capabilities/delivery/capability.json"
     }
   ],
   "detectors": [
@@ -37,6 +41,9 @@
     "capability": "schemas/capability.schema.json",
     "detector": "schemas/detector.schema.json",
     "project": "schemas/project.schema.json",
-    "profile": "schemas/profile.schema.json"
+    "profile": "schemas/profile.schema.json",
+    "lifecycle": "schemas/lifecycle.schema.json",
+    "card": "schemas/card.schema.json",
+    "delivery-policy": "schemas/delivery-policy.schema.json"
   }
 }

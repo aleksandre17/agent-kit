@@ -1,129 +1,63 @@
 """check -- run the declared gates, report, never repair.
 
-The gates are not listed here. Each capability DECLARES the gates that hold its own installs, and
-this verb interprets gate KINDS: an open registry of generic evaluators, each taking its params as
-data. A new gate is a row in a capability declaration; a new gate KIND is one registration. Nothing
-here knows the name of any capability, path, stack or runtime.
+The gates are not listed here, and now neither are the gate KINDS. Each capability DECLARES the
+gates that hold its own installs; each gate module DECLARES the kinds it can evaluate; this verb
+discovers the modules the same way the CLI discovers verbs. A new gate is a row in a capability
+declaration; a new gate kind is a FILE, never an edit here.
+
+That last step is the one this slice had to take: a dict of kinds inside the verb would have had
+to grow an entry the moment a capability arrived with rules of its own, and an interpreter that
+must be modified to admit a new capability is not open, however generic its evaluators are.
 """
 
 from __future__ import annotations
 
-import re
+import importlib
+from pathlib import Path
 
-import render as render_verb
 from errors import KitError
 
 SUMMARY = "run the declared fitness functions and report"
 MUTATES = False
 REQUIRES_APPROVED_HOST = True
 
+GATES = Path(__file__).resolve().parents[1] / "gates"
+
 
 class GateError(KitError):
-    """A declaration named a gate kind this interpreter cannot evaluate."""
+    """A declaration named a gate kind no discovered module can evaluate, or two modules claim
+    one kind -- which is a name resolving to two meanings, refused rather than ordered."""
 
 
-def _schema_valid(ctx, params):
-    target = params["file"]
-    if not ctx.workspace.exists(target):
-        return [f"{target}: declared BINDING file is absent"]
-    return [f"{target}: {e}" for e in ctx.manifest.validate(ctx.workspace.read_json(target), params["schema"])]
-
-
-def _path_class_total(ctx, params):
-    """Every file the kit produced must resolve to exactly ONE declared class."""
-    declared = ctx.class_declarations()
-    failures = []
-    for rel in ctx.workspace.files_under(params["root"]):
-        classes = {
-            klass for prefix, klass in declared
-            if rel == prefix or rel.startswith(prefix)
-        }
-        if len(classes) != 1:
-            failures.append(f"{rel}: resolves to {sorted(classes) or 'no'} class")
-    return failures
-
-
-def _projection_reproducible(ctx, params):
-    """The plane on disk must be exactly what VENDOR + BINDING imply -- byte for byte."""
-    expected = render_verb.projections(ctx)
-    failures = []
-    for rel, body in expected.items():
-        if not ctx.workspace.exists(rel):
-            failures.append(f"{rel}: projected path is missing")
-        elif ctx.workspace.read_text(rel) != body:
-            failures.append(f"{rel}: on disk differs from what the declaration renders")
-    plane = next(p["root"] for p in ctx.manifest.planes if p["class"] == "projection")
-    for rel in ctx.workspace.files_under(plane):
-        if rel not in expected:
-            failures.append(f"{rel}: present in the projection plane but nothing renders it")
-    return failures
-
-
-def _reading_current(ctx, params):
-    """A second reading of one reality is isolated and dated, never merged into the first."""
-    recorded = ctx.workspace.read_json(params["file"])
-    fresh = ctx.take_reading()
-    if recorded["facts"] != fresh["facts"]:
-        return [
-            f"{params['file']}: the reading taken at {recorded['taken_at']} says "
-            f"{recorded['facts']}, a reading taken at {fresh['taken_at']} says {fresh['facts']}"
-        ]
-    return []
-
-
-def _title_claim_within_authority(ctx, params):
-    """A NAME is a claim; a LOCATION is a grant. This gate compares the two and never reads a
-    word of the content, because authority was never a property of prose.
-
-    Both halves arrive as data: which locations grant declaring authority, and which name shapes
-    claim it. The interpreter knows no kind, no prefix and no document. A file that claims nothing
-    is not judged at all -- the gate exists to catch a claim that outruns its grant, not to
-    police what a host may keep on its shelves.
-    """
-    grants = {k["path"].rstrip("/"): k["declares"] for k in params["kinds"]}
-    claims = [(c["id"], re.compile(c["pattern"])) for c in params["claims"]]
-    failures = []
-    for rel in ctx.workspace.files_under(params["root"]):
-        name = rel.rsplit("/", 1)[-1]
-        claimed = [cid for cid, pattern in claims if pattern.search(name)]
-        if not claimed:
+def registry() -> dict:
+    kinds: dict = {}
+    owners: dict = {}
+    for path in sorted(GATES.glob("*.py")):
+        if path.stem.startswith("_"):
             continue
-        granting = [
-            path for path in grants
-            if rel.startswith(path + "/") and grants[path]
-        ]
-        if granting:
-            continue
-        located = sorted(path for path in grants if rel.startswith(path + "/"))
-        where = f"kind {located[0]!r}, which cannot declare" if located else "no declared kind"
-        failures.append(
-            f"{rel}: the name claims DECLARING authority ({', '.join(sorted(claimed))}), "
-            f"but it lives in {where}. Move it, promote it, or rename it -- "
-            f"a rule whose location cannot grant its claim binds no one, and the reader cannot tell."
-        )
-    return failures
-
-
-GATE_KINDS = {
-    "title-claim-within-authority": _title_claim_within_authority,
-    "schema-valid": _schema_valid,
-    "path-class-total": _path_class_total,
-    "projection-reproducible": _projection_reproducible,
-    "reading-current": _reading_current,
-}
+        module = importlib.import_module(path.stem)
+        for kind, evaluate in getattr(module, "KINDS", {}).items():
+            if kind in kinds:
+                raise GateError(
+                    f"gate kind {kind!r} is declared by both {owners[kind]!r} and {path.stem!r}"
+                )
+            owners[kind] = path.stem
+            kinds[kind] = evaluate
+    return kinds
 
 
 def run(ctx, args) -> int:
+    kinds = registry()
     failed = 0
     for capability in ctx.enabled_capabilities():
         for gate in capability.gates:
             kind = gate["kind"]
-            if kind not in GATE_KINDS:
+            if kind not in kinds:
                 raise GateError(
                     f"capability {capability.id!r} declares gate kind {kind!r}; "
-                    f"registered kinds are {sorted(GATE_KINDS)}"
+                    f"registered kinds are {sorted(kinds)}"
                 )
-            failures = GATE_KINDS[kind](ctx, gate.get("params", {}))
+            failures = kinds[kind](ctx, gate.get("params", {}))
             print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})")
             for failure in failures:
                 print(f"        {failure}")

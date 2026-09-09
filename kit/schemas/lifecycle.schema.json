@@ -1,0 +1,60 @@
+{
+  "$id": "lifecycle",
+  "title": "A lifecycle declaration -- states and the transitions between them, as DATA",
+  "description": "A folder can never force a decision; a column can. This document declares the states work may be in, and every passage between them with its owner, its exit criterion, and the door or guard that governs it. It carries no behaviour: nothing here branches, fetches or runs. An interpreter reads it and refuses what it does not declare -- which is why a transition that was never declared cannot be violated, and why declaring one is the whole cost of a new rule.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "version", "states", "transitions"],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "summary": { "type": "string" },
+    "initial": { "type": "string", "minLength": 1 },
+    "states": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "owner", "intent"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "title": { "type": "string", "minLength": 1 },
+          "owner": { "type": "string", "minLength": 1 },
+          "intent": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "transitions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to", "owner", "exit"],
+        "properties": {
+          "from": { "type": "string", "minLength": 1 },
+          "to": { "type": "string", "minLength": 1 },
+          "owner": { "type": "string", "minLength": 1 },
+          "exit": { "type": "string", "minLength": 1 },
+          "door": {
+            "description": "A passage no machine may make. The named party must accept it, and the acceptance is recorded exactly as an install approval is -- one mechanism, two subjects.",
+            "type": "string",
+            "minLength": 1
+          },
+          "when": {
+            "description": "A DECLARED bypass (ITIL's pre-approved standard change): this passage is open only to cards whose field holds this value. Bypass by declaration, never by omission -- a card is still written.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["field", "equals"],
+            "properties": {
+              "field": { "type": "string", "minLength": 1 },
+              "equals": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -9,6 +9,15 @@ Supported: `{{ name }}` (dotted paths, `.` for the current item), `{{#name}}...{
 (list -> iterate, truthy -> once, falsy/empty -> skip), `{{^name}}...{{/name}}` (inverted).
 Refused loudly: partials, lambdas, `{{{ }}}`, set-delimiters, and any missing key. A renderer
 that silently emits an empty string for a name it could not resolve is a surface that lies.
+
+A VARIABLE and a SECTION ask different questions, and this renderer answers them differently on
+purpose. `{{x}}` DEMANDS A VALUE: unresolvable is always a defect, because whatever it printed
+would be a fabrication. `{{#x}}` ASKS WHETHER x IS PRESENT, and for an OPTIONAL field of a record
+the answer *no* is a fact, not a typo -- a transition that declares no door is not a broken view.
+The two are told apart by the SHAPE OF THE SIBLINGS: while a list is iterated, the union of the
+keys its records carry is the vocabulary in scope, so a name some sibling declares is ABSENT here
+(falsy, and its `{{^x}}` renders) while a name nothing in the view declares anywhere is still
+refused. The bite is kept exactly where it belongs -- on the name no record has ever heard of.
 """
 
 from __future__ import annotations
@@ -42,6 +51,22 @@ def _resolve(name: str, stack: list):
     return _MISSING
 
 
+def _vocabulary(value) -> set:
+    """The names a frame puts in scope. For a list it is the UNION of its records' keys: the
+    records of one collection are one shape, and a field only some of them carry is optional --
+    which is a property of the shape, never of the record you happen to be standing on."""
+    if isinstance(value, dict):
+        return set(value)
+    if isinstance(value, list):
+        return {key for item in value if isinstance(item, dict) for key in item}
+    return set()
+
+
+def _declared(name: str, vocabularies: list) -> bool:
+    head = name.partition(".")[0]
+    return any(head in known for known in vocabularies)
+
+
 def _stringify(value) -> str:
     if isinstance(value, bool):
         return "true" if value else "false"
@@ -57,7 +82,7 @@ def render(template: str, view: dict) -> str:
     # Mustache's standalone-line rule: a line holding nothing but a section tag contributes no
     # line of its own to the output. Without it every section would emit a stray blank line.
     tokens = _tokenise(_STANDALONE.sub(r"\1", template))
-    out = _render_tokens(tokens, [view])
+    out = _render_tokens(tokens, [view], [_vocabulary(view)])
     return out
 
 
@@ -82,7 +107,7 @@ def _tokenise(template: str) -> list:
     return tokens
 
 
-def _render_tokens(tokens: list, stack: list) -> str:
+def _render_tokens(tokens: list, stack: list, vocabularies: list) -> str:
     out: list[str] = []
     index = 0
     while index < len(tokens):
@@ -100,16 +125,29 @@ def _render_tokens(tokens: list, stack: list) -> str:
             body, index = _slice_section(tokens, index, value)
             resolved = _resolve(value, stack)
             if resolved is _MISSING:
-                raise TemplateError(f"template opens section {value!r}, which the view does not carry")
+                if not _declared(value, vocabularies):
+                    raise TemplateError(
+                        f"template opens section {value!r}, which the view does not carry -- and "
+                        f"no record in scope declares that name either, so this is a name nothing "
+                        f"in the view has ever heard of rather than an optional field left out"
+                    )
+                # Declared by the shape, absent from this record: a fact, and a falsy section.
+                resolved = None
             if kind == "inverted":
                 if not resolved:
-                    out.append(_render_tokens(body, stack))
+                    out.append(_render_tokens(body, stack, vocabularies))
             elif isinstance(resolved, list):
+                inner = vocabularies + [_vocabulary(resolved)]
                 for item in resolved:
-                    out.append(_render_tokens(body, stack + [item]))
+                    out.append(_render_tokens(body, stack + [item], inner))
             elif resolved:
-                frame = resolved if isinstance(resolved, dict) else {}
-                out.append(_render_tokens(body, stack + [frame]))
+                # Mustache: a truthy non-list value renders the block once WITH THAT VALUE as the
+                # context, so `{{.}}` inside it is the value. Pushing an empty frame instead would
+                # make a scalar section render its own name as nothing -- the silent-empty the
+                # rest of this renderer refuses. Non-dict frames are skipped by name lookup, so
+                # outer names still resolve.
+                out.append(_render_tokens(body, stack + [resolved],
+                                          vocabularies + [_vocabulary(resolved)]))
         else:
             raise TemplateError(f"closing tag {value!r} has no opening section")
     return "".join(out)

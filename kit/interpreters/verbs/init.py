@@ -25,6 +25,7 @@ own application -- not care and not review, but the fact that there is only one 
 from __future__ import annotations
 
 import check as check_verb
+import collection
 import plan as plan_module
 import render as render_verb
 from context import SCHEMA_VERSION
@@ -93,6 +94,13 @@ def _mode_vendor(ctx, ws, item, state):
     ws.write_text(item["target"], ctx.manifest.payload_text(item["source"]))
 
 
+def _mode_space(ctx, ws, item, state):
+    """A place the HOST authors into, owned by the capability that declared it. The kit creates
+    it and puts nothing in it: seeding an example would be the kit authoring the host's content,
+    and an empty space is an honest declared state, not a missing one."""
+    ws.make_dir(item["target"])
+
+
 #: mode -> (phase, foresee, apply). The `answer` phase is the ONLY thing an unapproved host may
 #: write: it is the draft the owner is being asked to accept, and nothing moves until they do.
 INSTALL_MODES = {
@@ -100,6 +108,7 @@ INSTALL_MODES = {
     "declaration": ("answer", _answer, _mode_declaration),
     "seed": ("install", _once, _mode_seed),
     "vendor": ("install", _always, _mode_vendor),
+    "space": ("install", _once, _mode_space),
     "projection": ("render", None, None),
 }
 
@@ -137,18 +146,20 @@ def _apply(ctx, state, writes) -> None:
         if write.disposition != "keep":
             _mode_of(state["by_id"][write.capability], write.item)[2](ctx, scoped, write.item, state)
         print(f"  {write.accomplished:<9}  {write.target}")
-        _validate(ctx, scoped, write.item)
+        _validate(ctx, write.item)
 
 
-def _validate(ctx, ws, item) -> None:
-    schema = item.get("validates")
-    if not schema:
-        return
-    errors = ctx.manifest.validate(ws.read_json(item["target"]), schema)
-    if errors:
-        raise InstallError(
-            f"{item['target']} does not honour schema {schema!r}:\n  " + "\n  ".join(errors)
-        )
+def _validate(ctx, item) -> None:
+    """What was just written, read back through its own declaration and held to its schema.
+
+    The reading is DELEGATED, never repeated here. Whether a declared target is one document or a
+    space of many records was decided once, by the shape the declaration states, and `collection`
+    is where that decision lives. An installer that answered it a second time -- by reading every
+    target as a file -- would stay locally correct right up to the moment it opened a DIRECTORY,
+    which is a state no schema can describe and no message can explain.
+    """
+    if item.get("validates"):
+        collection.read(ctx, item)
 
 
 def _chosen(ctx, args, candidates, existing):

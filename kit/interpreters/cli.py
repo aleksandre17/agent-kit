@@ -10,14 +10,16 @@ from __future__ import annotations
 
 import argparse
 import importlib
+import os
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-for extra in (HERE, HERE / "ports", HERE / "verbs"):
+for extra in (HERE, HERE / "ports", HERE / "verbs", HERE / "gates"):
     if str(extra) not in sys.path:
         sys.path.insert(0, str(extra))
 
+import clock as clock_port  # noqa: E402
 from context import Context  # noqa: E402
 from errors import KitError  # noqa: E402
 
@@ -52,7 +54,10 @@ def main(argv=None) -> int:
     parser.add_argument("--disable", type=_ids, default=None,
                         help="this host's set is every available capability except these")
     parser.add_argument("--approve", default=None,
-                        help="accept the drafted answer, recorded by the name given")
+                        help="walk a door: accept what is drafted or declared, recorded by name")
+    parser.add_argument("--card", default=None, help="the card a verb acts on, by id")
+    parser.add_argument("--to", default=None, help="the state a card is being moved to")
+    parser.add_argument("--by", default=None, help="who is making this move, recorded on the card")
     args = parser.parse_args(argv)
 
     host = Path(args.root).resolve()
@@ -60,7 +65,8 @@ def main(argv=None) -> int:
         print(f"kit: --root {host} is not a directory", file=sys.stderr)
         return 2
 
-    ctx = Context(kit_root=Path(args.kit), host_root=host)
+    ctx = Context(kit_root=Path(args.kit), host_root=host,
+                  clock=clock_port.from_environment(os.environ))
     module = importlib.import_module(args.verb)
 
     # What a verb may be ASKED for is a property the verb declares, read generically. The CLI

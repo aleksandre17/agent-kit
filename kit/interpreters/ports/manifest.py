@@ -21,8 +21,21 @@ class ManifestError(KitError):
 class Capability:
     """A capability declaration, read-only. It declares; it never acts."""
 
-    def __init__(self, raw: dict) -> None:
+    def __init__(self, raw: dict, documents=None) -> None:
         self._raw = raw
+        self._documents = documents or {}
+
+    @property
+    def documents(self) -> dict:
+        """The declarations this capability SHIPS, by the id it gave them, already validated
+        against the schema it named. The base declaration stays thin: a capability that needs a
+        lifecycle brings its own document rather than growing a field on every other capability."""
+        return dict(self._documents)
+
+    @property
+    def governs(self):
+        """The collection this capability holds and the lifecycle it moves through, or None."""
+        return self._raw.get("governs")
 
     @property
     def raw(self) -> dict:
@@ -82,7 +95,12 @@ class Manifest:
             self._require_valid(raw, "capability", rel)
             if raw["id"] != entry["id"]:
                 raise ManifestError(f"{rel}: declares id {raw['id']!r}, manifest says {entry['id']!r}")
-            self._capabilities.append(Capability(raw))
+            documents = {}
+            for declared in raw.get("documents", []):
+                document = self._read(declared["source"])
+                self._require_valid(document, declared["validates"], declared["source"])
+                documents[declared["id"]] = document
+            self._capabilities.append(Capability(raw, documents))
 
         self._detectors = []
         for rel in self._raw["detectors"]:

@@ -77,6 +77,12 @@ class Composition(Fixtures, unittest.TestCase):
         straight = self.run_kit(KIT, self.host(), "init", "--approve", "acceptance-suite")
         self.assertEqual(0, straight.returncode, straight.stderr)
         self.assertEqual([
+            # `delivery` requires no provision, so it ties with `governance` and the tie is broken
+            # by id -- which is why it goes first. `knowledge` requires governance and can never
+            # precede it, whatever order the manifest happens to list them in.
+            ".agents/project/delivery/policy.json",
+            ".agents/project/delivery/cards/",
+            ".agents/kit/doctrine/delivery.md",
             ".agents/project/profile.json",
             ".agents/project/project.json",
             ".agents/project/laws.md",
@@ -85,6 +91,7 @@ class Composition(Fixtures, unittest.TestCase):
             ".agents/kit/doctrine/knowledge.md",
             "docs/decisions/ADR-0001-a-documents-kind-decides-its-authority.md",
             "docs/reference/README.md",
+            ".agents/generated/delivery/BOARD.md",
             ".agents/generated/governance/INDEX.md",
         ], install_order(straight.stdout))
 

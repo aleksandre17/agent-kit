@@ -32,6 +32,33 @@
         "schemas": { "type": "array", "items": { "type": "string" } }
       }
     },
+    "documents": {
+      "description": "Declarations this capability SHIPS and the interpreter reads: a name, a payload file, and the schema that judges it. The base declaration stays thin -- a capability that needs a lifecycle brings its own document and its own schema rather than growing a field on every other capability.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source", "validates"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "source": { "type": "string", "minLength": 1 },
+          "validates": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "governs": {
+      "description": "This capability holds a collection of things that move through a declared lifecycle. Every name here points at something declared elsewhere in THIS file -- never at a path, because the path is already declared by the install that owns it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collection", "state_field", "lifecycle", "policy", "board"],
+      "properties": {
+        "collection": { "type": "string", "minLength": 1 },
+        "state_field": { "type": "string", "minLength": 1 },
+        "lifecycle": { "type": "string", "minLength": 1 },
+        "policy": { "type": "string", "minLength": 1 },
+        "board": { "type": "string", "minLength": 1 }
+      }
+    },
     "installs": {
       "type": "array",
       "minItems": 1,
@@ -44,7 +71,12 @@
           "class": { "type": "string", "enum": ["vendor", "binding", "projection", "ephemeral"] },
           "target": { "type": "string", "minLength": 1 },
           "source": { "type": "string", "minLength": 1 },
-          "validates": { "type": "string", "minLength": 1 }
+          "validates": { "type": "string", "minLength": 1 },
+          "reads_as": {
+            "description": "This installed path is READ BACK under this name, and reaches every projection. A target ending in '/' is a collection of JSON files; anything else is one document. The path is stated once, here, by the install that owns it.",
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
