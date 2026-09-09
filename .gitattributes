@@ -1,0 +1,18 @@
+# A boundary is measured, never assumed.
+#
+# This kit asserts that `render` is BYTE-REPRODUCIBLE. Git's autocrlf would rewrite
+# line endings on the way in and out, so the bytes a host committed and the bytes a
+# host renders could differ while every participant behaved correctly — the claim
+# would go on reading as true from inside. The reproducibility test would still pass
+# locally and the guarantee would be false everywhere else.
+#
+# Therefore every text file in this repository is LF on disk and LF in the object
+# store, on every platform, regardless of any local `core.autocrlf`.
+
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.pdf binary
