@@ -13,3 +13,14 @@ from __future__ import annotations
 
 class KitError(Exception):
     """A situation the kit understands and can state plainly."""
+
+    exit_code = 1
+
+
+class PendingApproval(KitError):
+    """Not a failure -- a DECLARED STATE. The host was measured, a set was resolved and an answer
+    was drafted, and the one human door in the whole design has not been walked through. It gets
+    its own exit code because a stalled install is not a broken one, and an operator who cannot
+    tell the two apart will either ignore real defects or re-run a refusal forever."""
+
+    exit_code = 3

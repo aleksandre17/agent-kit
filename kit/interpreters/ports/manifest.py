@@ -123,6 +123,16 @@ class Manifest:
         return list(self._capabilities)
 
     @property
+    def policies(self) -> dict:
+        """What the KIT declares ABOUT each capability, as opposed to what a capability declares
+        about itself: id -> the manifest entry minus the pointer to the declaration. Handed on as
+        data so that whoever reads a policy field reads a declaration, never a hard-coded name."""
+        return {
+            entry["id"]: {k: v for k, v in entry.items() if k not in ("id", "declaration")}
+            for entry in self._raw["capabilities"]
+        }
+
+    @property
     def detectors(self) -> list:
         return list(self._detectors)
 

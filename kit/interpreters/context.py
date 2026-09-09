@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 import resolver
-from errors import KitError
+from errors import KitError, PendingApproval
 from ports.clock import Clock
 from ports.manifest import Manifest
 from ports.probe import Probe
@@ -78,10 +78,61 @@ class Context:
             raise BindingError(f"{rel} does not honour schema {schema!r}:\n  " + "\n  ".join(errors))
         return value
 
+    # -- the host's own answer --------------------------------------------------------------
+    def install_of_mode(self, mode: str, required: bool = True):
+        """The one install statement in this kit that works in `mode`. The answers file and the
+        reading are found by asking the DECLARATIONS where they live, never by a path constant
+        held in the interpreter: a path written into the interpreter is a second home for a
+        truth a capability already states, and it is the home that cannot be changed.
+
+        TWO is always a defect and is always refused -- two answers files is a second home for
+        the same host truth. ZERO is refused only where the answer is actually NEEDED. A kit that
+        declares none is malformed, but saying so early would put this judgement in front of the
+        composition refusal that explains WHY the declaration went missing, and a cause that
+        arrives after its consequence is not a report.
+        """
+        found = [i for c in self.manifest.capabilities for i in c.installs if i["mode"] == mode]
+        if len(found) > 1 or (not found and required):
+            raise BindingError(
+                f"this kit declares {len(found)} installs in mode {mode!r}; exactly one is "
+                f"required, because the host has exactly one of these to answer with"
+            )
+        return found[0] if found else None
+
+    def host_answers(self, required: bool = True):
+        """The ANSWERS FILE: what this host chose, in the host's own plane. `None` when the host
+        has never answered -- an absence the caller must name, never assume past."""
+        item = self.install_of_mode("declaration", required=required)
+        if item is None:
+            return None
+        if not self.workspace.exists(item["target"]):
+            if required:
+                raise BindingError(f"{item['target']}: declared host truth is absent; run `init` first")
+            return None
+        return self.binding(item["target"], item["validates"])
+
+    def require_approved(self) -> dict:
+        """Cardinal V at the one door where a human stands. An install whose approval never came
+        is a DECLARED, DATED state on disk, and every later phase refuses while it stands -- so a
+        stalled install reads as stalled, rather than as a half-built host that looks finished."""
+        answers = self.host_answers()
+        if answers["status"] != "accepted":
+            item = self.install_of_mode("declaration")
+            raise PendingApproval(
+                f"{item['target']} is status {answers['status']!r}, drafted at "
+                f"{answers['drafted_at']} and never approved. This host has chosen "
+                f"{answers['capabilities']} but nobody has accepted the choice, so nothing "
+                f"downstream may run on it. Approve with: init --approve <who>"
+            )
+        return answers
+
+    def select(self, candidates, enable=None, disable=None) -> list:
+        return resolver.select(candidates, self.manifest.policies, enable, disable,
+                               known=[c.id for c in self.manifest.capabilities])
+
     def enabled_capabilities(self) -> list:
         """The host's declaration is the source of truth once it exists."""
-        project = self.binding(".agents/project/project.json", "project")
-        wanted = set(project["capabilities"])
+        wanted = set(self.host_answers()["capabilities"])
         return resolver.arrange([c for c in self.manifest.capabilities if c.id in wanted])
 
     def class_declarations(self) -> list:

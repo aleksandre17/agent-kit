@@ -14,6 +14,8 @@ import render as render_verb
 from errors import KitError
 
 SUMMARY = "run the declared fitness functions and report"
+MUTATES = False
+REQUIRES_APPROVED_HOST = True
 
 
 class GateError(KitError):

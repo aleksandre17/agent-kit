@@ -1,73 +1,173 @@
-"""init -- measure the host, draft its bindings, seed once, vendor, render, check.
+"""init -- measure the host, resolve what it CHOSE, draft the answer, and only then mutate.
 
-Everything this verb writes was declared by a capability, and it writes through a workspace scoped
-to exactly that capability's declared targets: the interpreter cannot write somewhere no
-declaration named, even by mistake. Re-running is not a re-generation -- BINDING is created only
-if absent -- so a second `init` is, by construction, `render` + `check`.
+This verb holds the one door in the whole design where a human stands. It measures, classifies,
+composes and DRAFTS an answer; the owner approves; only an approved answer is installed against.
+An init whose approval never came leaves a declared, dated state on disk and exits with its own
+code -- a stalled install is a state, never a hung process and never a silent proceed.
 
-Install modes are an OPEN registry keyed by the mode a declaration states. A new kind of install
-is a new registration; no verb branches on the identity of any particular capability, path or
-stack, and none may.
+Two things are separated here on purpose:
+
+  * WHAT IS TRUE of the host -- measured, and never argued with.
+  * WHAT THIS HOST CHOSE -- the answers file, in the host's own plane. Once it exists it is the
+    source of truth for the set and the kit never overwrites it. The one exception is the
+    approval itself, which is the OWNER writing through the kit, and is recorded with a name.
+
+Everything written was declared by a capability, and it is written through a workspace scoped to
+exactly that capability's declared targets. Re-running is not a re-generation -- BINDING is
+created only if absent -- so a second `init` on an approved host is, by construction, render+check.
+
+Install modes are an OPEN registry keyed by the mode a declaration states, and each mode has TWO
+halves: FORESEE, which says what would happen, and APPLY, which does it. The apply never decides;
+it is handed the foreseen disposition. That is what makes a plan incapable of drifting from its
+own application -- not care and not review, but the fact that there is only one decision.
 """
 
 from __future__ import annotations
 
 import check as check_verb
+import plan as plan_module
 import render as render_verb
-from errors import KitError
 from context import SCHEMA_VERSION
+from errors import KitError, PendingApproval
 
-SUMMARY = "measure, draft bindings, seed, vendor, render, check"
-
-
-def _mode_reading(ctx, ws, item, state):
-    """The measured environment. Written once; a later reading is compared, never imposed."""
-    if ws.exists(item["target"]):
-        return "kept"
-    ws.write_json(item["target"], state["reading"])
-    return "created"
-
-
-def _mode_declaration(ctx, ws, item, state):
-    """What this host has decided. Host truth: an upgrade never writes here again."""
-    if ws.exists(item["target"]):
-        return "kept"
-    ws.write_json(item["target"], {
-        "schema_version": SCHEMA_VERSION,
-        "status": "draft",
-        "kit_version": ctx.manifest.version,
-        "capabilities": sorted(c.id for c in state["enabled"]),
-        "unavailable": state["unavailable"],
-        "drafted_at": state["reading"]["taken_at"],
-    })
-    return "created"
-
-
-def _mode_seed(ctx, ws, item, state):
-    """Created once if absent, never re-applied, never diffed. The host owns it from then on."""
-    if ws.exists(item["target"]):
-        return "kept"
-    ws.write_text(item["target"], ctx.manifest.payload_text(item["source"]))
-    return "created"
-
-
-def _mode_vendor(ctx, ws, item, state):
-    """Framework payload. Replaced wholesale; never edited downstream."""
-    ws.write_text(item["target"], ctx.manifest.payload_text(item["source"]))
-    return "vendored"
-
-
-INSTALL_MODES = {
-    "reading": ("install", _mode_reading),
-    "declaration": ("install", _mode_declaration),
-    "seed": ("install", _mode_seed),
-    "vendor": ("install", _mode_vendor),
-    "projection": ("render", None),
-}
+SUMMARY = "measure, choose, draft the answer, seed, vendor, render, check"
+MUTATES = True
+REQUIRES_APPROVED_HOST = False
 
 
 class InstallError(KitError):
-    """A declaration named an install mode this interpreter does not know, or wrote an invalid file."""
+    """A declaration named an install mode this interpreter does not know, a selection that
+    contradicts host truth, or a written file that does not honour its own schema."""
+
+
+# -- foresee: what WOULD happen, decided exactly once -----------------------------------------
+def _once(ws, item, state):
+    """Created if absent, never re-applied. The host owns it from then on."""
+    return "keep" if ws.exists(item["target"]) else "create"
+
+
+def _always(ws, item, state):
+    """Framework payload: replaced wholesale, never edited downstream."""
+    return "replace" if ws.exists(item["target"]) else "create"
+
+
+def _answer(ws, item, state):
+    """The answers file is create-once like any host truth -- except for the approval, which is
+    the owner's own act passing through the kit, and is therefore a PLANNED replace rather than
+    an edit nobody saw coming."""
+    if not ws.exists(item["target"]):
+        return "create"
+    return "replace" if state["approving_draft"] else "keep"
+
+
+# -- apply: the foreseen disposition, carried out ---------------------------------------------
+def _mode_reading(ctx, ws, item, state):
+    """The measured environment. Written once; a later reading is compared, never imposed."""
+    ws.write_json(item["target"], state["reading"])
+
+
+def _mode_declaration(ctx, ws, item, state):
+    """What this host has decided: its set, its status, and who accepted it. A prior answer is
+    carried forward field by field -- approving a draft must not silently re-answer it."""
+    prior = state["existing"] or {}
+    answer = {
+        "schema_version": SCHEMA_VERSION,
+        "status": "accepted" if state["approver"] else "draft",
+        "kit_version": ctx.manifest.version,
+        "capabilities": prior.get("capabilities") or sorted(c.id for c in state["enabled"]),
+        "unavailable": prior.get("unavailable", state["unavailable"]),
+        "drafted_at": prior.get("drafted_at", state["reading"]["taken_at"]),
+    }
+    if state["approver"]:
+        answer["signed_by"] = state["approver"]
+        answer["signed_at"] = state["reading"]["taken_at"]
+    ws.write_json(item["target"], answer)
+
+
+def _mode_seed(ctx, ws, item, state):
+    """Created once if absent, never re-applied, never diffed."""
+    ws.write_text(item["target"], ctx.manifest.payload_text(item["source"]))
+
+
+def _mode_vendor(ctx, ws, item, state):
+    ws.write_text(item["target"], ctx.manifest.payload_text(item["source"]))
+
+
+#: mode -> (phase, foresee, apply). The `answer` phase is the ONLY thing an unapproved host may
+#: write: it is the draft the owner is being asked to accept, and nothing moves until they do.
+INSTALL_MODES = {
+    "reading": ("install", _once, _mode_reading),
+    "declaration": ("answer", _answer, _mode_declaration),
+    "seed": ("install", _once, _mode_seed),
+    "vendor": ("install", _always, _mode_vendor),
+    "projection": ("render", None, None),
+}
+
+
+def _mode_of(capability, item):
+    mode = item["mode"]
+    if mode not in INSTALL_MODES:
+        raise InstallError(
+            f"capability {capability.id!r} declares install mode {mode!r}; "
+            f"registered modes are {sorted(INSTALL_MODES)}"
+        )
+    return INSTALL_MODES[mode]
+
+
+def _install_plan(ctx, enabled, state) -> list:
+    """The write set an install would produce, as data. While the host is unapproved this is
+    exactly the ANSWER -- the draft the owner is asked to accept -- and nothing else."""
+    writes = []
+    for capability in enabled:
+        scoped = state["scopes"][capability.id]
+        for item in capability.installs:
+            phase, foresee, _apply_fn = _mode_of(capability, item)
+            if phase == "render" or (phase != "answer" and not state["approved"]):
+                continue
+            writes.append(plan_module.Write(
+                foresee(scoped, item, state), item["class"], item["mode"],
+                capability.id, item["target"], item))
+    return writes
+
+
+def _apply(ctx, state, writes) -> None:
+    """Carry out a plan. It decides nothing: the disposition arrived with the entry."""
+    for write in writes:
+        scoped = state["scopes"][write.capability]
+        if write.disposition != "keep":
+            _mode_of(state["by_id"][write.capability], write.item)[2](ctx, scoped, write.item, state)
+        print(f"  {write.accomplished:<9}  {write.target}")
+        _validate(ctx, scoped, write.item)
+
+
+def _validate(ctx, ws, item) -> None:
+    schema = item.get("validates")
+    if not schema:
+        return
+    errors = ctx.manifest.validate(ws.read_json(item["target"]), schema)
+    if errors:
+        raise InstallError(
+            f"{item['target']} does not honour schema {schema!r}:\n  " + "\n  ".join(errors)
+        )
+
+
+def _chosen(ctx, args, candidates, existing):
+    """Where the host's set comes from -- and it comes from exactly ONE place at a time.
+
+    Before a host has answered, the request on the command line is the choice. Afterwards the
+    answers file IS the choice, and a flag that would contradict it is refused rather than
+    quietly obeyed or quietly ignored: two homes for one truth, and the drift is guaranteed.
+    """
+    if existing is None:
+        return ctx.select(candidates, args.enable, args.disable)
+    if args.enable is not None or args.disable is not None:
+        raise InstallError(
+            f"this host has already declared its set as {existing['capabilities']} in "
+            f"{ctx.install_of_mode('declaration')['target']}; --enable/--disable author that "
+            f"file and may not contradict it. Edit the answers file, then run init again."
+        )
+    wanted = set(existing["capabilities"])
+    return [c for c in candidates if c.id in wanted]
 
 
 def run(ctx, args) -> int:
@@ -84,35 +184,48 @@ def run(ctx, args) -> int:
     for entry in unavailable:
         print(f"  unavailable  {entry['id']}: {entry['reason']}")
 
-    enabled = ctx.compose(candidates, blocked)
-    state = {"reading": reading, "enabled": enabled, "unavailable": unavailable}
-
-    for capability in enabled:
-        scoped = ctx.workspace.scoped(capability.targets())
-        for item in capability.installs:
-            mode = item["mode"]
-            if mode not in INSTALL_MODES:
-                raise InstallError(
-                    f"capability {capability.id!r} declares install mode {mode!r}; "
-                    f"registered modes are {sorted(INSTALL_MODES)}"
+    existing = ctx.host_answers(required=False)
+    chosen = _chosen(ctx, args, candidates, existing)
+    for capability in candidates:
+        if capability not in chosen:
+            print(f"  disabled  {capability.id}: not in this host's declared set")
+            for provision in capability.raw.get("provides", []):
+                blocked[provision] = (
+                    f"it is provided by {capability.id}, which this host chose to disable"
                 )
-            phase, apply = INSTALL_MODES[mode]
-            if phase != "install":
-                continue
-            outcome = apply(ctx, scoped, item, state)
-            print(f"  {outcome:<9}  {item['target']}")
-            _validate(ctx, scoped, item)
 
-    render_verb.run(ctx, args)
-    return check_verb.run(ctx, args)
+    enabled = ctx.compose(chosen, blocked)
+    status = (existing or {}).get("status")
+    approved = bool(args.approve) or status == "accepted"
+    state = {
+        "reading": reading,
+        "enabled": enabled,
+        "unavailable": unavailable,
+        "existing": existing,
+        "approver": args.approve,
+        "approved": approved,
+        "approving_draft": bool(args.approve) and status == "draft",
+        "by_id": {c.id: c for c in enabled},
+        "scopes": {c.id: ctx.workspace.scoped(c.targets()) for c in enabled},
+    }
 
+    writes = _install_plan(ctx, enabled, state)
+    if getattr(args, "plan", False):
+        if approved:
+            writes = writes + render_verb.plan_entries(ctx, enabled)
+        print(plan_module.report("init", writes))
+        return 0
 
-def _validate(ctx, ws, item) -> None:
-    schema = item.get("validates")
-    if not schema:
-        return
-    errors = ctx.manifest.validate(ws.read_json(item["target"]), schema)
-    if errors:
-        raise InstallError(
-            f"{item['target']} does not honour schema {schema!r}:\n  " + "\n  ".join(errors)
+    _apply(ctx, state, writes)
+
+    if not approved:
+        answers = ctx.host_answers()
+        raise PendingApproval(
+            f"{ctx.install_of_mode('declaration')['target']} was drafted at "
+            f"{answers['drafted_at']} choosing {answers['capabilities']}, and nobody has "
+            f"accepted it. Nothing else has been written to this host. Read the draft, then: "
+            f"init --root <host> --approve <who>"
         )
+
+    render_verb.run(ctx, args, enabled)
+    return check_verb.run(ctx, args)

@@ -28,12 +28,29 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 
 | verb | does | writes |
 | --- | --- | --- |
-| `init` | measure the host, draft its bindings, seed once, vendor, render, check | binding (create-if-absent), vendor, projection |
+| `init` | measure the host, resolve what it chose, draft the answer, seed once, vendor, render, check | the answer first; everything else only once it is approved |
 | `render` | recompute every projection from vendor + binding | projection only |
 | `check` | run the declared gates; report, never repair | nothing |
 
 `upgrade` and `eject` are designed and not built. A verb is a file in `interpreters/verbs/`; the
 entry point discovers it and knows no verb's name.
+
+### Choosing, and approving
+
+```
+init --root <host> --enable governance      # this host's set is exactly these
+init --root <host> --disable knowledge      # ... or everything available except these
+init --root <host> --plan                   # print every write, touch nothing
+init --root <host> --approve <who>          # accept the drafted answer; only now does it install
+```
+
+The set is chosen ONCE. Before the host has answered, the flags author `.agents/project/project.json`;
+afterwards that file **is** the answer and a flag that contradicts it is refused — edit the file.
+
+`init` on a fresh host writes the draft and stops with **exit 3**: an install nobody approved is a
+dated state on disk, not a hung process and not a silent proceed. `render` and `check` refuse while
+it stands. `--plan` is available on every verb that writes, and it is not a preview: the verb
+decides once, `--plan` prints that decision and the apply carries out the same one.
 
 ## What is a declaration here
 

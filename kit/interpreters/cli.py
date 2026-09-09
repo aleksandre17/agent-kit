@@ -45,6 +45,14 @@ def main(argv=None) -> int:
     parser.add_argument("verb", choices=verbs, help="one of the declared verbs")
     parser.add_argument("--root", required=True, help="the host repository to act on")
     parser.add_argument("--kit", default=str(HERE.parent), help="the kit payload directory")
+    parser.add_argument("--plan", action="store_true",
+                        help="print the exact set of writes and exit without touching a byte")
+    parser.add_argument("--enable", type=_ids, default=None,
+                        help="this host's set is exactly these capabilities (comma-separated)")
+    parser.add_argument("--disable", type=_ids, default=None,
+                        help="this host's set is every available capability except these")
+    parser.add_argument("--approve", default=None,
+                        help="accept the drafted answer, recorded by the name given")
     args = parser.parse_args(argv)
 
     host = Path(args.root).resolve()
@@ -54,8 +62,22 @@ def main(argv=None) -> int:
 
     ctx = Context(kit_root=Path(args.kit), host_root=host)
     module = importlib.import_module(args.verb)
+
+    # What a verb may be ASKED for is a property the verb declares, read generically. The CLI
+    # still knows no verb's name: a verb that writes nothing says so, and asking it for a plan is
+    # refused rather than answered with an empty one -- an empty plan reads as "nothing to do".
+    if args.plan and not getattr(module, "MUTATES", False):
+        print(f"kit: {args.verb} writes nothing, so there is nothing to plan", file=sys.stderr)
+        return 2
+
     print(f"kit {ctx.manifest.version} · {args.verb} · {host.as_posix()}")
+    if getattr(module, "REQUIRES_APPROVED_HOST", False):
+        ctx.require_approved()
     return module.run(ctx, args)
+
+
+def _ids(text: str) -> list:
+    return [part.strip() for part in text.split(",") if part.strip()]
 
 
 def guarded(argv=None) -> int:
@@ -63,7 +85,7 @@ def guarded(argv=None) -> int:
         return main(argv)
     except KitError as refusal:
         print(f"kit: {refusal}", file=sys.stderr)
-        return 1
+        return refusal.exit_code
 
 
 if __name__ == "__main__":

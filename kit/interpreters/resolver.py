@@ -33,6 +33,51 @@ class CompositionError(KitError):
     casting a shadow on one path. Never resolved by preference -- always refused."""
 
 
+class SelectionError(KitError):
+    """The host asked for a set it may not have: a capability nobody declares, or the removal of
+    one this kit declares structural. Refused before composition, because a selection that names
+    nothing real is a typo the host must SEE -- silently honouring it would install a set the
+    operator never asked for while the command line went on reading as obeyed."""
+
+
+def select(candidates, policies: dict, enable=None, disable=None, known=()) -> list:
+    """HOST CHOICE, as a pure function over declarations. Returns the chosen subset.
+
+    `enable` is exhaustive when given (the set is exactly these); `disable` is subtractive.
+    Neither may name an id no capability declares -- including one the host measured as
+    unavailable, which is a real capability with an honest reason and not a typo.
+
+    `policies` carries what the KIT declares about each capability, and `never_disabled` is read
+    here. That flag lives on the kit's manifest entry rather than inside the capability, and it
+    belongs there: a capability cannot declare ITSELF indispensable without granting itself the
+    authority to do so. Which of its own parts a kit cannot stand without is a statement the KIT
+    makes about its composition, not a claim a part makes about itself.
+    """
+    known = set(known) or {c.id for c in candidates}
+    for flag, asked in (("--enable", enable), ("--disable", disable)):
+        for cid in asked or ():
+            if cid not in known:
+                raise SelectionError(
+                    f"{flag} names {cid!r}, which no capability in this kit declares; "
+                    f"declared capabilities are {sorted(known)}"
+                )
+    if enable is not None:
+        chosen = [c for c in candidates if c.id in set(enable)]
+    else:
+        chosen = [c for c in candidates if c.id not in set(disable or ())]
+
+    kept = {c.id for c in chosen}
+    for capability in candidates:
+        if capability.id not in kept and policies.get(capability.id, {}).get("never_disabled"):
+            raise SelectionError(
+                f"capability {capability.id!r} is declared never_disabled by this kit and cannot "
+                f"be left out of a host's set: it owns the host's reading, its answers file and "
+                f"the gates that class every path the kit writes. Without it an install has no "
+                f"way to describe itself, so there would be nothing for the rest to be true of."
+            )
+    return chosen
+
+
 def _provisions(capabilities) -> dict:
     """provision -> [capability ids offering it]. A capability provides only what it DECLARES;
     its own id is not an implicit provision, because a name is not a contract."""
@@ -141,7 +186,9 @@ def classify(capabilities, facts: dict) -> tuple[list, list]:
             )
             unavailable.append({"id": capability.id, "reason": reason})
             for provision in capability.raw.get("provides", []):
-                blocked.setdefault(provision, f"{capability.id} ({reason})")
+                blocked.setdefault(provision, (
+                    f"it is provided by {capability.id} ({reason}), which this host cannot support"
+                ))
         else:
             candidates.append(capability)
     return candidates, unavailable, blocked
@@ -161,10 +208,10 @@ def compose(candidates, blocked=None) -> list:
         for need in capability.requires:
             if need["kind"] != "capability" or offered.get(need["id"]):
                 continue
-            because = (
-                f"it is provided by {blocked[need['id']]}, which this host cannot support"
-                if need["id"] in blocked else "no enabled capability provides it"
-            )
+            # The blocked clause is written where the block was DECIDED -- by the measurement, or
+            # by the host's own selection. A refusal that can only say "missing" sends the reader
+            # looking for a declaration defect when the cause was a fact, or a choice.
+            because = blocked.get(need["id"], "no enabled capability provides it")
             raise CompositionError(
                 f"unmet requirement: capability {capability.id!r} requires "
                 f"capability:{need['id']}, and {because}. The set is refused as declared; "
