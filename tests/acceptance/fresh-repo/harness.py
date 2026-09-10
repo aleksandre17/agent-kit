@@ -95,6 +95,42 @@ def ship(dest: Path) -> Path:
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
 
+def reconciliation_words() -> set:
+    """Every state word a reconciliation can print, taken from the DECLARATION that enumerates
+    them plus the two the surface states in its own words. One home: `upgrade` and `adopt` are one
+    reading seen with a different number of records, and a suite holding two copies of their
+    vocabulary would go on passing after the vocabulary moved."""
+    import reconcile  # noqa: E402 -- the interpreter's path is set above, not at import time
+
+    raw = next(c.documents["stewardship"] for c in Manifest(KIT).capabilities
+               if "stewardship" in c.documents)
+    return ({row["state"] for steward in raw["stewards"] for row in steward["cells"]}
+            | {reconcile.UNACCOUNTED, reconcile.RE_STEWARDED})
+
+
+def states(stdout: str) -> dict:
+    """path -> the state a reconciliation printed for it."""
+    words = reconciliation_words()
+    found = {}
+    for line in stdout.splitlines():
+        parts = line.split()
+        if len(parts) >= 2 and parts[0] in words and "/" in parts[1]:
+            found[parts[1]] = parts[0]
+    return found
+
+
+def census(stdout: str) -> dict:
+    """state -> the count a reconciliation printed beside it, zeros included. A surface that lists
+    only what it found reads identically to a survey that found nothing."""
+    words = reconciliation_words()
+    counted = {}
+    for line in stdout.splitlines():
+        parts = line.split()
+        if len(parts) == 2 and parts[0].isdigit() and parts[1] in words:
+            counted[parts[1]] = int(parts[0])
+    return counted
+
+
 def applied(stdout: str) -> list:
     """(disposition, path) for every effect the run actually carried out, in order."""
     done = []

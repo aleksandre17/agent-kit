@@ -237,6 +237,14 @@ def _chosen(ctx, args, candidates, existing):
 
 
 def run(ctx, args) -> int:
+    # The BOUNDARY, measured before anything is trusted and before anything else is reported. A
+    # host inside a host makes every reading below ambiguous about which law governs a path, so it
+    # is the CAUSE and everything downstream of it is a consequence -- and a run that prints only
+    # the consequence sends the reader looking for a defect that was never there. Measured only at
+    # first contact, because a host that has already answered was measured when it did.
+    if adoption.at_first_contact(ctx):
+        adoption.require_unenclosed(ctx)
+
     reading = ctx.take_reading()
     candidates, unavailable, blocked = ctx.classify(reading["facts"])
 
@@ -270,7 +278,6 @@ def run(ctx, args) -> int:
     # who typed the installer's name instead. First contact is read from a DECLARATION -- this
     # host has never answered -- and never from a tree that happened to look untouched.
     if adoption.at_first_contact(ctx):
-        adoption.require_unenclosed(ctx)
         _empty, foreign = adoption.survey(ctx, enabled, reading["taken_at"])
         adoption.roster(ctx, foreign, reading["taken_at"])
         adoption.require_adoptable(ctx, foreign)

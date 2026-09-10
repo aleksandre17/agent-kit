@@ -175,6 +175,12 @@ def _refusal(path, found, steward, why) -> dict:
 def _why(found, moment, shipped, here) -> str:
     """Both moments, always. A digest reads afterwards exactly like a permanent property of a
     file, and two readings of one file disagreeing is not a property of the file."""
+    if shipped is None and here is not None:
+        # The kit wants this path and nothing says it ever gave it. Saying only *against a record
+        # taken at X* would leave the reader to work out WHICH of the three readings was the
+        # surprising one -- and on a host being adopted, that is the only question there is.
+        return (f"this host already holds bytes here ({here[:12]}) and the record taken at "
+                f"{moment} accounts for nothing at this path")
     if shipped and here and shipped["digest"] != here:
         return (f"a record taken at {moment} says {shipped['digest'][:12]}, this reading says "
                 f"{here[:12]}")

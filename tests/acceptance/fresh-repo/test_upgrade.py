@@ -29,7 +29,10 @@ import hashlib
 import json
 import unittest
 
-from harness import KIT, Fixtures, applied, planned  # noqa: I001 -- sets the interpreter's path
+#: `states` is IMPORTED, not kept here. It parses the vocabulary the interpreter prints, and that
+#: vocabulary has one home; a second copy of the parser in this file would go on reading a surface
+#: that had already moved -- and would keep passing while it did.
+from harness import KIT, Fixtures, applied, planned, states  # noqa: I001 -- sets the path
 
 import estate  # noqa: E402
 import reconcile  # noqa: E402
@@ -66,18 +69,6 @@ def _payload(rel: str, text: str):
         target = kit / rel
         target.write_text(text, encoding="utf-8", newline="\n")
     return patch
-
-
-def states(stdout: str) -> dict:
-    """path -> the state the reconciliation printed for it."""
-    words = {row["state"] for s in STEWARDSHIP["stewards"] for row in s["cells"]}
-    words |= {reconcile.UNACCOUNTED, reconcile.RE_STEWARDED}
-    found = {}
-    for line in stdout.splitlines():
-        parts = line.split()
-        if len(parts) >= 2 and parts[0] in words and "/" in parts[1]:
-            found[parts[1]] = parts[0]
-    return found
 
 
 class Upgrade(Fixtures, unittest.TestCase):
