@@ -14,6 +14,14 @@ import os
 import sys
 from pathlib import Path
 
+#: The interpreter lives INSIDE the payload it ships, so importing itself would drop bytecode
+#: into the one tree whose entire premise is that every path resolves to a declared class. That
+#: is not a tidiness problem and it is not git's problem: it is the kit reproducing, against
+#: itself, the condition it exists to prevent. Set before the first kit module is imported, so
+#: nothing is written; `kit.lock.json` is the other half, which refuses to ship what appears
+#: anyway. A fence hides the state; this stops producing it.
+sys.dont_write_bytecode = True
+
 HERE = Path(__file__).resolve().parent
 #: Every family of modules under the interpreter, DISCOVERED. A hand-kept list of the families
 #: would be a closed enumeration in the one file that is supposed to know no family's name: the

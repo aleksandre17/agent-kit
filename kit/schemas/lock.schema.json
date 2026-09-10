@@ -1,0 +1,29 @@
+{
+  "$id": "lock",
+  "title": "Kit lockfile -- what the kit IS, as a set of paths, read at a stated moment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kit_version", "algorithm", "newline", "taken_at", "count", "files"],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "kit_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "algorithm": { "type": "string", "minLength": 1 },
+    "newline": { "type": "string", "minLength": 1 },
+    "taken_at": { "type": "string", "minLength": 1 },
+    "count": { "type": "integer" },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "class", "accounted_by", "digest"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "class": { "type": "string", "minLength": 1 },
+          "accounted_by": { "type": "string", "minLength": 1 },
+          "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    }
+  }
+}

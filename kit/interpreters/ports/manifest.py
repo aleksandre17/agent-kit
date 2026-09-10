@@ -137,6 +137,12 @@ class Manifest:
             raise ManifestError(f"{where} does not honour schema {schema_name!r}:\n  " + "\n  ".join(errors))
 
     # -- the surface ------------------------------------------------------------------------
+    def raw_ships(self) -> dict:
+        """What the kit declares about ITSELF as a set of paths: where its lockfile lives, and
+        the rules accounting for what no other declaration can point at. Handed on as data; this
+        port holds no opinion about what any of it means."""
+        return self._raw["ships"]
+
     @property
     def root(self) -> Path:
         return self._root

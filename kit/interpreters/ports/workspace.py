@@ -77,6 +77,11 @@ class Workspace:
     def exists(self, rel: str) -> bool:
         return self.path(rel).exists()
 
+    def read_bytes(self, rel: str) -> bytes:
+        """The file as it actually is. Text decoding is a translation, and whoever must MEASURE a
+        boundary -- a line ending, a digest -- has to stand before it, not after it."""
+        return self.path(rel).read_bytes()
+
     def read_text(self, rel: str) -> str:
         return self.path(rel).read_text(encoding="utf-8")
 

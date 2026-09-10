@@ -3,7 +3,7 @@
   "title": "Kit manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "kit", "classes", "planes", "capabilities", "detectors", "schemas"],
+  "required": ["schema_version", "kit", "ships", "classes", "planes", "capabilities", "detectors", "schemas"],
   "properties": {
     "schema_version": { "type": "integer" },
     "kit": {
@@ -13,6 +13,28 @@
       "properties": {
         "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
         "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+    "ships": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lock", "accounts"],
+      "properties": {
+        "lock": { "type": "string", "minLength": 1 },
+        "accounts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "class", "root"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+              "class": { "type": "string", "minLength": 1 },
+              "root": { "type": "string", "minLength": 1 },
+              "suffix": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
       }
     },
     "classes": {

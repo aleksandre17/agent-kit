@@ -1,0 +1,598 @@
+{
+  "algorithm": "sha256",
+  "count": 98,
+  "files": [
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "6fdd953e1db00d0e1e386f5ff5557b9136c7bc19f42fb0af0d7daa6a6e99cb51",
+      "path": "MANIFEST.json"
+    },
+    {
+      "accounted_by": "readme",
+      "class": "prose",
+      "digest": "7c6c7a1f7ccb6cd2fa070621e7dce13e4bbc842c7c9d4472607cc56e2c26b737",
+      "path": "README.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "a16b5ad16179b4fef5bfc9611a5cbc4b05a0b0801cfacd3e95a451f047cf8b4a",
+      "path": "capabilities/delivery/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "fad3879bfb743f5dd4fb75ec0f5a470cd3cf608fed008ee3b018ab03676af5e7",
+      "path": "capabilities/delivery/lifecycle.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "14f53a8efceecad16f6e17e8a1c02e7cd9de50e50d1e9d60214197abc16fa7aa",
+      "path": "capabilities/delivery/payload/BOARD.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "46f02ea4dae8c2e1c23f44a75567c5aaa474fc71326a057f5335f1ccb9fd6672",
+      "path": "capabilities/delivery/payload/delivery.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "56cc6c4dd6fa60e51045c7c8bb0f81fe0498722b3251a143bc23967bdd22b0fa",
+      "path": "capabilities/delivery/payload/policy.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "a4acd410caaf1449a7cb701cb846c8847af37e1dbf29b6d3828a5d8fe269b88c",
+      "path": "capabilities/evaluation/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "7222a1c2765f114e9ff691d25441be2bcb8dba6678be8fd897cab29b5e7b154c",
+      "path": "capabilities/evaluation/dispositions.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "a85967be61a11e7783ce7252c6aa21a432ad528bbcc95a75a56d0da05a7db546",
+      "path": "capabilities/evaluation/payload/QUALITY.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "052768d43b751c6c7965d691403fae72035836cca4bf2aa3c3b5360356a5c24d",
+      "path": "capabilities/evaluation/payload/evaluation-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "cf2a81af00691436a5f44a625415cfa978b9b0ecc4474f7785233c5469ca7607",
+      "path": "capabilities/evaluation/payload/evaluation.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "56d0ac87835a434231065bb591cb8be50614adec598192a894a5992723893d3f",
+      "path": "capabilities/evaluation/payload/readings-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "fadad4904c1cd45a17e2eecd8e1518c56fa3ea849aae53562183f9543d2ffc34",
+      "path": "capabilities/governance/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "cecbf8e7ba0b2d44b949d4541eb32b59de19d84bf0bc3fc40a463d5098128f45",
+      "path": "capabilities/governance/payload/INDEX.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "0fe388b48fd7f98764e7355eb6fba41528e82366f2246238fbc1f86cfd170baf",
+      "path": "capabilities/governance/payload/governance.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "ebfba65595aed5c8160650be71fdc73364dbfff7ea639332d35f35c1480cee6e",
+      "path": "capabilities/hygiene/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "95ca26d89ecc8d58f2c562e6b65923e0fa40fb926d0a2ed747ea1e08d0f9d866",
+      "path": "capabilities/hygiene/payload/RESIDENCE.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "93759c9475d6e78adb66800c02f8db7417ca35e33cdbcfa00a44c9386f539122",
+      "path": "capabilities/hygiene/payload/hygiene.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "6deb94730b99d898d2856b928a11921f5b7b0156589a3fd030bee4f2411012a6",
+      "path": "capabilities/hygiene/payload/residence-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "730668a76c309083a63be872215e62deb513590d3c3aa46c7b29c2601140e3a5",
+      "path": "capabilities/hygiene/residence.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "1dfeec63352b650ca89a193110c3f060ff676bd6ea125a5b6c95c5cd0013fa89",
+      "path": "capabilities/knowledge/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "e8752dc32ff7090d128c51cd39c8cf3ce0dee4d948c73a73b546d474b7809dcc",
+      "path": "capabilities/knowledge/payload/ADR-0001.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "eb03e14e12a454a202326ea556c662df687d3ec1d4446b9068345aaa01c14194",
+      "path": "capabilities/knowledge/payload/knowledge.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "6976b33dacc74bc70f00efe1a185e5a1203313941ebe81a22783eabd3d138903",
+      "path": "capabilities/knowledge/payload/reference-README.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "dae08b0625b2cd1467af147d56a46ecba54ee747d0b1447fab8b38edbaf7e786",
+      "path": "capabilities/observability/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "3721f4cfd870a75747885913fa4519ec5605785b2afc0e289b4cf93f75c5b4a7",
+      "path": "capabilities/observability/observation.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "033f2be42c8b31d4e8c11987a707098f33e1d14d3c72fd490dfdaf919f6d4b11",
+      "path": "capabilities/observability/payload/RUNS.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "fd83c48f7bdcb1108b6e90403a5c6d767dbe81914e8e4d41233265461be13737",
+      "path": "capabilities/observability/payload/observability.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "cfbb046379716f4ea73d42adf890b07e0452a3ee4c5960e1c02b763c4230f515",
+      "path": "capabilities/observability/payload/observation-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "ad57495f77d76138fe2fb6072d68934203205be5b862632bb95a3c4cfe88662f",
+      "path": "capabilities/roles/archetypes.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "ba5f39c13c7d89b6d0b067829a3b55469364354f81b3d6131dafb0a23f373306",
+      "path": "capabilities/roles/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "2dfc94f7b741fa944f21d769454fc6b47081d6a966ac6f833349c47ea975c54e",
+      "path": "capabilities/roles/payload/ROLE.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "e0e901d5f3cfe1649b6aadbe72b40332a17bd4c8a8d9ebf94ebdb5820da37adc",
+      "path": "capabilities/roles/payload/ROLES.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "197b5247beeea958df310d073b9472f6a2e2aa22500d37f96747a4cf2cd18e72",
+      "path": "capabilities/roles/payload/archetypes-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "d1cc686a91a48afaa910596071bbb232480f5ebab819e2a938a683f1aa8d9ea3",
+      "path": "capabilities/roles/payload/roles.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "7c94bc197f78c0c2ba125cd8e67db847b7e7d94ea7f3423d07b17b4ce4faabc3",
+      "path": "capabilities/runtimes/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "193aaf91f44b6b232f34500a1ea9fe90e8b12016399e822abe51e0b1c33df1a3",
+      "path": "capabilities/runtimes/classes.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "94d3b27132c3c93d54bfefce1b89ba7865be030088b1c175db91e11327e74c3f",
+      "path": "capabilities/runtimes/payload/RUNTIME.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "8c7472096c1707b25270c21f769b6397734ec6dca70074ee35eeabadcafeb692",
+      "path": "capabilities/runtimes/payload/RUNTIMES.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "784559404ae6fc7843c6da9eb59b47f926c3a80e7b234c27436126464eaa8b09",
+      "path": "capabilities/runtimes/payload/classes-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "ef55f0958ba6fec8f614301bf06f68dad81b4a578fcbf2c9fe8a9d1c91322165",
+      "path": "capabilities/runtimes/payload/runtimes.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "f21062d9c1fd9b826faf318dc6843203dbf7acd6694145dca84a92978e018d68",
+      "path": "detectors/git-repository.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "5e526f02974dbe8b9cff692692c15166d2650f9de8e0043ec8ca79bb3aa52471",
+      "path": "detectors/node-workspace.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "2968cfa4001b4abe12f7a67885ef4a269a32d7b919bcf6387f70190582aee55f",
+      "path": "detectors/python-project.json"
+    },
+    {
+      "accounted_by": "fitness",
+      "class": "declaration",
+      "digest": "1ee48e932c18710aa1c7366f1417b62e3dd6bf560f280d5b71fba89a3bab9de7",
+      "path": "fitness/boundary.json"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "d2f8cc1cdd9bdec3b97115a02d34f8ff0f810326b650695014c0dc513ecc4a8e",
+      "path": "interpreters/cli.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "6a76f633463504586143199ef641ce61281dc4b6c7ad87ac23b65668cfa33955",
+      "path": "interpreters/collection.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "ca305c8a68206e270338afa4ee481c64f56e32989c2cc12f89a65df47f1ae00b",
+      "path": "interpreters/composition.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "1410e437de44d5b09aef1cf14cca28ab0f3265faf132210ce1d079399d9ff28b",
+      "path": "interpreters/context.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "51b9d61729935f2353497e39cd780df839a5691e4383bbbfd080e42c50ef2a34",
+      "path": "interpreters/declared.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "3bcb80aed34e5bee808ffa98ef4c7e37a263947729e0f894d542a0b4e9f1368e",
+      "path": "interpreters/doors.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "011504c2f525df63b47fcb3bde495d929d0fb5848ce2dc280a53efcdfb96722e",
+      "path": "interpreters/errors.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "85b026bd065cf9f9b13e00d4c73cbb95fca404e3486e4b9b621c4c8c370cae01",
+      "path": "interpreters/gates/core.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "c8c58c3d6b864341fceccb2e46baf7deccb566a6d4e6e032d42b0cec7f8a58a0",
+      "path": "interpreters/gates/delivery.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "1ec24125b887e4283ec2652e0dff795d07435a7dbeb517731350fb10965f00ea",
+      "path": "interpreters/gates/hygiene.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "7fd8e6637a3b379683ab4b68019b1774423987cd0f2e355b13bf21fe70854b40",
+      "path": "interpreters/gates/quality.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "2b68286518d840b0bf61ad49239f041ed4f7339c26071fb20933eaf155d72328",
+      "path": "interpreters/gates/records.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "03d93ddad5575cb8e9344afcbf63112bc270f6b7f0a504455186ee7edc555873",
+      "path": "interpreters/lifecycle.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "97c65f8d8ead62c8ad3c566490964fe36a62729e48bc112529a05cd4c7a834be",
+      "path": "interpreters/lockfile.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "23f436530aef83a09b9af1a0966060c375544f2bd1b6883bae9e60be84dc12df",
+      "path": "interpreters/observation.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "809c972efb71f9cb61abfacdd0787d7891aca835c07ee4d0ef265f7f704bdbe0",
+      "path": "interpreters/observers/receipt.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "bd2e971a712302bbfe99a5dac68ed26efe5538b18e6a2648c8c77d78dc8e5346",
+      "path": "interpreters/plan.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "8b75f7a4d6da099be729d80fa0e0fa706f06ba3edf98868fe52a7a4c673f53c9",
+      "path": "interpreters/ports/clock.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "3cd3878b7151202579841e4aa564ee3788e8c15d66566e52ae30e20525898b81",
+      "path": "interpreters/ports/manifest.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "481ddee0edf7b2a6c71b3418bdda4ec63bc5c700df42156c1dc15c706e9fc077",
+      "path": "interpreters/ports/probe.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "ae26003febca8c002b747034305a35eb5fe75ca803e07e11a56b8d3741d2229b",
+      "path": "interpreters/ports/workspace.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "6d3d8ffa49b7fc97d1ef095f599e9b02b22e36adc4c570b258cd5ec73ca14b05",
+      "path": "interpreters/predicate.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "01c13ce372b6ce1e841f52240119c54b5eaabb46fc9c61cfbdf43e8064a977bf",
+      "path": "interpreters/resolver.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "852cf607b9b8f6e1530af9b185c8e96df05ea05ae229703c0d873fbaef5f42d8",
+      "path": "interpreters/template.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "4fcdf099c3bf76b1f7660f1f8762995200874676d918647df94b1d9a079ea645",
+      "path": "interpreters/validation.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "8be997eed468631e476b79b04add69aec6da4a4df487b9ba894ce8e79535354e",
+      "path": "interpreters/verbs/check.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "9962ad793fad10b3cefcf6494d5b8be477cc21b7828a1799e567c085cde97452",
+      "path": "interpreters/verbs/evaluate.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "a9f1156ee8bc2b052c6bbfec66e2b9dd65bc7e3b955e455fa9f135a5ae281f38",
+      "path": "interpreters/verbs/init.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "108f64a9c516b38754f0f9c65fef624308a1c09815b720b0b9f7d87c14bf9e76",
+      "path": "interpreters/verbs/lock.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "4ec377169777a328037b7f9f621550f70f1eb769c37cf3ddb122f053d40894e0",
+      "path": "interpreters/verbs/move.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "584f381491c927f76dab090d72713fda382b93dc2319f08206e4158d4318edd6",
+      "path": "interpreters/verbs/render.py"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "12b62dd0b4aec90d9d579a461745905d8ad18e5e79cfcd6bf3a983e475368045",
+      "path": "schemas/archetype.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "49612178ff06e569b2878d56f6bf82673a0ab773844a772135af43c957aa9ace",
+      "path": "schemas/boundary.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "7283dd2889e01a90775f250a79c25147873efcc0c5061e480009ab4a4522b834",
+      "path": "schemas/capability.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "8f9a71f96f2e7b6478e5cb68e780c174a978469623c4f89116e715a7b6d909c2",
+      "path": "schemas/card.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "2efebe2273db3ba40d6702e86d95b31a9e8aac473806ea2dee69232976329ee5",
+      "path": "schemas/delivery-policy.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "25c55103b1b33a14e7db30c7dcdcc0156839409ad9e492d6f8cbdda4f2c89393",
+      "path": "schemas/detector.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "723463801b5bc40ac61c12d5d552f0c42ed6c74b2d24d82ea6ff886b939e75df",
+      "path": "schemas/judgement.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "306c32f9b4b8f1b132ac819ff9b60f295dc2b528c0ba9f26974af34f4567cae1",
+      "path": "schemas/lifecycle.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "15df51e9bfecb0546375a219cec66779c38e36a5deea98f17a7431dd62a0deb4",
+      "path": "schemas/lock.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "76418e545427e7bdd421e0ddf09f008542822be78dc9da4cff52b1f0a24895e2",
+      "path": "schemas/manifest.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "bd1ccee4a886c4ded7a35d7bcd1d0ef4a25129898f5b6c8dda24f4bc657572f1",
+      "path": "schemas/observation.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "67e7a0006ebe55c8e12f260328d54fc60c12a1f2a2a43c33a0e6d69d8d2c5e81",
+      "path": "schemas/overlay.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "77e634e903f86b1d4d37525797a929797e6bdc7b738805a1d050ea4bef1e1c47",
+      "path": "schemas/profile.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "8000cdbe38cdd0126a207ade323998982c6812c82834c332061060e42e868b1e",
+      "path": "schemas/project.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "b3e9698bc5d51ba2cb399b40085080f1e5324c993c49eeeff2d07bf85a935cdc",
+      "path": "schemas/quality.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "95b859e002e65351774ba1febb28e1bf9229a8fc2fac43308a448d7366483742",
+      "path": "schemas/receipt.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "9446bc996e6b299b488795323b4f1a418c3ab27efc6edc28f101b5da93bd6afa",
+      "path": "schemas/residence.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "82dabaff05aa6dd898c5385e9af6b73ffedda6f8efcf3636bf35bfccd40fb021",
+      "path": "schemas/runtime-class.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "053453427d244acfab0847b8b095e40ec9f576d9c70a51b4c7474cfc1174626b",
+      "path": "schemas/runtime.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "d4d7a2ef5c4527b89290e315aafd4a8a81f973059d6d8a8cde4f623292bc9f7b",
+      "path": "seeds/agents.gitignore"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "d16941c0a2132c9baea6fe36ad1f748093f5e871966503f708a7bcdc573a29fb",
+      "path": "seeds/laws.md"
+    }
+  ],
+  "kit_version": "0.1.4",
+  "newline": "lf",
+  "schema_version": 1,
+  "taken_at": "2026-09-10T12:05:25+00:00"
+}

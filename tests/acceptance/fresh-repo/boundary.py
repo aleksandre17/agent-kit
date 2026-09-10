@@ -101,8 +101,17 @@ def schema_terms() -> set:
 def instance_terms() -> set:
     """What some INSTANCE invented. Harvested from every declaration in the kit that is not a
     schema -- values only, because a key is shape and a value is a name somebody chose."""
+    #: The kit's own lockfile is excluded, and the reason is not convenience. This harvest asks
+    #: *what did some INSTANCE invent* -- a term whose home is a document a host can change. A
+    #: lockfile is the opposite: a READING the interpreter took of the kit, whose every value is
+    #: either a digest or a word the machine itself provided. Harvesting it would invert the rule
+    #: -- machine output re-entering as host vocabulary -- and, worse, it would make this sensor
+    #: NONDETERMINISTIC: a digest beginning with a letter is a well-formed term, so whether a rule
+    #: fired would depend on a hash. Found through the manifest's own declaration of where the
+    #: lock lives, never by spelling the filename here.
+    lock = KIT / MANIFEST["ships"]["lock"]
     documents = [path for path in sorted(KIT.rglob("*.json"))
-                 if path.parent != KIT / "schemas"]
+                 if path.parent != KIT / "schemas" and path != lock]
     _keys, values = _read_all(documents)
     return {term for term in values if TERM.match(term)}
 
