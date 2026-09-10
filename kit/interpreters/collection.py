@@ -27,13 +27,18 @@ class Reading:
     """What one `reads_as` name resolved to: the value a projection sees, and the records behind
     it, each still carrying the path it came from so a writer can put it back where it was."""
 
-    __slots__ = ("name", "kind", "value", "records")
+    __slots__ = ("name", "kind", "value", "records", "schema")
 
-    def __init__(self, name: str, kind: str, value, records: list) -> None:
+    def __init__(self, name: str, kind: str, value, records: list, schema=None) -> None:
         self.name = name
         self.kind = kind
         self.value = value
         self.records = records
+        #: The schema this reading was judged by, carried WITH it. A reader that needs to know
+        #: what a record MAY hold -- as opposed to what one happens to hold -- has exactly one
+        #: legitimate place to ask, and it is the declaration that judged the read. Carried here
+        #: rather than re-derived downstream, so the answer stays single.
+        self.schema = schema
 
     def record_of(self, identity: str):
         for rel, value in self.records:
@@ -63,7 +68,7 @@ def _document(ctx, item, name: str) -> Reading:
             f"{rel}: declared readable as {name!r} and absent; run `init` first"
         )
     value = _validated(ctx, rel, item.get("validates"))
-    return Reading(name, "document", value, [(rel, value)])
+    return Reading(name, "document", value, [(rel, value)], item.get("validates"))
 
 
 def _collection(ctx, item, name: str) -> Reading:
@@ -85,7 +90,8 @@ def _collection(ctx, item, name: str) -> Reading:
             )
         seen[identity] = rel
     records.sort(key=lambda pair: pair[1].get(IDENTITY, ""))
-    return Reading(name, "collection", [value for _rel, value in records], records)
+    return Reading(name, "collection", [value for _rel, value in records], records,
+                   item.get("validates"))
 
 
 #: An open registry, keyed by the SHAPE OF THE DECLARED PATH: a target ending in `/` is a

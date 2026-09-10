@@ -98,15 +98,25 @@ def _bases(ctx, spec: dict) -> tuple[dict, dict]:
     return rows, origin
 
 
-def _shape(bases: dict) -> set:
-    """The vocabulary a composed row always has, derived from the bases themselves.
+def _shape(ctx, bases: dict, instances) -> set:
+    """The vocabulary a composed row ALWAYS has, whatever any one row happens to say.
 
-    A row whose base was not found must still carry every field a bound row carries, holding
-    nothing. Otherwise the absence would reach a surface as a name that does not exist rather than
-    as a field that is empty -- and a renderer cannot tell a typo from an honest blank unless the
-    shape says which is which. Derived, never listed: this module names no field of any base.
+    Every field is present, holding nothing where it was not declared. Otherwise an absence
+    reaches a surface as a name that does not exist rather than as a field that is empty -- and
+    nothing downstream can tell a typo from an honest blank, which is the difference between a
+    defect and a state.
+
+    Two sources, and neither is a list kept here. From the BASES: whatever they carry, so a row
+    whose base was not found still has the shape of one that was. From the SCHEMA that judged the
+    instances: what an instance MAY hold, which is the only place that question has an answer --
+    the union of what the instances happen to hold is a reading of today's content, and an
+    optional field nobody has used yet would be missing from it exactly when a host first needs
+    the surface to say so.
     """
-    return {key for base in bases.values() for key in base} - {collection.IDENTITY}
+    shape = {key for base in bases.values() for key in base}
+    if instances.schema:
+        shape |= set(ctx.manifest.schema(instances.schema).get("properties", {}))
+    return shape - {collection.IDENTITY}
 
 
 def _merge(instance: dict, base, shape: set, protocol: list) -> dict:
@@ -138,12 +148,13 @@ def composed_of(ctx, capability, readings) -> "Composed | None":
     bases, origin = _bases(ctx, spec)
     shared = spec["shared"]
     protocol = declared.rules(ctx, shared["sources"], shared["list"])
-    shape = _shape(bases)
+    instances = readings[spec["instances"]]
+    shape = _shape(ctx, bases, instances)
     named_by = spec["base"]["named_by"]
 
     rows = [
         _merge(instance, bases.get(instance.get(named_by)), shape, protocol)
-        for instance in readings[spec["instances"]].value
+        for instance in instances.value
     ]
 
     # The census is the other half of the same reading, and it is the half that is easy to skip:
