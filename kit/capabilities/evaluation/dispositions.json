@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "id": "judgement-dispositions",
+  "summary": "The states a judgement may be found in that mean the record is not evidence. Every one of them is the same sentence in a different tense: a verdict that cannot say who reached it, or when, is testimony -- and testimony is the thing evidence was supposed to replace. Nothing here reads a verdict as wrong. Whether PASS was deserved is a question about this host's own subject matter, and no row here has an opinion about it; what these rows measure is whether the record can be questioned at all. There is no threshold and no tolerance: a threshold would be a number, this framework has never declared the number at which observing becomes enforcing, and a field nobody filled in would read as enforced.",
+  "dispositions": [
+    {
+      "id": "a-verdict-that-cannot-say-who-reached-it",
+      "when": { "verdict": "PASS", "judge": null },
+      "because": "this record says a case was judged good and cannot say by whom. Nothing in this kit measures a judge -- there is no sample it agrees with, no rate it is held to -- so the roster is the entire basis on which a host trusts a verdict, and a verdict off the roster has no basis at all. It will go on certifying, and it will do it most convincingly the longer it sits there.",
+      "instead": "written by a judge the host declared, whose id is on this record and whose reason for being trusted is in the declaration beside it.",
+      "proves": {
+        "schema_version": 1,
+        "id": "11111111111111111111111111111101",
+        "case": "the-case-that-was-judged",
+        "rubric": "the-rubric-it-was-read-against",
+        "verdict": "PASS",
+        "opened_at": "2026-01-01T00:00:00+00:00",
+        "judged_at": "2026-01-01T00:00:01+00:00"
+      },
+      "admits": {
+        "schema_version": 1,
+        "id": "11111111111111111111111111111102",
+        "case": "the-case-that-was-judged",
+        "rubric": "the-rubric-it-was-read-against",
+        "verdict": "PASS",
+        "opened_at": "2026-01-01T00:00:00+00:00",
+        "judged_at": "2026-01-01T00:00:01+00:00",
+        "judge": "the-judge-this-host-declared"
+      }
+    },
+    {
+      "id": "a-refusal-that-cannot-say-who-reached-it",
+      "when": { "verdict": "FAIL", "judge": null },
+      "because": "an accusation with no author is worse than a certificate with none. Somebody will have to answer for this verdict and there is nobody to ask what was read, so the finding cannot be argued with, only obeyed or ignored -- and both are how a quality signal stops being used.",
+      "instead": "written by a judge the host declared, so that a finding can be taken up with whoever, or whatever, reached it.",
+      "proves": {
+        "schema_version": 1,
+        "id": "22222222222222222222222222222201",
+        "case": "the-case-that-was-judged",
+        "rubric": "the-rubric-it-was-read-against",
+        "verdict": "FAIL",
+        "opened_at": "2026-01-01T00:00:00+00:00",
+        "judged_at": "2026-01-01T00:00:01+00:00"
+      },
+      "admits": {
+        "schema_version": 1,
+        "id": "22222222222222222222222222222202",
+        "case": "the-case-that-was-judged",
+        "rubric": "the-rubric-it-was-read-against",
+        "verdict": "FAIL",
+        "opened_at": "2026-01-01T00:00:00+00:00",
+        "judged_at": "2026-01-01T00:00:01+00:00",
+        "judge": "the-judge-this-host-declared"
+      }
+    },
+    {
+      "id": "a-verdict-that-cannot-be-placed-in-time",
+      "when": { "verdict": "PASS", "judged_at": null },
+      "because": "the record says the case was read and found good, and cannot say when. A reading that carries no moment cannot be contradicted, only believed: the case may have been rewritten the same afternoon and this verdict would still read as current to every reader who finds it.",
+      "instead": "closed by whatever judges, stating its moment in the same act as its verdict, so that a judgement can be aged, compared, and eventually re-asked.",
+      "proves": {
+        "schema_version": 1,
+        "id": "33333333333333333333333333333301",
+        "case": "the-case-that-was-judged",
+        "rubric": "the-rubric-it-was-read-against",
+        "verdict": "PASS",
+        "opened_at": "2026-01-01T00:00:00+00:00",
+        "judge": "the-judge-this-host-declared"
+      },
+      "admits": {
+        "schema_version": 1,
+        "id": "33333333333333333333333333333302",
+        "case": "the-case-that-was-judged",
+        "rubric": "the-rubric-it-was-read-against",
+        "verdict": "PASS",
+        "opened_at": "2026-01-01T00:00:00+00:00",
+        "judged_at": "2026-01-01T00:00:01+00:00",
+        "judge": "the-judge-this-host-declared"
+      }
+    },
+    {
+      "id": "a-refusal-that-cannot-be-placed-in-time",
+      "when": { "verdict": "FAIL", "judged_at": null },
+      "because": "a failure with no moment is read as current for as long as it sits there, and the case it belongs to may have been fixed long ago -- so the surface reports a fault the host no longer has, which is the same lie as reporting none it does.",
+      "instead": "closed by whatever judges, stating its moment in the same act as its verdict, so that a failure can be dated and left behind.",
+      "proves": {
+        "schema_version": 1,
+        "id": "44444444444444444444444444444401",
+        "case": "the-case-that-was-judged",
+        "rubric": "the-rubric-it-was-read-against",
+        "verdict": "FAIL",
+        "opened_at": "2026-01-01T00:00:00+00:00",
+        "judge": "the-judge-this-host-declared"
+      },
+      "admits": {
+        "schema_version": 1,
+        "id": "44444444444444444444444444444402",
+        "case": "the-case-that-was-judged",
+        "rubric": "the-rubric-it-was-read-against",
+        "verdict": "FAIL",
+        "opened_at": "2026-01-01T00:00:00+00:00",
+        "judged_at": "2026-01-01T00:00:01+00:00",
+        "judge": "the-judge-this-host-declared"
+      }
+    }
+  ]
+}

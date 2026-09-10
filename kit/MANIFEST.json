@@ -37,6 +37,10 @@
     {
       "id": "observability",
       "declaration": "capabilities/observability/capability.json"
+    },
+    {
+      "id": "evaluation",
+      "declaration": "capabilities/evaluation/capability.json"
     }
   ],
   "detectors": [
@@ -56,6 +60,8 @@
     "residence": "schemas/residence.schema.json",
     "boundary": "schemas/boundary.schema.json",
     "receipt": "schemas/receipt.schema.json",
-    "observation": "schemas/observation.schema.json"
+    "observation": "schemas/observation.schema.json",
+    "quality": "schemas/quality.schema.json",
+    "judgement": "schemas/judgement.schema.json"
   }
 }

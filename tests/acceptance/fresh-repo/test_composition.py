@@ -94,6 +94,13 @@ class Composition(Fixtures, unittest.TestCase):
             ".agents/project/delivery/policy.json",
             ".agents/project/delivery/cards/",
             ".agents/kit/doctrine/delivery.md",
+            # `evaluation` requires no provision either, so it is in the same tie and its id
+            # places it second. Nothing about JUDGING makes it late: it lays a blank declaration
+            # and an empty space, and both are as early as anything else that depends on nothing.
+            ".agents/project/evaluation/evaluation.json",
+            ".agents/project/evaluation/readings.json",
+            ".agents/runtime/evaluation/judgements/",
+            ".agents/kit/doctrine/evaluation.md",
             ".agents/project/profile.json",
             ".agents/project/project.json",
             ".agents/project/laws.md",
@@ -113,6 +120,7 @@ class Composition(Fixtures, unittest.TestCase):
             "docs/decisions/ADR-0001-a-documents-kind-decides-its-authority.md",
             "docs/reference/README.md",
             ".agents/generated/delivery/BOARD.md",
+            ".agents/generated/evaluation/QUALITY.md",
             ".agents/generated/governance/INDEX.md",
             ".agents/generated/observability/RUNS.md",
             ".agents/generated/hygiene/RESIDENCE.md",

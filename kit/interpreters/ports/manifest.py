@@ -38,6 +38,12 @@ class Capability:
         return self._raw.get("governs")
 
     @property
+    def evaluates(self):
+        """The declaration this capability holds JUDGEMENTS over, or None. Absent is the honest
+        answer for every capability that judges nothing, which is most of them."""
+        return self._raw.get("evaluates")
+
+    @property
     def raw(self) -> dict:
         return self._raw
 

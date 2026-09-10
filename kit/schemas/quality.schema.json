@@ -1,0 +1,65 @@
+{
+  "$id": "quality",
+  "title": "The host's evaluation declaration -- what is judged, how, and by whom",
+  "description": "This is the GRAMMAR of judgement and never a judgement. It states that a host may declare RUBRICS (how a thing is judged), CASES (the things to be judged) and JUDGES (who or what does the judging), and it states the shape of each. It states nothing about what any of them contain, because a good answer is a property of a domain and this framework has never met one: a rubric shipped with criteria in it would be an opinion about a subject the framework was never given, wearing the host's signature. So the file this schema governs is SEEDED EMPTY and stays empty until somebody who will live with the answers writes the first row. A host that has declared nothing has a ZERO MEASURE -- not a good score, not a bad one, no measure at all -- and every surface over this document is required to say so in those words rather than rendering a blank that reads as fine.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "rubrics", "cases", "judges"],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "summary": { "type": "string" },
+    "rubrics": {
+      "description": "How a thing is judged: a question, broken into the criteria it is asked through. The framework declares that a rubric HAS criteria and that each criterion asks something; what any of them ask is the host's, entirely.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "asks", "criteria"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "asks": { "type": "string", "minLength": 1 },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "asks"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+                "asks": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "cases": {
+      "description": "The things to be judged, each naming the rubrics it must be judged against. A case with no rubric is a thing nobody agreed how to read, so `judged_by` is required and an empty list is a host saying, on the record, that this case is declared and unmeasured.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "asks", "judged_by"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "asks": { "type": "string", "minLength": 1 },
+          "judged_by": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "judges": {
+      "description": "Who or what may put a verdict on a case: a person, a panel, a model asked to score against a rubric. Declared as a ROSTER so that a verdict can be traced to an author -- a judgement whose judge nobody declared is testimony, and testimony is what evidence is supposed to replace. What the framework does NOT do here is measure a judge: nothing in this kit compares a judge's verdicts against a sample somebody trusts, so a judge is trusted exactly as far as the host trusts it, and that limit is declared on the surface rather than left to be assumed.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "because"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "because": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

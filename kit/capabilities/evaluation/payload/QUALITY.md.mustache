@@ -1,0 +1,109 @@
+# Quality — what this host declared it judges, and what has never been judged
+
+> PROJECTION. Do not edit: delete this whole plane and run `render`, and it comes back byte-identical.
+> Kit version {{ kit_version }} · project status {{ project.status }}.
+
+**No judgement is listed on this page, and that is deliberate.** A judgement changes after it is
+written — it is opened `UNJUDGED` and rewritten when something judges — so a page that listed
+verdicts would be stale in the instant it was correct. The live reading is `evaluate`, which states
+the measure at the moment you ask it, and `check`, which reads the records the same way.
+
+What is on this page is the GRAMMAR, and this host's own declaration of what it judges.
+
+## What a judgement claims
+
+A run's receipt proves that it **fired**. A judgement is the other question — did it **hit** — and
+the framework ships no answer to it. The verdict vocabulary is `UNJUDGED · PASS · FAIL ·
+INCONCLUSIVE`; what earns any of them is this host's, declared in this host's rubrics, applied by
+this host's judges. There is no scale here and no number: how much better one answer is than another
+is a thing only a domain can say.
+
+## The rubrics this host declared
+
+{{#reads.evaluation_local.rubrics}}
+### {{ id }}
+
+- asks {{ asks }}
+{{#criteria}}
+- criterion `{{ id }}` — {{ asks }}
+{{/criteria}}
+
+{{/reads.evaluation_local.rubrics}}
+{{^reads.evaluation_local.rubrics}}
+**THE MEASURE IS ZERO.** This host has declared no rubric, so nothing here has been judged, and this
+page says so rather than reporting that everything is fine. A zero measure is not a good score and
+not a bad one — it is the absence of a measure, which is the state every host starts in and the one
+an evaluation surface most often hides. The framework ships no rubric of its own on purpose: a good
+answer is a property of a domain, and the only rubric it could write would be an opinion about a
+subject it was never given.
+{{/reads.evaluation_local.rubrics}}
+
+## The cases this host declared
+
+{{#reads.evaluation_local.cases}}
+### {{ id }}
+
+- asks {{ asks }}
+{{#judged_by}}
+- judged by the rubric `{{ . }}`
+{{/judged_by}}
+
+{{/reads.evaluation_local.cases}}
+{{^reads.evaluation_local.cases}}
+**THE MEASURE IS ZERO.** This host has declared no case. Nothing is being judged here, and no
+surface in this kit will imply otherwise until a case is declared by somebody who knows what a good
+answer to it looks like.
+{{/reads.evaluation_local.cases}}
+
+## Who judges here
+
+{{#reads.evaluation_local.judges}}
+- `{{ id }}` — {{ because }}
+{{/reads.evaluation_local.judges}}
+{{^reads.evaluation_local.judges}}
+**THE MEASURE IS ZERO.** This host has declared no judge, so no verdict written here could be traced
+to an author.
+{{/reads.evaluation_local.judges}}
+
+### Who judges the judge
+
+Nothing in this kit measures a judge. A judge's agreement with a sample somebody trusts — the one
+thing that would make its verdicts evidence rather than testimony — **is not measured anywhere
+here**. A judgement is trusted exactly as far as this host trusts the judge named on it, and no
+further. This is a declared limit, not an oversight, and it is on this page so that no one can
+mistake an unmeasured judge for a measured one.
+
+## How a judgement is read
+
+{{#documents.judgement_dispositions.dispositions}}
+### {{ id }}
+
+- because {{ because }}
+- instead {{ instead }}
+- calibrated on the judgement it must match, `{{ proves.id }}`, and the lookalike it must tolerate, `{{ admits.id }}`
+
+{{/documents.judgement_dispositions.dispositions}}
+None of them reads a verdict as wrong. Whether `PASS` was deserved is the domain's question; what is
+read here is only whether the record can be questioned at all.
+
+There is no threshold and no tolerance: **there is no observe-then-enforce period; the first crossing
+is a finding.** The number at which observing becomes enforcing has never been declared anywhere in
+this framework, and a field nobody filled in would read as enforced.
+
+Nothing is ever removed. A judgement is evidence, and evidence is not swept up by the thing being
+questioned.
+
+## Declared by this host
+
+{{#reads.judgement_readings.dispositions}}
+### {{ id }}
+
+- because {{ because }}
+- instead {{ instead }}
+- calibrated on the judgement it must match, `{{ proves.id }}`, and the lookalike it must tolerate, `{{ admits.id }}`
+
+{{/reads.judgement_readings.dispositions}}
+{{^reads.judgement_readings.dispositions}}
+_This host has declared no readings of its own. That is a state, not a gap: the kit's readings still
+hold, and a host adds one by declaring it._
+{{/reads.judgement_readings.dispositions}}

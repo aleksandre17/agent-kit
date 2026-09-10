@@ -1,7 +1,7 @@
 {
   "$id": "observation",
-  "title": "Dispositions -- the states a run's own record may be found in, and what each one means",
-  "description": "A disposition NAMES a shape a receipt can have and says what it tells a reader. It is a sensor and never a broom: it names a run whose record says something is wrong and stops, because deleting a record of a run is a decision with an author and no machine may be that author. Every disposition carries its own calibration -- one receipt it MUST match and one lookalike it MUST tolerate -- so the sensor proves what it sees before anything is believed on its word. A disposition matches by EQUALITY over the fields it names and nothing else: a comparison language would be behaviour inside a declaration, and the moment a declaration can compute, nothing may generate it.",
+  "title": "Dispositions -- the states a record may be found in, and what each one means",
+  "description": "The grammar of reading a record, held once for every kind of record this kit keeps: a run's own receipt, and a judgement of a case against a rubric. A disposition NAMES a shape a record can have and says what it tells a reader. It is a sensor and never a broom: it names a run whose record says something is wrong and stops, because deleting a record of a run is a decision with an author and no machine may be that author. Every disposition carries its own calibration -- one receipt it MUST match and one lookalike it MUST tolerate -- so the sensor proves what it sees before anything is believed on its word. A disposition matches by EQUALITY over the fields it names and nothing else: a comparison language would be behaviour inside a declaration, and the moment a declaration can compute, nothing may generate it.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "dispositions"],

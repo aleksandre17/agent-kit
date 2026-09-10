@@ -59,6 +59,19 @@
         "board": { "type": "string", "minLength": 1 }
       }
     },
+    "evaluates": {
+      "description": "This capability holds things that are JUDGED: a declaration the host owns, naming what is judged and how, and a collection of judgements over it. Every name here points at something declared elsewhere in THIS file, or at a field of the document it names -- never at a path, and never at a case, a rubric or a verdict, because those are the host's and the framework has no way to know a good one. The verb that reads this block opens a judgement for every pair that lacks one and writes no verdict at all.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declaration", "rubrics", "cases", "judged_by", "judgements"],
+      "properties": {
+        "declaration": { "type": "string", "minLength": 1 },
+        "rubrics": { "type": "string", "minLength": 1 },
+        "cases": { "type": "string", "minLength": 1 },
+        "judged_by": { "type": "string", "minLength": 1 },
+        "judgements": { "type": "string", "minLength": 1 }
+      }
+    },
     "observes": {
       "description": "This capability declares that something WATCHES a run: which kind of observer, and the runs it applies to. An observer is opened before the verb and closed after it, so a run that never comes back has already said that it started. WHICH runs are worth watching is stated here, as data, never decided in the machinery -- a rule about a host's runs spelled in an interpreter is a judgement in the one place a host cannot reach.",
       "type": "array",
