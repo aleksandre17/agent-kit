@@ -49,11 +49,7 @@ def _report(ctx, recorded, rows, stewards) -> None:
     print(f"upgrade: kit {ctx.manifest.version} against a host recorded at "
           f"{recorded['taken_at']} as kit {recorded['kit_version']}, signed by "
           f"{recorded['signed_by']}")
-    for state, count in reconcile.census(stewards, rows):
-        print(f"  {count:>4}  {state}")
-    for row in rows:
-        if row["refuse"] or row["cell"] != reconcile.UNCHANGED:
-            print(f"  {row['state']:>16}  {row['path']}  --  {row['why']}")
+    reconcile.report(stewards, rows, reconcile.UNCHANGED)
 
 
 def _refuse(rows) -> None:

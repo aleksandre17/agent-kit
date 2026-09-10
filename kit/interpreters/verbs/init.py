@@ -24,6 +24,7 @@ own application -- not care and not review, but the fact that there is only one 
 
 from __future__ import annotations
 
+import adoption
 import check as check_verb
 import collection
 import doors
@@ -260,6 +261,20 @@ def run(ctx, args) -> int:
                 )
 
     enabled = ctx.compose(chosen, blocked)
+
+    # FIRST CONTACT. A host that has never answered is a host this kit has never installed into,
+    # so the record of what it received is EMPTY -- and empty is not absent: it is a declared zero,
+    # true by construction, and it lets the ORDINARY reconciliation answer for a tree the kit has
+    # never touched. Every path that has no class is named, and the install stops WHOLE before a
+    # byte moves. Without this the `adopt` verb would be advisory decoration, bypassed by anyone
+    # who typed the installer's name instead. First contact is read from a DECLARATION -- this
+    # host has never answered -- and never from a tree that happened to look untouched.
+    if adoption.at_first_contact(ctx):
+        adoption.require_unenclosed(ctx)
+        _empty, foreign = adoption.survey(ctx, enabled, reading["taken_at"])
+        adoption.roster(ctx, foreign, reading["taken_at"])
+        adoption.require_adoptable(ctx, foreign)
+
     status = (existing or {}).get("status")
     approved = bool(args.approve) or status == "accepted"
     state = {

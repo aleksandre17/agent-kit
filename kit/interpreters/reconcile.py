@@ -185,6 +185,25 @@ def refused(rows) -> list:
     return [row for row in rows if row["refuse"]]
 
 
+def report(stewards, rows, ordinary: str) -> None:
+    """The survey, as the operator reads it: the census first -- every state, zeros included --
+    then every row whose reading was not the ORDINARY one for this operation.
+
+    It lives here, beside the reading it prints, because `upgrade` and `adoption` are ONE
+    reconciliation seen with a different number of readings, and two printers for one reading
+    would be two homes for the vocabulary it speaks (Cardinal III). Exactly two things differ
+    between the callers, and both arrive as DATA: the HEADLINE, which is about the record rather
+    than the rows and is stated by each verb; and which cell is unremarkable -- `unchanged` when a
+    host is being carried forward, `introduced` when one is being installed into for the first
+    time. A printer that knew which caller it had would be the policy this module refuses to hold.
+    """
+    for state, count in census(stewards, rows):
+        print(f"  {count:>4}  {state}")
+    for row in rows:
+        if row["refuse"] or row["cell"] != ordinary:
+            print(f"  {row['state']:>16}  {row['path']}  --  {row['why']}")
+
+
 def census(stewards, rows) -> list:
     """(state, count) for EVERY state any steward can produce, including the ones with none.
     A surface that lists only what it found reads identically to a survey that found nothing --
