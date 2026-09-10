@@ -59,6 +59,50 @@
         "board": { "type": "string", "minLength": 1 }
       }
     },
+    "composes": {
+      "description": "This capability holds things that are COMPOSED rather than authored: a BASE stating what is true of a kind, an INSTANCE stating what is true of one of them, and a definition that is the projection of the two. Every name here points at something declared elsewhere in THIS file. What the block is FOR is what it makes unreachable: the base is declared once and rendered into every definition, so a binding line is not a line anyone is trusted to keep in step -- it is a line nobody can restate. An instance never overrides; a key carried by both sides is refused, because precedence is how the loser's declaration goes on reading as true while the value came from somewhere else.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "instances", "base", "shared", "census"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "instances": { "type": "string", "minLength": 1 },
+        "base": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sources", "list", "named_by"],
+          "properties": {
+            "sources": {
+              "description": "The named documents holding bases -- SHIPPED by this capability, or AUTHORED by the host in a path it declared readable. Both arrive by name and neither outranks the other: a base a host declares is a base, which is what lets a thing with no shipped ancestor be the same grammar rather than an exception to it.",
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "list": { "type": "string", "minLength": 1 },
+            "named_by": {
+              "description": "The field on an instance that names its base.",
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "shared": {
+          "description": "Lines carried by EVERY definition whatever its base -- declared once, rendered into all. This is the half a reference could not do, because a reference can be left unfollowed.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sources", "list"],
+          "properties": {
+            "sources": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+            "list": { "type": "string", "minLength": 1 }
+          }
+        },
+        "census": {
+          "description": "The view-model name for the roll of BASES with the instances each one has -- including the ones with none. A base shipped and never taken up is a fact; a surface that merely omitted it would read exactly like a kit that never shipped it.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "evaluates": {
       "description": "This capability holds things that are JUDGED: a declaration the host owns, naming what is judged and how, and a collection of judgements over it. Every name here points at something declared elsewhere in THIS file, or at a field of the document it names -- never at a path, and never at a case, a rubric or a verdict, because those are the host's and the framework has no way to know a good one. The verb that reads this block opens a judgement for every pair that lacks one and writes no verdict at all.",
       "type": "object",
@@ -107,6 +151,17 @@
             "description": "This installed path is READ BACK under this name, and reaches every projection. A target ending in '/' is a collection of JSON files; anything else is one document. The path is stated once, here, by the install that owns it.",
             "type": "string",
             "minLength": 1
+          },
+          "each": {
+            "description": "This projection writes one file PER RECORD rather than one file about a set. Required exactly when the declared target names a collection -- the same '/' rule that decides whether a readable is one document or many, read once and never a second convention. A surface FOR each member, where the singular form gives a surface ABOUT them all.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["over", "named"],
+            "properties": {
+              "over": { "type": "string", "minLength": 1 },
+              "named": { "type": "string", "minLength": 1 },
+              "suffix": { "type": "string" }
+            }
           }
         }
       }

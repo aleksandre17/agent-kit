@@ -25,6 +25,8 @@ write is reachable from it.
 
 from __future__ import annotations
 
+from functools import partial
+
 import collection
 import declared
 
@@ -57,6 +59,28 @@ def _referents(ctx, among: dict) -> set:
     return {row[collection.IDENTITY] for row in document[among[LIST]]}
 
 
+#: The other word a reference may use to say where its referents live. Schema vocabulary of this
+#: kind's own params, exactly as `source` is -- one home each, and never both on one reference.
+SOURCES = "sources"
+
+
+def _referents_across(ctx, among: dict) -> set:
+    """Every identity declared in one named list ACROSS several named sources.
+
+    The same question as `_referents` and a different reach, which is why it is a second function
+    and not a branch inside the first. A referent set that spans sources is the ordinary case the
+    moment a thing can be declared by the KIT or by the HOST -- an archetype, a policy, a kind --
+    and a gate able to look in only one of the two places would report a perfectly well-founded
+    reference as dangling, which is the most expensive kind of false finding: it teaches a host
+    that the sensor is wrong, and after that it teaches nothing at all.
+
+    The merge is `declared.rules`, unchanged: it already refuses an id declared twice, which is
+    the failure a multi-source referent set brings with it.
+    """
+    return {row[collection.IDENTITY]
+            for row in declared.rules(ctx, among[SOURCES], among[LIST])}
+
+
 def _dangling(record: dict, reference: dict, referents: set) -> bool:
     """True when this record NAMES a referent and the host declared no such thing. A record that
     names nothing is not judged: an absence is a state, and only a claim can be false."""
@@ -64,13 +88,13 @@ def _dangling(record: dict, reference: dict, referents: set) -> bool:
     return named is not None and named not in referents
 
 
-def _calibration(ctx, references: list) -> list:
+def _calibration(ctx, references: list, referents_of) -> list:
     """What the sensor can prove about itself, before it is pointed at anything. Each reference
     declares one record it MUST flag and one it MUST admit, and both are read through exactly the
     machinery that will read the host's."""
     failures = []
     for reference in references:
-        referents = _referents(ctx, reference[AMONG])
+        referents = referents_of(ctx, reference[AMONG])
         if not _dangling(reference["proves"], reference, referents):
             failures.append(
                 f"{reference['id']}: UNCALIBRATED -- it does not flag the record it declares it "
@@ -86,12 +110,12 @@ def _calibration(ctx, references: list) -> list:
     return failures
 
 
-def _reference_declared(ctx, params) -> list:
+def _reference_declared(ctx, params, referents_of) -> list:
     references = params["references"]
-    uncalibrated = _calibration(ctx, references)
+    uncalibrated = _calibration(ctx, references, referents_of)
     if uncalibrated:
         return uncalibrated
-    referents = {reference["id"]: _referents(ctx, reference[AMONG]) for reference in references}
+    referents = {reference["id"]: referents_of(ctx, reference[AMONG]) for reference in references}
     failures = []
     for rel, record in _readable(ctx, params["over"]).records:
         for reference in references:
@@ -104,8 +128,13 @@ def _reference_declared(ctx, params) -> list:
     return failures
 
 
-#: What this module PROVIDES. A new way of reading a record is a file and a row, never an edit to
-#: the verb that runs the gates.
+#: What this module PROVIDES: two ways of asking one question -- does this record point at
+#: something a host declares -- differing only in WHERE the referents are looked for. The scan,
+#: the calibration and every word of the report are the same code; the reach is a strategy handed
+#: in, never a branch, because the day a third place to declare a referent arrives the machinery
+#: must not change. A new way of reading a record is a row here and a function beside these,
+#: never an edit to the verb that runs the gates.
 KINDS = {
-    "reference-declared": _reference_declared,
+    "reference-declared": partial(_reference_declared, referents_of=_referents),
+    "reference-declared-across": partial(_reference_declared, referents_of=_referents_across),
 }

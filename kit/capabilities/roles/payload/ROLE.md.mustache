@@ -1,0 +1,79 @@
+# {{id}}
+
+> **Generated. Do not edit.** This definition is composed from an archetype and this host's
+> overlay, and it is rebuilt from scratch on every render. An edit here is a change the next
+> render discards without asking.
+> Archetype: `{{archetype}}` · kit {{kit_version}}
+
+{{#unbound}}
+## UNBOUND
+
+This role names the archetype `{{archetype}}`, and neither the kit nor this host declares one by
+that name. There is no body under the delta: everything below is the host's overlay alone.
+
+Read this as a role that is **not yet defined**, not as a short one. An overlay without its base
+reads exactly like a complete definition to anyone who only opens the file, which is why it says
+so here rather than rendering as though nothing were missing. `check` reports the same fact with
+an exit code, under `FF-ROLE-BASE`.
+{{/unbound}}
+{{^unbound}}
+## Seam — the one reason this role changes
+
+{{seam}}
+
+## Duty order — what wins when duties compete
+
+{{#duty}}
+1. {{.}}
+{{/duty}}
+
+## Reference class — what this role is measured against
+
+{{#reference_class}}
+- {{.}}
+{{/reference_class}}
+{{/unbound}}
+
+## Binding protocol
+
+Declared once, for every role, and rendered into each. Not a link and not a reference: a
+reference can be left unfollowed.
+
+{{#protocol}}
+- **{{id}}** — {{says}}
+{{/protocol}}
+
+## This host's instance
+
+Everything above is true of the role wherever the discipline is practised. Everything below is
+what THIS repository says about its own instance of it, and nothing else may be said here.
+
+### Runtime
+
+{{#runtime}}
+- {{id}}: `{{value}}`
+{{/runtime}}
+{{^runtime}}
+This host declares no runtime settings for this instance.
+{{/runtime}}
+
+### Owns
+
+{{#owns}}
+- `{{.}}`
+{{/owns}}
+{{^owns}}
+Nothing in this repository is declared as owned by this role. A declared state and not an
+oversight: an instance with no scope is answerable for nothing, and the overlay is where a scope
+would be written.
+{{/owns}}
+
+### Appendix
+
+{{#appendix}}
+{{.}}
+
+{{/appendix}}
+{{^appendix}}
+This host adds nothing to the archetype beyond what is declared above.
+{{/appendix}}

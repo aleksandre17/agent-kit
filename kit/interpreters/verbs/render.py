@@ -11,6 +11,7 @@ projection of an answer nobody accepted would be a surface stating a decision as
 from __future__ import annotations
 
 import collection
+import composition as composition_module
 import lifecycle as lifecycle_module
 import plan as plan_module
 import template
@@ -53,6 +54,14 @@ def view_model(ctx, capabilities=None) -> dict:
         governed = lifecycle_module.governed_of(capability, readings)
         if governed:
             _claim(view, governed.spec["board"], lifecycle_module.columns(governed), capability.id)
+        # A COMPOSITION reaches the view by the same generic route as everything else: the
+        # declaration names the readable holding the instances and the sources holding the bases,
+        # and this line neither knows nor asks what is being composed. A second kind of composed
+        # thing is another `composes` block, and this function is not touched.
+        composed = composition_module.composed_of(ctx, capability, readings)
+        if composed:
+            _claim(view, composed.spec["id"], composed.rows, capability.id)
+            _claim(view, composed.spec["census"], composed.census, capability.id)
     return view
 
 
@@ -72,6 +81,73 @@ def _plane(ctx) -> str:
     return next(p["root"] for p in ctx.manifest.planes if p["class"] == "projection")
 
 
+def _project_one(ctx, item, view) -> dict:
+    """One template, one file. The ordinary projection: a surface ABOUT a set."""
+    return {item["target"]: template.render(ctx.manifest.payload_text(item["source"]), view)}
+
+
+def _project_each(ctx, item, view) -> dict:
+    """One template, one file PER RECORD -- a surface FOR each member of a set.
+
+    The two are told apart by the shape of the declared target, which is the same rule
+    `collection` already uses to decide whether a readable is one document or many: a target
+    ending in `/` is a plural. Declared once, read here, and never a second convention.
+
+    The record is pushed as the innermost frame, so a template reaches the record's own fields
+    directly and still sees everything the whole view carries -- which is what lets a line
+    declared ONCE, for every record, be RENDERED INTO each of them rather than referenced from
+    them. A reference can be left unfollowed. A rendered line cannot.
+    """
+    body = ctx.manifest.payload_text(item["source"])
+    produced: dict[str, str] = {}
+    for target, record in _each_targets(ctx, item, view):
+        shadowed = sorted(set(record) & set(view))
+        if shadowed:
+            raise KitError(
+                f"a record of {each['over']!r} carries {shadowed}, which the view already means "
+                f"something else by. A name that resolves to two things is not a name, and the "
+                f"record would silently win -- refused rather than ordered."
+            )
+        produced[target] = template.render(body, {**view, **record})
+    return produced
+
+
+def _each_targets(ctx, item, view) -> list:
+    """(path, record) for every file a plural projection would write. Computed WITHOUT rendering
+    a byte, so a plan can state the write set without producing the content of it."""
+    each = item.get("each")
+    if not each:
+        raise KitError(
+            f"{item['target']!r} is declared as a plural projection -- its target names a "
+            f"collection -- but it says nothing about what it is one of. A projection per record "
+            f"needs `each`, naming the view it iterates and the field that names each file."
+        )
+    rows = view.get(each["over"])
+    if rows is None:
+        raise KitError(
+            f"{item['target']!r} projects one file for each {each['over']!r}, which this view "
+            f"does not carry; it carries {sorted(view)}"
+        )
+    root = item["target"].rstrip("/")
+    found = []
+    for record in rows:
+        name = record.get(each["named"])
+        if not isinstance(name, str) or not name or "/" in name or name in (".", ".."):
+            raise KitError(
+                f"{item['target']!r} names each file by {each['named']!r}, and one record "
+                f"answers {name!r} -- which is not a single path segment. A name that is not a "
+                f"referent is how a write lands somewhere nobody chose."
+            )
+        found.append((f"{root}/{name}{each.get('suffix', '')}", record))
+    return found
+
+
+#: How a projection is SHAPED, keyed by the shape its own declared target states. An open
+#: registry: a third shape is a row here and a function beside these two, and nothing that
+#: dispatches to it is ever edited.
+PROJECTION_SHAPES = {"document": _project_one, "collection": _project_each}
+
+
 def projections(ctx, capabilities=None) -> dict:
     """Every projected path and its bytes, computed in memory. `check` uses this to prove the
     plane on disk is exactly what the declaration implies."""
@@ -80,9 +156,34 @@ def projections(ctx, capabilities=None) -> dict:
     produced: dict[str, str] = {}
     for capability in capabilities:
         for item in capability.installs_of_class("projection"):
-            body = ctx.manifest.payload_text(item["source"])
-            produced[item["target"]] = template.render(body, view)
+            produced.update(PROJECTION_SHAPES[collection.kind_of(item)](ctx, item, view))
     return produced
+
+
+def _foreseen(ctx, item, capabilities) -> list:
+    """Which paths this projection would write, as far as a PLAN can honestly know.
+
+    A singular projection's target is stated in the declaration, so a plan can name it before a
+    single binding exists. A PLURAL one's targets are a function of a binding, and that is a real
+    difference rather than an inconvenience: how many files there will be is a question only the
+    host's own content answers.
+
+    Where that content is readable the plan expands to the exact set. Where it is not -- an
+    install being planned before the bindings it would read have been created -- the answer is
+    NOTHING, and nothing is what is planned. The temptation is to name the collection instead, so
+    the operator sees that something is there; that was tried and it is a LIE: the apply writes no
+    such path, and a plan whose promise the apply does not keep is worse than no plan, because it
+    is believed exactly once. It is also, in the only case that reaches here, the wrong number --
+    a host with no records genuinely gets no files, so the empty plan is not a gap in the reading
+    but the reading itself.
+    """
+    if collection.kind_of(item) == "document":
+        return [item["target"]]
+    try:
+        return sorted(target for target, _record
+                      in _each_targets(ctx, item, view_model(ctx, capabilities)))
+    except KitError:
+        return []
 
 
 def plan_entries(ctx, capabilities=None) -> list:
@@ -93,10 +194,11 @@ def plan_entries(ctx, capabilities=None) -> list:
     targets, writes = [], []
     for capability in capabilities:
         for item in capability.installs_of_class("projection"):
-            targets.append(item["target"])
-            writes.append(plan_module.Write(
-                "replace" if ctx.workspace.exists(item["target"]) else "create",
-                item["class"], item["mode"], capability.id, item["target"], item))
+            for target in _foreseen(ctx, item, capabilities):
+                targets.append(target)
+                writes.append(plan_module.Write(
+                    "replace" if ctx.workspace.exists(target) else "create",
+                    item["class"], item["mode"], capability.id, target, item))
     # The plane is rebuilt wholesale, so anything in it that nothing renders is REMOVED. A plan
     # that lists only what it writes is not a plan: deletion is the effect an operator most
     # needs to have seen coming.

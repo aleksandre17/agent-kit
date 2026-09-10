@@ -1,0 +1,40 @@
+{
+  "$id": "overlay",
+  "title": "A host's OVERLAY on an archetype -- the delta, and never a second body",
+  "description": "One record, one role this host runs. It names the archetype it composes and then says only what a host legitimately says about its own instance: which runtime knobs it is given, which parts of THIS repository it owns, and what host prose it carries as an appendix.\n\nThe line is drawn by a test anyone can apply: can the sentence be written without naming a repository? If it can, it is the role AS A KIND and belongs to the archetype; if it cannot, it is this host's instance and belongs here. That is why `seam`, `duty` and `reference_class` are absent from this schema and cannot be added to it -- `additionalProperties` is false, so a host CANNOT restate the archetype's body even by accident. Two divergent bodies for one role, each internally correct and silently drifting, is not a discipline this design asks anyone to keep: it is a state the schema makes unreachable.\n\nAn overlay therefore never OVERRIDES. It only adds. Overriding is precedence, and precedence is exactly how two homes both go on reading as true. Where a host must vary something an archetype states, the archetype was wrong to state it -- that thing was never true of the role as a kind, and the cure is to move it here, not to let a host win an argument at render time.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "archetype"],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "archetype": {
+      "description": "The archetype this definition composes, by id, from any source that declares one -- the kit's registry or the host's own. A host-origin role declares its archetype in the host registry and names it here, so a role with no base is still one grammar and not an exception.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "runtime": {
+      "description": "What the host's runtime is told about this instance -- a model, a tool set, a display name. Nothing here is true of the role as a kind: the same architect is a different string on two runtimes, which is precisely why it is host truth.\n\nRows and not a free-form object, deliberately. An open bag of keys cannot be projected -- a surface would have to know the names in advance to show them, and one it did not know would be carried silently and displayed nowhere. Rows are enumerable, so every setting a host declares reaches the definition whether or not anybody anticipated it, and a name declared twice is refused instead of quietly winning.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "value"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "value": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "owns": {
+      "description": "The parts of THIS repository this instance is answerable for. Unwriteable in an archetype by construction: it is a list of names only this host has.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "appendix": {
+      "description": "Host prose, appended to the definition after everything the archetype supplied. An appendix and never a preamble: what a host adds is read AFTER what binds everywhere, so a reader who stops early has read the binding half.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

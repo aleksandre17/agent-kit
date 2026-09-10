@@ -41,6 +41,10 @@
     {
       "id": "evaluation",
       "declaration": "capabilities/evaluation/capability.json"
+    },
+    {
+      "id": "roles",
+      "declaration": "capabilities/roles/capability.json"
     }
   ],
   "detectors": [
@@ -62,6 +66,8 @@
     "receipt": "schemas/receipt.schema.json",
     "observation": "schemas/observation.schema.json",
     "quality": "schemas/quality.schema.json",
-    "judgement": "schemas/judgement.schema.json"
+    "judgement": "schemas/judgement.schema.json",
+    "archetype": "schemas/archetype.schema.json",
+    "overlay": "schemas/overlay.schema.json"
   }
 }

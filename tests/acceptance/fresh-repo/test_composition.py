@@ -61,15 +61,30 @@ def expected_install_order(kit_root) -> list:
       * inside a capability, installs happen in the order they are DECLARED -- except that the
         PROJECTION class is a later phase, so every projection of the whole set follows every
         install of the whole set.
+
+    A PLURAL projection -- one whose declared target names a collection, because it writes one
+    file per record rather than one file about a set -- is deliberately not derived here. Its
+    paths are a function of the host's own content, so a derivation from declarations alone
+    cannot state them and must not pretend to. What it contributes is asserted separately, at
+    the one place that can know: against a host that has been measured.
     """
     capabilities = Manifest(kit_root).capabilities
     by_id = {c.id: c for c in capabilities}
     ordered = [by_id[cid] for level in dependency_levels(capabilities) for cid in level]
-    phases = [
-        [item for c in ordered for item in c.installs if item["class"] != "projection"],
-        [item for c in ordered for item in c.installs if item["class"] == "projection"],
-    ]
-    return [item["target"] for phase in phases for item in phase]
+    singular = [item for item in
+                (i for c in ordered for i in c.installs if i["class"] == "projection")
+                if not item["target"].endswith("/")]
+    return (
+        [item["target"] for c in ordered for item in c.installs if item["class"] != "projection"]
+        + [item["target"] for item in singular]
+    )
+
+
+def plural_projections(kit_root) -> list:
+    """Every declared projection whose target names a COLLECTION -- the ones whose write set only
+    a host can answer for."""
+    return [item for c in Manifest(kit_root).capabilities for item in c.installs
+            if item["class"] == "projection" and item["target"].endswith("/")]
 
 
 # ==========================================================================================
@@ -158,10 +173,26 @@ class Composition(Fixtures, unittest.TestCase):
         an empty list, by a set that lost a capability, or by a rule that placed a requirer
         before its provider -- and each of those is asserted against explicitly.
         """
-        straight = self.run_kit(KIT, self.host(), "init", "--approve", "acceptance-suite")
+        host = self.host()
+        straight = self.run_kit(KIT, host, "init", "--approve", "acceptance-suite")
         self.assertEqual(0, straight.returncode, straight.stderr)
         walked = install_order(straight.stdout)
         expected = expected_install_order(KIT)
+
+        # The plural projections, at the one place that can answer for them. This host authored
+        # nothing, so each writes NOTHING -- and that zero is asserted rather than assumed: a
+        # projection that quietly wrote a file here would otherwise slip past the set comparison
+        # below as an unexplained extra, and one that wrote its own target as a FILE would be a
+        # directory-shaped declaration landing as a document.
+        for item in plural_projections(KIT):
+            self.assertNotIn(item["target"], walked,
+                             "a collection-shaped projection wrote its own target as a file")
+            self.assertEqual([], sorted(
+                path for path in walked if path.startswith(item["target"])),
+                f"{item['target']} projected files for a host that declared no records")
+            self.assertTrue((host / item["target"]).is_dir()
+                            or not (host / item["target"]).exists(),
+                            "a plural projection's plane is a directory or is honestly absent")
 
         # An expectation derived from a declaration can be vacuous. These four say it is not:
         # it is non-empty, it is not one capability's worth, every declared capability put at
@@ -178,7 +209,8 @@ class Composition(Fixtures, unittest.TestCase):
         # ... and the rule itself: a capability that REQUIRES a provision may never be reached
         # before the capability offering it. Asserted over the walked order directly, so it holds
         # even if the derivation above were wrong in the same direction.
-        first_touch = {c.id: min(walked.index(t) for t in c.targets()) for c in capabilities}
+        first_touch = {c.id: min(walked.index(t) for t in c.targets() if t in walked)
+                       for c in capabilities}
         provides = {p: c.id for c in capabilities for p in c.raw.get("provides", [])}
         for capability in capabilities:
             for need in capability.requires:
