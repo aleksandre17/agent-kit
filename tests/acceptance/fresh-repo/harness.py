@@ -20,7 +20,11 @@ REPO = Path(__file__).resolve().parents[3]
 KIT = REPO / "kit"
 CLI = KIT / "interpreters" / "cli.py"
 
-for extra in (KIT / "interpreters", KIT / "interpreters" / "ports", KIT / "interpreters" / "verbs"):
+#: Every family of modules under the interpreter, discovered rather than listed -- the same rule
+#: the entry point follows, for the same reason: a list here would go stale the first time a
+#: capability brought a new kind of module, and it would go stale silently.
+for extra in [KIT / "interpreters", *sorted(p for p in (KIT / "interpreters").iterdir()
+                                            if p.is_dir() and not p.name.startswith("_"))]:
     sys.path.insert(0, str(extra))
 
 from manifest import Manifest  # noqa: E402

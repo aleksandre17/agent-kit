@@ -1,0 +1,45 @@
+{
+  "$id": "receipt",
+  "title": "Run receipt -- one run of one verb, stated before it can be lost",
+  "description": "A receipt is the LIFE half of observation: it says a run started, and later that it finished. It is written the moment the run begins, holding status UNSET, and rewritten once when the run reports its end. That order is the whole mechanism: a receipt written only at the end proves nothing about a run that never reached the end, and this project has twice paid for a run killed mid-way whose half-built artifacts read exactly like finished ones. Its vocabulary is OpenTelemetry's where OpenTelemetry has a word -- a span carries a name, a status of UNSET, OK or ERROR, and a status message -- because a receipt that invents its own words for a thing the field already named is a second home for a vocabulary. Two deviations are stated rather than hidden: the identity is `id`, since the identity of a member of a collection is declared once by this kit's collection contract and a receipt carrying both `id` and `trace_id` would have two homes for one value; and the moments are ISO-8601 strings from the clock port rather than Unix nanoseconds, because a field named for nanoseconds holding an ISO string is a name that is not its referent. What a receipt does NOT say: whether the run was any good. Status OK records that the run reported success, never that what it produced was worth anything -- a receipt proves that it fired, not that it hit.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "name", "status", "started_at"],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "id": {
+      "description": "This run's identity, and the name of the file that holds it. Thirty-two hex characters, which is the width OpenTelemetry gives a trace id.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "name": {
+      "description": "What ran. A span's name in OpenTelemetry's sense: the operation, never a judgement of it.",
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "description": "UNSET until the run declares an end. A receipt still holding UNSET after its process is gone is not a missing reading -- it is a run that died, said so by never saying anything, and that is exactly what this field exists to make visible.",
+      "type": "string",
+      "enum": ["UNSET", "OK", "ERROR"]
+    },
+    "status_message": {
+      "description": "What the run said when it ended badly. Present only where there was something to say.",
+      "type": "string"
+    },
+    "started_at": {
+      "description": "The moment the run began, taken from the clock port. A reading that does not carry its moment cannot be contradicted, only believed.",
+      "type": "string",
+      "minLength": 1
+    },
+    "ended_at": {
+      "description": "The moment the run declared its end. ABSENT is a state and not a gap: a run that has not ended has no end to state.",
+      "type": "string",
+      "minLength": 1
+    },
+    "exit_code": {
+      "description": "What the run reported to whoever started it. Recorded beside the status rather than in place of it, because an exit code is not a result.",
+      "type": "integer"
+    },
+    "kit_version": { "type": "string", "minLength": 1 }
+  }
+}

@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import re
 
-import collection
+import declared
 from errors import KitError
 
 #: The field by which a residence document carries its rules. Schema vocabulary, one home: the
@@ -27,58 +27,9 @@ RULES = "genres"
 
 
 class ResidenceError(KitError):
-    """A declared source of residence rules is missing, claims a name twice, or carries a pattern
-    that is not a pattern."""
-
-
-def _sources(ctx, names: list) -> dict:
-    """The named residence documents, wherever they were declared: SHIPPED by a capability, or
-    AUTHORED by the host in a path a capability declared readable. Both arrive by name, and a name
-    that resolves to two documents is refused rather than ordered -- the loser would go on reading
-    as true while the value came from somewhere else."""
-    found: dict = {}
-    owners: dict = {}
-
-    def claim(name, value, owner):
-        if name in found:
-            raise ResidenceError(
-                f"capabilities {owners[name]!r} and {owner!r} both declare residence rules named "
-                f"{name!r}; a name that resolves to two things is not a name"
-            )
-        owners[name] = owner
-        found[name] = value
-
-    for capability in ctx.enabled_capabilities():
-        for identity, document in capability.documents.items():
-            if identity in names:
-                claim(identity, document, capability.id)
-        for item in capability.installs:
-            if item.get("reads_as") in names:
-                claim(item["reads_as"], collection.read(ctx, item).value, capability.id)
-
-    missing = [name for name in names if name not in found]
-    if missing:
-        raise ResidenceError(
-            f"this gate was declared over residence rules named {missing}, which no enabled "
-            f"capability ships or declares readable; a source that cannot be found is not an "
-            f"empty source"
-        )
-    return found
-
-
-def _rules(ctx, params) -> list:
-    found = _sources(ctx, params["sources"])
-    rules, owners = [], {}
-    for name in params["sources"]:
-        for rule in found[name][RULES]:
-            if rule["id"] in owners:
-                raise ResidenceError(
-                    f"residence rule {rule['id']!r} is declared by both {owners[rule['id']]!r} and "
-                    f"{name!r}; two rules under one name is two homes for one judgement"
-                )
-            owners[rule["id"]] = name
-            rules.append(rule)
-    return rules
+    """A residence rule carries a pattern that is not a pattern. Where the RULES come from -- and
+    the two ways that resolution can be ambiguous -- is not this module's question: it is the same
+    question for every sensor, so it is asked once, in `declared`."""
 
 
 def _compiled(rule):
@@ -112,7 +63,7 @@ def _calibration(rules: list) -> list:
 
 
 def _residence_declared(ctx, params):
-    rules = _rules(ctx, params)
+    rules = declared.rules(ctx, params["sources"], RULES)
     uncalibrated = _calibration(rules)
     if uncalibrated:
         return uncalibrated

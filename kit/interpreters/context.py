@@ -27,6 +27,12 @@ class Context:
         self.workspace = Workspace(host_root)
         self.clock = clock or Clock()
         self.probe = Probe(self.workspace)
+        #: The records THIS process opened and has not yet closed. A run cannot judge its own
+        #: liveness: a record still open because the run holding it is the one asking is not a
+        #: run that died, and a sensor unable to tell the two apart would report every healthy
+        #: run as a corpse. Carried as a READING the context can state, so that a declaration
+        #: names what to do about it and no interpreter holds a hidden exemption.
+        self.in_flight = set()
 
     # -- boundary ---------------------------------------------------------------------------
     def boundary(self) -> dict:

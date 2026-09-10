@@ -65,6 +65,13 @@ class Capability:
     def gates(self) -> list:
         return self._raw["gates"]
 
+    @property
+    def observes(self) -> list:
+        """What this capability declares should WATCH a run. Absent is a declared state and not a
+        gap: most capabilities watch nothing, and one that watches nothing says so by declaring
+        nothing -- which is why this field is optional and an empty list is its honest answer."""
+        return self._raw.get("observes", [])
+
     def targets(self) -> tuple[str, ...]:
         """The write scope this capability declared for itself. Nothing else may be written."""
         return tuple(item["target"] for item in self.installs)

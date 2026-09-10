@@ -15,11 +15,16 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-for extra in (HERE, HERE / "ports", HERE / "verbs", HERE / "gates"):
+#: Every family of modules under the interpreter, DISCOVERED. A hand-kept list of the families
+#: would be a closed enumeration in the one file that is supposed to know no family's name: the
+#: first time a capability brought a new kind of module, the entry point would need an edit.
+for extra in [HERE, *sorted(p for p in HERE.iterdir()
+                            if p.is_dir() and not p.name.startswith("_"))]:
     if str(extra) not in sys.path:
         sys.path.insert(0, str(extra))
 
 import clock as clock_port  # noqa: E402
+import observation  # noqa: E402
 from context import Context  # noqa: E402
 from errors import KitError  # noqa: E402
 
@@ -77,9 +82,31 @@ def main(argv=None) -> int:
         return 2
 
     print(f"kit {ctx.manifest.version} · {args.verb} · {host.as_posix()}")
-    if getattr(module, "REQUIRES_APPROVED_HOST", False):
-        ctx.require_approved()
-    return module.run(ctx, args)
+
+    # Whatever the enabled capabilities declared should watch a run like this one is opened HERE
+    # -- before the verb, before even the precondition that could refuse it -- and closed in a
+    # `finally`. The order is the whole guarantee and it is the one thing that cannot be added
+    # afterwards: a record written only at the end says nothing about a run that never reached
+    # the end, and a run that dies mid-way leaves work that reads exactly like finished work.
+    # A process that is KILLED never reaches the close, and its record stays open forever. That
+    # is the mechanism succeeding, not failing.
+    watching = observation.opened(ctx, args, module, args.verb)
+    code, message = 1, None
+    try:
+        if getattr(module, "REQUIRES_APPROVED_HOST", False):
+            ctx.require_approved()
+        code = module.run(ctx, args)
+        return code
+    except KitError as refusal:
+        # A refusal is an ENDING. The run was turned away, said why, and did not vanish -- and a
+        # record unable to tell those two apart would be the one lie this exists to prevent.
+        code, message = refusal.exit_code, str(refusal)
+        raise
+    except BaseException as unforeseen:  # noqa: BLE001 -- re-raised; only the record is added
+        message = f"{type(unforeseen).__name__}: {unforeseen}"
+        raise
+    finally:
+        observation.closed(watching, code, message)
 
 
 def _ids(text: str) -> list:

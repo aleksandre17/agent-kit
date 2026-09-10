@@ -49,7 +49,8 @@ INTERPRETERS = KIT / "interpreters"
 #: reader of a declaration may spell what the contract declares.
 SEEDED = "seed"
 
-for _extra in (INTERPRETERS, INTERPRETERS / "ports", INTERPRETERS / "verbs", INTERPRETERS / "gates"):
+for _extra in [INTERPRETERS, *sorted(p for p in INTERPRETERS.iterdir()
+                                     if p.is_dir() and not p.name.startswith("_"))]:
     if str(_extra) not in sys.path:
         sys.path.insert(0, str(_extra))
 

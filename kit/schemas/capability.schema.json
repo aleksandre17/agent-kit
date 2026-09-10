@@ -59,6 +59,24 @@
         "board": { "type": "string", "minLength": 1 }
       }
     },
+    "observes": {
+      "description": "This capability declares that something WATCHES a run: which kind of observer, and the runs it applies to. An observer is opened before the verb and closed after it, so a run that never comes back has already said that it started. WHICH runs are worth watching is stated here, as data, never decided in the machinery -- a rule about a host's runs spelled in an interpreter is a judgement in the one place a host cannot reach.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "when", "params"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "kind": { "type": "string", "minLength": 1 },
+          "when": {
+            "description": "The fields of the run's own reading this row reads, and the values it reads them as. Equality only: the instant a declaration can express a comparison it can express a policy, and a policy inside a declaration is a thing no machine may generate and no host may safely edit.",
+            "type": "object"
+          },
+          "params": { "type": "object" }
+        }
+      }
+    },
     "installs": {
       "type": "array",
       "minItems": 1,

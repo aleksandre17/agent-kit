@@ -99,6 +99,12 @@ class Composition(Fixtures, unittest.TestCase):
             ".agents/project/laws.md",
             ".agents/.gitignore",
             ".agents/kit/doctrine/governance.md",
+            # `observability` requires no provision either, so it is in the same tie as the two
+            # above and its id places it third -- after `governance`, before anything that
+            # depends on governance. Nothing about WATCHING a run makes it late.
+            ".agents/project/observability/observation.json",
+            ".agents/runtime/observability/runs/",
+            ".agents/kit/doctrine/observability.md",
             # `hygiene` and `knowledge` both require what governance provides, so neither may
             # precede it; the tie between the two is broken by id, and hygiene lands first.
             ".agents/project/hygiene/residence.json",
@@ -108,6 +114,7 @@ class Composition(Fixtures, unittest.TestCase):
             "docs/reference/README.md",
             ".agents/generated/delivery/BOARD.md",
             ".agents/generated/governance/INDEX.md",
+            ".agents/generated/observability/RUNS.md",
             ".agents/generated/hygiene/RESIDENCE.md",
         ], install_order(straight.stdout))
 

@@ -1,0 +1,44 @@
+{
+  "$id": "observation",
+  "title": "Dispositions -- the states a run's own record may be found in, and what each one means",
+  "description": "A disposition NAMES a shape a receipt can have and says what it tells a reader. It is a sensor and never a broom: it names a run whose record says something is wrong and stops, because deleting a record of a run is a decision with an author and no machine may be that author. Every disposition carries its own calibration -- one receipt it MUST match and one lookalike it MUST tolerate -- so the sensor proves what it sees before anything is believed on its word. A disposition matches by EQUALITY over the fields it names and nothing else: a comparison language would be behaviour inside a declaration, and the moment a declaration can compute, nothing may generate it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "dispositions"],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "summary": { "type": "string" },
+    "dispositions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "when", "because", "instead", "proves", "admits"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "when": {
+            "description": "The fields this disposition reads and the values it reads them as. A field the reading does not carry reads as null, so a declared null is how a disposition names an ABSENCE -- which is the state that matters most here, since a run that died states nothing at all. What a disposition reads is the receipt as it was FOUND, plus the fields declared below, which no receipt carries and only the reader can know.",
+            "type": "object",
+            "properties": {
+              "in_flight": {
+                "description": "True when the run that opened this record is the very run now reading it. A run cannot judge its own liveness: its record is legitimately unclosed because it has not finished, and a sensor unable to tell that from a corpse would report every healthy run as one. Stated as a READ FIELD rather than as an exemption inside the machine, so that the exclusion is visible, declared, and a host's to tighten.",
+                "type": "boolean"
+              }
+            }
+          },
+          "because": { "type": "string", "minLength": 1 },
+          "instead": { "type": "string", "minLength": 1 },
+          "proves": {
+            "description": "A receipt this disposition MUST match: its evidence that it can see the thing it claims to catch, carried in the declaration rather than in somebody's memory of a test.",
+            "type": "object"
+          },
+          "admits": {
+            "description": "A lookalike receipt it MUST NOT match. A disposition that cannot state what it tolerates has no measured edge, and a rule with no edge eventually names everything.",
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

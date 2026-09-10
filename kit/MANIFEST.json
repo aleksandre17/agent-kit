@@ -33,6 +33,10 @@
     {
       "id": "hygiene",
       "declaration": "capabilities/hygiene/capability.json"
+    },
+    {
+      "id": "observability",
+      "declaration": "capabilities/observability/capability.json"
     }
   ],
   "detectors": [
@@ -50,6 +54,8 @@
     "card": "schemas/card.schema.json",
     "delivery-policy": "schemas/delivery-policy.schema.json",
     "residence": "schemas/residence.schema.json",
-    "boundary": "schemas/boundary.schema.json"
+    "boundary": "schemas/boundary.schema.json",
+    "receipt": "schemas/receipt.schema.json",
+    "observation": "schemas/observation.schema.json"
   }
 }

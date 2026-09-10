@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "id": "observation",
+  "summary": "The dispositions a run's own record may be found in. Every one of them is a way of saying the same thing: a run that cannot state what became of it must not read as a run that went well. They are stated as DATA so the reading is executable rather than advisory, and so a host can see the whole of it without reading a proposal. There is no threshold here and no tolerance field: this framework has never declared the number at which observing becomes enforcing, so this sensor names a crossing the first time it sees one, and the surface says that this is why.",
+  "dispositions": [
+    {
+      "id": "a-run-that-never-declared-its-end",
+      "when": { "status": "UNSET", "in_flight": false },
+      "because": "the run opened this record, wrote that it had begun, and was gone before it could write what became of it. Its work is therefore UNVERIFIED STATE and not partial success -- whatever it left behind reads exactly like the output of a run that finished, and nothing on disk can tell the two apart except this receipt.",
+      "instead": "read what the run touched, decide whether that half is sound, and remove this record by hand once you have. Nothing removes it for you: a run's record is evidence, and evidence is not swept up by the thing being questioned.",
+      "proves": {
+        "schema_version": 1,
+        "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1",
+        "name": "the-operation-that-was-running",
+        "status": "UNSET",
+        "started_at": "2026-01-01T00:00:00+00:00"
+      },
+      "admits": {
+        "schema_version": 1,
+        "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa2",
+        "name": "the-operation-that-was-running",
+        "status": "OK",
+        "started_at": "2026-01-01T00:00:00+00:00",
+        "ended_at": "2026-01-01T00:00:01+00:00",
+        "exit_code": 0
+      }
+    },
+    {
+      "id": "a-run-that-claims-an-end-it-never-dated",
+      "when": { "status": "OK", "ended_at": null },
+      "because": "the record says the run finished well and cannot say when. A reading that carries no moment cannot be contradicted, only believed -- so this one will go on certifying a success nobody can place in time, and it will do it most convincingly the longer it sits there.",
+      "instead": "written by a closing that states its moment in the same act as its status. If this receipt came from outside this kit, the writer is the defect and this record is the symptom.",
+      "proves": {
+        "schema_version": 1,
+        "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb1",
+        "name": "the-operation-that-was-running",
+        "status": "OK",
+        "started_at": "2026-01-01T00:00:00+00:00",
+        "exit_code": 0
+      },
+      "admits": {
+        "schema_version": 1,
+        "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb2",
+        "name": "the-operation-that-was-running",
+        "status": "OK",
+        "started_at": "2026-01-01T00:00:00+00:00",
+        "ended_at": "2026-01-01T00:00:01+00:00",
+        "exit_code": 0
+      }
+    },
+    {
+      "id": "a-failure-that-cannot-be-placed-in-time",
+      "when": { "status": "ERROR", "ended_at": null },
+      "because": "a failure with no moment is worse than an unrecorded one. It is read as current by every reader who finds it, for as long as it sits there, and the run it belongs to may have been fixed the same afternoon -- so the surface reports a fault the host no longer has, which is the same lie as reporting none it does.",
+      "instead": "written by a closing that states its moment in the same act as its status, so that a failure can be dated, compared and eventually left behind.",
+      "proves": {
+        "schema_version": 1,
+        "id": "ccccccccccccccccccccccccccccccc1",
+        "name": "the-operation-that-was-running",
+        "status": "ERROR",
+        "status_message": "what the run said when it ended badly",
+        "started_at": "2026-01-01T00:00:00+00:00",
+        "exit_code": 1
+      },
+      "admits": {
+        "schema_version": 1,
+        "id": "ccccccccccccccccccccccccccccccc2",
+        "name": "the-operation-that-was-running",
+        "status": "ERROR",
+        "status_message": "what the run said when it ended badly",
+        "started_at": "2026-01-01T00:00:00+00:00",
+        "ended_at": "2026-01-01T00:00:01+00:00",
+        "exit_code": 1
+      }
+    }
+  ]
+}

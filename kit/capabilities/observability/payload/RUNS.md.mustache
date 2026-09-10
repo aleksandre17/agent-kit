@@ -1,0 +1,59 @@
+# Runs — what a run leaves behind, and how its record is read
+
+> PROJECTION. Do not edit: delete this whole plane and run `render`, and it comes back byte-identical.
+> Kit version {{ kit_version }} · project status {{ project.status }}.
+
+**No run is listed on this page, and that is deliberate.** A receipt changes after it is written —
+it begins holding a status that means *nothing has been concluded yet*, and is closed once when the
+run reports its end. A page that listed runs would therefore be stale in the instant it was correct,
+and this plane is rebuilt only when `render` is asked to rebuild it. The live reading of the runs
+this host holds is `check`, which takes it at the moment you ask and says so.
+
+What is on this page is the GRAMMAR: what a receipt is for, and every way a run's record can be
+read as saying that something went wrong.
+
+## What a receipt claims
+
+A receipt claims that a run **fired**. It never claims that the run **hit**. Whether the work was
+any good is a question about this host's own subject matter, answered by cases and standards this
+host owns, and nothing in the kit has an opinion about it.
+
+The order is the whole mechanism. The record is written **before** the work, holding an unset
+status, and rewritten **once** when the run declares its end. A record written only at the end
+would prove nothing about the runs that matter most — the ones that never reach an end.
+
+## Enforcement, and the number that has never been declared
+
+This gate names a crossing the **first** time it sees one. It does not observe for a while and
+enforce later, because the threshold at which observing becomes enforcing must be a number and no
+number has ever been declared anywhere in this framework. Rather than hold an unread field that
+would read as enforced, this capability declares none and states the absence here: **there is no
+observe-then-enforce period; the first crossing is a finding.**
+
+Nothing here is ever removed by the kit. A disposition NAMES a run's record and says how to read
+it; removing evidence is a human act, recorded as such.
+
+## Declared by the kit
+
+{{#documents.run_dispositions.dispositions}}
+### {{ id }}
+
+- because {{ because }}
+- instead {{ instead }}
+- calibrated on the receipt it must match, `{{ proves.id }}`, and the lookalike it must tolerate, `{{ admits.id }}`
+
+{{/documents.run_dispositions.dispositions}}
+## Declared by this host
+
+{{#reads.observation_local.dispositions}}
+### {{ id }}
+
+- because {{ because }}
+- instead {{ instead }}
+- calibrated on the receipt it must match, `{{ proves.id }}`, and the lookalike it must tolerate, `{{ admits.id }}`
+
+{{/reads.observation_local.dispositions}}
+{{^reads.observation_local.dispositions}}
+_This host has declared no dispositions of its own. That is a state, not a gap: the kit's readings
+still hold, and a host adds one by declaring it._
+{{/reads.observation_local.dispositions}}
