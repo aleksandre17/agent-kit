@@ -359,7 +359,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "97c65f8d8ead62c8ad3c566490964fe36a62729e48bc112529a05cd4c7a834be",
+      "digest": "1ade4fe187b16384eae1f3052d7122cfe56c808a8aab1b0e6d4f89f23e268976",
       "path": "interpreters/lockfile.py"
     },
     {
@@ -594,5 +594,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-10T12:05:25+00:00"
+  "taken_at": "2026-09-10T12:17:23+00:00"
 }

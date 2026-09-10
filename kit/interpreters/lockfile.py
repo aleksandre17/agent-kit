@@ -142,25 +142,27 @@ def accounted(manifest, ws) -> dict:
     # -- declared: what no declaration can point at -------------------------------------------
     for rule in ships["accounts"]:
         root, suffix = rule["root"], rule.get("suffix")
-        if ws.path(root.rstrip("/")).is_file():
-            if suffix:
+        # WHICH KIND of rule this is, is read from the DECLARATION and never from the disk. A rule
+        # that stated a suffix scans; a rule that stated none names exactly one file. Deciding it
+        # by what happens to exist would mean a deleted file silently changes what its own rule
+        # meant -- and the report would then diagnose the rule instead of naming the absence.
+        if suffix:
+            matched = [rel for rel in ws.files_under(root) if rel.endswith(suffix)]
+            if not matched:
                 raise LockError(
-                    f"ships rule {rule['id']!r}: names one file and a suffix; a file is already exact"
+                    f"ships rule {rule['id']!r}: matched no file under {root!r} -- a rule pointed "
+                    f"at nothing passes gloriously and measures an empty set"
                 )
-            matched = [_inside(root)]
         else:
-            if not suffix:
+            if ws.path(root.rstrip("/")).is_dir():
                 raise LockError(
                     f"ships rule {rule['id']!r}: accounts for the directory {root!r} and states no "
                     f"suffix -- a rule that swallows a directory whole would swallow whatever "
                     f"appears in it, which is the defect this lockfile exists to make impossible"
                 )
-            matched = [rel for rel in ws.files_under(root) if rel.endswith(suffix)]
-        if not matched:
-            raise LockError(
-                f"ships rule {rule['id']!r}: matched no file under {root!r} -- a rule pointed at "
-                f"nothing passes gloriously and measures an empty set"
-            )
+            # Its absence is not a broken sensor: it is a path this kit says it has and does not,
+            # which the survey states in that word.
+            matched = [_inside(root)]
         for rel in matched:
             _claim(found, rel, rule["class"], rule["id"])
 
@@ -226,8 +228,12 @@ def compare(lock: dict, rows: list) -> list:
     for path in sorted(set(recorded) | set(fresh)):
         row = fresh.get(path)
         if row is None:
-            out.append((UNACCOUNTED, path,
-                        f"locked at {lock['taken_at']}, and the kit no longer accounts for it"))
+            # Recorded, and now neither present nor accounted for. The word is MISSING and not
+            # `unaccounted`: `unaccounted` says a path is here that nothing explains, which is the
+            # opposite complaint and would send a reader looking for a file that is gone.
+            out.append((MISSING, path,
+                        f"in a lock taken at {lock['taken_at']}, and the kit neither has it nor "
+                        f"accounts for it now"))
         elif row["state"] != MATCHED:
             out.append((row["state"], path, f"the kit as it stands reports {row['state']}"))
         elif path not in recorded:
