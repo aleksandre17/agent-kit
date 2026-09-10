@@ -26,6 +26,8 @@ from __future__ import annotations
 
 import check as check_verb
 import collection
+import doors
+import estate as estate_module
 import plan as plan_module
 import render as render_verb
 from context import SCHEMA_VERSION
@@ -110,7 +112,14 @@ INSTALL_MODES = {
     "vendor": ("install", _always, _mode_vendor),
     "space": ("install", _once, _mode_space),
     "projection": ("render", None, None),
+    "estate": ("record", None, None),
 }
+
+#: The phases the install loop itself carries out. A phase named here and nowhere else belongs to
+#: a LATER step of the run: `render` recomputes the projections, `record` measures what this host
+#: was given once everything else has landed. A record taken in the middle of the writes would be
+#: a reading of a half-installed host, stating a moment that described nothing.
+INSTALLED_PHASES = ("answer", "install")
 
 
 def _mode_of(capability, item):
@@ -131,12 +140,43 @@ def _install_plan(ctx, enabled, state) -> list:
         scoped = state["scopes"][capability.id]
         for item in capability.installs:
             phase, foresee, _apply_fn = _mode_of(capability, item)
-            if phase == "render" or (phase != "answer" and not state["approved"]):
+            if phase not in INSTALLED_PHASES or (phase != "answer" and not state["approved"]):
                 continue
             writes.append(plan_module.Write(
                 foresee(scoped, item, state), item["class"], item["mode"],
                 capability.id, item["target"], item))
     return writes
+
+
+def _record_plan(ctx, enabled, signed_by) -> list:
+    """The estate write, foreseen -- and foreseen by MEASURING, not by assuming a run writes.
+
+    Empty where this kit declares no estate at all: a kit that records nothing says so by planning
+    nothing, rather than leaving an operator to notice an absence. Where a record already stands
+    and a fresh reading would say exactly the same thing, the disposition is `keep`, because the
+    moment that document states is the moment this host received those bytes and no run may move
+    it over a delivery that did not happen.
+    """
+    item = ctx.install_of_mode("estate", required=False)
+    if item is None:
+        return []
+    owner = next(c for c in enabled for i in c.installs if i["target"] == item["target"])
+    entries = estate_module.rows(ctx, enabled, estate_module.stewardship(ctx))
+    if not ctx.workspace.exists(item["target"]):
+        disposition = "create"
+    elif estate_module.restates(estate_module.read(ctx), ctx, entries, signed_by):
+        disposition = "keep"
+    else:
+        disposition = "replace"
+    return [plan_module.Write(disposition, item["class"], item["mode"],
+                              owner.id, item["target"], item)]
+
+
+def _signed(args, existing):
+    """Whose name is on the writes: the approver walking the door now, or the one already
+    recorded. Never nobody -- a record of what a machine did to a host, with no name on it,
+    cannot be contradicted by anyone."""
+    return args.approve or (existing or {}).get(doors.SIGNED_BY)
 
 
 def _apply(ctx, state, writes) -> None:
@@ -223,7 +263,7 @@ def run(ctx, args) -> int:
     writes = _install_plan(ctx, enabled, state)
     if getattr(args, "plan", False):
         if approved:
-            writes = writes + render_verb.plan_entries(ctx, enabled)
+            writes = writes + render_verb.plan_entries(ctx, enabled) + _record_plan(ctx, enabled, _signed(args, existing))
         print(plan_module.report("init", writes))
         return 0
 
@@ -239,4 +279,16 @@ def run(ctx, args) -> int:
         )
 
     render_verb.run(ctx, args, enabled)
+
+    # The record is taken LAST, and it is taken by MEASURING what is now on disk rather than by
+    # believing the plan that put it there. A record written from the plan would agree with the
+    # plan by construction and could never contradict it, which is an attribution that cannot
+    # fail. It carries the NAME on the door: what a machine did to a host, with nobody's name on
+    # it, is a thing no one can be held to.
+    for write in _record_plan(ctx, enabled, ctx.host_answers()[doors.SIGNED_BY]):
+        if write.disposition != "keep":
+            estate_module.take(ctx, enabled, reading["taken_at"],
+                               ctx.host_answers()[doors.SIGNED_BY])
+        print(f"  {write.accomplished:<9}  {write.target}")
+
     return check_verb.run(ctx, args)

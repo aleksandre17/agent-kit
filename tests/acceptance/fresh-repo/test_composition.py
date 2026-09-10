@@ -56,11 +56,14 @@ def dependency_levels(capabilities) -> list:
 def expected_install_order(kit_root) -> list:
     """The path sequence the ordering rule implies for a kit, derived from its declarations.
 
-    Two rules compose, and both are read from the declarations rather than remembered:
+    Three rules compose, and all three are read from the declarations rather than remembered:
       * capabilities run in dependency order (above);
       * inside a capability, installs happen in the order they are DECLARED -- except that the
         PROJECTION class is a later phase, so every projection of the whole set follows every
-        install of the whole set.
+        install of the whole set;
+      * and the ESTATE is later still -- last of everything, because it is a MEASUREMENT of what
+        the run gave this host. A record taken before the writes it records would state a moment
+        that described nothing, so its position is not a preference and is asserted as a rule.
 
     A PLURAL projection -- one whose declared target names a collection, because it writes one
     file per record rather than one file about a set -- is deliberately not derived here. Its
@@ -74,9 +77,12 @@ def expected_install_order(kit_root) -> list:
     singular = [item for item in
                 (i for c in ordered for i in c.installs if i["class"] == "projection")
                 if not item["target"].endswith("/")]
+    estate = [item for c in ordered for item in c.installs if item["mode"] == "estate"]
     return (
-        [item["target"] for c in ordered for item in c.installs if item["class"] != "projection"]
+        [item["target"] for c in ordered for item in c.installs
+         if item["class"] != "projection" and item["mode"] != "estate"]
         + [item["target"] for item in singular]
+        + [item["target"] for item in estate]
     )
 
 

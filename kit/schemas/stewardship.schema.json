@@ -1,0 +1,77 @@
+{
+  "$id": "stewardship",
+  "title": "Stewardship -- who owns an installed path's bytes, and what each cell of a three-way reading means",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "stewards", "modes"],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "summary": { "type": "string" },
+    "stewards": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "summary", "digest", "cells"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "summary": { "type": "string", "minLength": 1 },
+          "digest": {
+            "description": "Whether a digest of these paths MEANS anything. `not-taken` is a declared absence of a measurement -- a directory the host fills has no bytes of its own, and the estate cannot record a digest of itself. The estate writes null there, and null is never read as a value.",
+            "type": "string", "enum": ["recorded", "not-taken"]
+          },
+          "cells": {
+            "description": "One verdict per cell. WHICH cell a path is in is computed from three digests and is a finite, DERIVED space; what a cell MEANS is policy and lives here. A cell the reconciler computes and this table does not answer is refused at the moment it is met -- never defaulted, because a default is how a reconciliation acquires a rule nobody declared.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["cell", "state", "file", "record"],
+              "properties": {
+                "cell": {
+                  "description": "Which of the three-way readings this row answers. The space is FINITE and DERIVED -- three readings, each present, absent or changed -- so it is enumerated here, where the contract between the reconciler and this declaration belongs. It is not an open registry and must not pretend to be one: a cell nobody can compute is a rule that certifies.",
+                  "type": "string",
+                  "enum": [
+                    "introduced", "collision", "forgotten", "restored",
+                    "retired", "retired-diverged",
+                    "unchanged", "advanced", "diverged-kept", "conflicted", "converged"
+                  ]
+                },
+                "state": {
+                  "description": "The word the surface prints for this reading. Distinct from the cell, on purpose: `advanced` under a host steward is `available`, because what happened to the path and what the operator must understand are two different statements.",
+                  "type": "string", "minLength": 1
+                },
+                "file": {
+                  "description": "What happens to the path. The words are the PLAN's own disposition vocabulary, which the interpreter provides and this declaration consumes -- restated here only because a schema is where a contract between the two is legible, and held to that one home by a gate rather than by care.",
+                  "type": "string",
+                  "enum": ["create", "keep", "replace", "remove"]
+                },
+                "record": {
+                  "description": "What happens to the ROW, which is a separate axis from what happens to the file: a path can be kept on disk and dropped from the account, or left untouched and have its digest advanced. Collapsing the two is how a file the kit stopped shipping becomes an unexplained path in a governed plane.",
+                  "type": "string",
+                  "enum": ["advance", "carry", "forget", "orphan", "drop"]
+                },
+                "refuse": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "modes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mode", "steward"],
+        "properties": {
+          "mode": { "type": "string", "minLength": 1 },
+          "steward": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

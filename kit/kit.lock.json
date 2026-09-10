@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 98,
+  "count": 102,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "6fdd953e1db00d0e1e386f5ff5557b9136c7bc19f42fb0af0d7daa6a6e99cb51",
+      "digest": "c1ff97b5d10531cbb4204c98334d7604e206cbf05098e4f8d58bba452be612d9",
       "path": "MANIFEST.json"
     },
     {
@@ -83,7 +83,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "fadad4904c1cd45a17e2eecd8e1518c56fa3ea849aae53562183f9543d2ffc34",
+      "digest": "6dea76c1b2866bbae40d4f4baaa37cff8c6c09b119f5e89cea6db15784e0d65e",
       "path": "capabilities/governance/capability.json"
     },
     {
@@ -97,6 +97,12 @@
       "class": "payload",
       "digest": "0fe388b48fd7f98764e7355eb6fba41528e82366f2246238fbc1f86cfd170baf",
       "path": "capabilities/governance/payload/governance.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "5b6be239779c2518a1d5e89a8795afa2de3d6841274ccfde64f25bf340f28f6c",
+      "path": "capabilities/governance/stewardship.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -275,7 +281,7 @@
     {
       "accounted_by": "fitness",
       "class": "declaration",
-      "digest": "1ee48e932c18710aa1c7366f1417b62e3dd6bf560f280d5b71fba89a3bab9de7",
+      "digest": "b4575ab5af45155ce1d90661f1761726c4c3540b5e1789648d8ba16d64db1f8a",
       "path": "fitness/boundary.json"
     },
     {
@@ -319,6 +325,12 @@
       "class": "interpreter",
       "digest": "011504c2f525df63b47fcb3bde495d929d0fb5848ce2dc280a53efcdfb96722e",
       "path": "interpreters/errors.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "351464ce133d92d4da3e138b2f5819a327180d4cb9835846fb0b1513160cd5d2",
+      "path": "interpreters/estate.py"
     },
     {
       "accounted_by": "interpreter",
@@ -443,7 +455,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a9f1156ee8bc2b052c6bbfec66e2b9dd65bc7e3b955e455fa9f135a5ae281f38",
+      "digest": "e671658bb6946a37e03f86b1dfeb140ebcc103d9adfa7ea7504100901e8fc097",
       "path": "interpreters/verbs/init.py"
     },
     {
@@ -499,6 +511,12 @@
       "class": "declaration",
       "digest": "25c55103b1b33a14e7db30c7dcdcc0156839409ad9e492d6f8cbdda4f2c89393",
       "path": "schemas/detector.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "b74d546bfb1ab5753e6eb3a6f537defb92419ec264f2e534b34743a11e5c17d7",
+      "path": "schemas/estate.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -580,6 +598,12 @@
     },
     {
       "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "05b7ddf4298fe9d482aec02c1c9f124ef4e782085524a7c38014d4a2e6d67851",
+      "path": "schemas/stewardship.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
       "class": "payload",
       "digest": "d4d7a2ef5c4527b89290e315aafd4a8a81f973059d6d8a8cde4f623292bc9f7b",
       "path": "seeds/agents.gitignore"
@@ -594,5 +618,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-10T12:17:23+00:00"
+  "taken_at": "2026-09-10T13:06:26+00:00"
 }

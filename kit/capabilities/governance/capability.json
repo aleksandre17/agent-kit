@@ -4,14 +4,36 @@
   "version": "0.1.0",
   "summary": "Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the vendored doctrine and the index projection, plus the gates that hold them.",
   "requires": [
-    { "kind": "fact", "id": "vcs.git", "equals": true }
+    {
+      "kind": "fact",
+      "id": "vcs.git",
+      "equals": true
+    }
   ],
-  "provides": ["governance"],
+  "provides": [
+    "governance"
+  ],
   "conflicts": [],
   "declares": {
-    "detectors": ["git-repository", "node-workspace", "python-project"],
-    "schemas": ["project", "profile"]
+    "detectors": [
+      "git-repository",
+      "node-workspace",
+      "python-project"
+    ],
+    "schemas": [
+      "project",
+      "profile",
+      "stewardship",
+      "estate"
+    ]
   },
+  "documents": [
+    {
+      "id": "stewardship",
+      "source": "capabilities/governance/stewardship.json",
+      "validates": "stewardship"
+    }
+  ],
   "installs": [
     {
       "mode": "reading",
@@ -24,6 +46,12 @@
       "class": "binding",
       "target": ".agents/project/project.json",
       "validates": "project"
+    },
+    {
+      "mode": "estate",
+      "class": "binding",
+      "target": ".agents/project/estate.json",
+      "validates": "estate"
     },
     {
       "mode": "seed",
@@ -54,17 +82,25 @@
     {
       "id": "FF-BINDING-SCHEMA-PROJECT",
       "kind": "schema-valid",
-      "params": { "file": ".agents/project/project.json", "schema": "project" }
+      "params": {
+        "file": ".agents/project/project.json",
+        "schema": "project"
+      }
     },
     {
       "id": "FF-BINDING-SCHEMA-PROFILE",
       "kind": "schema-valid",
-      "params": { "file": ".agents/project/profile.json", "schema": "profile" }
+      "params": {
+        "file": ".agents/project/profile.json",
+        "schema": "profile"
+      }
     },
     {
       "id": "FF-KIT-CLASS",
       "kind": "path-class-total",
-      "params": { "root": ".agents" }
+      "params": {
+        "root": ".agents"
+      }
     },
     {
       "id": "FF-KIT-PROJECTION",
@@ -74,7 +110,9 @@
     {
       "id": "FF-READING-FRESH",
       "kind": "reading-current",
-      "params": { "file": ".agents/project/profile.json" }
+      "params": {
+        "file": ".agents/project/profile.json"
+      }
     }
   ]
 }

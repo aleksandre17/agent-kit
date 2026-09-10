@@ -1,0 +1,102 @@
+{
+  "$id": "estate",
+  "title": "The estate -- what this host RECEIVED from the kit, read at a stated moment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kit_version",
+    "algorithm",
+    "newline",
+    "taken_at",
+    "signed_by",
+    "files"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer"
+    },
+    "kit_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "algorithm": {
+      "type": "string",
+      "minLength": 1
+    },
+    "newline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "taken_at": {
+      "description": "The moment this reading was taken. A digest reads afterwards exactly like a permanent property of a file; it is not one, and every comparison against this document states BOTH moments.",
+      "type": "string",
+      "minLength": 1
+    },
+    "signed_by": {
+      "description": "Who accepted the writes this document records. A record of what a machine did to a host, with no name on it, cannot be contradicted by anyone.",
+      "type": "string",
+      "minLength": 1
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "class",
+          "mode",
+          "capability",
+          "digest"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "class": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mode": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The install mode that wrote this path. WHO owns its bytes follows from the mode and is not restated here: a steward written into the record would be a second home for a truth stewardship.json declares, and -- being a short, generic word living in a host's own document -- it would also attribute any line that happened to contain it."
+          },
+          "capability": {
+            "type": "string",
+            "minLength": 1
+          },
+          "digest": {
+            "description": "What the bytes were when they were written -- or NULL where a digest would measure nothing: a directory the host fills, a projection recomputed every run, the estate itself. Null is a DECLARED absence of a measurement and never a stand-in for one.",
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "orphaned_at": {
+            "description": "The kit version that stopped shipping this path. The file stays -- the host owns it -- and this row keeps accounting for it, so a withdrawn path never becomes an unexplained file in a governed plane.",
+            "type": "string",
+            "minLength": 1
+          },
+          "adopted_by": {
+            "type": "string",
+            "minLength": 1
+          },
+          "adopted_at": {
+            "type": "string",
+            "minLength": 1
+          },
+          "superseded": {
+            "description": "The digest of what this host had at this path before a named human accepted its replacement. The bytes are not archived here; the refusal happens BEFORE the write, so the host still holds them at the moment it decides.",
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "description": "Every path the kit wrote into this host. An empty list is a DECLARED zero and is written out as one -- but no count stands beside it: a derived number is a thing no host was ever told, and the honest place for one is the surface that prints it in front of the reader, computed where it can be seen to have been computed."
+    }
+  }
+}
