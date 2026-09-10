@@ -35,15 +35,14 @@
         {
           "cell": "retired",
           "state": "retired",
-          "file": "remove",
-          "record": "forget"
+          "file": "keep",
+          "record": "orphan"
         },
         {
           "cell": "retired-diverged",
-          "state": "retired-diverged",
+          "state": "retired",
           "file": "keep",
-          "record": "carry",
-          "refuse": true
+          "record": "orphan"
         },
         {
           "cell": "unchanged",
@@ -68,7 +67,8 @@
           "state": "conflicted",
           "file": "keep",
           "record": "carry",
-          "refuse": true
+          "refuse": true,
+          "adoptable": "advanced"
         },
         {
           "cell": "converged",
@@ -184,13 +184,13 @@
         {
           "cell": "retired",
           "state": "retired",
-          "file": "remove",
+          "file": "keep",
           "record": "forget"
         },
         {
           "cell": "retired-diverged",
           "state": "retired",
-          "file": "remove",
+          "file": "keep",
           "record": "forget"
         },
         {
@@ -330,13 +330,13 @@
         {
           "cell": "retired",
           "state": "retired",
-          "file": "remove",
+          "file": "keep",
           "record": "forget"
         },
         {
           "cell": "retired-diverged",
           "state": "retired",
-          "file": "remove",
+          "file": "keep",
           "record": "forget"
         },
         {

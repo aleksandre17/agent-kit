@@ -53,7 +53,11 @@
                   "type": "string",
                   "enum": ["advance", "carry", "forget", "orphan", "drop"]
                 },
-                "refuse": { "type": "boolean" }
+                "refuse": { "type": "boolean" },
+                "adoptable": {
+                  "description": "This refusal is one a NAMED HUMAN may accept, and the cell it becomes when they do. Absent means the refusal stands whoever is asking -- a structural contradiction is not a thing anyone has the standing to wave through, and a flag that could wave it through would be an exemption field on a gate. Adoption is not that: it is a door, and it leaves a name, a moment and the digest it superseded on the row itself.",
+                  "type": "string", "minLength": 1
+                }
               }
             }
           }

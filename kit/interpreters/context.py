@@ -33,6 +33,16 @@ class Context:
         #: run as a corpse. Carried as a READING the context can state, so that a declaration
         #: names what to do about it and no interpreter holds a hidden exemption.
         self.in_flight = set()
+        #: What a NAMED HUMAN has accepted during this run, by path: who, when, and the digest
+        #: their acceptance supersedes. Carried as a READING the context can state, for the same
+        #: reason the set above is: the decision belongs to the run, the record of it belongs to
+        #: the host, and nothing in between may hold a hidden exemption. Empty is the ordinary
+        #: case and is an honest one -- an upgrade nobody had to accept accepted nothing.
+        self.adopted = {}
+        #: What a reconciliation has already decided about a path, by path. Empty where nothing
+        #: has read a record -- and then every install mode's own foresight answers, which is
+        #: exactly what it is for: the rule a foresight can state when there is no record to read.
+        self.decided = {}
 
     # -- boundary ---------------------------------------------------------------------------
     def boundary(self) -> dict:

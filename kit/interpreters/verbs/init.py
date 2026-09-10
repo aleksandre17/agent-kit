@@ -142,9 +142,15 @@ def _install_plan(ctx, enabled, state) -> list:
             phase, foresee, _apply_fn = _mode_of(capability, item)
             if phase not in INSTALLED_PHASES or (phase != "answer" and not state["approved"]):
                 continue
+            # A disposition this run has ALREADY DECIDED outranks the mode's own foresight, and
+            # this is not a precedence ladder: the mode's rule is what a foresight can say with no
+            # record to read -- `vendor` replaces because nothing could tell it whether the host
+            # had touched the file. Where a reconciliation HAS read the record, it has answered
+            # the same question with more evidence, and the answer arrives here as data so that
+            # foresee and apply remain ONE decision across both verbs.
             writes.append(plan_module.Write(
-                foresee(scoped, item, state), item["class"], item["mode"],
-                capability.id, item["target"], item))
+                ctx.decided.get(item["target"]) or foresee(scoped, item, state),
+                item["class"], item["mode"], capability.id, item["target"], item))
     return writes
 
 

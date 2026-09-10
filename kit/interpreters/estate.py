@@ -172,6 +172,10 @@ def rows(ctx, capabilities, stewards: Stewardship) -> list:
                 "capability": capability.id,
                 "digest": _digest(ctx.workspace, path) if taken else None,
             }
+            # An acceptance is carried ONTO the row it is about. A record of what was overwritten,
+            # kept anywhere other than beside the thing overwritten, is a record nobody reading
+            # that path will ever find.
+            found[path].update(ctx.adopted.get(path, {}))
     return [found[path] for path in sorted(found)]
 
 

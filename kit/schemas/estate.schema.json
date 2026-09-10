@@ -81,18 +81,19 @@
             "type": "string",
             "minLength": 1
           },
-          "adopted_by": {
-            "type": "string",
-            "minLength": 1
-          },
-          "adopted_at": {
-            "type": "string",
-            "minLength": 1
-          },
           "superseded": {
             "description": "The digest of what this host had at this path before a named human accepted its replacement. The bytes are not archived here; the refusal happens BEFORE the write, so the host still holds them at the moment it decides.",
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
+          },
+          "signed_by": {
+            "description": "Who accepted a replacement at this path, and when. The two fields a door records are the door's vocabulary and are not renamed here: an acceptance is a NAME and a MOMENT wherever it is made, and a second spelling of it is how one half of a system goes on saying `accepted` while the other reads `adopted`.",
+            "type": "string",
+            "minLength": 1
+          },
+          "signed_at": {
+            "type": "string",
+            "minLength": 1
           }
         }
       },
