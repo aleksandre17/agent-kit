@@ -52,7 +52,7 @@ def _report(ctx, recorded, rows, stewards) -> None:
     for state, count in reconcile.census(stewards, rows):
         print(f"  {count:>4}  {state}")
     for row in rows:
-        if row["refuse"] or row["record"] != "carry" or row["shipped"] != row["here"]:
+        if row["refuse"] or row["cell"] != reconcile.UNCHANGED:
             print(f"  {row['state']:>16}  {row['path']}  --  {row['why']}")
 
 
@@ -111,7 +111,7 @@ def run(ctx, args) -> int:
     # The reconciliation's verdict is handed to the installer as DATA. `init` carries it out and
     # decides nothing again -- which is the only construction under which what was just printed
     # and what is about to be written cannot be two different things.
-    ctx.decided = {row["path"]: row["file"] for row in rows}
+    ctx.decided = {row["path"]: row for row in rows}
 
     if getattr(args, "plan", False):
         print(f"upgrade: reconciled; the writes below are {init_verb.SUMMARY}")

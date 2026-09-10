@@ -48,6 +48,14 @@ STEWARDSHIP = "stewardship"
 RECORDED = "recorded"
 NOT_TAKEN = "not-taken"
 
+#: What happens to a ROW, as the stewardship schema enumerates it. A row's fate is a separate
+#: axis from its file's: a path can be left untouched on disk and still have its digest advance,
+#: or be kept on disk and dropped from the account. Collapsing the two erases the one thing this
+#: record exists to hold -- a divergence measured back onto the row is a divergence forgotten.
+ADVANCE = "advance"
+CARRY = "carry"
+ORPHAN = "orphan"
+
 
 class EstateError(KitError):
     """The host's record of what it received is absent, or cannot be honestly taken."""
@@ -145,15 +153,42 @@ def is_root(path: str) -> bool:
     return path.endswith("/")
 
 
+def _shipping(ctx, path: str, incoming: dict):
+    """The bytes this run leaves at a path: the payload's where one is being written, and
+    whatever is there otherwise."""
+    item = incoming.get(path)
+    if item is not None:
+        return hashlib.sha256(
+            ctx.manifest.payload_text(item["source"]).encode("utf-8")).hexdigest()
+    return _digest(ctx.workspace, path)
+
+
 def _digest(ws, path: str):
     if not ws.exists(path) or ws.path(path).is_dir():
         return None
     return hashlib.sha256(ws.read_bytes(path)).hexdigest()
 
 
-def rows(ctx, capabilities, stewards: Stewardship) -> list:
-    """Every path this kit's declarations say it writes into this host, measured as it now
-    stands. Sorted by path: a record is read by people, and by tests."""
+def rows(ctx, capabilities, stewards: Stewardship, recorded=None, decided=None,
+         writes=()) -> list:
+    """Every path this kit accounts for in this host, and what the kit GAVE at each one.
+
+    Measuring the disk is right only where this run actually delivered something. Where a
+    reconciliation decided to CARRY a row -- a file the host changed and the kit left alone --
+    measuring would write the host's own bytes into the record as though the kit had shipped
+    them, and the divergence would be gone by the next run: erased by the act of recording it.
+    So the outcome for the row arrives as data, from the declaration that decided it, and an
+    absent decision means this run gave what it says it gave.
+    """
+    prior = {row["path"]: row for row in (recorded or {}).get("files", [])}
+    decided = decided or {}
+    #: What the FORESEEN writes will leave at a path, where a declaration can say so before the
+    #: byte is written: a source's payload is the bytes, verbatim. Reading the disk instead would
+    #: make this record depend on WHEN it was taken relative to the writes it describes -- the
+    #: plan would foresee one document and the apply would leave another, over the one file whose
+    #: whole job is to say what happened.
+    incoming = {write.target: write.item for write in writes
+                if write.disposition != "keep" and (write.item or {}).get("source")}
     found = {}
     for capability in capabilities:
         for item in capability.installs:
@@ -165,13 +200,18 @@ def rows(ctx, capabilities, stewards: Stewardship) -> list:
                     f"{capability.id!r} -- one path with two owners is not a path"
                 )
             taken = (stewards.measures(steward) and not is_root(path))
-            found[path] = {
-                "path": path,
-                "class": item["class"],
-                "mode": item["mode"],
-                "capability": capability.id,
-                "digest": _digest(ctx.workspace, path) if taken else None,
-            }
+            outcome = (decided.get(path) or {}).get("record", ADVANCE)
+            held = prior.get(path)
+            if outcome == CARRY and held is not None:
+                found[path] = dict(held)
+            else:
+                found[path] = {
+                    "path": path,
+                    "class": item["class"],
+                    "mode": item["mode"],
+                    "capability": capability.id,
+                    "digest": _shipping(ctx, path, incoming) if taken else None,
+                }
             # An acceptance is carried ONTO the row it is about. A record of what was overwritten,
             # kept anywhere other than beside the thing overwritten, is a record nobody reading
             # that path will ever find.
@@ -220,7 +260,7 @@ def restates(recorded, ctx, entries: list, signed_by: str) -> bool:
             and recorded["signed_by"] == signed_by)
 
 
-def take(ctx, capabilities, moment: str, signed_by: str, entries=None) -> dict:
+def take(ctx, capabilities, moment: str, signed_by: str, entries=None, writes=()) -> dict:
     """Measure this host and record what it holds. Written through a workspace scoped to the
     declaring capability's own targets -- `installs` is the write permission, and an estate is
     not a way around it."""
@@ -228,7 +268,7 @@ def take(ctx, capabilities, moment: str, signed_by: str, entries=None) -> dict:
     path = target(ctx)
     owner = next(c for c in capabilities for i in c.installs if i["target"] == path)
     if entries is None:
-        entries = rows(ctx, capabilities, stewards)
+        entries = rows(ctx, capabilities, stewards, read(ctx), ctx.decided, writes)
     record = document(ctx, entries, moment, signed_by)
     errors = ctx.manifest.validate(record, ctx.install_of_mode(MODE)["validates"])
     if errors:

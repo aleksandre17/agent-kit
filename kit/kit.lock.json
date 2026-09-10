@@ -101,7 +101,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "7059a06a0abf9d5a5f7fb764260172df9b46a42f6b7482231081f637ae6ee246",
+      "digest": "fd4ad8ba579a60cacbc86e7a0dde64864d4fb982647a13eb6eecfe72378d5966",
       "path": "capabilities/governance/stewardship.json"
     },
     {
@@ -329,7 +329,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "5906f61ef5ac54b0e229c5f05a610bb98f5e67879b898666a74bc31f4dd274ea",
+      "digest": "4e3cb3061dee00c69d7c61b600df9d78b5bd7ee8550f1f2210d1639f147f43e9",
       "path": "interpreters/estate.py"
     },
     {
@@ -461,7 +461,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "10f8079b35493464772747147e68c38c75427c536ddfdeabff2146c89d49d20f",
+      "digest": "ffc5527ef36262fe7f99eb6330099149cbca3e5cbd7f3f9b49f4f3ff36e7872c",
       "path": "interpreters/verbs/init.py"
     },
     {
@@ -485,7 +485,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4e56e2cf87e5dec0f15377d3ea00aba8c5c43e77111bf535e9e3f11fdb886bb7",
+      "digest": "d64034719d1a969433734c39690676c19c2ad0d8b44f52df9cec07b121f085f6",
       "path": "interpreters/verbs/upgrade.py"
     },
     {
@@ -630,5 +630,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-10T13:12:06+00:00"
+  "taken_at": "2026-09-10T13:23:34+00:00"
 }

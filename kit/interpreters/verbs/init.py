@@ -149,28 +149,36 @@ def _install_plan(ctx, enabled, state) -> list:
             # the same question with more evidence, and the answer arrives here as data so that
             # foresee and apply remain ONE decision across both verbs.
             writes.append(plan_module.Write(
-                ctx.decided.get(item["target"]) or foresee(scoped, item, state),
+                (ctx.decided.get(item["target"]) or {}).get("file")
+                or foresee(scoped, item, state),
                 item["class"], item["mode"], capability.id, item["target"], item))
     return writes
 
 
-def _record_plan(ctx, enabled, signed_by) -> list:
+def _record_plan(ctx, enabled, signed_by, writes=()) -> list:
     """The estate write, foreseen -- and foreseen by MEASURING, not by assuming a run writes.
 
     Empty where this kit declares no estate at all: a kit that records nothing says so by planning
     nothing, rather than leaving an operator to notice an absence. Where a record already stands
-    and a fresh reading would say exactly the same thing, the disposition is `keep`, because the
-    moment that document states is the moment this host received those bytes and no run may move
-    it over a delivery that did not happen.
+    and this run gives nothing, the disposition is `keep`, because the moment that document states
+    is the moment this host received those bytes and no run may move it over a delivery that did
+    not happen.
+
+    Whether this run gives anything is read from the OTHER writes it has already foreseen, and
+    never from the disk in front of it. A record planned by measuring what is there NOW would
+    foresee `keep` and then find itself replaced by the very writes it was planned beside -- the
+    plan and the apply disagreeing about the one file whose job is to say what happened.
     """
     item = ctx.install_of_mode("estate", required=False)
     if item is None:
         return []
     owner = next(c for c in enabled for i in c.installs if i["target"] == item["target"])
-    entries = estate_module.rows(ctx, enabled, estate_module.stewardship(ctx))
+    recorded = estate_module.read(ctx)
+    entries = estate_module.rows(ctx, enabled, estate_module.stewardship(ctx),
+                                 recorded, ctx.decided, writes)
     if not ctx.workspace.exists(item["target"]):
         disposition = "create"
-    elif estate_module.restates(estate_module.read(ctx), ctx, entries, signed_by):
+    elif estate_module.restates(recorded, ctx, entries, signed_by):
         disposition = "keep"
     else:
         disposition = "replace"
@@ -269,7 +277,8 @@ def run(ctx, args) -> int:
     writes = _install_plan(ctx, enabled, state)
     if getattr(args, "plan", False):
         if approved:
-            writes = writes + render_verb.plan_entries(ctx, enabled) + _record_plan(ctx, enabled, _signed(args, existing))
+            writes = writes + render_verb.plan_entries(ctx, enabled)
+            writes = writes + _record_plan(ctx, enabled, _signed(args, existing), writes)
         print(plan_module.report("init", writes))
         return 0
 
@@ -291,10 +300,10 @@ def run(ctx, args) -> int:
     # plan by construction and could never contradict it, which is an attribution that cannot
     # fail. It carries the NAME on the door: what a machine did to a host, with nobody's name on
     # it, is a thing no one can be held to.
-    for write in _record_plan(ctx, enabled, ctx.host_answers()[doors.SIGNED_BY]):
+    for write in _record_plan(ctx, enabled, ctx.host_answers()[doors.SIGNED_BY], writes):
         if write.disposition != "keep":
             estate_module.take(ctx, enabled, reading["taken_at"],
-                               ctx.host_answers()[doors.SIGNED_BY])
+                               ctx.host_answers()[doors.SIGNED_BY], writes=writes)
         print(f"  {write.accomplished:<9}  {write.target}")
 
     return check_verb.run(ctx, args)

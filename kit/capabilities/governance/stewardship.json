@@ -155,7 +155,7 @@
     {
       "id": "derived",
       "summary": "A projection has no history: it is deleted and rebuilt from VENDOR + BINDING on every run, so there is nothing for it to drift FROM and nothing to reconcile. Its digest is never recorded, because a digest of a thing recomputed every run is a reading that measures the clock.",
-      "digest": "recorded",
+      "digest": "not-taken",
       "cells": [
         {
           "cell": "introduced",

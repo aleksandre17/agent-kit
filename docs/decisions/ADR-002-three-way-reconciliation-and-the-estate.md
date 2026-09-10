@@ -76,8 +76,8 @@ arrives one day and is silently reconciled under whichever rule was cheapest to 
 | 4 | · | ✓ | ✓ | `collision` | **REFUSE** | **REFUSE** | **REFUSE** | n/a |
 | 5 | ✓ | · | · | `forgotten` | forget | forget | forget | forget |
 | 6 | ✓ | · | ✓ | `restored` | create | create | create | create |
-| 7a | ✓ | =S | · | `retired` | remove | orphan | remove | orphan |
-| 7b | ✓ | ≠S | · | `retired-diverged` | **REFUSE** | orphan | remove | orphan |
+| 7a | ✓ | =S | · | `retired` | orphan | orphan | forget | orphan |
+| 7b | ✓ | ≠S | · | `retired-diverged` | orphan | orphan | forget | orphan |
 | 8a | ✓ | =S | =S | `unchanged` | keep | keep | rebuild | keep |
 | 8b | ✓ | =S | ≠S | `advanced` | replace | `available` (keep) | rebuild | keep |
 | 8c | ✓ | ≠S | =S | `diverged-kept` | **keep + report, every run** | keep | rebuild | keep |
@@ -98,9 +98,15 @@ Notes on the cells that are not obvious:
   alternative — treating a deletion as a silent decision — would give a decision a home nobody
   can read. Taken knowingly: a host that means to be rid of a shipped path disables the capability
   that declares it.
-- **7b `retired-diverged`** for `kit` — withdrawing a file the host has since edited destroys host
-  work in the name of tidiness. Refused.
-- **7a/7b `orphan`** for host-owned paths — the file STAYS and the estate KEEPS the row, marked
+- **7a/7b `retired`** — the first draft of this table had the kit DELETE a withdrawn file it owned,
+  and refuse where the host had edited it. Building it settled the question without anyone
+  choosing: **a capability's `installs` IS its write permission, so a path the new kit no longer
+  declares is a path nothing gives it permission to touch.** The kit cannot delete there, and the
+  cell collapses to `orphan` for every steward whose plane the kit does not rebuild wholesale.
+  `derived` is the exception and not an exception to the law: `render` already tears its whole
+  plane down and rebuilds it under an authority the projection plane grants, so a withdrawn
+  projection is `forget` — the row goes, and render removes the file.
+- **7a/7b `orphan`** — the file STAYS and the estate KEEPS the row, marked
   orphaned with the version that withdrew it. The path therefore remains accounted for by a
   declaration rather than becoming, at the next run, an unexplained file in a governed plane. The
   kit stops shipping it; it does not stop knowing about it.
@@ -109,6 +115,21 @@ Notes on the cells that are not obvious:
   that edits the host's own words.
 - **8e `converged`** — the host had already made precisely the change upstream now ships. A naive
   implementation reports this as a conflict; it is agreement, and the estate simply advances.
+
+### 3b. `upgrade` is a GATE IN FRONT OF THE INSTALLER, not a second installer
+
+`init` already carries out every install mode correctly. A second write path in `upgrade` would be
+a second home for the one thing that must never have two, and it would drift from the first the
+week after it was written. What was missing was never the writing — it was the judgement of
+whether the writing is safe. So `upgrade` reconciles, refuses or passes, and then calls `init`.
+
+That leaves one hazard, and it is the one this design nearly shipped: `vendor` replaces wholesale.
+That rule is correct for a foresight with **no record to read** — nothing could tell it whether
+the host had touched the file. The reconciliation HAS read one, so its verdict is handed to `init`
+as data, and the mode's own foresight yields to it. It is not a precedence ladder and not an
+override: it is the same question answered with more evidence, arriving as a value, so that
+foresee and apply remain ONE decision *across two verbs*. A test compares the plan of an upgrade
+with what the upgrade did, and a smoke run caught the silent overwrite before any test existed.
 
 ### 4. The state of a legitimately locally-modified shipped file
 
@@ -186,7 +207,16 @@ that must never run, and it still does not record WHO approved anything or WHEN.
 a tree inside the host that the host's own class-total gate would then have to be taught to
 ignore — a new exemption to protect an artefact whose only job is bookkeeping.
 
-**D. Interactive per-file prompting (the `dpkg` conffile experience).**
+**D. `upgrade` as a second installer, with its own write path.**
+The obvious shape, and the one every "upgrade command" in the wild has. Rejected because the two
+installers would then hold the same knowledge — which mode writes what, in which order, under
+which scope — and would be correct together only for as long as somebody kept them in step.
+Synchronisation by discipline is not a mechanism. It would also have hidden the defect that
+actually mattered: with one installer, the vendor mode's unconditional replace was visible as a
+contradiction with the reconciliation's verdict, and had to be resolved. With two, both would have
+been internally correct and the host's edits would have vanished quietly.
+
+**E. Interactive per-file prompting (the `dpkg` conffile experience).**
 Proven prior art, and deliberately not taken. Its record is a terminal session; the resolution
 lives in the operator's memory and in `.dpkg-dist` files that accumulate unread. This kit already
 owns a better instrument — a door, with a name and a moment, recorded in a declaration — and
