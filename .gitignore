@@ -1,5 +1,7 @@
-# Bytecode is EPHEMERAL and it appears INSIDE the payload the moment the kit runs — the exact
-# condition the layout proposal names: unclassed state sitting in what we call the portable kit.
-# Until self-vendoring enumerates what ships (kit.lock.json, not in this slice), this is the fence.
+# This is NO LONGER THE MECHANISM, and it must not be read as one. Bytecode used to appear INSIDE
+# the payload the moment the kit ran — unclassed state sitting in what we call the portable kit —
+# and this fence was all that stood against it. `kit.lock.json` now enumerates what ships, the
+# interpreter no longer writes bytecode at all, and the lock REFUSES any path it cannot account
+# for. What remains here is ordinary git hygiene for a developer's tree, nothing more.
 __pycache__/
 *.py[cod]
