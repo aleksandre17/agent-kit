@@ -22,6 +22,17 @@ The order is the whole mechanism. The record is written **before** the work, hol
 status, and rewritten **once** when the run declares its end. A record written only at the end
 would prove nothing about the runs that matter most — the ones that never reach an end.
 
+## The one record a reading may not treat as a corpse
+
+A run cannot judge its own liveness. While `check` runs, the run that started it is holding an
+open record of its own — legitimately unclosed, because it has not finished — and a reading that
+could not tell that from a run that died would report every healthy run as one.
+
+That is not an exemption hidden in the machinery. The reading of a record carries one field no
+record can hold, `in_flight`, which is true only of the run doing the reading, and the kit's own
+disposition below NAMES it. A host may declare a reading that does not exclude it. The exclusion
+is data, it is on this page, and it is yours to tighten.
+
 ## Enforcement, and the number that has never been declared
 
 This gate names a crossing the **first** time it sees one. It does not observe for a while and

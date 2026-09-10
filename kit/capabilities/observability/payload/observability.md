@@ -27,6 +27,13 @@ nothing on the disk can tell you which one you are looking at.
 So a process that is killed leaves its record holding the unset status forever. That is the record
 working, not failing.
 
+One record is never read as a corpse: the one belonging to the run doing the reading. A run cannot
+judge its own liveness — its record is unclosed because it has not finished — and a sensor unable
+to tell that from a death would name every healthy run. The reading of a record therefore carries
+one field no record can hold, stating whether the run holding it is the one asking, and the
+declaration NAMES that field rather than the machinery quietly skipping a row. An exclusion nobody
+can see is indistinguishable from a blind spot.
+
 ## What is recorded, and in whose words
 
 Where the field already has a word, the receipt uses it: a run carries a name, a status of unset, ok

@@ -42,7 +42,11 @@ def _reading(ctx, record: dict) -> dict:
     one thing only the running process can know. A reading, never a rewrite -- nothing here
     reaches the record on disk."""
     reading = dict(record)
-    reading[IN_FLIGHT] = record.get(collection.IDENTITY) in ctx.in_flight
+    #: A record found on disk can never carry this field -- the schema that governs a receipt
+    #: closes itself to properties it did not declare, so a planted file cannot claim to be alive
+    #: and walk past the sensor. A declared SPECIMEN can, and must: a calibration states the whole
+    #: reading it is measured on, including the half no document could ever hold.
+    reading.setdefault(IN_FLIGHT, record.get(collection.IDENTITY) in ctx.in_flight)
     return reading
 
 
