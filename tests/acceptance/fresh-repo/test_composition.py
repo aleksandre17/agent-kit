@@ -7,6 +7,69 @@ import unittest
 from pathlib import Path
 
 from harness import FIXTURES, KIT, Fixtures, install_order
+from manifest import Manifest  # noqa: E402  -- the path is prepared by importing harness first
+
+
+# ------------------------------------------------------------------------------------------
+# The ordering RULE, transcribed -- not imported, and not copied from an output.
+#
+# A literal list of paths is a SECOND HOME for the manifest: it goes red every time a capability
+# is added, for a reason that has nothing to do with ordering, and what it finally agrees with is
+# yesterday's output rather than the rule. So the rule is stated here in its own words and the
+# expected sequence is DERIVED from the same declarations the interpreter reads.
+#
+# It is a transcription and never a call: nothing below imports `resolver`. If the two ever
+# disagree, one of them is wrong and the suite says so -- which is the whole point of writing the
+# rule twice in two languages rather than once and quoting its answer.
+# ------------------------------------------------------------------------------------------
+
+def dependency_levels(capabilities) -> list:
+    """The rule: **dependencies first, ties broken by id** -- read level by level.
+
+    A capability is READY when every capability providing something it requires is already
+    placed. All capabilities ready at once form one LEVEL, and inside a level the order is by id.
+    The level is the part a literal list can never show: it is why `observability` precedes
+    `hygiene` although `h` sorts first -- they are not tied, they are on different levels.
+    """
+    provided: dict = {}
+    for capability in capabilities:
+        for name in capability.raw.get("provides", []):
+            provided.setdefault(name, set()).add(capability.id)
+    depends = {
+        capability.id: {
+            provider
+            for need in capability.requires if need["kind"] == "capability"
+            for provider in provided.get(need["id"], set()) if provider != capability.id
+        }
+        for capability in capabilities
+    }
+    placed, levels = set(), []
+    while len(placed) < len(capabilities):
+        ready = sorted(c.id for c in capabilities if c.id not in placed and depends[c.id] <= placed)
+        if not ready:
+            raise AssertionError(f"no order satisfies {sorted(set(depends) - placed)}")
+        levels.append(ready)
+        placed |= set(ready)
+    return levels
+
+
+def expected_install_order(kit_root) -> list:
+    """The path sequence the ordering rule implies for a kit, derived from its declarations.
+
+    Two rules compose, and both are read from the declarations rather than remembered:
+      * capabilities run in dependency order (above);
+      * inside a capability, installs happen in the order they are DECLARED -- except that the
+        PROJECTION class is a later phase, so every projection of the whole set follows every
+        install of the whole set.
+    """
+    capabilities = Manifest(kit_root).capabilities
+    by_id = {c.id: c for c in capabilities}
+    ordered = [by_id[cid] for level in dependency_levels(capabilities) for cid in level]
+    phases = [
+        [item for c in ordered for item in c.installs if item["class"] != "projection"],
+        [item for c in ordered for item in c.installs if item["class"] == "projection"],
+    ]
+    return [item["target"] for phase in phases for item in phase]
 
 
 # ==========================================================================================
@@ -83,48 +146,48 @@ class Composition(Fixtures, unittest.TestCase):
 
     # -- ordering ---------------------------------------------------------------------------
     def test_24_the_install_order_is_declared_not_incidental(self):
-        """Assert the ORDER, not the set: dependencies first, ties by id. And assert it does not
-        move when the manifest lists the same capabilities the other way round."""
+        """Assert the RULE, not a remembered sequence: dependencies first, ties by id, level by
+        level -- derived from the same declarations the run reads. And assert it does not move
+        when the manifest lists the same capabilities the other way round.
+
+        What this used to assert was a literal list of paths, which is a second home for the
+        manifest: it agreed with yesterday's output and went red whenever a capability arrived,
+        for a reason that was never about ordering. The bite is unchanged and now has to be
+        argued for rather than remembered, so the guards below are the price of the derivation:
+        an expectation computed from the same file the run reads could otherwise be satisfied by
+        an empty list, by a set that lost a capability, or by a rule that placed a requirer
+        before its provider -- and each of those is asserted against explicitly.
+        """
         straight = self.run_kit(KIT, self.host(), "init", "--approve", "acceptance-suite")
         self.assertEqual(0, straight.returncode, straight.stderr)
-        self.assertEqual([
-            # `delivery` requires no provision, so it ties with `governance` and the tie is broken
-            # by id -- which is why it goes first. `knowledge` requires governance and can never
-            # precede it, whatever order the manifest happens to list them in.
-            ".agents/project/delivery/policy.json",
-            ".agents/project/delivery/cards/",
-            ".agents/kit/doctrine/delivery.md",
-            # `evaluation` requires no provision either, so it is in the same tie and its id
-            # places it second. Nothing about JUDGING makes it late: it lays a blank declaration
-            # and an empty space, and both are as early as anything else that depends on nothing.
-            ".agents/project/evaluation/evaluation.json",
-            ".agents/project/evaluation/readings.json",
-            ".agents/runtime/evaluation/judgements/",
-            ".agents/kit/doctrine/evaluation.md",
-            ".agents/project/profile.json",
-            ".agents/project/project.json",
-            ".agents/project/laws.md",
-            ".agents/.gitignore",
-            ".agents/kit/doctrine/governance.md",
-            # `observability` requires no provision either, so it is in the same tie as the two
-            # above and its id places it third -- after `governance`, before anything that
-            # depends on governance. Nothing about WATCHING a run makes it late.
-            ".agents/project/observability/observation.json",
-            ".agents/runtime/observability/runs/",
-            ".agents/kit/doctrine/observability.md",
-            # `hygiene` and `knowledge` both require what governance provides, so neither may
-            # precede it; the tie between the two is broken by id, and hygiene lands first.
-            ".agents/project/hygiene/residence.json",
-            ".agents/kit/doctrine/hygiene.md",
-            ".agents/kit/doctrine/knowledge.md",
-            "docs/decisions/ADR-0001-a-documents-kind-decides-its-authority.md",
-            "docs/reference/README.md",
-            ".agents/generated/delivery/BOARD.md",
-            ".agents/generated/evaluation/QUALITY.md",
-            ".agents/generated/governance/INDEX.md",
-            ".agents/generated/observability/RUNS.md",
-            ".agents/generated/hygiene/RESIDENCE.md",
-        ], install_order(straight.stdout))
+        walked = install_order(straight.stdout)
+        expected = expected_install_order(KIT)
+
+        # An expectation derived from a declaration can be vacuous. These four say it is not:
+        # it is non-empty, it is not one capability's worth, every declared capability put at
+        # least one path into it, and no capability's paths are interleaved with another's.
+        capabilities = Manifest(KIT).capabilities
+        self.assertGreater(len(expected), len(capabilities), "a derived expectation that small "
+                           "would be satisfied by almost any order")
+        self.assertEqual(sorted(expected), sorted(walked),
+                         "the run touched a different SET of paths than the declarations imply")
+        for capability in capabilities:
+            self.assertTrue(set(capability.targets()) & set(walked),
+                            f"{capability.id} declares installs and touched no path")
+
+        # ... and the rule itself: a capability that REQUIRES a provision may never be reached
+        # before the capability offering it. Asserted over the walked order directly, so it holds
+        # even if the derivation above were wrong in the same direction.
+        first_touch = {c.id: min(walked.index(t) for t in c.targets()) for c in capabilities}
+        provides = {p: c.id for c in capabilities for p in c.raw.get("provides", [])}
+        for capability in capabilities:
+            for need in capability.requires:
+                provider = provides.get(need["id"]) if need["kind"] == "capability" else None
+                if provider and provider != capability.id:
+                    self.assertLess(first_touch[provider], first_touch[capability.id],
+                                    f"{capability.id} was reached before {provider}, which it requires")
+
+        self.assertEqual(expected, walked, "the walked order is not the order the rule implies")
 
         def reverse_manifest(kit: Path):
             self.edit_json(kit, "MANIFEST.json",
