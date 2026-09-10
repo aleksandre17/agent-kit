@@ -63,6 +63,35 @@ UNTAKEN = "untaken"
 INSTANCES = "instances"
 ORIGIN = "origin"
 
+#: The STANDING of one member of a declared vocabulary against one composed row, and the three
+#: words this module PROVIDES for it. Naming what you provide is a promise; naming what you
+#: consume is a policy -- so these are spelled here, in the machinery that produces them, and
+#: never read from an instance.
+#:
+#: The whole reason the accounting exists is that these three are told apart nowhere else. A list
+#: of what an instance says it can do reads identically to a list of what it HAS BEEN SEEN to do,
+#: and both read identically to a short list belonging to something that genuinely needs nothing.
+#: So every member of the vocabulary is placed in exactly one of them, for every row, always:
+#:
+#:   CLAIMED -- an instance says it, and nothing has been observed. Testimony, and never a fact.
+#:   PROVEN  -- a RECORD of something that happened names this row and this member. Never
+#:              authored: no instance schema in this kit has a field a proof could be written in.
+#:   ABSENT  -- the vocabulary declares it and this instance claims nothing. A named gap, which
+#:              is the state an empty list can never express.
+CLAIMED = "claimed"
+PROVEN = "proven"
+ABSENT = "absent"
+STANDING = "standing"
+COUNTS = "counts"
+TOTAL = "total"
+
+#: The readable whose records may turn a claim into an observation, BY NAME -- or nothing, which
+#: is a declared gap and not a zero. A count of `0 proven` taken where no source of proof was
+#: declared at all is an attribution that cannot fail, and an attribution that cannot fail
+#: certifies rather than measures. So the name is carried to the surface with the count, and a
+#: surface holding a zero beside no source is required to say which of the two it is looking at.
+PROOF_SOURCE = "proof_source"
+
 
 class CompositionConflict(KitError):
     """An instance and its base both carry one key. Refused rather than ordered: whichever side
@@ -138,6 +167,70 @@ def _merge(instance: dict, base, shape: set, protocol: list) -> dict:
     return row
 
 
+def _observed(spec: dict, readings, identity) -> "set | None":
+    """Which vocabulary members a RECORD says were observed of this row, or None where no source
+    of proof was declared. Nothing is inferred and nothing is assumed: a proof is a record, in a
+    readable the declaration named, that names this row and that member. Where the declaration
+    names no readable this returns None rather than an empty set, because those are two different
+    answers -- `nothing has been observed` and `nothing here could ever observe` -- and a surface
+    shown only the empty set would report the second as the first.
+    """
+    where = spec.get(PROVEN)
+    if not where:
+        return None
+    reading = readings[where["reading"]]
+    return {record[where["names"]] for _rel, record in reading.records
+            if record.get(where["of"]) == identity and where["names"] in record}
+
+
+def _accounted(spec: dict, row: dict, vocabulary: list, observed) -> dict:
+    """One row's standing against the whole declared vocabulary -- every member placed, none
+    omitted. Grouped by standing rather than flagged, so that a surface iterates a state instead
+    of filtering one, and so that a state with no members is a section that can SAY SO.
+
+    This reads a claim and can never read a proof out of one: an instance's own words reach the
+    CLAIMED group and no other, whatever they say. That is not a check performed here -- it is
+    the shape of the data. A claim arrives from a document a host authored; an observation
+    arrives from a record of something that happened; there is no path between them.
+    """
+    names = spec[CLAIMED]["names"]
+    claims = {claim[names]: claim for claim in (row.get(spec[CLAIMED]["field"]) or [])}
+    grouped = {CLAIMED: [], PROVEN: [], ABSENT: []}
+    for member in vocabulary:
+        identity = member[collection.IDENTITY]
+        claim = claims.get(identity)
+        if claim is None:
+            state = ABSENT
+        elif observed is not None and identity in observed:
+            state = PROVEN
+        else:
+            state = CLAIMED
+        entry = dict(member)
+        entry.update({key: value for key, value in (claim or {}).items() if key != names})
+        entry[STANDING] = state
+        grouped[state].append(entry)
+    counts = {state: len(members) for state, members in grouped.items()}
+    counts[TOTAL] = len(vocabulary)
+    return {**grouped, COUNTS: counts, PROOF_SOURCE: (spec.get(PROVEN) or {}).get("reading")}
+
+
+def _accounts(ctx, spec: dict, rows: list, readings) -> None:
+    """The accounting a composition declares, written onto every row it composed. Knows the name
+    of no vocabulary and no member: which list is counted, which field holds the claims and which
+    sub-field names a member all arrive from the declaration that owns them."""
+    where = spec["vocabulary"]
+    vocabulary = declared.rules(ctx, where["sources"], where["list"])
+    for row in rows:
+        if spec["id"] in row and row[spec["id"]] is not None:
+            raise CompositionConflict(
+                f"{row.get(collection.IDENTITY)!r} already carries {spec['id']!r}, which this "
+                f"composition's accounting also produces. A name that resolves to two things is "
+                f"not a name, and the computed value would silently win."
+            )
+        row[spec["id"]] = _accounted(
+            spec, row, vocabulary, _observed(spec, readings, row.get(collection.IDENTITY)))
+
+
 def composed_of(ctx, capability, readings) -> "Composed | None":
     """The composition a capability declares, or None. Every name points INSIDE the capability's
     own declaration; no path, no capability id and no field name reaches this module as a
@@ -156,6 +249,13 @@ def composed_of(ctx, capability, readings) -> "Composed | None":
         _merge(instance, bases.get(instance.get(named_by)), shape, protocol)
         for instance in instances.value
     ]
+
+    # An ACCOUNTING, where one is declared: every member of a declared vocabulary placed against
+    # every composed row, so that what an instance claims, what has been observed of it, and what
+    # it does not claim at all are three groups on the surface rather than one list that reads as
+    # whichever of them the reader already believed.
+    if spec.get("accounts"):
+        _accounts(ctx, spec["accounts"], rows, readings)
 
     # The census is the other half of the same reading, and it is the half that is easy to skip:
     # the composed rows answer "what does this host run", and only the census answers "what was

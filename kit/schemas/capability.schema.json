@@ -100,6 +100,50 @@
           "description": "The view-model name for the roll of BASES with the instances each one has -- including the ones with none. A base shipped and never taken up is a fact; a surface that merely omitted it would read exactly like a kit that never shipped it.",
           "type": "string",
           "minLength": 1
+        },
+        "accounts": {
+          "description": "Every member of a declared VOCABULARY placed against every composed row, so that what an instance CLAIMS, what has been PROVEN of it and what it does not claim AT ALL are three groups rather than one list. Declared where the composition is, because it is the same reading: an instance's list of what it can do is meaningless without the list of what it could have said and did not, and the two are only comparable if some document declared the words first.\n\nWithout this block a capability composes exactly as before. With it, no member of the vocabulary can be omitted from any row -- which is the point, since a short list of claims and an instance that genuinely needs nothing read identically to anyone shown only what is present.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "vocabulary", "claimed"],
+          "properties": {
+            "id": {
+              "description": "The field each composed row carries the accounting under.",
+              "type": "string",
+              "minLength": 1
+            },
+            "vocabulary": {
+              "description": "The named documents and the list within them declaring every member that may be claimed. Several sources for the same reason bases have several: a vocabulary the kit ships and a vocabulary this host adds are both vocabulary, and a member declared twice is refused rather than ordered.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["sources", "list"],
+              "properties": {
+                "sources": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+                "list": { "type": "string", "minLength": 1 }
+              }
+            },
+            "claimed": {
+              "description": "Where an instance's own words live: the field holding its claims, and the sub-field of each naming the vocabulary member it is about. A claim reaches the CLAIMED group and no other, whatever it says -- not by a check, but because an authored document and a record of something that happened are not the same document.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["field", "names"],
+              "properties": {
+                "field": { "type": "string", "minLength": 1 },
+                "names": { "type": "string", "minLength": 1 }
+              }
+            },
+            "proven": {
+              "description": "The readable whose RECORDS may turn a claim into an observation: which reading holds them, which field of a record names the row it is about, and which names the vocabulary member. ABSENT where nothing in this kit can yet observe such a thing -- and absent is a declared gap, carried to every surface as the name that is missing rather than as a count of zero. A zero taken against no instrument is an attribution that cannot fail, and an attribution that cannot fail certifies rather than measures.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["reading", "of", "names"],
+              "properties": {
+                "reading": { "type": "string", "minLength": 1 },
+                "of": { "type": "string", "minLength": 1 },
+                "names": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
         }
       }
     },

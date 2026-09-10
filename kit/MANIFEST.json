@@ -45,6 +45,10 @@
     {
       "id": "roles",
       "declaration": "capabilities/roles/capability.json"
+    },
+    {
+      "id": "runtimes",
+      "declaration": "capabilities/runtimes/capability.json"
     }
   ],
   "detectors": [
@@ -68,6 +72,8 @@
     "quality": "schemas/quality.schema.json",
     "judgement": "schemas/judgement.schema.json",
     "archetype": "schemas/archetype.schema.json",
-    "overlay": "schemas/overlay.schema.json"
+    "overlay": "schemas/overlay.schema.json",
+    "runtime-class": "schemas/runtime-class.schema.json",
+    "runtime": "schemas/runtime.schema.json"
   }
 }

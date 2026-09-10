@@ -1,0 +1,57 @@
+{
+  "$id": "runtime",
+  "title": "A host's RUNTIME DESCRIPTOR -- what this host runs its agents on, what it CLAIMS that tool can do, and nothing it has observed",
+  "description": "One record, one runtime this host uses. It names the class it composes and then says only what a host legitimately says about its own tool: which capabilities it CLAIMS, which settings it was given, which parts of THIS repository it is used for, and what host prose it carries as an appendix.\n\nThe line is the same one the archetype/overlay grammar draws: can the sentence be written without naming a repository or a product? If it can, it is the runtime AS A KIND and belongs in the class registry; if it cannot, it is this host's instance and belongs here. `reach`, `boundary` and `reference_class` are absent from this schema and cannot be added to it -- `additionalProperties` is false -- so a host cannot restate a class's body even by accident, and a descriptor never OVERRIDES: a key carried by both sides is refused rather than ordered, because precedence is exactly how the loser's declaration goes on reading as true.\n\nThe second closure is the one this schema exists for, and it is a closure by ABSENCE. **There is no field here in which a proof can be written.** No `proven`, no `verified`, no `status`, no `tested_at` -- and none may be added, because the document is closed. A descriptor can therefore state a CLAIM and can never state an OBSERVATION: the strongest thing any authored file in this repository can say about a runtime is `we believe it can do this`. Whether it ever did is answered somewhere a host cannot author -- by a record of a run that happened -- and the two can never be confused because they are not the same document, not the same schema, and not written by the same hand. The standing evidence for this design is a peer runtime that once reported all eight of its claimed capabilities as unproven, and was right, including a command shape that had been ASSUMED rather than measured.\n\nA claim is therefore not a lie and not a fact. It is a stated belief with an author, and every surface renders it as one.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "class"],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "class": {
+      "description": "The runtime class this descriptor composes, by id, from any source that declares one -- the kit's registry or the host's own. A host running a kind of tool the kit never anticipated declares the class in its own registry and names it here, so a runtime with no shipped ancestor is still one grammar and not an exception.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "claims": {
+      "description": "What this host BELIEVES this runtime can do -- each naming a capability the class registry declares, and each carrying the reason the host believes it. The reason is required and it is required to be a sentence rather than a flag: `true` cannot be wrong out loud, and a belief that cannot be read cannot be contradicted.\n\nA capability the registry declares and this list omits is not silence -- it is an ABSENT capability, and it is named as one on the surface, because a short list of claims and a runtime that genuinely needs nothing read identically to anyone who is only shown what is present.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability", "says"],
+        "properties": {
+          "capability": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "says": {
+            "description": "Why this host believes it, in the host's own words. Testimony, labelled as testimony.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "settings": {
+      "description": "What this host's tooling is told about this runtime -- an invocation shape, a model, a working directory. Nothing here is true of the runtime as a kind.\n\nRows and not a free-form object, deliberately: an open bag of keys cannot be projected, so a setting nobody anticipated would be carried silently and displayed nowhere. Rows are enumerable, and a name declared twice is refused rather than quietly winning.\n\nA setting is not a capability and cannot become one by being written confidently. The one that broke a peer host was an invocation shape recorded here and never measured -- which is why a setting is projected as what a host CONFIGURED, never as what a runtime DOES.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "value"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "value": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "owns": {
+      "description": "The parts of THIS repository this runtime is used for. Unwriteable in a class by construction: it is a list of names only this host has.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "appendix": {
+      "description": "Host prose, appended to the descriptor after everything the class supplied. An appendix and never a preamble: what a host adds is read AFTER what binds everywhere, so a reader who stops early has read the binding half.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

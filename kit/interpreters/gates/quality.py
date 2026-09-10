@@ -81,11 +81,32 @@ def _referents_across(ctx, among: dict) -> set:
             for row in declared.rules(ctx, among[SOURCES], among[LIST])}
 
 
-def _dangling(record: dict, reference: dict, referents: set) -> bool:
-    """True when this record NAMES a referent and the host declared no such thing. A record that
-    names nothing is not judged: an absence is a state, and only a claim can be false."""
-    named = record.get(reference[FIELD])
-    return named is not None and named not in referents
+#: The word a reference uses to say that the field it reads holds MANY pointers rather than one,
+#: and which sub-field of each row carries the name. Schema vocabulary of this kind's own params,
+#: exactly as `field` is -- and a declared DEPTH rather than a second gate kind, because how deep
+#: a name sits is a property of the record's shape and not a different question: the scan, the
+#: calibration and every word of the report are identical either way. A branch in the machinery
+#: would have made the depth an interpreter's opinion about somebody else's record.
+EACH = "each"
+
+
+def _named(record: dict, reference: dict) -> list:
+    """Every referent this record NAMES through one reference -- none, one, or one per row of a
+    list-valued field. A field the record does not carry names nothing, and a row that does not
+    carry the sub-field names nothing: an absence is a state, and only a claim can be false."""
+    held = record.get(reference[FIELD])
+    if held is None:
+        return []
+    if EACH in reference:
+        return [row[reference[EACH]] for row in held
+                if isinstance(row, dict) and reference[EACH] in row]
+    return [held]
+
+
+def _dangling(record: dict, reference: dict, referents: set) -> list:
+    """The referents this record names that the host declares nowhere. Empty is the ordinary
+    answer and is not a judgement: a record that names nothing has nothing to be wrong about."""
+    return [name for name in _named(record, reference) if name not in referents]
 
 
 def _calibration(ctx, references: list, referents_of) -> list:
@@ -119,9 +140,9 @@ def _reference_declared(ctx, params, referents_of) -> list:
     failures = []
     for rel, record in _readable(ctx, params["over"]).records:
         for reference in references:
-            if _dangling(record, reference, referents[reference["id"]]):
+            for name in _dangling(record, reference, referents[reference["id"]]):
                 failures.append(
-                    f"{rel}: {reference['id']} -- it names {record[reference[FIELD]]!r}, which "
+                    f"{rel}: {reference['id']} -- it names {name!r}, which "
                     f"this host does not declare. {reference['because']} {reference['instead']} "
                     f"Nothing was removed: this names a record, and clearing it is yours."
                 )
