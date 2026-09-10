@@ -7,6 +7,14 @@ here either measures the host or parses what the kit said; nothing here asserts 
 
 from __future__ import annotations
 
+import sys as _sys
+
+#: Set before a single kit module is imported, for the same reason `cli.py` sets it: this suite
+#: imports the interpreter from INSIDE the payload, and bytecode written there is an unclassed
+#: path in the one tree that may not have any. The suite would otherwise manufacture the very
+#: condition its own lockfile refuses.
+_sys.dont_write_bytecode = True
+
 import hashlib
 import json
 import os
@@ -58,6 +66,30 @@ def host_digest(root: Path) -> dict:
     would otherwise make an honest comparison depend on somebody else's bookkeeping."""
     return {rel: digest_sha for rel, digest_sha in digest(root, WHOLE_HOST).items()
             if not rel.startswith(".git/")}
+
+
+#: Where the kit records what it IS -- read from the manifest, never spelled here.
+LOCK = Manifest(KIT).raw_ships()["lock"]
+
+
+def shipped() -> list:
+    """Every path the kit states it is made of, as recorded at the moment the lock was taken."""
+    return json.loads((KIT / LOCK).read_text(encoding="utf-8"))["files"]
+
+
+def ship(dest: Path) -> Path:
+    """A copy of the kit that is EXACTLY what the kit says it is -- enumerated from the lock,
+    never walked off the disk. This is the whole point of a lockfile made concrete: a copy taken
+    with `copytree` carries whatever happens to be lying in the tree (bytecode was, the first
+    time the kit ran), and a copy taken from the enumeration carries what was DECLARED and
+    nothing else. Every fixture kit in this suite is such a copy, so the property is exercised
+    on every run rather than asserted once."""
+    for entry in shipped():
+        target = dest / entry["path"]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(KIT / entry["path"], target)
+    shutil.copyfile(KIT / LOCK, dest / LOCK)
+    return dest
 
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
@@ -118,7 +150,7 @@ class Fixtures:
         a hand-written fixture of a declaration is a second home for it, and would go on passing
         after the original changed."""
         base = cls._temp(f"kit-fix-{name}-") / "kit"
-        shutil.copytree(KIT, base)
+        ship(base)
         for src, rel in add:
             dest = base / rel
             dest.parent.mkdir(parents=True, exist_ok=True)
