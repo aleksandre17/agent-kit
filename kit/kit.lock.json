@@ -521,7 +521,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "48300d520062e60250b9a2d41f0f1a807580e7b424a9b6dc0fe3b184187b45eb",
+      "digest": "a69f6b5dcf779abb90d3b49e27da41fa6823faf62d676f2a70bfbc3748ec4c30",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -780,5 +780,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-11T12:59:12+00:00"
+  "taken_at": "2026-09-11T13:01:50+00:00"
 }

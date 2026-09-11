@@ -12,9 +12,29 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import time
 from pathlib import Path, PurePosixPath
 
 from errors import KitError
+
+
+#: A reader holding the target open is the one condition under which a rename is refused, and
+#: only on Windows, where an open file cannot be replaced. The reader is transient -- a poll, an
+#: editor, an indexer -- so the rename is retried for a bounded moment, and then the refusal is
+#: raised as what it is, never swallowed into a write that silently did not happen.
+_REPLACE_ATTEMPTS = 50
+_REPLACE_PAUSE = 0.02
+
+
+def _replace(source: Path, target: Path) -> None:
+    for attempt in range(_REPLACE_ATTEMPTS):
+        try:
+            os.replace(source, target)
+            return
+        except PermissionError:
+            if attempt == _REPLACE_ATTEMPTS - 1:
+                raise
+            time.sleep(_REPLACE_PAUSE)
 
 
 class WorkspaceError(KitError):
@@ -107,11 +127,30 @@ class Workspace:
 
     # -- writing ----------------------------------------------------------------------------
     def write_text(self, rel: str, content: str) -> None:
+        """Every write is ATOMIC: the bytes go to a sibling temporary file, are flushed to the
+        disk, and then REPLACE the target in one rename. A reader sees the old document or the
+        new one and never a truncated one, and a process killed mid-write leaves the old document
+        intact. Writing in place was honest to the WRITER and tearable for the READER -- the
+        externalise-before-it-is-lost identity half-adopted, because a record nobody can read
+        whole has not been externalised.
+
+        The sibling shares the target's directory because a rename is atomic only within one
+        filesystem. The residue is DECLARED, not hidden: a process killed between the write and
+        the rename leaves a `.<name>.<pid>.kit-tmp` beside the target -- a visible stray the next
+        reading names, instead of a silently torn document that reads as a real one."""
         norm = self._permit(rel)
         target = self._root / norm
         target.parent.mkdir(parents=True, exist_ok=True)
-        with open(target, "w", encoding="utf-8", newline="\n") as handle:
-            handle.write(content)
+        temporary = target.with_name(f".{target.name}.{os.getpid()}.kit-tmp")
+        try:
+            with open(temporary, "w", encoding="utf-8", newline="\n") as handle:
+                handle.write(content)
+                handle.flush()
+                os.fsync(handle.fileno())
+            _replace(temporary, target)
+        except BaseException:
+            temporary.unlink(missing_ok=True)
+            raise
 
     def write_json(self, rel: str, value) -> None:
         self.write_text(rel, json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n")
