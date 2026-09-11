@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 123,
+  "count": 124,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -527,7 +527,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "01c13ce372b6ce1e841f52240119c54b5eaabb46fc9c61cfbdf43e8064a977bf",
+      "digest": "3c3eb0d71bc56e00c9cf4c2fe14880c7c5bce5cb516924fda78df03c6b23902d",
       "path": "interpreters/resolver.py"
     },
     {
@@ -591,6 +591,12 @@
       "path": "interpreters/verbs/upgrade.py"
     },
     {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "9fa015d96ff9898bd0baf731f88d7d0303dbf966e4a3daf60942cc4a6712b892",
+      "path": "interpreters/version_range.py"
+    },
+    {
       "accounted_by": "declaration-closure",
       "class": "declaration",
       "digest": "12b62dd0b4aec90d9d579a461745905d8ad18e5e79cfcd6bf3a983e475368045",
@@ -605,7 +611,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "7283dd2889e01a90775f250a79c25147873efcc0c5061e480009ab4a4522b834",
+      "digest": "5364d7a799b1ded62f3b856aedf4bfee41b6353373d1f8fd4a1d1a83c4f64b32",
       "path": "schemas/capability.schema.json"
     },
     {
@@ -744,5 +750,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-11T06:49:00+00:00"
+  "taken_at": "2026-09-11T12:05:15+00:00"
 }

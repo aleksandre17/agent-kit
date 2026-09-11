@@ -18,7 +18,12 @@
         "properties": {
           "kind": { "type": "string", "enum": ["capability", "fact"] },
           "id": { "type": "string", "minLength": 1 },
-          "equals": {}
+          "equals": {},
+          "version": {
+            "description": "A version RANGE the declared `version` of every provider must satisfy -- a subset of npm node-semver: comparator sets joined by `||`, comparators inside a set joined by whitespace, each comparator an operator followed by a full MAJOR.MINOR.PATCH. This pattern holds only that SHAPE; which operators exist, and what each means, is declared once in kit/interpreters/version_range.py, where a new operator is one row. ABSENT means ANY version.",
+            "type": "string",
+            "pattern": "^[^0-9\\s|]*[0-9]+\\.[0-9]+\\.[0-9]+(\\s+[^0-9\\s|]*[0-9]+\\.[0-9]+\\.[0-9]+)*(\\s*\\|\\|\\s*[^0-9\\s|]*[0-9]+\\.[0-9]+\\.[0-9]+(\\s+[^0-9\\s|]*[0-9]+\\.[0-9]+\\.[0-9]+)*)*$"
+          }
         }
       }
     },

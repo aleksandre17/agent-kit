@@ -19,12 +19,20 @@ A requirement of kind `capability` is matched against what capabilities PROVIDE,
 their ids. A provision is a contract; an id is a name. Two capabilities offering the same
 provision are substitutable, and the requirer never learns which one it got (Cardinal VIII).
 
+A capability requirement MAY state a `version` range (grammar and dialect: version_range.py).
+The range is judged against the declared `version` of EVERY enabled capability offering the
+provision -- not of one of them -- because a requirer never learns which provider it got, so a
+range one provider meets and another does not is a coin toss, and ambiguity resolves to nothing.
+A requirement with NO range is satisfied by ANY version: that is what every requirement declared
+before ranges existed means, and it keeps resolving exactly as it did.
+
 Ordering is total and independent of declaration order: dependencies first, ties broken by id.
 Byte-reproducibility downstream is worth nothing if the order that produced the bytes drifts.
 """
 
 from __future__ import annotations
 
+import version_range
 from errors import KitError
 
 
@@ -130,6 +138,41 @@ def _refuse_conflicts(capabilities, offered: dict) -> None:
                 )
 
 
+def _refuse_unsatisfied_ranges(capabilities, offered: dict) -> None:
+    """Every stated range, held against every provider of what it names. An unreadable range, a
+    range on something that has no version, and a provider outside the range are each REFUSED,
+    naming what was wanted and what was found. A requirement with no range is not looked at."""
+    versions = {c.id: c.version for c in capabilities}
+    for capability in capabilities:
+        for need in capability.requires:
+            if "version" not in need:
+                continue
+            wanted = f"{need['kind']}:{need['id']} at {need['version']!r}"
+            if need["kind"] != "capability":
+                raise CompositionError(
+                    f"unreadable requirement: capability {capability.id!r} requires {wanted}, but "
+                    f"a version range is a claim about a capability's declared version and a "
+                    f"{need['kind']} has none"
+                )
+            try:
+                outside = sorted(
+                    f"{pid} {versions[pid]}" for pid in offered.get(need["id"], [])
+                    if not version_range.satisfies(versions[pid], need["version"])
+                )
+            except version_range.RangeError as refused:
+                raise CompositionError(
+                    f"unreadable version range: capability {capability.id!r} requires {wanted}; "
+                    f"{refused}"
+                ) from None
+            if outside:
+                raise CompositionError(
+                    f"unsatisfied version range: capability {capability.id!r} requires {wanted}, "
+                    f"and found {', '.join(outside)}, outside it. Every provider must satisfy "
+                    f"the range, because a requirer never learns which one it got. The set is "
+                    f"refused as declared; nothing was enabled on its behalf."
+                )
+
+
 def _order(capabilities) -> list:
     """Dependencies before dependants; ties by id. Kahn's algorithm with a sorted frontier, so
     the result depends on the declarations and never on the order they were listed in."""
@@ -164,6 +207,7 @@ def arrange(capabilities) -> list:
     set comes from host truth rather than from a fresh measurement, so that a set which was
     coherent at install time cannot quietly become shadowed later and go unnoticed."""
     ordered = _order(capabilities)
+    _refuse_unsatisfied_ranges(ordered, _provisions(ordered))
     _refuse_conflicts(ordered, _provisions(ordered))
     _refuse_shadow_collisions(ordered)
     return ordered
@@ -218,6 +262,7 @@ def compose(candidates, blocked=None) -> list:
                 f"nothing was enabled on its behalf."
             )
 
+    _refuse_unsatisfied_ranges(candidates, offered)
     _refuse_conflicts(candidates, offered)
     ordered = _order(candidates)
     _refuse_shadow_collisions(ordered)
