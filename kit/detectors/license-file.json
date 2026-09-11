@@ -1,0 +1,11 @@
+{
+  "id": "license-file",
+  "summary": "A licence declared as a file, under either spelling and any case.",
+  "evidence": [
+    { "kind": "glob_any", "pattern": "[Ll][Ii][Cc][Ee][Nn][SsCc][Ee]*" }
+  ],
+  "emits": {
+    "legal.license": true,
+    "legal.license.files": "$1"
+  }
+}

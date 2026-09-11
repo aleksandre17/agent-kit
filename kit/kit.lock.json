@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 116,
+  "count": 123,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "c7efd081ab8895839d3114ce1c0c5aaa2e62d83057ca37f01555f5413653c630",
+      "digest": "0203bd07f3e761e7ca04b9609e5a056d2cc729d803ab4f47768395114f604d92",
       "path": "MANIFEST.json"
     },
     {
@@ -293,14 +293,56 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "7cb133088f2892439c5982a30704c66773ba0b0b978c4f93deb23aa1c1a6b911",
+      "path": "detectors/ci-workflows.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "e17b4734c133283b60cf310db727147ef4e3c4180b1c422797e1a84ee6c1803b",
+      "path": "detectors/container-compose.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "da245ee26c3009d5d9691d6868e726813b5c7ece4710cbd2e559dc997fa17991",
+      "path": "detectors/database-migrations.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "15fce4925fd8203391eb52a95532612b6da526c7b50300158d6145cae49cd231",
+      "path": "detectors/declared-test-runner.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "f21062d9c1fd9b826faf318dc6843203dbf7acd6694145dca84a92978e018d68",
       "path": "detectors/git-repository.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "d4a542bfdd55e8345671b29680d719d2bdcf0590ba267163e099720af452ea45",
+      "path": "detectors/go-module.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "b8678495e8a5029d3eec3c178be4f2917395184cbfb95cd294a7d211fbb56348",
+      "path": "detectors/license-file.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "5e526f02974dbe8b9cff692692c15166d2650f9de8e0043ec8ca79bb3aa52471",
       "path": "detectors/node-workspace.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "3adc5b96734a2bae5e1aeefa3808fa5a8d062699cc427768bef622428555db5c",
+      "path": "detectors/pnpm-workspace.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -702,5 +744,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-11T06:31:44+00:00"
+  "taken_at": "2026-09-11T06:49:00+00:00"
 }

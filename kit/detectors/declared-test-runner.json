@@ -1,0 +1,11 @@
+{
+  "id": "declared-test-runner",
+  "summary": "A test command the host itself declares, captured as the host spelled it.",
+  "evidence": [
+    { "kind": "json_path", "path": "package.json", "pointer": "scripts.test" }
+  ],
+  "emits": {
+    "quality.tests.declared": true,
+    "quality.tests.command": "$1"
+  }
+}

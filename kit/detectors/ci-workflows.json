@@ -1,0 +1,11 @@
+{
+  "id": "ci-workflows",
+  "summary": "Automated pipelines declared as workflow files in the tree.",
+  "evidence": [
+    { "kind": "glob_any", "pattern": ".github/workflows/*.y*ml" }
+  ],
+  "emits": {
+    "ci.workflows": true,
+    "ci.workflows.files": "$1"
+  }
+}

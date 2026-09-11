@@ -1,0 +1,10 @@
+{
+  "id": "go-module",
+  "summary": "A Go module, declared by its module file.",
+  "evidence": [
+    { "kind": "file_exists", "path": "go.mod" }
+  ],
+  "emits": {
+    "stack.go": true
+  }
+}
