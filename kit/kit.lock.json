@@ -11,7 +11,7 @@
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "7c6c7a1f7ccb6cd2fa070621e7dce13e4bbc842c7c9d4472607cc56e2c26b737",
+      "digest": "73da69557b8ea3d2ed253daf15db8a679fd2a3253ac18df15a1c1aba72ae5aca",
       "path": "README.md"
     },
     {
@@ -642,5 +642,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-10T13:49:24+00:00"
+  "taken_at": "2026-09-11T05:25:18+00:00"
 }

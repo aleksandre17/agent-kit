@@ -31,8 +31,13 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `init` | measure the host, resolve what it chose, draft the answer, seed once, vendor, render, check | the answer first; everything else only once it is approved |
 | `render` | recompute every projection from vendor + binding | projection only |
 | `check` | run the declared gates; report, never repair | nothing |
+| `upgrade` | reconcile kit, lock and host three ways; a cell no steward answers is refused | only cells a steward declared, and nothing at all if any path refuses |
+| `adopt` | read a host this kit never installed into; class every path or name it unaccounted | nothing — adoption reads |
+| `evaluate` | report the measure this host declared; with none declared, say the measure is zero | nothing |
+| `lock` | re-take `kit.lock.json` from the manifest's own declaration closure | the lock |
+| `move` | move a card to a declared state, recorded by who moved it | the card |
 
-`upgrade` and `eject` are designed and not built. A verb is a file in `interpreters/verbs/`; the
+`eject` is designed and not built. A verb is a file in `interpreters/verbs/`; the
 entry point discovers it and knows no verb's name.
 
 ### Choosing, and approving
