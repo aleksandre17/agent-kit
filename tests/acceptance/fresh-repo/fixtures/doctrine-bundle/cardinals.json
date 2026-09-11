@@ -1,0 +1,26 @@
+[
+  {
+    "schema_version": 1,
+    "id": "ethics-example@1.0.0#say-what-you-did",
+    "genre": "cardinal",
+    "title": "Say what you did",
+    "says": "A report states what was done and what was observed, and never what was intended.",
+    "publisher": "the acceptance suite"
+  },
+  {
+    "schema_version": 1,
+    "id": "ethics-example@1.0.0#name-the-silence",
+    "genre": "cardinal",
+    "title": "Name the silence",
+    "says": "Where a thing was not measured, the absence is named rather than left out.",
+    "publisher": "the acceptance suite"
+  },
+  {
+    "schema_version": 1,
+    "id": "ethics-example@1.0.0#the-economy-of-a-report",
+    "genre": "chapter",
+    "title": "The economy of a report",
+    "says": "A report is priced by what its reader must re-read, not by what it cost to write.",
+    "publisher": "the acceptance suite"
+  }
+]

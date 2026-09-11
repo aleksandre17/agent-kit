@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "id": "ethics-example",
+  "version": "1.0.0",
+  "summary": "A doctrine bundle, standing in for one a company or a team would publish. It exists ONLY as a test fixture: this framework ships no bundle of its own, so that its carrier is proven on a host that declared none. Everything here is an ORDINARY capability declaration -- an id, a semver, a requires, a provides, an installs and a composes -- and no interpreter in the kit knows that any of it is doctrine.",
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "doctrine"
+    },
+    {
+      "kind": "fact",
+      "id": "vcs.git",
+      "equals": true
+    }
+  ],
+  "provides": [
+    "doctrine-bundle"
+  ],
+  "conflicts": [],
+  "declares": {},
+  "composes": {
+    "id": "ethics_roll",
+    "instances": "ethics_cardinals",
+    "base": {
+      "sources": [
+        "doctrine_local"
+      ],
+      "list": "stances",
+      "named_by": "id"
+    },
+    "shared": {
+      "sources": [
+        "doctrine_grammar"
+      ],
+      "list": "reading"
+    },
+    "census": "ethics_stance_census"
+  },
+  "installs": [
+    {
+      "mode": "vendor",
+      "class": "vendor",
+      "target": ".agents/kit/doctrine/bundles/ethics-example.cardinals.json",
+      "source": "capabilities/ethics-example/payload/cardinals.json",
+      "validates": "cardinal",
+      "reads_as": "ethics_cardinals"
+    },
+    {
+      "mode": "vendor",
+      "class": "vendor",
+      "target": ".agents/kit/doctrine/bundles/ethics-example.md",
+      "source": "capabilities/ethics-example/payload/bundle.md"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/doctrine/ethics-example.md",
+      "source": "capabilities/ethics-example/payload/ROLL.md.mustache"
+    }
+  ],
+  "gates": []
+}

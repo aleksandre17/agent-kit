@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 106,
+  "count": 116,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "b4c44384225e111f8a8f5fe5ecc9d9219e9a4c82f0783903992eeec147ef5de2",
+      "digest": "c7efd081ab8895839d3114ce1c0c5aaa2e62d83057ca37f01555f5413653c630",
       "path": "MANIFEST.json"
     },
     {
@@ -43,6 +43,36 @@
       "class": "declaration",
       "digest": "56cc6c4dd6fa60e51045c7c8bb0f81fe0498722b3251a143bc23967bdd22b0fa",
       "path": "capabilities/delivery/payload/policy.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "06d16ce2c8b02bdb5667c330af5a94c9b7364f1267439920f0e0fc5eab10193d",
+      "path": "capabilities/doctrine/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "dde824af3cb4cafebc428db736d12ea9343dbe6b1dc1ee8e2e516687b1666da1",
+      "path": "capabilities/doctrine/grammar.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "b4ed7484734213b60f9a1f9098a059cdbc7ca42248e3e9011288e93ca06edbee",
+      "path": "capabilities/doctrine/payload/DOCTRINE.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "97728928464b62510647cfce52cce01d085823ccd580c5bd2a996885fc001174",
+      "path": "capabilities/doctrine/payload/doctrine-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "b21c8dc71a43ed4850a244535987d3fb6e2caffd9b5c041767248915a2213bfb",
+      "path": "capabilities/doctrine/payload/doctrine.md"
     },
     {
       "accounted_by": "declaration-closure",
@@ -293,7 +323,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d2f8cc1cdd9bdec3b97115a02d34f8ff0f810326b650695014c0dc513ecc4a8e",
+      "digest": "dec2b76385ce9a7c23a6f9ab0b67aac725785d8836b237115413b08aa2282689",
       "path": "interpreters/cli.py"
     },
     {
@@ -325,6 +355,12 @@
       "class": "interpreter",
       "digest": "3bcb80aed34e5bee808ffa98ef4c7e37a263947729e0f894d542a0b4e9f1368e",
       "path": "interpreters/doors.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "f7fc4553a9e0024c18608bead1f4de6bdd77174830f109cb651d25e7a77ccbe5",
+      "path": "interpreters/ephemeral.py"
     },
     {
       "accounted_by": "interpreter",
@@ -367,6 +403,18 @@
       "class": "interpreter",
       "digest": "2b68286518d840b0bf61ad49239f041ed4f7339c26071fb20933eaf155d72328",
       "path": "interpreters/gates/records.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "50dffb732d1c89e7e997733e62e56cde6312283d7420249218d7c89c7798a25f",
+      "path": "interpreters/hostlock.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "c6b0c343495dddf712c35de6fa1baf4d041ad333d69f80779d6bee139dfae13b",
+      "path": "interpreters/journal.py"
     },
     {
       "accounted_by": "interpreter",
@@ -473,7 +521,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "fcc793c97cc8337aa9d37beab172d12d0b1790384bd5788464816526cdd32e2a",
+      "digest": "085d7db5a98a026deb4164d56d7da2d0d1b7523995cc87c9e0a5c81f35efd30f",
       "path": "interpreters/verbs/init.py"
     },
     {
@@ -527,6 +575,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "92f4d46804f0ff933abf09b7db09e132a2dfc91249ab2924b35ee9fa5a8e5fb2",
+      "path": "schemas/cardinal.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "2efebe2273db3ba40d6702e86d95b31a9e8aac473806ea2dee69232976329ee5",
       "path": "schemas/delivery-policy.schema.json"
     },
@@ -535,6 +589,12 @@
       "class": "declaration",
       "digest": "25c55103b1b33a14e7db30c7dcdcc0156839409ad9e492d6f8cbdda4f2c89393",
       "path": "schemas/detector.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "f0cf307db354418577496e1c5ce58eafb2185f59735adf686fc6519537277288",
+      "path": "schemas/doctrine.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -642,5 +702,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-11T05:42:56+00:00"
+  "taken_at": "2026-09-11T06:31:44+00:00"
 }

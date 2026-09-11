@@ -1,0 +1,54 @@
+# ethics-example — the roll of doctrine, cardinal by cardinal
+
+> **Generated. Do not edit.** Kit {{kit_version}}. Every row below is a document this bundle
+> published, beside what this host has declared about it — including the ones it has said nothing
+> about, which are named rather than left out.
+
+{{#documents.doctrine_grammar.reading}}
+- {{says}}
+{{/documents.doctrine_grammar.reading}}
+
+## The roll
+
+{{#ethics_roll}}
+### `{{id}}` — {{title}}
+
+{{says}}
+
+*{{genre}}, published by {{publisher}}*
+
+{{^unbound}}
+This host **{{stance}}** it — declared {{declared_at}} by {{declared_by}}.
+> {{holds}}
+{{/unbound}}
+{{#unbound}}
+**UNANSWERED.** This host has declared no stance against this address. A named silence and not an
+omission: the answer would live in this host's own law page, under this exact address, and there
+is no row there for it.
+{{/unbound}}
+
+{{/ethics_roll}}
+{{^ethics_roll}}
+**This bundle published nothing.** A bundle with no documents is still a bundle, and it says so
+here rather than rendering an empty page.
+{{/ethics_roll}}
+
+## Answers, and answers to nothing
+
+{{#ethics_stance_census}}
+{{#taken}}
+- `{{id}}` — **{{stance}}**, {{declared_at}}, {{declared_by}} — answers a document in force.
+{{/taken}}
+{{^taken}}
+**This host has answered nothing this bundle published.**
+{{/taken}}
+{{#untaken}}
+**{{.}} stance(s) this host declared answer an address no document in force carries.** Orphans,
+and counted rather than deleted: a withdrawn or superseded bundle does not unsay what was said
+about it. They are named where they legitimately live — this host's own law page — because they
+are its authorship and not this bundle's.
+{{/untaken}}
+{{^untaken}}
+Every stance this host declared answers a document that is in force.
+{{/untaken}}
+{{/ethics_stance_census}}

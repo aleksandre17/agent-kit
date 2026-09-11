@@ -1,0 +1,51 @@
+{
+  "$id": "cardinal",
+  "title": "The conduct doctrine ONE BUNDLE publishes -- VENDOR, addressed rather than quoted",
+  "description": "A cardinal states what its PUBLISHER holds true. It has exactly one home, upstream, and it is replaced wholesale by whoever published it -- never merged, never edited where it landed -- because a document a host may edit is a fork taken silently, and a fork can never be spoken about again.\n\nOne bundle publishes its documents as ONE vendored set, because they are one release: they move together, they are withdrawn together, and a host that holds half a bundle holds something its publisher never shipped.\n\nIdentity is the ADDRESS: `bundle@semver#id`. Everything that cites doctrine -- a stance, a review, a gate result -- cites that address and never the prose, so two hosts on two versions produce a delta that can be PRINTED instead of two texts that differ in wording and cannot be compared. An old address stays legible forever and is never rewritten.\n\nThis schema has NO field in which a stance could be written, and that is the design rather than an omission. What a host does with a cardinal is a different proposition from what the cardinal says; it lives in the host's own plane, in its own document, with its own date and author. Because the field cannot exist here, a publisher cannot state a host's answer even by accident, and the two can never become two homes for one truth.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "schema_version",
+      "id",
+      "genre",
+      "title",
+      "says",
+      "publisher"
+    ],
+    "properties": {
+      "schema_version": {
+        "type": "integer"
+      },
+      "id": {
+        "description": "The address: `bundle@semver#id`. The version is IN the name on purpose -- a citation that outlived the text it cited would go on reading as resolved.",
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]*@[0-9]+\\.[0-9]+\\.[0-9]+#[a-z0-9][a-z0-9-]*$"
+      },
+      "genre": {
+        "description": "Which kind of doctrine document this is, by id, from any source that declares a genre -- the kit's grammar or this host's own. A document naming a genre nobody declares renders UNBOUND rather than as a complete row.",
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]*$"
+      },
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "says": {
+        "type": "string",
+        "minLength": 1
+      },
+      "publisher": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Who holds this true. Required: a standing verdict with no author cannot be questioned, only believed, and an address is only an authority if somebody stands behind it."
+      },
+      "supersedes": {
+        "description": "The address this document replaces, where it replaces one. A version is not a correction unless somebody says which sentence moved.",
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

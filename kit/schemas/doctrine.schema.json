@@ -1,0 +1,163 @@
+{
+  "$id": "doctrine",
+  "title": "The GRAMMAR of doctrine, and a host's record of the doctrine it has taken",
+  "description": "One shape, declared by the kit and authored by the host in exactly the same words -- the roles registry's rule, applied to conduct. The kit's copy carries GRAMMAR ONLY: the genres a doctrine document may be, the vocabulary a host answers a cardinal in, and the lines every roll of doctrine is read under. It carries no cardinal, because a cardinal is a standing verdict about conduct and a verdict can only become false if the HOST changed -- so nothing here may say a word about how anybody should work.\n\nThe host's copy carries the other half, which is the only half that is the host's to write: which bundles it has TAKEN, and when, and on whose authority. That is not a second home for a bundle's own declaration -- the bundle states what it publishes, this states what this host has accepted -- and the two are different propositions with one home each.\n\nA host may ADD genres and stance words and may not edit the kit's: a source it does not own is not a source it can silently disagree with, and a member declared twice is refused rather than ordered.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "genres",
+    "stance_vocabulary",
+    "reading",
+    "stances"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer"
+    },
+    "genres": {
+      "description": "What KINDS of thing a doctrine bundle may distribute. A genre is grammar: it says what sort of sentence a document is, never what the sentence says. The kit ships the two whose identity is settled and leaves the rest addable here by any host that needs one -- a genre this kit did not anticipate is a row, not a code change.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "means"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "means": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "stance_vocabulary": {
+      "description": "The words in which a host may answer a cardinal. It exists so that two hosts on two bundles stay COMPARABLE: an answer in private words is legible to nobody but its author. A new stance is a row here and never a change to any interpreter.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "means"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "means": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "reading": {
+      "description": "The lines every roll of doctrine is read under -- declared ONCE and RENDERED into every composed row rather than referenced from one. A reference can be left unfollowed; a rendered line cannot.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "bundles": {
+      "description": "The doctrine bundles THIS HOST has taken, each with the version, the moment and the authority it was taken on. Absent from the kit's own copy, and that absence is the decision: this framework publishes no bundle, so that its carrier is proven on a host that declared none.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "taken_at",
+          "taken_by",
+          "because"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          },
+          "taken_at": {
+            "type": "string",
+            "minLength": 1
+          },
+          "taken_by": {
+            "type": "string",
+            "minLength": 1
+          },
+          "because": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Why this host took this bundle. Required, because a norm adopted for no recorded reason cannot be reconsidered by anyone who was not in the room -- and a row that sometimes carries a reason and sometimes does not cannot be read the same way twice."
+          }
+        }
+      }
+    },
+    "stances": {
+      "description": "What this host does with each cardinal it has something to say about: the ADDRESS answered, one word of the declared vocabulary, what it holds in that word, and the date and author of the answer. This is the host's own authorship and the only half of a roll of doctrine a host writes.\n\nIt is not a second home for the cardinal, because it is a DIFFERENT PROPOSITION: the cardinal states what its publisher holds true, the stance states what this host does with it. Each has exactly one home, so there is nothing to synchronise and therefore nothing that can drift. The kit's own copy of this document necessarily carries none -- nothing reads it there, and a framework with a stance would be a framework with an opinion about a host it has never met.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "stance",
+          "holds",
+          "declared_at",
+          "declared_by"
+        ],
+        "properties": {
+          "id": {
+            "description": "The address answered, verbatim: `bundle@semver#id`. An address that no bundle in force publishes stays legible as an ORPHAN rather than being dropped -- a withdrawn bundle does not delete what was said about it.",
+            "type": "string",
+            "minLength": 1
+          },
+          "stance": {
+            "description": "One member of the declared stance vocabulary, by id. Never free prose: an answer in private words is legible to nobody but its author, and comparability across hosts is the whole reason an address exists.",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "holds": {
+            "description": "What this host holds, in the word it chose -- the narrowing, the extension, the gap or the reason. Required even for a bare adoption, and that is deliberate: an answer carried in one word and no sentence cannot be reviewed, only counted, and a row that sometimes carries words and sometimes does not cannot be stated the same way twice on any surface.",
+            "type": "string",
+            "minLength": 1
+          },
+          "declared_at": {
+            "type": "string",
+            "minLength": 1
+          },
+          "declared_by": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

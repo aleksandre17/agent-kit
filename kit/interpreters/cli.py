@@ -68,6 +68,10 @@ def main(argv=None) -> int:
                         help="this host's set is every available capability except these")
     parser.add_argument("--approve", default=None,
                         help="walk a door: accept what is drafted or declared, recorded by name")
+    parser.add_argument("--break-lock", default=None, metavar="WHO",
+                        help="break a hold that is standing on this host, by name: a DECLARATION "
+                             "that the run holding it is dead. No machine may make it, and no "
+                             "amount of elapsed time makes it for anyone")
     parser.add_argument("--card", default=None, help="the card a verb acts on, by id")
     parser.add_argument("--to", default=None, help="the state a card is being moved to")
     parser.add_argument("--by", default=None, help="who is making this move, recorded on the card")

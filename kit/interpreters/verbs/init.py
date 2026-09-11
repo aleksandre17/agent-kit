@@ -24,12 +24,18 @@ own application -- not care and not review, but the fact that there is only one 
 
 from __future__ import annotations
 
+import uuid
+
 import adoption
 import check as check_verb
 import collection
 import doors
+import ephemeral
 import estate as estate_module
+import hostlock
+import journal
 import plan as plan_module
+import predicate
 import render as render_verb
 from context import SCHEMA_VERSION
 from errors import KitError, PendingApproval
@@ -236,7 +242,41 @@ def _chosen(ctx, args, candidates, existing):
     return [c for c in candidates if c.id in wanted]
 
 
-def run(ctx, args) -> int:
+# -- the phases, DECLARED ---------------------------------------------------------------------
+#: What an init IS, stated as DATA: an ordered list of phases, each with an id and what it does.
+#: The journal that records them is handed exactly this and reads nothing else -- it names no
+#: phase, matches no phase and branches on none. A phase is added HERE, as a row plus a step in
+#: the registry below, and never as another line inside a function that already knew the order.
+#:
+#: This list is also the SURFACE of a dead run: a host whose installer was killed can be asked
+#: which of these it had concluded, and the answer is on disk rather than in a reconstruction.
+#:
+#: A row also declares WHEN the phase writes -- as a condition matched against what the run has
+#: turned out to be, by the same predicate mechanism a capability uses to say which runs it
+#: watches. That one field is what decides when the hold is taken and the journal opened, and it
+#: replaces what would otherwise be a rule buried in the loop.
+#:
+#: Two things follow, and both are properties of the DECLARATION rather than of any function:
+#: a run refused before the first writer -- a host inside a host, an unmet requirement, a tree
+#: full of unaccounted paths -- leaves the host byte-identical, because it has not written so much
+#: as a lock; and a run that stalls at the human door writes exactly the draft it declared and
+#: nothing beside it, because until that door is walked through the install writes one create-once
+#: document, which a killed run leaves either whole or absent and never half-interpretable.
+PHASES = (
+    {"id": "boundary", "does": "measure the boundary before anything on this host is trusted"},
+    {"id": "measure", "does": "take the reading: what is TRUE of this host"},
+    {"id": "choose", "does": "classify, select and compose this host's set"},
+    {"id": "adopt", "does": "at first contact, account for every path already in the tree"},
+    {"id": "answer", "does": "draft what this host chose, and foresee the write set"},
+    {"id": "install", "does": "carry out the foreseen writes", "writes": {"approved": True}},
+    {"id": "render", "does": "recompute every projection", "writes": {"approved": True}},
+    {"id": "record", "does": "measure and record what this host was given",
+     "writes": {"approved": True}},
+    {"id": "check", "does": "hold the installed host to its own gates"},
+)
+
+
+def _phase_boundary(ctx, args, state):
     # The BOUNDARY, measured before anything is trusted and before anything else is reported. A
     # host inside a host makes every reading below ambiguous about which law governs a path, so it
     # is the CAUSE and everything downstream of it is a consequence -- and a run that prints only
@@ -245,9 +285,10 @@ def run(ctx, args) -> int:
     if adoption.at_first_contact(ctx):
         adoption.require_unenclosed(ctx)
 
-    reading = ctx.take_reading()
-    candidates, unavailable, blocked = ctx.classify(reading["facts"])
 
+def _phase_measure(ctx, args, state):
+    reading = ctx.take_reading()
+    state["reading"] = reading
     # The reading is REPORTED before the set is composed, and therefore before any refusal the
     # composition may raise. A measured absence is the cause; an unmet provision downstream of it
     # is the consequence -- and a run that prints only the consequence leaves the reader looking
@@ -255,6 +296,10 @@ def run(ctx, args) -> int:
     print(f"reading taken at {reading['taken_at']} on {reading['boundary']['os']}")
     for fact, value in reading["facts"].items():
         print(f"  fact  {fact} = {value}")
+
+
+def _phase_choose(ctx, args, state):
+    candidates, unavailable, blocked = ctx.classify(state["reading"]["facts"])
     for entry in unavailable:
         print(f"  unavailable  {entry['id']}: {entry['reason']}")
 
@@ -268,8 +313,12 @@ def run(ctx, args) -> int:
                     f"it is provided by {capability.id}, which this host chose to disable"
                 )
 
-    enabled = ctx.compose(chosen, blocked)
+    state["unavailable"] = unavailable
+    state["existing"] = existing
+    state["enabled"] = ctx.compose(chosen, blocked)
 
+
+def _phase_adopt(ctx, args, state):
     # FIRST CONTACT. A host that has never answered is a host this kit has never installed into,
     # so the record of what it received is EMPTY -- and empty is not absent: it is a declared zero,
     # true by construction, and it lets the ORDINARY reconciliation answer for a tree the kit has
@@ -277,26 +326,28 @@ def run(ctx, args) -> int:
     # byte moves. Without this the `adopt` verb would be advisory decoration, bypassed by anyone
     # who typed the installer's name instead. First contact is read from a DECLARATION -- this
     # host has never answered -- and never from a tree that happened to look untouched.
-    if adoption.at_first_contact(ctx):
-        _empty, foreign = adoption.survey(ctx, enabled, reading["taken_at"])
-        adoption.roster(ctx, foreign, reading["taken_at"])
-        adoption.require_adoptable(ctx, foreign)
+    if not adoption.at_first_contact(ctx):
+        return
+    taken_at = state["reading"]["taken_at"]
+    _empty, foreign = adoption.survey(ctx, state["enabled"], taken_at)
+    adoption.roster(ctx, foreign, taken_at)
+    adoption.require_adoptable(ctx, foreign)
 
+
+def _phase_answer(ctx, args, state):
+    enabled, existing = state["enabled"], state["existing"]
     status = (existing or {}).get("status")
     approved = bool(args.approve) or status == "accepted"
-    state = {
-        "reading": reading,
-        "enabled": enabled,
-        "unavailable": unavailable,
-        "existing": existing,
+    state.update({
         "approver": args.approve,
         "approved": approved,
         "approving_draft": bool(args.approve) and status == "draft",
         "by_id": {c.id: c for c in enabled},
         "scopes": {c.id: ctx.workspace.scoped(c.targets()) for c in enabled},
-    }
+    })
 
     writes = _install_plan(ctx, enabled, state)
+    state["writes"] = writes
     if getattr(args, "plan", False):
         if approved:
             writes = writes + render_verb.plan_entries(ctx, enabled)
@@ -304,9 +355,11 @@ def run(ctx, args) -> int:
         print(plan_module.report("init", writes))
         return 0
 
-    _apply(ctx, state, writes)
 
-    if not approved:
+def _phase_install(ctx, args, state):
+    _apply(ctx, state, state["writes"])
+
+    if not state["approved"]:
         answers = ctx.host_answers()
         raise PendingApproval(
             f"{ctx.install_of_mode('declaration')['target']} was drafted at "
@@ -315,17 +368,138 @@ def run(ctx, args) -> int:
             f"init --root <host> --approve <who>"
         )
 
-    render_verb.run(ctx, args, enabled)
 
+def _phase_render(ctx, args, state):
+    render_verb.run(ctx, args, state["enabled"])
+
+
+def _phase_record(ctx, args, state):
     # The record is taken LAST, and it is taken by MEASURING what is now on disk rather than by
     # believing the plan that put it there. A record written from the plan would agree with the
     # plan by construction and could never contradict it, which is an attribution that cannot
     # fail. It carries the NAME on the door: what a machine did to a host, with nobody's name on
     # it, is a thing no one can be held to.
+    enabled, writes = state["enabled"], state["writes"]
     for write in _record_plan(ctx, enabled, ctx.host_answers()[doors.SIGNED_BY], writes):
         if write.disposition != "keep":
-            estate_module.take(ctx, enabled, reading["taken_at"],
+            estate_module.take(ctx, enabled, state["reading"]["taken_at"],
                                ctx.host_answers()[doors.SIGNED_BY], writes=writes)
         print(f"  {write.accomplished:<9}  {write.target}")
 
+
+def _phase_check(ctx, args, state):
     return check_verb.run(ctx, args)
+
+
+#: phase id -> the step that carries it out. An OPEN registry, exactly as the install modes are:
+#: the declaration above says what an init is made of, this says how each part is done, and the
+#: loop that walks them knows neither. A row here with no row above is unreachable; a row above
+#: with no step here is refused by name rather than silently skipped, because a phase that was
+#: declared and never ran is precisely the state this whole slice exists to make visible.
+STEPS = {
+    "boundary": _phase_boundary,
+    "measure": _phase_measure,
+    "choose": _phase_choose,
+    "adopt": _phase_adopt,
+    "answer": _phase_answer,
+    "install": _phase_install,
+    "render": _phase_render,
+    "record": _phase_record,
+    "check": _phase_check,
+}
+
+
+def _so_far(state) -> dict:
+    """What this run has turned out to BE, as a flat reading a phase's condition is matched
+    against. Every field is something the run already knows about itself by the time the phase
+    before it concluded -- never a guess about what is coming."""
+    return {"approved": bool(state.get("approved"))}
+
+
+def _report_resumption(book) -> None:
+    """What a dead run left behind, stated to the operator BEFORE this one repeats any of it.
+
+    A resumed run is not a fresh one and must never read like one. It says whose run died, which
+    phase it was inside when it did, what that run had already concluded and what it had never
+    reached -- and then it continues. Every init phase is idempotent by construction (a host truth
+    is created once, a projection is recomputed, a record is re-measured), so continuing means
+    REPLAYING from the record rather than skipping on the strength of it. No phase is dropped here
+    on the word of a document: a machine quietly deciding that some work no longer needs doing,
+    on evidence it did not gather, is the same class of mistake as breaking a lock on its age.
+    """
+    resumed = book.resumed_from
+    if not resumed:
+        return
+    print(f"resuming: a run started at {resumed['started_at']} never declared an ending")
+    for field in ("interrupted_in", "never_reached", "concluded"):
+        print(f"  {field.replace('_', ' '):<16}  {resumed[field] or '-'}")
+
+
+def run(ctx, args) -> int:
+    """One init, held and journalled.
+
+    The ordering here is the whole mechanism and it is the one thing that cannot be added later:
+    the hold is TAKEN before any work, the journal is OPENED before any work, every phase is
+    written before it runs, and both are closed in a `finally`. A process that is killed reaches
+    none of the closings -- so it leaves a hold still standing and a journal still saying which
+    phase it was inside. Both are the mechanism succeeding.
+
+    A run that writes nothing takes nothing and records nothing -- and that is not a special case
+    for `--plan`, it is the same rule applied to every run: the hold and the journal appear at the
+    moment this run becomes a WRITER, which the phase declaration states and no function here
+    decides. A plan simply never reaches one. A run REFUSED before that moment -- a host inside a
+    host, an unmet requirement, a tree full of unaccounted paths -- leaves the host byte-identical,
+    which a lock file written on arrival would have quietly destroyed.
+
+    The hold is READ at the very start all the same, because a host held by a dying installer must
+    be named as the CAUSE it is rather than described three refusals later as its consequences.
+    """
+    run_id = uuid.uuid4().hex
+    now = ctx.clock.now()
+    break_by = getattr(args, "break_lock", None)
+    lock_at, journal_at = ephemeral.place(ctx, hostlock.NAME), ephemeral.place(ctx, journal.NAME)
+    state = {"reading": None, "enabled": [], "writes": []}
+
+    hostlock.guard(ctx, lock_at, verb="init", now=now, break_by=break_by)
+
+    hold, book, concluded = None, journal.Silent(), {}
+    code, message = 1, None
+    try:
+        for phase in PHASES:
+            step = STEPS.get(phase["id"])
+            if step is None:
+                raise InstallError(
+                    f"init declares a phase {phase['id']!r} that no step carries out; the "
+                    f"steps this interpreter provides are {sorted(STEPS)}"
+                )
+            if (hold is None and phase.get("writes")
+                    and predicate.matches(phase["writes"], _so_far(state))):
+                hold = hostlock.take(ctx, lock_at, run_id=run_id, verb="init", now=now,
+                                     break_by=break_by)
+                book = journal.Journal.opened(
+                    ctx, journal_at, verb="init", phases=PHASES, now=now, run_id=run_id,
+                    broke=hold.broke, concluded=concluded)
+                _report_resumption(book)
+            started = ctx.clock.now()
+            book.enter(phase["id"])
+            outcome = step(ctx, args, state)
+            book.conclude(phase["id"])
+            concluded[phase["id"]] = {"status": journal.OK, "started_at": started,
+                                      "ended_at": ctx.clock.now()}
+            if outcome is not None:
+                code = outcome
+                return code
+        code = 0
+        return code
+    except KitError as refusal:
+        # A refusal is an ENDING. The run was turned away, said why, and did not vanish -- and a
+        # journal unable to tell those two apart would be the one lie this mechanism prevents.
+        code, message = refusal.exit_code, str(refusal)
+        raise
+    except BaseException as unforeseen:  # noqa: BLE001 -- re-raised; only the record is added
+        message = f"{type(unforeseen).__name__}: {unforeseen}"
+        raise
+    finally:
+        book.close(code, message)
+        if hold is not None:
+            hold.release(code, message)
