@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 32,
+  "issued": 34,
   "codes": [
     {
       "code": "KIT0001",
@@ -194,6 +194,18 @@
       "status": "active",
       "title": "a capability this kit did not issue cannot be taken as it stands",
       "explanation": "A capability the kit's own lock does not account for is not the bytes this host pinned when it first took it, is at a version older than the one pinned, or claims a signature its declared verifier refuted -- or the kit holds no single provenance declaration or no lock to tell what it issued. It is refused before any write and no approval opens it: a pin that could be re-taken would pin nothing. Restore the pinned bytes, or have the publisher release a NEWER version, which is met at the door as first contact is."
+    },
+    {
+      "code": "KIT0033",
+      "status": "active",
+      "title": "a document was written by a newer kit than this one",
+      "explanation": "A document the kit was about to read states a schema_version HIGHER than the one this kit's schema for that kind declares. It is refused before its shape is judged, because a shape from the future read through today's schema is a guess, and a guess read as understanding is a surface that lies (ADR-009). Nothing is written. Run the kit version that wrote the document, or upgrade this kit to one that reads its version."
+    },
+    {
+      "code": "KIT0034",
+      "status": "active",
+      "title": "a document is at an older version this kit declares no migration for",
+      "explanation": "A document the kit was about to read states a schema_version LOWER than the one this kit's schema for that kind declares, and this kit ships no migration from that version. It is refused by name rather than read as if it had the current shape (ADR-009). Nothing is written. Run the kit version that wrote the document, or re-create the document with this kit; before 1.0 the kit ships no migrations, and every kind is at version 1."
     }
   ]
 }

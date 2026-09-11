@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "id", "archetype"],
   "properties": {
-    "schema_version": { "type": "integer" },
+    "schema_version": { "type": "integer", "const": 1 },
     "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
     "archetype": {
       "description": "The archetype this definition composes, by id, from any source that declares one -- the kit's registry or the host's own. A host-origin role declares its archetype in the host registry and names it here, so a role with no base is still one grammar and not an exception.",

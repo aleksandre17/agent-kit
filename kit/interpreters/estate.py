@@ -32,7 +32,6 @@ import hashlib
 from errors import KitError
 from plan import DISPOSITIONS
 
-SCHEMA_VERSION = 1
 ALGORITHM = "sha256"
 NEWLINE = "lf"
 
@@ -226,7 +225,7 @@ def document(ctx, entries: list, moment: str, signed_by: str, taken=()) -> dict:
     declared zero, and a derived number is a thing no host was ever told -- the honest place for a
     count is the surface that prints it, in front of the reader who can see it computed."""
     return {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": ctx.manifest.version_of(ctx.install_of_mode(MODE)["validates"]),
         "kit_version": ctx.manifest.version,
         "algorithm": ALGORITHM,
         "newline": NEWLINE,

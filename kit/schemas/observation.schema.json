@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "dispositions"],
   "properties": {
-    "schema_version": { "type": "integer" },
+    "schema_version": { "type": "integer", "const": 1 },
     "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
     "summary": { "type": "string" },
     "dispositions": {

@@ -14,7 +14,6 @@ from manifest import Manifest
 from probe import Probe
 from workspace import Workspace
 
-SCHEMA_VERSION = 1
 
 
 class BindingError(KitError):
@@ -63,13 +62,20 @@ class Context:
     # -- declarations, resolved -------------------------------------------------------------
     def take_reading(self) -> dict:
         facts, results = self.probe.run(self.manifest.detectors)
-        return {
-            "schema_version": SCHEMA_VERSION,
+        reading = {
             "taken_at": self.clock.now(),
             "boundary": self.boundary(),
             "facts": facts,
             "detectors": results,
         }
+        # The version is the one the reading's DECLARED schema states (ADR-009). A kit that
+        # declares no reading install has no kind to version it by -- and composition, which
+        # runs after this measurement, is what names why; so it is not refused here, and no
+        # version is invented for a document that no declaration will ever store.
+        declared = self.install_of_mode("reading", required=False)
+        if declared is not None:
+            reading = {"schema_version": self.manifest.version_of(declared["validates"]), **reading}
+        return reading
 
     def classify(self, facts: dict) -> tuple[list, list, dict]:
         """What the MEASUREMENT decides: candidates, the unavailable with their reasons, and the

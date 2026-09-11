@@ -33,7 +33,6 @@ from errors import KitError
 
 #: The shape version of the record this observer writes. It writes the document, so it names the
 #: contract it writes to -- naming what you produce is a promise, not a policy.
-SCHEMA_VERSION = 1
 
 #: OpenTelemetry's span statuses, adopted rather than re-invented. UNSET is not "unknown": it is
 #: the declared state of a run that has concluded nothing yet, which is exactly what a run that
@@ -82,7 +81,7 @@ class Receipt:
         item = _space(capability, watch)
         identity = uuid.uuid4().hex
         value = {
-            "schema_version": SCHEMA_VERSION,
+            "schema_version": ctx.manifest.version_of(item["validates"]),
             "id": identity,
             "name": asked["verb"],
             "status": UNSET,

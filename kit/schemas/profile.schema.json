@@ -5,7 +5,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "taken_at", "boundary", "facts", "detectors"],
   "properties": {
-    "schema_version": { "type": "integer" },
+    "schema_version": { "type": "integer", "const": 1 },
     "taken_at": { "type": "string", "minLength": 1 },
     "boundary": {
       "type": "object",

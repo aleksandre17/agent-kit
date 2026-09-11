@@ -52,30 +52,37 @@ LOCK = f"{PLANE}/{hostlock.NAME}"
 APPROVER = "acceptance-suite"
 
 
+
+def _settled(path: Path):
+    """A document read whole, or None when it does not exist or is mid-rename on Windows."""
+    if not path.exists():
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (PermissionError, FileNotFoundError):
+        return None
+
+
 class Initialization(Fixtures, unittest.TestCase):
     """P-init: a run that dies, and a host two runtimes both want."""
 
     # -- reading the host -----------------------------------------------------------------------
     def journal(self, host: Path):
-        """The journal as it stands right now -- and None while it is mid-rewrite.
+        """The journal as it stands right now -- and None while the kit is replacing it.
 
-        The kit rewrites this document in place at every transition, so a reader polling a LIVE
-        run will sometimes catch it truncated. That is a property of the one way this kit writes
-        files and not of the journal: the cure is an atomic replace in the workspace port, which
-        is named in this slice's report and is not this suite's to invent. A torn read is treated
-        as *not yet readable*, never as an absence -- the caller polls again.
+        Every workspace write is ATOMIC (sibling temporary, fsync, one rename; c96f281), so a
+        reader sees the old document or the new one and NEVER a torn one -- which is why a
+        `JSONDecodeError` is no longer excused here: a torn journal would now be a regression of
+        atomicity, and it must fail loudly rather than be polled past. What remains is Windows:
+        an open reader and a rename can collide, and the READ is refused with `PermissionError`
+        for an instant. That is the one transient, and it is *not yet readable*, never an
+        absence -- the caller polls again. (It was this suite's one flake: the atomic write
+        turned a torn read into a refused one, and this reader did not yet know the new word.)
         """
-        path = host / JOURNAL
-        if not path.exists():
-            return None
-        try:
-            return json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            return None
+        return _settled(host / JOURNAL)
 
     def lock(self, host: Path):
-        path = host / LOCK
-        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+        return _settled(host / LOCK)
 
     def phases(self, record, *statuses) -> list:
         return [p["id"] for p in record["phases"] if p["status"] in statuses]

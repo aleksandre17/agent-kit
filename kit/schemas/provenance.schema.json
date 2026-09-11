@@ -13,7 +13,8 @@
   ],
   "properties": {
     "schema_version": {
-      "type": "integer"
+      "type": "integer",
+      "const": 1
     },
     "summary": {
       "type": "string"

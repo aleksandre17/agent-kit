@@ -82,7 +82,7 @@ def holds(module) -> bool:
 
 def version(ctx) -> int:
     """The shape version this kit writes, as its schema declares it."""
-    return ctx.manifest.schema(SCHEMA)["properties"]["schema_version"]["const"]
+    return ctx.manifest.version_of(SCHEMA)
 
 
 def _honoured(ctx, rel: str, value: dict, moment: str) -> dict:

@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "id", "case", "rubric", "verdict", "opened_at"],
   "properties": {
-    "schema_version": { "type": "integer" },
+    "schema_version": { "type": "integer", "const": 1 },
     "id": {
       "description": "This judgement's identity, and the name of the file that holds it. Thirty-two hex characters, the same width a run's record carries, because a member of a collection is identified once and the same way everywhere in this kit.",
       "type": "string",

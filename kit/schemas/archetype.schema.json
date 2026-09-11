@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "protocol", "archetypes"],
   "properties": {
-    "schema_version": { "type": "integer" },
+    "schema_version": { "type": "integer", "const": 1 },
     "protocol": {
       "description": "The binding lines every definition carries, whichever archetype it composes. Declared once, projected into all -- which is the whole cure: a line that is rendered cannot be restated, and a line that cannot be restated cannot drift. A host may add lines and may not edit these, because a source it does not own is not a source it can silently disagree with.",
       "type": "array",

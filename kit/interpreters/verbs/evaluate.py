@@ -43,7 +43,6 @@ REQUIRES_APPROVED_HOST = True
 
 #: The shape version of the record this verb writes. It writes the document, so it names the
 #: contract it writes to -- naming what you produce is a promise, not a policy.
-SCHEMA_VERSION = 1
 
 #: The vocabulary of a verdict, as far as this verb is concerned: the one word that means nothing
 #: has judged yet. Every other word in the vocabulary is put on a record by a judge, never here.
@@ -95,9 +94,9 @@ def _pairs(spec: dict, declaration: dict) -> list:
     return sorted(set(pairs))
 
 
-def _blank(ctx, case: str, rubric: str) -> dict:
+def _blank(ctx, case: str, rubric: str, version: int) -> dict:
     return {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": version,
         collection.IDENTITY: uuid.uuid4().hex,
         CASE: case,
         RUBRIC: rubric,
@@ -139,15 +138,18 @@ def run(ctx, args) -> int:
     readings = collection.read_all(ctx, capabilities)
     declaration = readings[spec["declaration"]].value
     held = readings[spec["judgements"]]
-    root = next(item["target"].rstrip("/") for item in capability.installs
-                if item.get("reads_as") == spec["judgements"])
+    space = next(item for item in capability.installs
+                 if item.get("reads_as") == spec["judgements"])
+    root = space["target"].rstrip("/")
+    #: The version a judgement is written at is the one its declared schema states (ADR-009).
+    version = ctx.manifest.version_of(space["validates"])
 
     pairs = _pairs(spec, declaration)
     already = {(record[CASE], record[RUBRIC]) for _rel, record in held.records}
 
     # The write set is DECIDED here, once. `--plan` prints it and the apply consumes it; there is
     # no second computation to drift from this one.
-    opening = [_blank(ctx, case, rubric) for case, rubric in pairs if (case, rubric) not in already]
+    opening = [_blank(ctx, case, rubric, version) for case, rubric in pairs if (case, rubric) not in already]
     writes = [plan_module.Write("create", "ephemeral", "space", capability.id,
                                 f"{root}/{blank[collection.IDENTITY]}.json", blank)
               for blank in opening]

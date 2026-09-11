@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "wip_limit", "max_age_days"],
   "properties": {
-    "schema_version": { "type": "integer" },
+    "schema_version": { "type": "integer", "const": 1 },
     "wip_limit": {
       "description": "state id -> the greatest number of cards this host will carry in it.",
       "type": "object"

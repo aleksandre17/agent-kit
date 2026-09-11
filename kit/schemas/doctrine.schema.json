@@ -13,7 +13,8 @@
   ],
   "properties": {
     "schema_version": {
-      "type": "integer"
+      "type": "integer",
+      "const": 1
     },
     "genres": {
       "description": "What KINDS of thing a doctrine bundle may distribute. A genre is grammar: it says what sort of sentence a document is, never what the sentence says. The kit ships the two whose identity is settled and leaves the rest addable here by any host that needs one -- a genre this kit did not anticipate is a row, not a code change.",

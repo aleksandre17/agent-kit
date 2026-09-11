@@ -38,7 +38,6 @@ import plan as plan_module
 import predicate
 import provenance
 import render as render_verb
-from context import SCHEMA_VERSION
 from errors import KitError, PendingApproval
 
 SUMMARY = "measure, choose, draft the answer, seed, vendor, render, check"
@@ -84,7 +83,7 @@ def _mode_declaration(ctx, ws, item, state):
     carried forward field by field -- approving a draft must not silently re-answer it."""
     prior = state["existing"] or {}
     answer = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": ctx.manifest.version_of(item["validates"]),
         "status": "accepted" if state["approver"] else "draft",
         "kit_version": ctx.manifest.version,
         "capabilities": prior.get("capabilities") or sorted(c.id for c in state["enabled"]),

@@ -147,7 +147,7 @@ class Journal:
                                    f"is not overwritten; move it aside by hand.") from exc
             _honoured(ctx, rel, prior, "as it stands on disk")
         value = {
-            "schema_version": ctx.manifest.schema(SCHEMA)["properties"]["schema_version"]["const"],
+            "schema_version": ctx.manifest.version_of(SCHEMA),
             "run_id": run_id or uuid.uuid4().hex,
             "verb": verb,
             "status": UNSET,

@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "id", "class"],
   "properties": {
-    "schema_version": { "type": "integer" },
+    "schema_version": { "type": "integer", "const": 1 },
     "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
     "class": {
       "description": "The runtime class this descriptor composes, by id, from any source that declares one -- the kit's registry or the host's own. A host running a kind of tool the kit never anticipated declares the class in its own registry and names it here, so a runtime with no shipped ancestor is still one grammar and not an exception.",

@@ -20,6 +20,49 @@ class ManifestError(KitError):
     code = "KIT0015"
 
 
+#: The one property through which EVERY document the kit reads or writes states its shape
+#: version (ADR-009). Its value is declared once, as the `const` of that property in the kind's
+#: own schema; nothing else in the kit may hold a document's version.
+VERSION = "schema_version"
+
+
+class NewerDocument(KitError):
+    """A document states a shape version HIGHER than the one this kit's schema declares: it was
+    written by a newer kit. It is refused, never read as if it were understood (ADR-009)."""
+
+    code = "KIT0033"
+
+
+class OlderDocument(KitError):
+    """A document states a shape version LOWER than the one this kit's schema declares, and the
+    kit declares no migration that would carry it forward. Refused by name (ADR-009)."""
+
+    code = "KIT0034"
+
+
+def _versioned(schema: dict):
+    """The object schema that carries the version: the document itself, or -- for a document
+    that is a list of records -- each record. Read from the schema's SHAPE, never from its name."""
+    if schema.get("type") == "array" and isinstance(schema.get("items"), dict):
+        return schema["items"]
+    return schema
+
+
+def _stated(instance, schema: dict) -> list:
+    """Every version the instance STATES where its schema says a version lives. A statement that
+    is not an integer is left to shape validation, which names it; this reads only real versions."""
+    carriers = instance if _versioned(schema) is not schema else [instance]
+    if not isinstance(carriers, list):
+        return []
+    found = []
+    for carrier in carriers:
+        if isinstance(carrier, dict) and VERSION in carrier:
+            value = carrier[VERSION]
+            if isinstance(value, int) and not isinstance(value, bool):
+                found.append(value)
+    return found
+
+
 class Capability:
     """A capability declaration, read-only. It declares; it never acts."""
 
@@ -101,6 +144,7 @@ class Manifest:
         # manifest can be judged -- and the manifest is judged before anything else is read.
         for name, rel in self._raw.get("schemas", {}).items():
             self._schemas[name] = self._read(rel)
+            self._require_policy(name, rel)
         self._require_valid(self._raw, "manifest", "MANIFEST.json")
 
         self._capabilities = []
@@ -132,6 +176,23 @@ class Manifest:
             return json.loads(target.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
             raise ManifestError(f"{rel}: not readable as JSON -- {exc}") from exc
+
+    def _require_policy(self, name: str, rel: str) -> None:
+        """ADR-009, held where every schema is loaded: a kind that cannot say which version it
+        is cannot tell a document from the future from one it understands. So every registered
+        schema declares its version as an integer `const` >= 1 -- and a kind past version 1
+        REQUIRES the statement, because an absent version can only ever mean the first one."""
+        carrier = _versioned(self._schemas[name])
+        declared = carrier.get("properties", {}).get(VERSION)
+        const = declared.get("const") if isinstance(declared, dict) else None
+        if not (isinstance(const, int) and not isinstance(const, bool) and const >= 1
+                and declared.get("type") == "integer"):
+            raise ManifestError(f"{rel}: schema {name!r} does not declare its version as "
+                                f"{{\"type\": \"integer\", \"const\": N>=1}} on {VERSION!r} (ADR-009)")
+        if const > 1 and VERSION not in carrier.get("required", []):
+            raise ManifestError(f"{rel}: schema {name!r} is at version {const} but does not "
+                                f"require {VERSION!r}; past version 1 an absent version would be "
+                                f"a guess (ADR-009)")
 
     def _require_valid(self, instance, schema_name: str, where: str) -> None:
         errors = self.validate(instance, schema_name)
@@ -189,7 +250,29 @@ class Manifest:
             raise ManifestError(f"no schema named {name!r} is declared by this kit")
         return self._schemas[name]
 
+    def version_of(self, schema_name: str) -> int:
+        """The shape version this kit reads and writes for a kind -- as its schema declares it.
+        Every writer stamps THIS; no module holds a version of its own (ADR-009)."""
+        return _versioned(self.schema(schema_name))["properties"][VERSION]["const"]
+
     def validate(self, instance, schema_name: str) -> list[str]:
+        """Shape errors, after the VERSION is settled. A document at a version this kit does not
+        read is refused by name before its shape is judged: judging a future shape by today's
+        schema would produce a list of errors that describes nothing true (ADR-009)."""
+        current = self.version_of(schema_name)
+        for found in _stated(instance, self.schema(schema_name)):
+            if found > current:
+                raise NewerDocument(
+                    f"a {schema_name!r} document states version {found}; this kit reads version "
+                    f"{current} and will not guess at a shape from a newer kit. Run the kit that "
+                    f"wrote it, or upgrade this one."
+                )
+            if 1 <= found < current:
+                raise OlderDocument(
+                    f"a {schema_name!r} document states version {found}; this kit reads version "
+                    f"{current} and declares no migration from {found}. Run the kit version that "
+                    f"wrote it, or re-create the document with this one."
+                )
         return validation.validate(instance, self.schema(schema_name))
 
     def payload_text(self, rel: str) -> str:

@@ -47,7 +47,6 @@ from pathlib import PurePosixPath
 
 from errors import KitError
 
-SCHEMA_VERSION = 1
 
 #: The digest algorithm, named in the document so a reader is never guessing which one produced
 #: these sixty-four characters.
@@ -228,7 +227,7 @@ def document(manifest, rows, moment: str) -> dict:
     files = [{"path": r["path"], "class": r["class"], "accounted_by": r["accounted_by"],
               "digest": r["digest"]} for r in rows]
     return {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": manifest.version_of("lock"),
         "kit_version": manifest.version,
         "algorithm": ALGORITHM,
         "newline": NEWLINE,

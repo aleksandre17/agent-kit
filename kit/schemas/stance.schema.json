@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "unanswered", "stances"],
   "properties": {
-    "schema_version": { "type": "integer" },
+    "schema_version": { "type": "integer", "const": 1 },
     "summary": { "type": "string" },
     "unanswered": {
       "description": "The stance of a gate nobody answered for. Must name a row below.",

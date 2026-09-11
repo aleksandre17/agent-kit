@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "protocol", "capabilities", "classes"],
   "properties": {
-    "schema_version": { "type": "integer" },
+    "schema_version": { "type": "integer", "const": 1 },
     "protocol": {
       "description": "The binding lines every descriptor carries, whichever class it composes. Declared once, projected into all -- a line that is rendered cannot be restated, and a line that cannot be restated cannot drift. The word is the composer's, not this subject's: what binds every composition of a kind is called a protocol wherever this kit composes anything, and a second word for it here would be a second home for one idea.",
       "type": "array",

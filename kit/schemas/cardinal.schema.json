@@ -16,7 +16,8 @@
     ],
     "properties": {
       "schema_version": {
-        "type": "integer"
+        "type": "integer",
+        "const": 1
       },
       "id": {
         "description": "The address: `bundle@semver#id`. The version is IN the name on purpose -- a citation that outlived the text it cited would go on reading as resolved.",
