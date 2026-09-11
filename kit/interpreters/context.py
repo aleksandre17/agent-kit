@@ -9,10 +9,10 @@ from pathlib import Path
 
 import resolver
 from errors import KitError, PendingApproval
-from ports.clock import Clock
-from ports.manifest import Manifest
-from ports.probe import Probe
-from ports.workspace import Workspace
+from clock import Clock
+from manifest import Manifest
+from probe import Probe
+from workspace import Workspace
 
 SCHEMA_VERSION = 1
 

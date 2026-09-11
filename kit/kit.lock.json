@@ -389,7 +389,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b0396e931d6570d159e8ef72d974037d1899d24c24b29ffc518096b52fc75aba",
+      "digest": "74484d95e790f56c2e5f7f41949fdc000494f62a14ff25425f89008f072d0d36",
       "path": "interpreters/context.py"
     },
     {
@@ -762,5 +762,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-11T12:27:46+00:00"
+  "taken_at": "2026-09-11T12:35:06+00:00"
 }
