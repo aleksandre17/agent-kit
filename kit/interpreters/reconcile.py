@@ -149,26 +149,35 @@ def survey(ctx, capabilities, recorded, stewards, adoptions=None) -> list:
             "why": _why(found, recorded["taken_at"], shipped, here),
         })
 
-    # Anything in a governed plane that none of the three readings explains. It is not deleted --
-    # the kit did not put it there -- and it is not ignored: an unexplained path in a plane whose
-    # whole premise is that every path resolves to a declared class is the defect this refuses.
+    # Anything in a governed plane that none of the three readings explains. It is never deleted --
+    # the kit did not put it there -- and it is never hidden. Whether it REFUSES is the plane's own
+    # declaration (`unaccounted`), read as data: a plane whose premise is that every path resolves
+    # to a declared class refuses, and a plane the kit disclaims reports. Nothing in a region the
+    # kit owns nothing in can obstruct a write the kit was never going to make (ADR-003 §6, met on
+    # HOST #2, where 81 session receipts made a real repository unadoptable). The interpreter does
+    # not know which plane is which and must not learn.
     roots = set(will) | set(was)
     for plane in ctx.manifest.planes:
+        refuses = plane["unaccounted"] == "refuse"
         for path in ws.files_under(plane["root"]):
             if not _covered(path, roots):
                 rows.append(_refusal(
                     path, UNACCOUNTED, None,
                     f"is in the {plane['class']!r} plane and nothing accounts for it: no install "
                     f"declares it and the record taken at {recorded['taken_at']} does not carry "
-                    f"it. The kit did not put it here and will not take it away"))
+                    f"it. The kit did not put it here and will not take it away"
+                    + ("" if refuses else f". The {plane['class']!r} plane declares that what it "
+                       f"does not account for is REPORTED and does not refuse"),
+                    refuse=refuses))
     return sorted(rows, key=lambda row: row["path"])
 
 
-def _refusal(path, found, steward, why) -> dict:
+def _refusal(path, found, steward, why, refuse: bool = True) -> dict:
     """A reading with no verdict to look up. It carries the same fields as any other row so that
-    a surface never has to ask which kind of row it is holding."""
+    a surface never has to ask which kind of row it is holding -- including whether it refuses,
+    which for an unaccounted path is the PLANE's declaration and not this function's opinion."""
     return {"path": path, "cell": found, "state": found, "steward": steward, "mode": None,
-            "file": "keep", "record": "carry", "refuse": True, "adoptable": None,
+            "file": "keep", "record": "carry", "refuse": refuse, "adoptable": None,
             "here": None, "shipped": None, "why": why}
 
 

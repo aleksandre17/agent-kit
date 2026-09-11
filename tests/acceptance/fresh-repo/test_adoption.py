@@ -27,7 +27,11 @@ What these must show, each by attacking the thing rather than asserting the happ
      declared, which is the evidence that the four-class seam was complete all along;
   6. the gate that holds the seam can still go RED. A decision that makes a fitness function
      unfalsifiable is not a decision, it is a retirement;
-  7. a host inside a host is refused BY NAME, at the boundary, before anything is read.
+  7. a host inside a host is refused BY NAME, at the boundary, before anything is read;
+  8. and the half of that rule which ADR-003 Section 6 had to amend after HOST #2: whether an
+     unaccounted path REFUSES is the PLANE's own declaration. A plane the kit disclaims reports
+     and does not obstruct; a plane the kit owns still halts the whole operation. The pair is the
+     test -- a change that only relaxed would have retired the gate rather than corrected it.
 """
 
 from __future__ import annotations
@@ -59,6 +63,11 @@ A_HOST_OWNED_PATH = next(i["target"] for i in GOVERNANCE["installs"] if i["mode"
 
 #: A plane this kit governs entirely, taken from the manifest.
 VENDOR_PLANE = next(p["root"] for p in MANIFEST["planes"] if p["class"] == "vendor")
+#: Asked of the DECLARATION, never named here: which plane reports what it does not account for,
+#: and which refuse. A test that hardcoded `ephemeral` would pass a manifest that had changed its
+#: mind, and would be measuring this file's memory instead of the kit's statement (ADR-003 Section 6).
+REPORTING_PLANES = [p for p in MANIFEST["planes"] if p["unaccounted"] == "report"]
+REFUSING_PLANES = [p for p in MANIFEST["planes"] if p["unaccounted"] == "refuse"]
 
 #: A name lifted VERBATIM from the kit's own payload, to be planted where no plane reaches. If
 #: anything here classed by resemblance, this is the file it would seize.
@@ -253,6 +262,47 @@ class Adoption(Fixtures, unittest.TestCase):
                 self.assertIn("GAP-NESTED-HOST-GRAMMAR", refused.stderr)
                 self.assertEqual(before, host_digest(outer),
                                  "a refused nested install still moved bytes")
+
+    # -- 8. the stance toward the unaccounted belongs to the PLANE (ADR-003 Section 6) ------
+    def test_143_a_plane_the_kit_disclaims_reports_what_it_does_not_account_for_and_never_refuses(self):
+        """Measured on HOST #2, the first tree this kit ever met that it did not create: 81 session
+        receipts in the ephemeral plane made a real repository unadoptable. The surface said `the
+        kit did not put it here and will not take it away` and in the same breath demanded it be
+        removed. Nothing in a region the kit owns nothing in can obstruct a write it was never
+        going to make -- and the path is still PRINTED, because not refusing is not the same as
+        not seeing."""
+        self.assertTrue(REPORTING_PLANES, "no plane declares that it reports; Section 6 is unreachable")
+        for plane in REPORTING_PLANES:
+            with self.subTest(plane=plane["class"]):
+                dropping = f"{plane['root']}/{A_NAME_NOTHING_RESEMBLES}"
+                host = self.host()
+                _plant(host, dropping)
+                read = self.run_kit(KIT, host, "adopt")
+                self.assertEqual(0, read.returncode,
+                                 f"{plane['class']!r} obstructed an install over a path it disclaims")
+                self.assertIn(dropping, read.stdout, "a reported path was not printed at all")
+                self.assertEqual(reconcile.UNACCOUNTED, states(read.stdout).get(dropping),
+                                 "a reported path lost the state that names what it is")
+                self.assertNotIn(dropping, read.stderr,
+                                 "a path that does not refuse was still named in the refusal")
+
+    def test_144_a_plane_the_kit_owns_still_halts_the_whole_operation_over_one_unaccounted_path(self):
+        """The other half, and the reason this is a correction rather than a retirement. A relaxation
+        that also stopped the owned planes from biting would have deleted the rule while appearing
+        to refine it -- and a gate earns its keep only by DENYING."""
+        self.assertTrue(REFUSING_PLANES, "no plane refuses; the seam has stopped holding anything")
+        for plane in REFUSING_PLANES:
+            with self.subTest(plane=plane["class"]):
+                intruder = f"{plane['root']}/{A_NAME_NOTHING_RESEMBLES}"
+                host = self.host()
+                _plant(host, intruder)
+                before = host_digest(host)
+                refused = self.run_kit(KIT, host, "init")
+                self.assertNotEqual(0, refused.returncode,
+                                    f"{plane['class']!r} admitted an unexplained path")
+                self.assertIn(intruder, refused.stderr)
+                self.assertEqual(before, host_digest(host),
+                                 "a refused install still moved bytes in the host")
 
 
 if __name__ == "__main__":

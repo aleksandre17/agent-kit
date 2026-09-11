@@ -35,19 +35,23 @@
   "planes": [
     {
       "class": "vendor",
-      "root": ".agents/kit"
+      "root": ".agents/kit",
+      "unaccounted": "refuse"
     },
     {
       "class": "binding",
-      "root": ".agents/project"
+      "root": ".agents/project",
+      "unaccounted": "refuse"
     },
     {
       "class": "projection",
-      "root": ".agents/generated"
+      "root": ".agents/generated",
+      "unaccounted": "refuse"
     },
     {
       "class": "ephemeral",
-      "root": ".agents/runtime"
+      "root": ".agents/runtime",
+      "unaccounted": "report"
     }
   ],
   "capabilities": [

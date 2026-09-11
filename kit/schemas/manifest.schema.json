@@ -48,10 +48,11 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["class", "root"],
+        "required": ["class", "root", "unaccounted"],
         "properties": {
           "class": { "type": "string", "enum": ["vendor", "binding", "projection", "ephemeral"] },
-          "root": { "type": "string", "minLength": 1 }
+          "root": { "type": "string", "minLength": 1 },
+          "unaccounted": { "type": "string", "enum": ["refuse", "report"] }
         }
       }
     },

@@ -5,7 +5,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "c1ff97b5d10531cbb4204c98334d7604e206cbf05098e4f8d58bba452be612d9",
+      "digest": "b4c44384225e111f8a8f5fe5ecc9d9219e9a4c82f0783903992eeec147ef5de2",
       "path": "MANIFEST.json"
     },
     {
@@ -431,7 +431,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "cd2c64a34cc42f7dbba1f5ba4c4d2dd5553bd0ffd59ed7af342921a2eb4a6f34",
+      "digest": "9486d0642470727a298fa96fcf59c9dc3e381cfc365307bc1134c599db414240",
       "path": "interpreters/reconcile.py"
     },
     {
@@ -563,7 +563,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "76418e545427e7bdd421e0ddf09f008542822be78dc9da4cff52b1f0a24895e2",
+      "digest": "19c18b999d52517aa9caee0fba47ae703a82cfd1ba0764a4b70339dc70832342",
       "path": "schemas/manifest.schema.json"
     },
     {
@@ -642,5 +642,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-11T05:25:18+00:00"
+  "taken_at": "2026-09-11T05:42:56+00:00"
 }

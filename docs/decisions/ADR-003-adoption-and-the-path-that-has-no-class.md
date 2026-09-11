@@ -2,6 +2,7 @@
 
 - **Status**: Accepted
 - **Date**: 2026-09-10
+- **Amended**: 2026-09-11 — §6, on first contact with a tree the kit did not create
 - **Supersedes**: nothing
 - **Amends**: ADR-001 (the framework blueprint), by settling the `foreign` question it left open;
   ADR-002 (three-way reconciliation), by naming the reading in which S is empty rather than absent
@@ -140,6 +141,67 @@ question as archetype ⊕ overlay, one level up, and it is a slice. What has cha
 silent case is gone: nesting is now a named refusal with a remedy, not two hosts each internally
 right.
 
+### 6. AMENDMENT, 2026-09-11 — whether an unaccounted path REFUSES is a property of its PLANE, declared as data
+
+*Stated on record rather than adjusted in place, because a law is amended only by restatement
+(Cardinal VI). What follows changes §1–§5 in exactly one respect and leaves the rest standing.*
+
+**What was measured.** HOST #2 — `national-accounts`, the first tree this kit has ever met that it
+did not create — refused. `init --plan` halted at exit 1 before a byte moved, over 82 paths: ONE
+`collision` and EIGHTY-ONE `unaccounted`, and **every one of the eighty-one lay in the `ephemeral`
+plane**: session receipts, probes, archives, a ledger. Precisely the droppings that a repository
+which has ever been *run in* accumulates.
+
+**The defect this exposed.** The surface said of each of them, in the kit's own words, *"The kit did
+not put it here and will not take it away"* — and in the same breath demanded the path be moved or
+removed before anything could proceed. Those two sentences cannot both be honoured. The `ephemeral`
+class is DEFINED as observed state the kit never owns, never upgrades, and treats as safely
+deletable; the kit even seeds `runtime/` into the host's `.agents/.gitignore` as its first act. So
+the doctrine was already present and already correct — it simply had never been carried into the
+halting rule, which was written over THE TREE when every other rule in this design is written over
+A DECLARATION. One truth, two homes, and the second home was the one nobody could date (Cardinal
+III). The consequence was not a cosmetic one: **it made every real repository unadoptable, for the
+one class of path the kit explicitly disclaims.**
+
+**Why it could only be found here.** Everything before this was proved on a clean tree, where the
+ephemeral plane is empty and the rule is unfalsifiable. This is the entire reason Host #2 exists,
+and it returned its finding on first contact.
+
+**The decision.** An unaccounted path's verdict is **declared by the PLANE it lies in**, as data in
+`MANIFEST.planes`, and never decided by the interpreter. `vendor`, `binding` and `projection`
+declare that an unaccounted path REFUSES the whole operation, exactly as §4 states. `ephemeral`
+declares that an unaccounted path is **REPORTED and never refuses** — it is counted, named and
+printed, so the surface still states everything it found (Cardinal V); it simply is not an
+obstacle, because nothing in a plane the kit disclaims can obstruct a write the kit was never going
+to make. The refusal, where it applies, stays WHOLE: a single refusing path in a governed plane
+still refuses the entire operation, in the plan, before a byte moves.
+
+**Why declared and not derived.** The tempting derivation — *a plane no `installs` entry writes
+into cannot obstruct* — is FALSE here and was measured false: `evaluation` and `observability` both
+install with `class: ephemeral`. Worse, it would be action at a distance: one capability adding one
+ephemeral seed would silently flip the halting behaviour of eighty-one unrelated paths, and nothing
+on any surface would say why. A plane's stance toward what it does not account for is a property of
+the plane, so it is stated where the plane is declared.
+
+**The field already settled this.** Git refuses to overwrite an **untracked** file and proceeds
+over an **ignored** one — not because ignored files are less real, but because the repository has
+already DECLARED them outside its universe of discourse, and a thing outside the discourse cannot
+be evidence within it. `rsync --exclude`, Terraform's `.terraform/`, Bazel's `bazel-out/` and
+`node_modules` are all the same shape: a region the tool writes into freely, owns nothing in, and
+never reasons about when deciding whether it may proceed. What every one of them makes explicit is
+that the excluded region is DECLARED, never inferred from the shape of the tree.
+
+**What this does NOT change.** `collision` still refuses everywhere, including in `ephemeral` — a
+path some capability's `installs` names is a path the kit intends to WRITE, and the host holding
+unaccounted bytes there is a genuine obstacle whatever plane it sits in. `adopt` still writes
+nothing. `init` at first contact still refuses on the same reading. The roster is still produced by
+the machine and never by judgement, and a row may still never be classed by hand.
+
+**Consequence for HOST #2.** The refusal reduces from 82 paths to ONE: the `collision` at
+`.agents/.gitignore`, where the host authored its own rules and the `governance` capability seeds
+the plane rule. That is a real obstacle, correctly named, and it is cured by a declaration rather
+than by a judgement.
+
 ## Rejected alternatives
 
 **A. `foreign` as a fifth class in `MANIFEST.classes`, with a plane of its own.**
@@ -202,3 +264,6 @@ a kit meeting an unknown repository must not do.
 - A nested install is refused by name. `GAP-NESTED-HOST-GRAMMAR` is open and recorded.
 - `foreign` is closed as a question: it is a reading, it appears in the roster, and it will never
   appear in `MANIFEST.classes`.
+- **(2026-09-11)** An unaccounted path in the `ephemeral` plane is REPORTED and does not refuse;
+  in `vendor`, `binding` and `projection` it refuses the whole operation. The stance is declared
+  in `MANIFEST.planes`, so a new plane states its own and the interpreter learns nothing new.
