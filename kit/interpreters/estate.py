@@ -221,7 +221,7 @@ def rows(ctx, capabilities, stewards: Stewardship, recorded=None, decided=None,
     return [found[path] for path in sorted(found)]
 
 
-def document(ctx, entries: list, moment: str, signed_by: str) -> dict:
+def document(ctx, entries: list, moment: str, signed_by: str, taken=()) -> dict:
     """The reading, as it is stored. No count stands beside `files`: an empty list is already a
     declared zero, and a derived number is a thing no host was ever told -- the honest place for a
     count is the surface that prints it, in front of the reader who can see it computed."""
@@ -233,6 +233,11 @@ def document(ctx, entries: list, moment: str, signed_by: str) -> dict:
         "taken_at": moment,
         "signed_by": signed_by,
         "files": list(entries),
+        # What this host TOOK from outside the kit, each pinned at the door that took it
+        # (ADR-008). It lives here because it is the same proposition as `files` read one step
+        # further upstream: what this host was GIVEN, stated rather than inferred. Built and
+        # judged by `provenance`; this module only carries it.
+        "taken": list(taken),
     }
 
 
@@ -245,7 +250,7 @@ def read(ctx):
     return ctx.binding(path, ctx.install_of_mode(MODE)["validates"])
 
 
-def restates(recorded, ctx, entries: list, signed_by: str) -> bool:
+def restates(recorded, ctx, entries: list, signed_by: str, taken=None) -> bool:
     """Whether a fresh reading would say exactly what the recorded one already says.
 
     `taken_at` is the moment this host RECEIVED these bytes -- not the moment somebody ran the
@@ -259,10 +264,12 @@ def restates(recorded, ctx, entries: list, signed_by: str) -> bool:
         return False
     return (recorded["files"] == entries
             and recorded["kit_version"] == ctx.manifest.version
-            and recorded["signed_by"] == signed_by)
+            and recorded["signed_by"] == signed_by
+            and (taken is None or recorded.get("taken", []) == list(taken)))
 
 
-def take(ctx, capabilities, moment: str, signed_by: str, entries=None, writes=()) -> dict:
+def take(ctx, capabilities, moment: str, signed_by: str, entries=None, writes=(),
+         taken=None) -> dict:
     """Measure this host and record what it holds. Written through a workspace scoped to the
     declaring capability's own targets -- `installs` is the write permission, and an estate is
     not a way around it."""
@@ -271,7 +278,12 @@ def take(ctx, capabilities, moment: str, signed_by: str, entries=None, writes=()
     owner = next(c for c in capabilities for i in c.installs if i["target"] == path)
     if entries is None:
         entries = rows(ctx, capabilities, stewards, read(ctx), ctx.decided, writes)
-    record = document(ctx, entries, moment, signed_by)
+    if taken is None:
+        # A writer that did not come through the provenance door CARRIES the pins it found. A
+        # record rewritten without them would declare, with a fresh moment on it, that this host
+        # took nothing -- and the next reading would call every pinned capability a stranger.
+        taken = (read(ctx) or {}).get("taken", [])
+    record = document(ctx, entries, moment, signed_by, taken)
     errors = ctx.manifest.validate(record, ctx.install_of_mode(MODE)["validates"])
     if errors:
         raise EstateError("the estate reading does not honour its own schema:\n  "

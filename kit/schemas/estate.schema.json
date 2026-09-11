@@ -98,6 +98,95 @@
         }
       },
       "description": "Every path the kit wrote into this host. An empty list is a DECLARED zero and is written out as one -- but no count stands beside it: a derived number is a thing no host was ever told, and the honest place for one is the surface that prints it in front of the reader, computed where it can be seen to have been computed."
+    },
+    "taken": {
+      "description": "Every capability this host took that the kit did not issue, each pinned at the door that took it (ADR-008). Absent in a record written before pins existed, which is read as NO pins -- never as a pass. An empty list is a declared zero.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability",
+          "version",
+          "digest",
+          "pinned_by",
+          "pinned_at",
+          "authenticity"
+        ],
+        "properties": {
+          "capability": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^h1:[A-Za-z0-9+/]{43}=$"
+          },
+          "pinned_by": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pinned_at": {
+            "type": "string",
+            "minLength": 1
+          },
+          "supersedes": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "version",
+              "digest"
+            ],
+            "properties": {
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^h1:[A-Za-z0-9+/]{43}=$"
+              }
+            }
+          },
+          "authenticity": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "taken_at"
+            ],
+            "properties": {
+              "state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "taken_at": {
+                "type": "string",
+                "minLength": 1
+              },
+              "verifier": {
+                "type": "string",
+                "minLength": 1
+              },
+              "signer": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trust_root_digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "evidence": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

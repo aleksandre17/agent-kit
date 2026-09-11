@@ -111,6 +111,36 @@ def _claim(into: dict, rel: str, klass: str, by: str) -> None:
     into[rel] = (klass, by)
 
 
+def closure(ws, start: str, skip=frozenset(), view=None) -> dict:
+    """path -> class, for every file reachable from `start` by the one rule this module knows: a
+    string in a declaration that names a file of the tree IS a reference to it. JSON is walked
+    into; anything else is payload and carried. `skip` names paths the walk must neither claim nor
+    enter, and `view` lets a caller hide a part of one document that is not references. ONE walk,
+    used for the kit's account of itself and for the account of any single capability in it --
+    a second walker would be a second opinion about what a declaration points at."""
+    found: dict = {}
+    queue = [start]
+    while queue:
+        rel = queue.pop()
+        if rel in found or rel in skip:
+            continue
+        raw = ws.read_bytes(rel)
+        try:
+            value = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            value = None
+        found[rel] = PAYLOAD if value is None else DECLARATION
+        if value is None:
+            continue
+        if view is not None:
+            value = view(rel, value)
+        for text in _strings(value):
+            candidate = _inside(text)
+            if candidate and candidate not in skip and ws.path(candidate).is_file():
+                queue.append(candidate)
+    return found
+
+
 def accounted(manifest, ws) -> dict:
     """path -> (class, accounted_by), for every file this kit says it is made of."""
     ships = manifest.raw_ships()
@@ -118,28 +148,16 @@ def accounted(manifest, ws) -> dict:
     found: dict = {}
 
     # -- derived: the closure of the declarations ---------------------------------------------
-    queue = ["MANIFEST.json"]
-    while queue:
-        rel = queue.pop()
-        if rel in found or rel == lock_path:
-            continue
-        raw = ws.read_bytes(rel)
-        try:
-            value = json.loads(raw.decode("utf-8"))
-        except (UnicodeDecodeError, json.JSONDecodeError):
-            value = None
-        _claim(found, rel, PAYLOAD if value is None else DECLARATION, "declaration-closure")
-        if value is None:
-            continue
+    def without_ships(rel, value):
+        # `ships` is the DECLARED accounting, not a set of references. Walking it as though its
+        # strings were pointers would make every rule account for its own root twice -- once as a
+        # rule and once as a reference -- which is one path with two meanings.
         if rel == "MANIFEST.json":
-            # `ships` is the DECLARED accounting, not a set of references. Walking it as though
-            # its strings were pointers would make every rule account for its own root twice --
-            # once as a rule and once as a reference -- which is one path with two meanings.
-            value = {k: v for k, v in value.items() if k != "ships"}
-        for text in _strings(value):
-            candidate = _inside(text)
-            if candidate and candidate != lock_path and ws.path(candidate).is_file():
-                queue.append(candidate)
+            return {k: v for k, v in value.items() if k != "ships"}
+        return value
+
+    for rel, klass in closure(ws, "MANIFEST.json", {lock_path}, without_ships).items():
+        _claim(found, rel, klass, "declaration-closure")
 
     # -- declared: what no declaration can point at -------------------------------------------
     for rule in ships["accounts"]:

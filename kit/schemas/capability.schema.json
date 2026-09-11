@@ -9,6 +9,17 @@
     "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
     "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
     "summary": { "type": "string" },
+    "provenance": {
+      "description": "A publisher's CLAIM of a signature over this capability's digest (ADR-008): which declared verifier checks it, the principal who signed, and the kit-relative signature file. A claim establishes nothing until the verifier ran.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verifier", "signer", "signature"],
+      "properties": {
+        "verifier": { "type": "string", "minLength": 1 },
+        "signer": { "type": "string", "minLength": 1 },
+        "signature": { "type": "string", "minLength": 1 }
+      }
+    },
     "requires": {
       "type": "array",
       "items": {

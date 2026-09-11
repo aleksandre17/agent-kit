@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 31,
+  "issued": 32,
   "codes": [
     {
       "code": "KIT0001",
@@ -188,6 +188,12 @@
       "status": "active",
       "title": "an init journal exists and cannot be read as one",
       "explanation": "The host's init journal -- the only account of how far an interrupted install got -- is present but unreadable or does not honour the kit's journal schema, or a run was about to write one that does not. It is refused rather than overwritten, because replacing it would destroy the evidence the next run exists to read. Read it, move it aside by hand, then run again."
+    },
+    {
+      "code": "KIT0032",
+      "status": "active",
+      "title": "a capability this kit did not issue cannot be taken as it stands",
+      "explanation": "A capability the kit's own lock does not account for is not the bytes this host pinned when it first took it, is at a version older than the one pinned, or claims a signature its declared verifier refuted -- or the kit holds no single provenance declaration or no lock to tell what it issued. It is refused before any write and no approval opens it: a pin that could be re-taken would pin nothing. Restore the pinned bytes, or have the publisher release a NEWER version, which is met at the door as first contact is."
     }
   ]
 }

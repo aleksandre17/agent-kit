@@ -171,6 +171,15 @@ class Manifest:
             for entry in self._raw["capabilities"]
         }
 
+    def declaration_of(self, capability_id: str) -> str:
+        """The kit-relative path of the file that declares a capability, as the manifest states
+        it. Asked by whoever must say which BYTES a capability is -- never reconstructed from its
+        id, because a path convention nobody declared is a second home for this row."""
+        for entry in self._raw["capabilities"]:
+            if entry["id"] == capability_id:
+                return entry["declaration"]
+        raise ManifestError(f"no capability named {capability_id!r} is declared by this kit")
+
     @property
     def detectors(self) -> list:
         return list(self._detectors)

@@ -137,6 +137,7 @@
     "diagnostics": "schemas/diagnostics.schema.json",
     "stance": "schemas/stance.schema.json",
     "hold": "schemas/hold.schema.json",
-    "journal": "schemas/journal.schema.json"
+    "journal": "schemas/journal.schema.json",
+    "provenance": "schemas/provenance.schema.json"
   }
 }

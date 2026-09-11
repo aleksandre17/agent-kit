@@ -36,6 +36,7 @@ import hostlock
 import journal
 import plan as plan_module
 import predicate
+import provenance
 import render as render_verb
 from context import SCHEMA_VERSION
 from errors import KitError, PendingApproval
@@ -164,7 +165,7 @@ def _install_plan(ctx, enabled, state) -> list:
     return writes
 
 
-def _record_plan(ctx, enabled, signed_by, writes=()) -> list:
+def _record_plan(ctx, enabled, signed_by, writes=(), taken=None) -> list:
     """The estate write, foreseen -- and foreseen by MEASURING, not by assuming a run writes.
 
     Empty where this kit declares no estate at all: a kit that records nothing says so by planning
@@ -187,7 +188,7 @@ def _record_plan(ctx, enabled, signed_by, writes=()) -> list:
                                  recorded, ctx.decided, writes)
     if not ctx.workspace.exists(item["target"]):
         disposition = "create"
-    elif estate_module.restates(recorded, ctx, entries, signed_by):
+    elif estate_module.restates(recorded, ctx, entries, signed_by, taken):
         disposition = "keep"
     else:
         disposition = "replace"
@@ -269,6 +270,8 @@ PHASES = (
     {"id": "measure", "does": "take the reading: what is TRUE of this host"},
     {"id": "choose", "does": "classify, select and compose this host's set"},
     {"id": "adopt", "does": "at first contact, account for every path already in the tree"},
+    {"id": "provenance", "does": "hold every capability this kit did not issue to the pin its "
+                                 "host took, and stand a human at the door of any it has not"},
     {"id": "answer", "does": "draft what this host chose, and foresee the write set"},
     {"id": "install", "does": "carry out the foreseen writes", "writes": {"approved": True}},
     {"id": "render", "does": "recompute every projection", "writes": {"approved": True}},
@@ -336,6 +339,17 @@ def _phase_adopt(ctx, args, state):
     adoption.require_adoptable(ctx, foreign)
 
 
+def _phase_provenance(ctx, args, state):
+    # What this host TAKES from outside the kit is judged BEFORE a byte of it is written: bytes
+    # that are not the bytes this host pinned are refused here, whole, and a capability it has
+    # never pinned is a DOOR -- the approval on this run walks it, and names the pin (ADR-008).
+    # A draft host is already standing at the install's own door, which this one rides with.
+    status = (state["existing"] or {}).get("status")
+    state["taken"] = provenance.judge(
+        ctx, state["enabled"], who=args.approve, when=state["reading"]["taken_at"],
+        at_door=status == doors.ACCEPTED and not getattr(args, "plan", False))
+
+
 def _phase_answer(ctx, args, state):
     enabled, existing = state["enabled"], state["existing"]
     status = (existing or {}).get("status")
@@ -353,7 +367,8 @@ def _phase_answer(ctx, args, state):
     if getattr(args, "plan", False):
         if approved:
             writes = writes + render_verb.plan_entries(ctx, enabled)
-            writes = writes + _record_plan(ctx, enabled, _signed(args, existing), writes)
+            writes = writes + _record_plan(ctx, enabled, _signed(args, existing), writes,
+                                           state.get("taken"))
         print(plan_module.report("init", writes))
         return 0
 
@@ -382,10 +397,11 @@ def _phase_record(ctx, args, state):
     # fail. It carries the NAME on the door: what a machine did to a host, with nobody's name on
     # it, is a thing no one can be held to.
     enabled, writes = state["enabled"], state["writes"]
-    for write in _record_plan(ctx, enabled, ctx.host_answers()[doors.SIGNED_BY], writes):
+    taken = state.get("taken")
+    for write in _record_plan(ctx, enabled, ctx.host_answers()[doors.SIGNED_BY], writes, taken):
         if write.disposition != "keep":
             estate_module.take(ctx, enabled, state["reading"]["taken_at"],
-                               ctx.host_answers()[doors.SIGNED_BY], writes=writes)
+                               ctx.host_answers()[doors.SIGNED_BY], writes=writes, taken=taken)
         print(f"  {write.accomplished:<9}  {write.target}")
 
 
@@ -403,6 +419,7 @@ STEPS = {
     "measure": _phase_measure,
     "choose": _phase_choose,
     "adopt": _phase_adopt,
+    "provenance": _phase_provenance,
     "answer": _phase_answer,
     "install": _phase_install,
     "render": _phase_render,
