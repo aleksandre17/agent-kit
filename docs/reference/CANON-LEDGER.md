@@ -85,6 +85,12 @@ that leaves no trace is not.
 | **A code is opaque: its digits carry no class** (HTTP's class digit rejected — a refusal's family can move and then the digit lies forever). Severity stays with the exit code. | 2026-09-11, ADR-005 | ADOPTED |
 | **`--explain`, SARIF 2.1.0 output (`ruleId` = code, `level` from exit code), and the code inside the observation record.** Shape decided in ADR-005, none built; the code today lives only in the rendered line. | 2026-09-11, ADR-005 | NOT BUILT — three named gaps |
 
+| **Two stance vocabularies now exist, and that is one truth with two homes.** ADR-006 declares gate stances as ONE ordered list of data (`observe`/`enforce`, ranked, with a non-lowerable floor). ADR-003 §6 declared a plane's stance toward the unaccounted as `refuse|report`, an older enum held in the manifest schema. Both say *does this obstruct, or is it only shown* — each internally right, in two vocabularies that will drift (Cardinal III). The plane stance should very likely become a row on the same list. | 2026-09-11, ADR-006 | OPEN — unify |
+| **Rust lint levels with `forbid` — a floor no inner scope may lower — adopted as the stance grammar.** A floor is declared ON THE GATE, never listed in the interpreter; a host that lowers one is REFUSED (`KIT0030`) rather than silently raised back, because a surface showing a stance that was not honoured lies (Rust E0453). The measure for a floor: *when it fails, can the kit still truthfully say anything about itself or the files it reads and writes?* Four gates are floors. | 2026-09-11, ADR-006 | ADOPTED WHOLE |
+| **An observed failure is still printed, named and COUNTED; the stance decides only whether it fails `check`** (Gatekeeper dryrun audit, PSA audit). ESLint's `off` is rejected: a gate that runs and prints nothing reads as passing. | 2026-09-11, ADR-006 | ADOPTED WHOLE |
+| **Maturation is by RESTATEMENT, and P9's number is the printed count of observed failures.** The kit ships no threshold (ADR-001 ④). A measured trigger declared by the host is deferred: it needs run history and a dated record of every firing. SonarQube's "clean as you code" (enforce new, observe legacy) belongs in a gate kind's params, not in the stance. | 2026-09-11, ADR-006 | PARTIAL — trigger and new-code scoping not built |
+| **Untested: whether `init --approve` preserves a `stances` array written before approval.** | 2026-09-11, ADR-006 | OPEN — small |
+
 ## Canon met — status per Law 13
 
 | Concept | Status | Note |

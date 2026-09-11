@@ -15,6 +15,7 @@ from __future__ import annotations
 import importlib
 from pathlib import Path
 
+import stance as stance_of
 from errors import KitError
 
 SUMMARY = "run the declared fitness functions and report"
@@ -49,9 +50,15 @@ def registry() -> dict:
 
 
 def run(ctx, args) -> int:
+    """Every gate runs and every failure is printed, whatever its stance. The stance decides one
+    thing only -- whether that failure fails this verb -- and it is printed beside the verdict with
+    its author, so an observed failure is shown, counted and named, never a silent green."""
     kinds = registry()
+    enabled = ctx.enabled_capabilities()
+    stances, unbound = stance_of.resolve(ctx.manifest, ctx.host_answers(), enabled)
     failed = 0
-    for capability in ctx.enabled_capabilities():
+    observed, clean = [], []
+    for capability in enabled:
         for gate in capability.gates:
             kind = gate["kind"]
             if kind not in kinds:
@@ -59,10 +66,24 @@ def run(ctx, args) -> int:
                     f"capability {capability.id!r} declares gate kind {kind!r}; "
                     f"registered kinds are {sorted(kinds)}"
                 )
+            held = stances[(capability.id, gate["id"])]
             failures = kinds[kind](ctx, gate.get("params", {}))
-            print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})")
+            print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})  {held.label()}")
             for failure in failures:
                 print(f"        {failure}")
-            failed += 1 if failures else 0
+            if held.fails:
+                failed += 1 if failures else 0
+            else:
+                (observed if failures else clean).append(f"{gate['id']} [{held.stance}]")
+    for entry in unbound:
+        print(f"  STANCE  {entry['gate']}  [{entry['stance']}: declared by {entry['by']} at "
+              f"{entry['at']}] names no gate an enabled capability declares -- it binds nothing")
+    if observed:
+        print(f"check: {len(observed)} gate(s) failed under a stance that does not fail check: "
+              f"{', '.join(observed)} -- shown, counted, and not enforced")
+    if clean:
+        print(f"check: {len(clean)} gate(s) held under a stance that does not fail check are "
+              f"clean: {', '.join(clean)} -- no failure stands between them and a stance that "
+              f"fails; raising one is a declaration only the host makes")
     print(f"check: {failed} gate(s) failed")
     return 1 if failed else 0

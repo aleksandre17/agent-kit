@@ -24,7 +24,8 @@
       "project",
       "profile",
       "stewardship",
-      "estate"
+      "estate",
+      "stance"
     ]
   },
   "documents": [
@@ -32,6 +33,11 @@
       "id": "stewardship",
       "source": "capabilities/governance/stewardship.json",
       "validates": "stewardship"
+    },
+    {
+      "id": "stances",
+      "source": "capabilities/governance/stances.json",
+      "validates": "stance"
     }
   ],
   "installs": [
@@ -85,6 +91,9 @@
       "params": {
         "file": ".agents/project/project.json",
         "schema": "project"
+      },
+      "stance": {
+        "floor": "enforce"
       }
     },
     {
@@ -93,6 +102,9 @@
       "params": {
         "file": ".agents/project/profile.json",
         "schema": "profile"
+      },
+      "stance": {
+        "floor": "enforce"
       }
     },
     {
@@ -100,12 +112,18 @@
       "kind": "path-class-total",
       "params": {
         "root": ".agents"
+      },
+      "stance": {
+        "floor": "enforce"
       }
     },
     {
       "id": "FF-KIT-PROJECTION",
       "kind": "projection-reproducible",
-      "params": {}
+      "params": {},
+      "stance": {
+        "floor": "enforce"
+      }
     },
     {
       "id": "FF-READING-FRESH",

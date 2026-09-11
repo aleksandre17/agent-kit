@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 29,
+  "issued": 30,
   "codes": [
     {
       "code": "KIT0001",
@@ -176,6 +176,12 @@
       "status": "active",
       "title": "an upgrade meets readings that cannot be reconciled",
       "explanation": "Upgrading found paths where the shipped, received and held readings contradict. The paths and both moments are named. Resolve each named path, then upgrade again."
+    },
+    {
+      "code": "KIT0030",
+      "status": "active",
+      "title": "a gate's stance cannot be honoured as declared",
+      "explanation": "A stance names no row of the stance vocabulary, a host lowers a gate below the floor its publisher declared, one gate is answered twice, or the kit holds no single stance vocabulary to read. The kit refuses rather than choosing a stance, because a gate standing in a stance nobody declared would report a verdict nobody asked for. Correct the named stance; a floor is lowered only by the gate's publisher, never by a host."
     }
   ]
 }

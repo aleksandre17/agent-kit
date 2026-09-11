@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "summary": "What a failing gate does to `check`. The kit ships the vocabulary and the unanswered default; WHEN a host lowers or raises a gate is the host's declaration, never the kit's number (ADR-006, consistent with ADR-001 point 4).",
+  "unanswered": "enforce",
+  "stances": [
+    {
+      "id": "observe",
+      "rank": 0,
+      "fails": false,
+      "says": "the gate runs and every failure is shown, counted and named on every check -- and does not fail it. A gate on its way in, watched before it is trusted to stop anyone."
+    },
+    {
+      "id": "enforce",
+      "rank": 1,
+      "fails": true,
+      "says": "a failure fails check."
+    }
+  ]
+}

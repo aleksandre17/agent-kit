@@ -224,7 +224,16 @@
         "properties": {
           "id": { "type": "string", "minLength": 1 },
           "kind": { "type": "string", "minLength": 1 },
-          "params": { "type": "object" }
+          "params": { "type": "object" },
+          "stance": {
+            "description": "What the PUBLISHER of this gate declares about its enforcement (ADR-006). `ships` is the stance the gate stands in until the host answers -- absent, it stands in the vocabulary's declared `unanswered` stance. `floor` is the lowest stance any host may declare for it: a gate that holds the kit's own integrity declares a floor, as Rust's `forbid` cannot be lowered by an inner scope. Both name rows of the one stance vocabulary; neither is ever a list inside the interpreter.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ships": { "type": "string", "minLength": 1 },
+              "floor": { "type": "string", "minLength": 1 }
+            }
+          }
         }
       }
     }

@@ -134,6 +134,7 @@
     "runtime": "schemas/runtime.schema.json",
     "doctrine": "schemas/doctrine.schema.json",
     "cardinal": "schemas/cardinal.schema.json",
-    "diagnostics": "schemas/diagnostics.schema.json"
+    "diagnostics": "schemas/diagnostics.schema.json",
+    "stance": "schemas/stance.schema.json"
   }
 }
