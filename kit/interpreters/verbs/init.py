@@ -458,11 +458,12 @@ def run(ctx, args) -> int:
     """
     run_id = uuid.uuid4().hex
     now = ctx.clock.now()
-    break_by = getattr(args, "break_lock", None)
-    lock_at, journal_at = ephemeral.place(ctx, hostlock.NAME), ephemeral.place(ctx, journal.NAME)
+    journal_at = ephemeral.place(ctx, journal.NAME)
     state = {"reading": None, "enabled": [], "writes": []}
 
-    hostlock.guard(ctx, lock_at, verb="init", now=now, break_by=break_by)
+    # The run's OWN verb is what holds and what is journalled: an install carried out by an
+    # upgrade is an upgrade, and a hold that named the step instead would name the wrong run.
+    hostlock.arrive(ctx, args)
 
     hold, book, concluded = None, journal.Silent(), {}
     code, message = 1, None
@@ -476,10 +477,9 @@ def run(ctx, args) -> int:
                 )
             if (hold is None and phase.get("writes")
                     and predicate.matches(phase["writes"], _so_far(state))):
-                hold = hostlock.take(ctx, lock_at, run_id=run_id, verb="init", now=now,
-                                     break_by=break_by)
+                hold = hostlock.writer(ctx, args, run_id=run_id)
                 book = journal.Journal.opened(
-                    ctx, journal_at, verb="init", phases=PHASES, now=now, run_id=run_id,
+                    ctx, journal_at, verb=args.verb, phases=PHASES, now=now, run_id=run_id,
                     broke=hold.broke, concluded=concluded)
                 _report_resumption(book)
             started = ctx.clock.now()

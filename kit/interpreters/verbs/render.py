@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import collection
 import composition as composition_module
+import hostlock
 import lifecycle as lifecycle_module
 import plan as plan_module
 import template
@@ -217,17 +218,21 @@ def plan_entries(ctx, capabilities=None) -> list:
 
 
 def run(ctx, args, capabilities=None) -> int:
+    hostlock.arrive(ctx, args)
     capabilities = ctx.enabled_capabilities() if capabilities is None else capabilities
     writes = plan_entries(ctx, capabilities)
     if getattr(args, "plan", False):
         print(plan_module.report("render", writes))
         return 0
 
-    ctx.workspace.unscoped().remove_tree(_plane(ctx))
-    produced = projections(ctx, capabilities)
-    scopes = {c.id: ctx.workspace.scoped(c.targets()) for c in capabilities}
-    for write in writes:
-        if write.disposition != "remove":
-            scopes[write.capability].write_text(write.target, produced[write.target])
-        print(f"  {write.accomplished:<9}  {write.target}")
-    return 0
+    def write() -> int:
+        ctx.workspace.unscoped().remove_tree(_plane(ctx))
+        produced = projections(ctx, capabilities)
+        scopes = {c.id: ctx.workspace.scoped(c.targets()) for c in capabilities}
+        for entry in writes:
+            if entry.disposition != "remove":
+                scopes[entry.capability].write_text(entry.target, produced[entry.target])
+            print(f"  {entry.accomplished:<9}  {entry.target}")
+        return 0
+
+    return hostlock.held(ctx, args, write)

@@ -33,6 +33,7 @@ from __future__ import annotations
 import uuid
 
 import collection
+import hostlock
 import plan as plan_module
 from errors import KitError
 
@@ -131,6 +132,7 @@ def _measure(pairs: list, records: list) -> str:
 
 
 def run(ctx, args) -> int:
+    hostlock.arrive(ctx, args)
     capabilities = ctx.enabled_capabilities()
     capability = _judging(capabilities)
     spec = capability.evaluates
@@ -155,12 +157,14 @@ def run(ctx, args) -> int:
         print(f"  {_measure(pairs, [r for _rel, r in held.records])}")
         return 0
 
-    workspace = ctx.workspace.scoped(capability.targets())
-    for write in writes:
-        workspace.write_json(write.target, write.item)
-        print(f"  {write.accomplished:<9}  {write.target}  "
-              f"{write.item[CASE]} / {write.item[RUBRIC]}  {write.item[VERDICT]}")
+    def write() -> int:
+        workspace = ctx.workspace.scoped(capability.targets())
+        for entry in writes:
+            workspace.write_json(entry.target, entry.item)
+            print(f"  {entry.accomplished:<9}  {entry.target}  "
+                  f"{entry.item[CASE]} / {entry.item[RUBRIC]}  {entry.item[VERDICT]}")
+        on_disk = [record for _rel, record in held.records] + opening
+        print(f"  {_measure(pairs, on_disk)}")
+        return 0
 
-    on_disk = [record for _rel, record in held.records] + opening
-    print(f"  {_measure(pairs, on_disk)}")
-    return 0
+    return hostlock.held(ctx, args, write)

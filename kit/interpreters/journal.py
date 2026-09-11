@@ -36,6 +36,8 @@ from __future__ import annotations
 
 import uuid
 
+from errors import KitError
+
 #: OpenTelemetry's span statuses, imported from their one declaration in this kit rather than
 #: restated. UNSET is not "unknown": it is the declared state of something that has concluded
 #: nothing yet -- which is what a phase that was interrupted will say forever.
@@ -47,11 +49,30 @@ from receipt import ERROR, OK, UNSET  # noqa: F401
 #: phase is ever represented by a silent blank.
 PENDING = "PENDING"
 
-SCHEMA_VERSION = 1
+#: The kit schema that is the ONE home of this document's shape. The version a journal is written
+#: at is read from it; nothing here declares a second one.
+SCHEMA = "journal"
 
 #: The document's name inside the plane that holds observed state. The kit's own vocabulary; the
 #: PLACE is resolved from the manifest's plane declaration, never written here.
 NAME = "init.journal"
+
+
+class JournalError(KitError):
+    """A journal document exists and cannot be read as one, or this run was about to write one
+    that is not one. Refused rather than overwritten: the record of a dead run is the only account
+    of how far it got, and a run that replaced it would be destroying the evidence it came for."""
+
+    code = "KIT0031"
+
+
+def _honoured(ctx, rel: str, value, moment: str) -> dict:
+    errors = ctx.manifest.validate(value, SCHEMA) if isinstance(value, dict) else ["not an object"]
+    if errors:
+        raise JournalError(f"{rel} {moment} does not honour the kit schema {SCHEMA!r}. It is not "
+                           f"overwritten; move it aside by hand once it has been read:\n  "
+                           + "\n  ".join(errors))
+    return value
 
 
 class Silent:
@@ -79,11 +100,12 @@ class Journal:
     never reached the end.
     """
 
-    __slots__ = ("workspace", "clock", "rel", "value")
+    __slots__ = ("ctx", "workspace", "clock", "rel", "value")
 
-    def __init__(self, workspace, clock, rel: str, value: dict) -> None:
+    def __init__(self, ctx, workspace, rel: str, value: dict) -> None:
+        self.ctx = ctx
         self.workspace = workspace
-        self.clock = clock
+        self.clock = ctx.clock
         self.rel = rel
         self.value = value
 
@@ -116,11 +138,16 @@ class Journal:
         from ephemeral import scope
 
         workspace = scope(ctx)
-        prior = ctx.workspace.read_json(rel) if ctx.workspace.exists(rel) else None
-        if not isinstance(prior, dict):
-            prior = None
+        prior = None
+        if ctx.workspace.exists(rel):
+            try:
+                prior = ctx.workspace.read_json(rel)
+            except ValueError as exc:
+                raise JournalError(f"{rel} exists and is not readable as a journal -- {exc}. It "
+                                   f"is not overwritten; move it aside by hand.") from exc
+            _honoured(ctx, rel, prior, "as it stands on disk")
         value = {
-            "schema_version": SCHEMA_VERSION,
+            "schema_version": ctx.manifest.schema(SCHEMA)["properties"]["schema_version"]["const"],
             "run_id": run_id or uuid.uuid4().hex,
             "verb": verb,
             "status": UNSET,
@@ -137,8 +164,8 @@ class Journal:
             #: document is what remains, so the declaration that broke a hold is recorded where it
             #: will outlive the hold it broke.
             value["broke_lock"] = broke
-        workspace.write_json(rel, value)
-        return Journal(workspace, ctx.clock, rel, value)
+        workspace.write_json(rel, _honoured(ctx, rel, value, "as this run opens it"))
+        return Journal(ctx, workspace, rel, value)
 
     @property
     def resumed_from(self):
@@ -151,7 +178,8 @@ class Journal:
         raise KeyError(phase_id)
 
     def _flush(self) -> None:
-        self.workspace.write_json(self.rel, self.value)
+        self.workspace.write_json(
+            self.rel, _honoured(self.ctx, self.rel, self.value, "as this run rewrites it"))
 
     def enter(self, phase_id: str) -> None:
         """Stated BEFORE the work. This write is the entire guarantee and it is the one that

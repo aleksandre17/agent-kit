@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import doors
 import estate as estate_module
+import hostlock
 import init as init_verb
 import reconcile
 from errors import KitError, PendingApproval
@@ -81,6 +82,10 @@ def _refuse(rows) -> None:
 
 
 def run(ctx, args) -> int:
+    # Guarded on arrival, so a held host is named as the cause before a reconciliation is printed
+    # against a tree somebody else is writing. The hold itself is taken by the installer this verb
+    # hands its verdict to, at the moment that installer writes, and under THIS verb's name.
+    hostlock.arrive(ctx, args)
     recorded = estate_module.read(ctx)
     if recorded is None:
         raise UpgradeRefused(

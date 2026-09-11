@@ -1,0 +1,99 @@
+{
+  "$id": "hold",
+  "title": "Host hold -- the one writer a host has, stated on disk by the run that is writing it",
+  "description": "Written by a run at the moment it becomes a WRITER of the host (never on arrival: a hold written by a run about to be refused is itself a mutation) and CLOSED, never deleted, in a `finally` with its ending. A hold that declares no `released_at` is STANDING, and a standing hold is a door: no machine may decide it is stale, because the bytes of a dead holder and of a slow one are the same. Only a person, by name (`--break-lock <who>`), passes it, and the break is recorded here and in the init journal. Which verbs take it is read from each verb's declarations (ADR-007).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "verb",
+    "owner",
+    "machine",
+    "pid",
+    "started_at",
+    "kit_version"
+  ],
+  "properties": {
+    "schema_version": {
+      "description": "The ONE declaration of this document's version; the writer reads it from here.",
+      "type": "integer",
+      "const": 1
+    },
+    "run_id": {
+      "description": "The run that took the hold. Thirty-two hex characters, the width of a receipt's identity.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "verb": {
+      "description": "The verb of the run that holds the host -- the run's own verb, never the step inside it that wrote.",
+      "type": "string",
+      "minLength": 1
+    },
+    "owner": {
+      "description": "Who, measured at the boundary; '-' where the host resolves no user.",
+      "type": "string",
+      "minLength": 1
+    },
+    "machine": {
+      "description": "Which machine, as the platform names it. May be empty where the platform names none, and is then shown as such.",
+      "type": "string"
+    },
+    "pid": {
+      "description": "Which process, on that machine. Reported for a person to check; never probed by the kit.",
+      "type": "integer"
+    },
+    "started_at": {
+      "description": "The moment the hold was taken, from the clock port. Reported so a person can decide; never compared against anything by a machine.",
+      "type": "string",
+      "minLength": 1
+    },
+    "kit_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "broke": {
+      "description": "Present where this run was started with --break-lock: who declared the previous hold dead, when, and the whole hold that was superseded (null where nothing was standing).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "by",
+        "at",
+        "previous"
+      ],
+      "properties": {
+        "by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "at": {
+          "description": "The moment of the declaration.",
+          "type": "string",
+          "minLength": 1
+        },
+        "previous": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "released_at": {
+      "description": "The moment the holder declared its ending. ABSENT is the held state, not a gap.",
+      "type": "string",
+      "minLength": 1
+    },
+    "exit_code": {
+      "description": "What the holding run reported. Written with the release, never before.",
+      "type": "integer"
+    },
+    "ended_because": {
+      "description": "What the run said when it ended badly.",
+      "type": "string"
+    }
+  }
+}

@@ -13,6 +13,7 @@ reality presented as the reality.
 from __future__ import annotations
 
 import collection
+import hostlock
 import lifecycle as lifecycle_module
 import plan as plan_module
 import render as render_verb
@@ -44,6 +45,7 @@ def _asked(args) -> tuple:
 
 
 def run(ctx, args) -> int:
+    hostlock.arrive(ctx, args)
     card_id, target, by, approver = _asked(args)
     capabilities = ctx.enabled_capabilities()
     governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
@@ -75,9 +77,12 @@ def run(ctx, args) -> int:
         print(plan_module.report("move", writes + render_verb.plan_entries(ctx, capabilities)))
         return 0
 
-    scoped = ctx.workspace.scoped(governed.capability.targets())
-    scoped.write_json(rel, updated)
-    print(f"  {edge['from']} -> {edge['to']}  card {card_id}  by {by}"
-          + (f"  ACCEPTED by {approver}" if approver else "") + f"  at {when}")
-    print(f"  {writes[0].accomplished:<9}  {rel}")
-    return render_verb.run(ctx, args, capabilities)
+    def write() -> int:
+        scoped = ctx.workspace.scoped(governed.capability.targets())
+        scoped.write_json(rel, updated)
+        print(f"  {edge['from']} -> {edge['to']}  card {card_id}  by {by}"
+              + (f"  ACCEPTED by {approver}" if approver else "") + f"  at {when}")
+        print(f"  {writes[0].accomplished:<9}  {rel}")
+        return render_verb.run(ctx, args, capabilities)
+
+    return hostlock.held(ctx, args, write)

@@ -26,6 +26,9 @@ from workspace import Workspace
 
 SUMMARY = "enumerate what the kit is, measure it, and record the reading"
 MUTATES = True
+#: What this verb mutates is the KIT, never the host `--root` names -- so the host's hold is not
+#: this verb's to take (ADR-007). Declared, so the set of verbs that hold is read, never listed.
+SUBJECT = "kit"
 REQUIRES_APPROVED_HOST = False
 
 
