@@ -43,6 +43,8 @@ class ObservationError(KitError):
     """A declaration named an observer kind no discovered module provides, or two modules claim
     one kind -- which is a name resolving to two meanings, refused rather than ordered."""
 
+    code = "KIT0013"
+
 
 def registry() -> dict:
     kinds: dict = {}

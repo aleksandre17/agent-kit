@@ -78,6 +78,8 @@ class LockError(KitError):
     """The kit cannot state what it is: a rule that measures nothing, a rule over a directory
     that names no suffix, or one path accounted for twice."""
 
+    code = "KIT0012"
+
 
 def _inside(rel: str) -> str | None:
     """The kit-relative form of a string that MIGHT be a path, or None if it cannot be one."""

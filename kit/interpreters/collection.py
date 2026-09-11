@@ -22,6 +22,8 @@ IDENTITY = "id"
 class CollectionError(KitError):
     """A readable declaration is absent, unreadable, invalid, or claims one identity twice."""
 
+    code = "KIT0002"
+
 
 class Reading:
     """What one `reads_as` name resolved to: the value a projection sees, and the records behind

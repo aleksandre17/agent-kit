@@ -1,0 +1,61 @@
+{
+  "$id": "diagnostics",
+  "title": "Diagnostic code registry -- the one home of what every refusal code MEANS",
+  "description": "Every refusal the kit can state carries a stable code, and this registry is the only place a code's meaning is declared (ADR-005). The class that raises a refusal names its code; the message, any future `--explain`, any SARIF export and every test are projections of the row. The registry is APPEND-ONLY: a code is issued once, never deleted, never reused and never re-meant. A code that stops being raised is RETIRED -- its row stays, marked, with the version and the reason -- because an outside consumer may still be matching on it, and a deleted row is how a published code gets silently handed to a second meaning. `issued` is the high-water mark: codes are dense from 1 to `issued`, so a deleted row is a gap a gate can see without any history.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "prefix", "issued", "codes"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "prefix": {
+      "description": "The namespace every code carries. Constant for the life of the registry: changing it re-numbers every published code at once.",
+      "type": "string",
+      "const": "KIT"
+    },
+    "issued": {
+      "description": "The highest code ever issued. Only ever grows. A new code is `issued + 1`, and this field moves with it in the same change.",
+      "type": "integer"
+    },
+    "codes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "status", "title", "explanation"],
+        "properties": {
+          "code": {
+            "description": "Opaque and sequential. The digits carry NO class: severity is the exit code's job, and a family digit would lie the day a refusal moved between families.",
+            "type": "string",
+            "pattern": "^KIT[0-9]{4}$"
+          },
+          "status": {
+            "description": "active: raised today by exactly one refusal class. retired: raised by nothing, kept forever, never reissued.",
+            "type": "string",
+            "enum": ["active", "retired"]
+          },
+          "title": {
+            "description": "One line: the situation this code names, in the host's terms rather than the interpreter's.",
+            "type": "string",
+            "minLength": 1
+          },
+          "explanation": {
+            "description": "What the situation is, why the kit refuses it rather than guessing, and what the operator does next. The text `--explain` would print.",
+            "type": "string",
+            "minLength": 1
+          },
+          "retired": {
+            "description": "Present exactly when status is retired: the kit version the code stopped being raised in, and why.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["in", "reason"],
+            "properties": {
+              "in": { "type": "string", "minLength": 1 },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

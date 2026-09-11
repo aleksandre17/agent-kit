@@ -129,7 +129,9 @@ def guarded(argv=None) -> int:
     try:
         return main(argv)
     except KitError as refusal:
-        print(f"kit: {refusal}", file=sys.stderr)
+        # The code leads, bracketed, so a machine matches `^kit: \[(\w+)\] ` and never the prose
+        # (ADR-005). A refusal with no code says so -- an honest absence, never an invented code.
+        print(f"kit: [{refusal.code or 'uncoded'}] {refusal}", file=sys.stderr)
         return refusal.exit_code
 
 

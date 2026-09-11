@@ -35,6 +35,8 @@ _MISSING = object()
 class TemplateError(KitError):
     """The template used syntax outside the supported subset, or named something absent."""
 
+    code = "KIT0022"
+
 
 def _resolve(name: str, stack: list):
     if name == ".":

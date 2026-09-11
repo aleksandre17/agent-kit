@@ -46,6 +46,8 @@ class ReceiptError(KitError):
     declare. Refused rather than defaulted: a record written somewhere nobody reads is worse than
     no record, because its absence from the report reads as nothing having happened."""
 
+    code = "KIT0014"
+
 
 def _space(capability, watch):
     """The install that owns the place these records live. The path is read from the declaration

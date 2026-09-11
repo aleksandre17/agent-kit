@@ -56,6 +56,8 @@ class EvaluationError(KitError):
     """No enabled capability declares anything to judge, or two of them do -- which is two homes
     for one question and is refused rather than ordered."""
 
+    code = "KIT0024"
+
 
 def _judging(capabilities):
     """The one capability that declares something judged. Found by DECLARATION: this verb knows no

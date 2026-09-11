@@ -97,6 +97,8 @@ class CompositionConflict(KitError):
     """An instance and its base both carry one key. Refused rather than ordered: whichever side
     lost would go on declaring a value the composition does not have."""
 
+    code = "KIT0003"
+
 
 class Composed:
     """What one `composes` declaration resolved to: the composed rows, and the census of bases."""

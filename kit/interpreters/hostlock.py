@@ -50,6 +50,8 @@ class LockError(KitError):
     """A lock document exists and cannot be read as one. Refused rather than overwritten: a hold
     nobody can read is still a hold somebody may be standing behind."""
 
+    code = "KIT0010"
+
 
 def who() -> str:
     """The owner, measured at the boundary rather than assumed. A hold with no name on it is a

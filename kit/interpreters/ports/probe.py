@@ -57,6 +57,8 @@ EVIDENCE_KINDS = {
 class ProbeError(KitError):
     """A detector declared an evidence kind this interpreter does not know how to evaluate."""
 
+    code = "KIT0016"
+
 
 class Probe:
     """Evaluates detector declarations against a workspace. Reads only."""

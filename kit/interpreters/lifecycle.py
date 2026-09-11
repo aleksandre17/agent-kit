@@ -25,6 +25,8 @@ CREATED_AT = "created_at"
 class LifecycleError(KitError):
     """A card, a move or a board contradicts the lifecycle that was declared."""
 
+    code = "KIT0011"
+
 
 class Governed:
     """A collection and the lifecycle it moves through, found by DECLARATION."""

@@ -60,6 +60,8 @@ ORPHAN = "orphan"
 class EstateError(KitError):
     """The host's record of what it received is absent, or cannot be honestly taken."""
 
+    code = "KIT0008"
+
 
 class Stewardship:
     """The stewardship declaration, read once and asked questions. It holds no behaviour, and

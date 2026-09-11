@@ -61,6 +61,8 @@ class AdoptionRefused(KitError):
     """Paths this kit has no permission to touch stand where it must install. Every one is named,
     and the OPERATION stops -- never the path."""
 
+    code = "KIT0001"
+
 
 def nothing(ctx, moment: str) -> dict:
     """The record of a host that received nothing: EMPTY, at a stated moment, signed by nobody.

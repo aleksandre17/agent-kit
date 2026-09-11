@@ -26,6 +26,8 @@ REQUIRES_APPROVED_HOST = True
 class MoveError(KitError):
     """The move named something the host does not have, or was asked for incompletely."""
 
+    code = "KIT0027"
+
 
 def _asked(args) -> tuple:
     card_id, target = getattr(args, "card", None), getattr(args, "to", None)

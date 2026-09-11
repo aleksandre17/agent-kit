@@ -23,6 +23,11 @@
         "id": "readme",
         "class": "prose",
         "root": "README.md"
+      },
+      {
+        "id": "diagnostics",
+        "class": "declaration",
+        "root": "diagnostics.json"
       }
     ]
   },
@@ -128,6 +133,7 @@
     "runtime-class": "schemas/runtime-class.schema.json",
     "runtime": "schemas/runtime.schema.json",
     "doctrine": "schemas/doctrine.schema.json",
-    "cardinal": "schemas/cardinal.schema.json"
+    "cardinal": "schemas/cardinal.schema.json",
+    "diagnostics": "schemas/diagnostics.schema.json"
   }
 }

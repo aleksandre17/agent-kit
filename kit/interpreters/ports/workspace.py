@@ -20,9 +20,13 @@ from errors import KitError
 class WorkspaceError(KitError):
     """A path could not be resolved inside this workspace."""
 
+    code = "KIT0017"
+
 
 class WriteScopeError(WorkspaceError):
     """A write was attempted outside the declared scope. Refused, not warned about."""
+
+    code = "KIT0018"
 
 
 def _normalise(rel: str) -> str:

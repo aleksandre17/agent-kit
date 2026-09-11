@@ -57,6 +57,8 @@ RE_STEWARDED = "re-stewarded"
 class ReconcileError(KitError):
     """The three readings cannot be reconciled, or one of them cannot honestly be taken."""
 
+    code = "KIT0019"
+
 
 def _same(left, right) -> bool:
     """Whether two digests say the same thing. A comparison one side cannot answer is NOT a

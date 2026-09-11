@@ -28,6 +28,8 @@ class GateError(KitError):
     """A declaration named a gate kind no discovered module can evaluate, or two modules claim
     one kind -- which is a name resolving to two meanings, refused rather than ordered."""
 
+    code = "KIT0023"
+
 
 def registry() -> dict:
     kinds: dict = {}

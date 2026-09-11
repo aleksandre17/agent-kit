@@ -44,6 +44,8 @@ REQUIRES_APPROVED_HOST = True
 class UpgradeRefused(KitError):
     """The three readings could not be reconciled. The paths are named and so are both moments."""
 
+    code = "KIT0029"
+
 
 def _report(ctx, recorded, rows, stewards) -> None:
     print(f"upgrade: kit {ctx.manifest.version} against a host recorded at "

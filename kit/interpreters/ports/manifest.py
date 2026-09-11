@@ -17,6 +17,8 @@ from errors import KitError
 class ManifestError(KitError):
     """A payload declaration is missing, unreadable, or does not honour its own schema."""
 
+    code = "KIT0015"
+
 
 class Capability:
     """A capability declaration, read-only. It declares; it never acts."""

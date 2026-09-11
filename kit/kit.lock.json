@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 124,
+  "count": 126,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "0203bd07f3e761e7ca04b9609e5a056d2cc729d803ab4f47768395114f604d92",
+      "digest": "a6b070c99b7d6b9ff509b4608b74bdd152d72996a4cc4fc6b43c948d4c769bd1",
       "path": "MANIFEST.json"
     },
     {
@@ -351,6 +351,12 @@
       "path": "detectors/python-project.json"
     },
     {
+      "accounted_by": "diagnostics",
+      "class": "declaration",
+      "digest": "542f80907ece0cf80bf5ccff720a128036c983853edd6ee636efe6cd5df222b6",
+      "path": "diagnostics.json"
+    },
+    {
       "accounted_by": "fitness",
       "class": "declaration",
       "digest": "b4575ab5af45155ce1d90661f1761726c4c3540b5e1789648d8ba16d64db1f8a",
@@ -359,37 +365,37 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d026fd3918f69aaedbe723d67de7e03c5fc355453005dee38c9920069027b14e",
+      "digest": "e9349e7b2eeaa68f7fdf04c865599482ac1a69eeb1a091d61f92332d77ee58eb",
       "path": "interpreters/adoption.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "dec2b76385ce9a7c23a6f9ab0b67aac725785d8836b237115413b08aa2282689",
+      "digest": "d652dfd5ab3db8453454276f848344aab3886051a64d8e313c730593f22f89fe",
       "path": "interpreters/cli.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "6a76f633463504586143199ef641ce61281dc4b6c7ad87ac23b65668cfa33955",
+      "digest": "be2aaae95bfbd6c30f6d6108aac4dc909e20d8b7d49ef57bb6fd652c64d89b62",
       "path": "interpreters/collection.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ca305c8a68206e270338afa4ee481c64f56e32989c2cc12f89a65df47f1ae00b",
+      "digest": "17e274f99ec77ebc9af523a862582fad4ffbdbcb07b8d0ce4c627afe3cf8ac5f",
       "path": "interpreters/composition.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "c1c8a981192400c98d331f5c6881337f0882b9b855f67bf9a7dbc8c9911d67be",
+      "digest": "b0396e931d6570d159e8ef72d974037d1899d24c24b29ffc518096b52fc75aba",
       "path": "interpreters/context.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "51b9d61729935f2353497e39cd780df839a5691e4383bbbfd080e42c50ef2a34",
+      "digest": "701a5bebffe738711f67397e8024c6529878c876d710f13db141bda84626cad3",
       "path": "interpreters/declared.py"
     },
     {
@@ -401,19 +407,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f7fc4553a9e0024c18608bead1f4de6bdd77174830f109cb651d25e7a77ccbe5",
+      "digest": "771674cc2ed68bd16ff61d73fb59b02bfdfa5fafd522ca071b3ca59863f40c7a",
       "path": "interpreters/ephemeral.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "011504c2f525df63b47fcb3bde495d929d0fb5848ce2dc280a53efcdfb96722e",
+      "digest": "fe352b1dabf0a484f081ea489334aec8cbd7aaf02fda0db10c1d2b93a0f79e26",
       "path": "interpreters/errors.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4e3cb3061dee00c69d7c61b600df9d78b5bd7ee8550f1f2210d1639f147f43e9",
+      "digest": "6fa8090a7abde75d26faec06f7ac7f6d24d9b2de97098efe6f7a8ae27a0a004d",
       "path": "interpreters/estate.py"
     },
     {
@@ -431,7 +437,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1ec24125b887e4283ec2652e0dff795d07435a7dbeb517731350fb10965f00ea",
+      "digest": "3c4188f292cb6fa2d5c4efad09bc4b9d1d601b639126611e5f8613c63670c181",
       "path": "interpreters/gates/hygiene.py"
     },
     {
@@ -449,7 +455,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "50dffb732d1c89e7e997733e62e56cde6312283d7420249218d7c89c7798a25f",
+      "digest": "e727be0b6b5ac27c3ca8cd10a35d38996f0d19f3d67422761e037b655ea9dc47",
       "path": "interpreters/hostlock.py"
     },
     {
@@ -461,25 +467,25 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "03d93ddad5575cb8e9344afcbf63112bc270f6b7f0a504455186ee7edc555873",
+      "digest": "bdd6c4d4d3db5f030846ff2648337d0c41bcff8e6b9e2e04ef4464eec0ce242b",
       "path": "interpreters/lifecycle.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1ade4fe187b16384eae1f3052d7122cfe56c808a8aab1b0e6d4f89f23e268976",
+      "digest": "3dfece424848cd0a8421488aa4450f76853a12ad8eb1987f3273a9ff2bbf5542",
       "path": "interpreters/lockfile.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "23f436530aef83a09b9af1a0966060c375544f2bd1b6883bae9e60be84dc12df",
+      "digest": "a6c815bb7392db8b29db65541390077ea6c4c174dda6055533c64a5bae2d9fa7",
       "path": "interpreters/observation.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "809c972efb71f9cb61abfacdd0787d7891aca835c07ee4d0ef265f7f704bdbe0",
+      "digest": "92a813d87e6f2289705c7d87a9fa091af252dea03baa8b50c905c6942dbccb08",
       "path": "interpreters/observers/receipt.py"
     },
     {
@@ -497,19 +503,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3cd3878b7151202579841e4aa564ee3788e8c15d66566e52ae30e20525898b81",
+      "digest": "d491e1f47ab37bb3a7cc90562f0b3b07eb5d22fb0d2cb7a948965d72d6fc7031",
       "path": "interpreters/ports/manifest.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "481ddee0edf7b2a6c71b3418bdda4ec63bc5c700df42156c1dc15c706e9fc077",
+      "digest": "bd76ae064d95cacf5d87fd19bc67f35503a6d747420ad33d0ecd0ca7a2973148",
       "path": "interpreters/ports/probe.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ae26003febca8c002b747034305a35eb5fe75ca803e07e11a56b8d3741d2229b",
+      "digest": "48300d520062e60250b9a2d41f0f1a807580e7b424a9b6dc0fe3b184187b45eb",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -521,19 +527,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "9486d0642470727a298fa96fcf59c9dc3e381cfc365307bc1134c599db414240",
+      "digest": "0c6b2019a9f765159b63b39bb73f0632e4c184477f44eae7a56c4940cf968370",
       "path": "interpreters/reconcile.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3c3eb0d71bc56e00c9cf4c2fe14880c7c5bce5cb516924fda78df03c6b23902d",
+      "digest": "b2eadefed5aa8fea988531d075e481082d7ec577fc294f419cc45f986cead96e",
       "path": "interpreters/resolver.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "852cf607b9b8f6e1530af9b185c8e96df05ea05ae229703c0d873fbaef5f42d8",
+      "digest": "68d5729000065fe276045090ce50540717a4f63372c8a01e67653e9dd011d668",
       "path": "interpreters/template.py"
     },
     {
@@ -551,43 +557,43 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "8be997eed468631e476b79b04add69aec6da4a4df487b9ba894ce8e79535354e",
+      "digest": "2853be8cb8616403b1ef978d461275282b47ee5cdbb9c64139bbc81beac0c254",
       "path": "interpreters/verbs/check.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "9962ad793fad10b3cefcf6494d5b8be477cc21b7828a1799e567c085cde97452",
+      "digest": "bc39502cfe2740fed9a8456ebcb1ff46469145d13e2263cd88bc7002e52d704a",
       "path": "interpreters/verbs/evaluate.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "085d7db5a98a026deb4164d56d7da2d0d1b7523995cc87c9e0a5c81f35efd30f",
+      "digest": "eff91ba629b3e131d5e1e66d7b0d70af41659e1c27a8c1133d08a26690e85087",
       "path": "interpreters/verbs/init.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "108f64a9c516b38754f0f9c65fef624308a1c09815b720b0b9f7d87c14bf9e76",
+      "digest": "734d8c1d36802eff10dca47f54f3400eaaf165b5962b6d279b1c352453578757",
       "path": "interpreters/verbs/lock.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4ec377169777a328037b7f9f621550f70f1eb769c37cf3ddb122f053d40894e0",
+      "digest": "4a5e8de5a921f1827d01bb75ce7b5b3d3b708f2270d2bd3540b6db2cc3526181",
       "path": "interpreters/verbs/move.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "584f381491c927f76dab090d72713fda382b93dc2319f08206e4158d4318edd6",
+      "digest": "5ce815fff2ff1a7fbcc66ced483313e5c9514eb5a8f8f80f2dc612daeb1cf072",
       "path": "interpreters/verbs/render.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "72c87bf7d1b06d8b42ea750bb459d5a6be9cbbb56a5e2a4a711c77a4ec9b9583",
+      "digest": "7279a80258a5fd620f722b7a7fa15bcb41ff9a8f628c7059493fb60c479bd8d3",
       "path": "interpreters/verbs/upgrade.py"
     },
     {
@@ -637,6 +643,12 @@
       "class": "declaration",
       "digest": "25c55103b1b33a14e7db30c7dcdcc0156839409ad9e492d6f8cbdda4f2c89393",
       "path": "schemas/detector.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "60aeeb9f387603060530afb677b58a12f2a8c45f80613e12e1c246f25aff09d7",
+      "path": "schemas/diagnostics.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -750,5 +762,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-11T12:05:15+00:00"
+  "taken_at": "2026-09-11T12:27:46+00:00"
 }

@@ -32,6 +32,8 @@ import collection
 class DeclarationError(KitError):
     """A declared source of rules is missing, or a name resolves to two things."""
 
+    code = "KIT0005"
+
 
 def sources(ctx, names: list) -> dict:
     """The named documents, wherever they were declared: SHIPPED by a capability, or AUTHORED by

@@ -40,12 +40,16 @@ class CompositionError(KitError):
     """The declared set cannot compose: an unmet provision, a conflict, or two capabilities
     casting a shadow on one path. Never resolved by preference -- always refused."""
 
+    code = "KIT0020"
+
 
 class SelectionError(KitError):
     """The host asked for a set it may not have: a capability nobody declares, or the removal of
     one this kit declares structural. Refused before composition, because a selection that names
     nothing real is a typo the host must SEE -- silently honouring it would install a set the
     operator never asked for while the command line went on reading as obeyed."""
+
+    code = "KIT0021"
 
 
 def select(candidates, policies: dict, enable=None, disable=None, known=()) -> list:

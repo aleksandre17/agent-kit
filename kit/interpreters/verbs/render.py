@@ -22,6 +22,13 @@ MUTATES = True
 REQUIRES_APPROVED_HOST = True
 
 
+class RenderError(KitError):
+    """A projection cannot be rendered without a name resolving to two things, or a plural
+    projection does not declare soundly what it iterates and how each file is named."""
+
+    code = "KIT0028"
+
+
 def view_model(ctx, capabilities=None) -> dict:
     capabilities = ctx.enabled_capabilities() if capabilities is None else capabilities
     project = ctx.host_answers()
@@ -70,7 +77,7 @@ def _claim(where: dict, name: str, value, owner: str) -> None:
     defect as two capabilities installing to one path, and gets the same answer: refused, both
     named -- never last-writer-wins, which would leave the loser's declaration reading as true."""
     if name in where:
-        raise KitError(
+        raise RenderError(
             f"capability {owner!r} claims the view-model name {name!r}, which is already taken; "
             f"a name that resolves to two things is not a name"
         )
@@ -103,7 +110,7 @@ def _project_each(ctx, item, view) -> dict:
     for target, record in _each_targets(ctx, item, view):
         shadowed = sorted(set(record) & set(view))
         if shadowed:
-            raise KitError(
+            raise RenderError(
                 f"a record of {each['over']!r} carries {shadowed}, which the view already means "
                 f"something else by. A name that resolves to two things is not a name, and the "
                 f"record would silently win -- refused rather than ordered."
@@ -117,14 +124,14 @@ def _each_targets(ctx, item, view) -> list:
     a byte, so a plan can state the write set without producing the content of it."""
     each = item.get("each")
     if not each:
-        raise KitError(
+        raise RenderError(
             f"{item['target']!r} is declared as a plural projection -- its target names a "
             f"collection -- but it says nothing about what it is one of. A projection per record "
             f"needs `each`, naming the view it iterates and the field that names each file."
         )
     rows = view.get(each["over"])
     if rows is None:
-        raise KitError(
+        raise RenderError(
             f"{item['target']!r} projects one file for each {each['over']!r}, which this view "
             f"does not carry; it carries {sorted(view)}"
         )
@@ -133,7 +140,7 @@ def _each_targets(ctx, item, view) -> list:
     for record in rows:
         name = record.get(each["named"])
         if not isinstance(name, str) or not name or "/" in name or name in (".", ".."):
-            raise KitError(
+            raise RenderError(
                 f"{item['target']!r} names each file by {each['named']!r}, and one record "
                 f"answers {name!r} -- which is not a single path segment. A name that is not a "
                 f"referent is how a write lands somewhere nobody chose."

@@ -32,6 +32,8 @@ REQUIRES_APPROVED_HOST = False
 class LockRefused(KitError):
     """The kit could not honestly state what it is, or what it is no longer matches the record."""
 
+    code = "KIT0026"
+
 
 def run(ctx, args) -> int:
     kit = Workspace(ctx.manifest.root)

@@ -20,6 +20,8 @@ SCHEMA_VERSION = 1
 class BindingError(KitError):
     """A host truth is absent, unreadable, or does not honour the schema that declares it."""
 
+    code = "KIT0004"
+
 
 class Context:
     def __init__(self, kit_root: Path, host_root: Path, clock=None) -> None:

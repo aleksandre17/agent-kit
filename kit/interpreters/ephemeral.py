@@ -25,6 +25,8 @@ class PlaneError(KitError):
     """No plane is declared for observed state, or more than one is -- and a name that resolves
     to two places is not a name."""
 
+    code = "KIT0006"
+
 
 def root(ctx) -> str:
     found = [p["root"].rstrip("/") for p in ctx.manifest.planes if p["class"] == OBSERVED]

@@ -49,6 +49,8 @@ class InstallError(KitError):
     """A declaration named an install mode this interpreter does not know, a selection that
     contradicts host truth, or a written file that does not honour its own schema."""
 
+    code = "KIT0025"
+
 
 # -- foresee: what WOULD happen, decided exactly once -----------------------------------------
 def _once(ws, item, state):

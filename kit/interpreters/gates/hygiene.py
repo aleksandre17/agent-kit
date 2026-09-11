@@ -31,6 +31,8 @@ class ResidenceError(KitError):
     the two ways that resolution can be ambiguous -- is not this module's question: it is the same
     question for every sensor, so it is asked once, in `declared`."""
 
+    code = "KIT0009"
+
 
 def _compiled(rule):
     try:
