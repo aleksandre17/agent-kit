@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "summary": "What may become of a path of a host's PRIOR agent system when this kit takes over (ADR-011). Assigned only by a host's migration map; a reading measures, and never assigns.",
+  "undecided": {
+    "id": "undecided",
+    "says": "No row of the migration map answers this path. It is counted and named, and nothing may be applied while it stands -- an unanswered path is never defaulted to any disposition below."
+  },
+  "dispositions": [
+    {
+      "id": "moves",
+      "says": "The bytes are good and move INTO a plane of this kit, at the stated place. For a row naming a directory, every path below it keeps its remainder below the destination.",
+      "carries": [ { "field": "to", "refers": "plane" } ]
+    },
+    {
+      "id": "superseded",
+      "says": "What this path did is done by a declared capability of this kit; the path itself does not survive the takeover.",
+      "carries": [ { "field": "by", "refers": "capability" } ]
+    },
+    {
+      "id": "retired",
+      "says": "Nothing takes this path's place; it is deleted at the takeover, for the stated reason.",
+      "carries": [ { "field": "because", "refers": "statement" } ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "declared_by": "fixture-steward",
+  "declared_at": "2026-09-12T00:00:00Z",
+  "prior": ["legacy-agents", "LEGACY-SYSTEM.md"],
+  "rows": [
+    { "path": "legacy-agents/roles", "disposition": "moves", "to": ".agents/project/legacy-roles" },
+    { "path": "legacy-agents/hooks/gate.py", "disposition": "superseded", "by": "governance" },
+    { "path": "legacy-agents/notes", "disposition": "retired", "because": "superseded by the knowledge capability" },
+    { "path": "legacy-agents/notes/keep", "disposition": "moves", "to": ".agents/project/kept" },
+    { "path": "LEGACY-SYSTEM.md", "disposition": "retired", "because": "the kit's own index replaces it" }
+  ]
+}

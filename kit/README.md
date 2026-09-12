@@ -33,6 +33,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `check` | run the declared gates; report, never repair | nothing |
 | `upgrade` | reconcile kit, lock and host three ways; a cell no steward answers is refused | only cells a steward declared, and nothing at all if any path refuses |
 | `adopt` | read a host this kit never installed into; class every path or name it unaccounted | nothing — adoption reads |
+| `inherit` | read a host's PRIOR agent system inside a declared boundary, measure each path, and print the disposition its migration map (`--map`) assigns; every state counted, an unanswered path `undecided` (ADR-011) | nothing — a roster is carried out at a door, never by this verb |
 | `evaluate` | report the measure this host declared; with none declared, say the measure is zero | nothing |
 | `lock` | re-take `kit.lock.json` from the manifest's own declaration closure | the lock |
 | `move` | move a card to a declared state, recorded by who moved it | the card |

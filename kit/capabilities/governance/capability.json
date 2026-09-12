@@ -26,7 +26,9 @@
       "stewardship",
       "estate",
       "stance",
-      "provenance"
+      "provenance",
+      "succession",
+      "migration-map"
     ]
   },
   "documents": [
@@ -44,6 +46,11 @@
       "id": "provenance",
       "source": "capabilities/governance/provenance.json",
       "validates": "provenance"
+    },
+    {
+      "id": "succession",
+      "source": "capabilities/governance/succession.json",
+      "validates": "succession"
     }
   ],
   "installs": [

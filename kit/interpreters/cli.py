@@ -77,6 +77,9 @@ def main(argv=None) -> int:
     parser.add_argument("--by", default=None, help="who is making this move, recorded on the card")
     parser.add_argument("--path", type=_ids, default=None,
                         help="the host path(s) a verb acts on (comma-separated)")
+    parser.add_argument("--map", default=None,
+                        help="a migration map: the host's signed statement of what becomes of "
+                             "its prior agent system (ADR-011)")
     args = parser.parse_args(argv)
 
     host = Path(args.root).resolve()
