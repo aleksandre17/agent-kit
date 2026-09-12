@@ -28,7 +28,8 @@
       "stance",
       "provenance",
       "succession",
-      "migration-map"
+      "migration-map",
+      "succession-act"
     ]
   },
   "documents": [
@@ -101,6 +102,13 @@
       "class": "projection",
       "target": ".agents/generated/governance/INDEX.md",
       "source": "capabilities/governance/payload/INDEX.md.mustache"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/succession/migration-map.json",
+      "source": "capabilities/governance/payload/migration-map.json",
+      "validates": "migration-map"
     }
   ],
   "gates": [

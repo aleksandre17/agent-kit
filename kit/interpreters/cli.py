@@ -80,6 +80,9 @@ def main(argv=None) -> int:
     parser.add_argument("--map", default=None,
                         help="a migration map: the host's signed statement of what becomes of "
                              "its prior agent system (ADR-011)")
+    parser.add_argument("--roster", default=None, metavar="DIGEST",
+                        help="the digest of the succession roster a door accepts, as --plan printed "
+                             "it: the act refuses if the roster it reads now is not this one (ADR-012)")
     args = parser.parse_args(argv)
 
     host = Path(args.root).resolve()

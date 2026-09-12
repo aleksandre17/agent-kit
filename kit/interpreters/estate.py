@@ -59,6 +59,12 @@ ORPHAN = "orphan"
 #: one module that reads and writes rows; its shape is the estate schema's.
 CEDED = "ceded"
 
+#: The field that accounts for every path a SUCCESSION act moved or removed (ADR-012). The host
+#: never received those paths from the kit; it gave them up at a signed door. Carried by every
+#: writer of this document exactly as `taken` is, because a record rewritten without it would
+#: declare, with a fresh moment on it, that nothing ever left this tree.
+SUCCESSION = "succession_acts"
+
 
 class EstateError(KitError):
     """The host's record of what it received is absent, or cannot be honestly taken."""
@@ -257,7 +263,7 @@ def rows(ctx, capabilities, stewards: Stewardship, recorded=None, decided=None,
     return [found[path] for path in sorted(found)]
 
 
-def document(ctx, entries: list, moment: str, signed_by: str, taken=()) -> dict:
+def document(ctx, entries: list, moment: str, signed_by: str, taken=(), acts=()) -> dict:
     """The reading, as it is stored. No count stands beside `files`: an empty list is already a
     declared zero, and a derived number is a thing no host was ever told -- the honest place for a
     count is the surface that prints it, in front of the reader who can see it computed."""
@@ -274,6 +280,9 @@ def document(ctx, entries: list, moment: str, signed_by: str, taken=()) -> dict:
         # further upstream: what this host was GIVEN, stated rather than inferred. Built and
         # judged by `provenance`; this module only carries it.
         "taken": list(taken),
+        # What this host GAVE UP at a succession door (ADR-012): every path an act moved or
+        # removed, with its digest and where its bytes went. Built by `succession`; carried here.
+        SUCCESSION: list(acts),
     }
 
 
@@ -305,7 +314,7 @@ def restates(recorded, ctx, entries: list, signed_by: str, taken=None) -> bool:
 
 
 def take(ctx, capabilities, moment: str, signed_by: str, entries=None, writes=(),
-         taken=None) -> dict:
+         taken=None, acts=None) -> dict:
     """Measure this host and record what it holds. Written through a workspace scoped to the
     declaring capability's own targets -- `installs` is the write permission, and an estate is
     not a way around it."""
@@ -319,7 +328,9 @@ def take(ctx, capabilities, moment: str, signed_by: str, entries=None, writes=()
         # record rewritten without them would declare, with a fresh moment on it, that this host
         # took nothing -- and the next reading would call every pinned capability a stranger.
         taken = (read(ctx) or {}).get("taken", [])
-    record = document(ctx, entries, moment, signed_by, taken)
+    if acts is None:
+        acts = (read(ctx) or {}).get(SUCCESSION, [])
+    record = document(ctx, entries, moment, signed_by, taken, acts)
     errors = ctx.manifest.validate(record, ctx.install_of_mode(MODE)["validates"])
     if errors:
         raise EstateError("the estate reading does not honour its own schema:\n  "

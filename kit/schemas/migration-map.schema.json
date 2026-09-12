@@ -1,28 +1,52 @@
 {
   "$id": "migration-map",
   "title": "Migration map -- a host's signed statement of what becomes of its prior agent system (ADR-011)",
-  "description": "HOST data. `prior` declares the BOUNDARY of the prior system: every path at or below a listed root is in the census, and nothing else is -- no path is found by resemblance. Each row answers the paths at or below its `path` with one disposition from the kit's declared succession vocabulary, carrying exactly the fields that disposition declares; the most specific row answers a path. A path no row answers is undecided, never defaulted. The map is a declaration: it moves nothing.",
+  "description": "HOST data. `prior` declares the BOUNDARY of the prior system: every path at or below a listed root is in the census, and nothing else is -- no path is found by resemblance. Each row answers the paths at or below its `path` with one disposition from the kit's declared succession vocabulary, carrying exactly the fields that disposition declares; the most specific row answers a path. A path no row answers is undecided, never defaulted. The map is a declaration: it moves nothing. Seeded BLANK at its residence (ADR-012): no prior root, no row and no signer -- a map in which nobody has declared anything. `declared_by` and `declared_at` are the signature; a map with rows and no signature is read, and is never carried out.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "declared_by", "declared_at", "prior", "rows"],
+  "required": [
+    "schema_version",
+    "prior",
+    "rows"
+  ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
-    "declared_by": { "type": "string", "minLength": 1 },
-    "declared_at": { "type": "string", "minLength": 1 },
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "declared_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "declared_at": {
+      "type": "string",
+      "minLength": 1
+    },
     "prior": {
       "type": "array",
-      "minItems": 1,
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "rows": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": true,
-        "required": ["path", "disposition"],
+        "required": [
+          "path",
+          "disposition"
+        ],
         "properties": {
-          "path": { "type": "string", "minLength": 1 },
-          "disposition": { "type": "string", "minLength": 1 }
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "disposition": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     }

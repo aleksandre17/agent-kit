@@ -161,6 +161,45 @@ class Workspace:
         that resolve to no class."""
         (self._root / self._permit(rel)).mkdir(parents=True, exist_ok=True)
 
+    def relocate(self, source: str, destination: str) -> None:
+        """Move ONE path -- a file, or a link as itself, never through it -- by a RENAME, never a
+        copy and a delete: a rename is atomic within one filesystem, so a process killed at any
+        instant leaves the path whole at exactly one of its two names, and never a torn copy
+        beside an intact original. Both names are scope-checked. A destination that exists is
+        REFUSED, never replaced (git's refusal to overwrite, Home-Manager's refusal to clobber);
+        the check stands immediately before the rename, and on Windows the rename itself refuses
+        an existing target. A rename across filesystems fails loudly rather than degrading into
+        a copy (ADR-012)."""
+        src = self._root / self._permit(source)
+        dst = self._root / self._permit(destination)
+        if os.path.lexists(dst):
+            raise WriteScopeError(f"relocate refused: {destination!r} already exists")
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        for attempt in range(_REPLACE_ATTEMPTS):
+            try:
+                os.rename(src, dst)
+                return
+            except PermissionError:
+                if attempt == _REPLACE_ATTEMPTS - 1:
+                    raise
+                time.sleep(_REPLACE_PAUSE)
+
+    def prune(self, rel: str, stop: str) -> list[str]:
+        """Remove the directories from `rel` upward, never above `stop`, while each is EMPTY --
+        and not one that is not: an empty directory is the shape a relocation left behind, and a
+        directory holding anything is somebody's. Returns what was removed."""
+        halt = _normalise(stop)
+        removed = []
+        current = PurePosixPath(_normalise(rel))
+        while current.as_posix() == halt or current.as_posix().startswith(halt + "/"):
+            whole = self._root / self._permit(current.as_posix())
+            if not whole.is_dir() or os.path.islink(whole) or any(whole.iterdir()):
+                break
+            whole.rmdir()
+            removed.append(current.as_posix())
+            current = current.parent
+        return removed
+
     def remove_tree(self, rel: str) -> None:
         norm = self._permit(rel)
         target = self._root / norm

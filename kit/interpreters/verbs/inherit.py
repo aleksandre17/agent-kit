@@ -2,6 +2,9 @@
 
     python kit/interpreters/cli.py inherit --root <host> [--map <migration-map.json>]
 
+With no `--map`, the map at the RESIDENCE the succession vocabulary declares is read where one is
+there -- the same reading `takeover` carries out (ADR-012).
+
 A host that already runs an agent system of its own keeps it outside this kit's planes, where
 `adopt` never looks. This verb takes the census of that system -- every path inside a DECLARED
 boundary, never one found by resemblance -- measures what can be proven about each path, and

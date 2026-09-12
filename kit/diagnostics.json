@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 36,
+  "issued": 38,
   "codes": [
     {
       "code": "KIT0001",
@@ -218,6 +218,18 @@
       "status": "active",
       "title": "a migration map cannot be read as declared",
       "explanation": "A host asked what becomes of its prior agent system (ADR-011), and the migration map it gave -- or the succession vocabulary it is read against -- cannot be read as declared: it is not JSON or not the declared shape, a root or row leaves the host, two rows name one path, a row names a disposition the vocabulary does not declare or omits or adds a field its disposition declares, a reference names no plane or no capability, or two paths are sent to one destination. Every fault is named and no roster is printed. Nothing is written. Correct the map and read again."
+    },
+    {
+      "code": "KIT0037",
+      "status": "active",
+      "title": "a succession cannot be carried out as read",
+      "explanation": "A host asked to carry out its migration map (ADR-012), and the act cannot be carried out whole: no map resides at the declared residence (a map passed from anywhere is refused), the host has no record of what it was given, a path of the prior boundary is still undecided, a row would move or remove a path this kit itself installed or the map itself, a destination already exists, or a destination lies in no space whose mode the succession vocabulary declares may receive a path. Every fault is named and nothing is moved or removed. Answer or correct the map and read again."
+    },
+    {
+      "code": "KIT0038",
+      "status": "active",
+      "title": "the accepted roster is not the roster read now",
+      "explanation": "A succession act was accepted by the digest of its roster, and the roster read at the moment of carrying it out has another digest: the map at its residence or a path of the prior system changed since the reading that was signed, or a path changed while the act was under way, or an interrupted act cannot be reconciled with the tree. Nothing further is moved. Read again with --plan, and sign the digest of what is there now."
     }
   ]
 }

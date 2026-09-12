@@ -140,6 +140,7 @@
     "journal": "schemas/journal.schema.json",
     "provenance": "schemas/provenance.schema.json",
     "succession": "schemas/succession.schema.json",
-    "migration-map": "schemas/migration-map.schema.json"
+    "migration-map": "schemas/migration-map.schema.json",
+    "succession-act": "schemas/succession-act.schema.json"
   }
 }

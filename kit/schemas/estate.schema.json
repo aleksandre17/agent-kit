@@ -100,13 +100,26 @@
             "description": "This path was TAKEN OVER by the host through the cede door (ADR-010): who opened it, when, and the digest the host held at that moment. From then on the steward that answers for it is the one its mode's steward declares it transfers to, and `class` on this row is the class it holds now. `mode` keeps saying what WROTE the bytes, because that is history, and history does not change hands.",
             "type": "object",
             "additionalProperties": false,
-            "required": ["signed_by", "signed_at", "held"],
+            "required": [
+              "signed_by",
+              "signed_at",
+              "held"
+            ],
             "properties": {
-              "signed_by": { "type": "string", "minLength": 1 },
-              "signed_at": { "type": "string", "minLength": 1 },
+              "signed_by": {
+                "type": "string",
+                "minLength": 1
+              },
+              "signed_at": {
+                "type": "string",
+                "minLength": 1
+              },
               "held": {
                 "description": "What the host held at this path when it took it over, or null where nothing stood there to measure.",
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "pattern": "^[0-9a-f]{64}$"
               }
             }
@@ -202,6 +215,13 @@
             }
           }
         }
+      }
+    },
+    "succession_acts": {
+      "description": "Every succession act carried out in this host (ADR-012): the signed roster it carried, and every path it moved or removed with the digest of its bytes and where they went. The host never RECEIVED these paths from the kit; it gave them up at a signed door, and this is the account that nothing left the tree unrecorded. Each act has the shape of the kit schema `succession-act`, validated by the one module that writes it.",
+      "type": "array",
+      "items": {
+        "type": "object"
       }
     }
   }

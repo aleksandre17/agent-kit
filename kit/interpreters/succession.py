@@ -76,6 +76,26 @@ REFERENCES = {
     "statement": (_statement, False),
 }
 
+#: effect -> whether it takes its destination from a RELOCATING reference the row carries (True)
+#: or sends the path aside into the observed plane (False). Carrying either out is the same act --
+#: one rename -- and no effect destroys bytes a host authored (ADR-012). A disposition declares
+#: its effect; an effect that is not here is refused, and an effect is never inferred from the
+#: fields a row happens to carry, because an effect that had to be guessed would be a deletion
+#: by default.
+def _relocated(row: dict, path: str, _aside: str) -> str:
+    field = next(f for f, kind in row["refers"].items() if REFERENCES[kind][1])
+    return row["carried"][field].rstrip("/") + path[len(row["path"]):]
+
+
+def _set_aside(_row: dict, path: str, aside: str) -> str:
+    return f"{aside}/{path}"
+
+
+EFFECTS = {
+    "relocate": (_relocated, True),
+    "remove": (_set_aside, False),
+}
+
 
 # -- the declarations ----------------------------------------------------------------------------
 def vocabulary(ctx) -> dict:
@@ -96,6 +116,23 @@ def vocabulary(ctx) -> dict:
     faults += [f"disposition {d['id']!r} carries {c['field']!r} referring to {c['refers']!r}, a "
                f"kind this interpreter cannot check {sorted(REFERENCES)}"
                for d in words["dispositions"] for c in d["carries"] if c["refers"] not in REFERENCES]
+    for d in words["dispositions"]:
+        relocating = [c["field"] for c in d["carries"] if REFERENCES.get(c["refers"], (0, False))[1]]
+        if "effect" not in d:
+            continue
+        if d["effect"] not in EFFECTS:
+            faults.append(f"disposition {d['id']!r} declares the effect {d['effect']!r}, which this "
+                          f"interpreter cannot carry out {sorted(EFFECTS)}")
+        elif len(relocating) != (1 if EFFECTS[d["effect"]][1] else 0):
+            faults.append(f"disposition {d['id']!r} declares the effect {d['effect']!r} and carries "
+                          f"{len(relocating)} destination field(s) {relocating}; the effect needs "
+                          f"{1 if EFFECTS[d['effect']][1] else 0}, so where its paths go is not stated once")
+    home = _relative(words["residence"])
+    declared = [i["target"] for c in ctx.manifest.capabilities for i in c.installs]
+    if home is None or _plane(ctx, home) or home not in declared:
+        faults.append(f"the map's residence {words['residence']!r} is not a path in a plane that a "
+                      f"capability declares as an install target; a map living there would be a "
+                      f"path nothing accounts for")
     if faults:
         raise SuccessionRefused("the succession vocabulary cannot be read:\n  " + "\n  ".join(faults))
     return words
@@ -170,8 +207,8 @@ def read_map(ctx, given, words: dict):
     if faults:
         raise SuccessionRefused(f"{path.as_posix()} cannot be read as a migration map:\n  "
                                 + "\n  ".join(faults))
-    return {"file": path, "declared_by": document["declared_by"],
-            "declared_at": document["declared_at"], "prior": prior, "rows": rows}
+    return {"file": path, "declared_by": document.get("declared_by"),
+            "declared_at": document.get("declared_at"), "prior": prior, "rows": rows}
 
 
 # -- the census and what is measured -------------------------------------------------------------
@@ -262,9 +299,18 @@ def answer(rows, path: str):
     return max(matching, key=lambda row: len(row["path"])) if matching else None
 
 
+def residence(words) -> str:
+    """Where this host's migration map lives, as the vocabulary declares it (ADR-012)."""
+    return _relative(words["residence"])
+
+
 def read(ctx, given) -> dict:
-    """The whole reading: every census path with its state, its carried fields, and what was measured."""
+    """The whole reading: every census path with its state, its carried fields, and what was
+    measured. With no map given, the map at the declared residence is read where one is there --
+    so the reading `inherit` prints is the reading an act is carried out from."""
     words = vocabulary(ctx)
+    if given is None and ctx.workspace.path(residence(words)).is_file():
+        given = ctx.workspace.path(residence(words))
     mapped = read_map(ctx, given, words)
     roots = boundary(ctx, mapped)
     found = census(ctx, roots)
