@@ -17,6 +17,20 @@
         "properties": {
           "id": { "type": "string", "minLength": 1 },
           "summary": { "type": "string", "minLength": 1 },
+          "transfers_to": {
+            "description": "Whether a host may TAKE OVER a path this steward holds, and what the path becomes when it does (ADR-010). Absent means no transfer exists: a host cannot take over what is already its own, and a projection or a record has no bytes anyone could own. `steward` names who answers for the path afterwards; `class` is the one class it holds afterwards, so the four-class seam still resolves every path to exactly one. The transfer is a DOOR, signed on the estate row -- never inferred from an edit.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["steward", "class"],
+            "properties": {
+              "steward": { "type": "string", "minLength": 1 },
+              "class": { "type": "string", "minLength": 1 }
+            }
+          },
+          "named": {
+            "description": "Every path this steward holds is PRINTED on every reconciliation, whatever its cell. For a steward whose paths the kit no longer vouches for, an unremarkable cell is not a reason for silence: a path read as if the kit still stood behind it is the surface lying by omission.",
+            "type": "boolean"
+          },
           "digest": {
             "description": "Whether a digest of these paths MEANS anything. `not-taken` is a declared absence of a measurement -- a directory the host fills has no bytes of its own, and the estate cannot record a digest of itself. The estate writes null there, and null is never read as a value.",
             "type": "string", "enum": ["recorded", "not-taken"]

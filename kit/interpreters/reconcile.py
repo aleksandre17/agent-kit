@@ -132,7 +132,10 @@ def survey(ctx, capabilities, recorded, stewards, adoptions=None) -> list:
                     f"{recorded['taken_at']}, and this kit ships it as {item['mode']!r}, owned by "
                     f"{taking!r} -- an upgrade may not hand one party's bytes to another"))
                 continue
-        steward = stewards.of_mode(mode)
+        # Who answers for the path NOW -- its mode's steward, or, where the row carries a signed
+        # transfer, the steward that one declares it transfers to. Read from the record and the
+        # declaration; this module privileges no steward and no path (ADR-010).
+        steward = stewards.answering(mode, shipped)
         taken = stewards.measures(steward) and not estate_module.is_root(path)
         present = ws.exists(path)
         here = hashlib.sha256(ws.read_bytes(path)).hexdigest() if (present and taken) else None
@@ -148,7 +151,8 @@ def survey(ctx, capabilities, recorded, stewards, adoptions=None) -> list:
             "mode": mode, "file": verdict["file"], "record": verdict["record"],
             "refuse": bool(verdict.get("refuse")), "adoptable": verdict.get("adoptable"),
             "here": here, "shipped": shipped["digest"] if shipped else None,
-            "why": _why(found, recorded["taken_at"], shipped, here),
+            "why": _transferred(shipped) + _why(found, recorded["taken_at"], shipped, here),
+            "named": stewards.named(steward),
         })
 
     # Anything in a governed plane that none of the three readings explains. It is never deleted --
@@ -180,7 +184,17 @@ def _refusal(path, found, steward, why, refuse: bool = True) -> dict:
     which for an unaccounted path is the PLANE's declaration and not this function's opinion."""
     return {"path": path, "cell": found, "state": found, "steward": steward, "mode": None,
             "file": "keep", "record": "carry", "refuse": refuse, "adoptable": None,
-            "here": None, "shipped": None, "why": why}
+            "here": None, "shipped": None, "why": why, "named": False}
+
+
+def _transferred(shipped) -> str:
+    """The signature on a path the host took over, stated on every reading of it. What the kit
+    no longer vouches for is said in those words, with the name and the moment that made it so."""
+    signed = (shipped or {}).get(estate_module.CEDED)
+    if not signed:
+        return ""
+    return (f"taken over by {signed['signed_by']} at {signed['signed_at']}; this kit no longer "
+            f"writes, restores or vouches for it -- ")
 
 
 def _why(found, moment, shipped, here) -> str:
@@ -196,6 +210,24 @@ def _why(found, moment, shipped, here) -> str:
         return (f"a record taken at {moment} says {shipped['digest'][:12]}, this reading says "
                 f"{here[:12]}")
     return f"against a record taken at {moment}"
+
+
+def taken_over(ctx, capabilities) -> dict:
+    """path -> this reading's verdict, for every path the record says the host TOOK OVER.
+
+    Any writer that has not been handed a reconciliation's verdict asks this before it writes, so
+    that `init` run again on a host is not a way around a signed transfer: a vendor mode replaces
+    because it cannot tell whether the host touched a file, and here the record says -- with a name
+    on it -- that the file is no longer the kit's to replace (ADR-010). Empty where there is no
+    record or nothing in it was taken over, and then no survey is taken at all.
+    """
+    recorded = estate_module.read(ctx)
+    ceded = {row["path"] for row in (recorded or {}).get("files", [])
+             if row.get(estate_module.CEDED)}
+    if not ceded:
+        return {}
+    rows = survey(ctx, capabilities, recorded, estate_module.stewardship(ctx))
+    return {row["path"]: row for row in rows if row["path"] in ceded}
 
 
 def refused(rows) -> list:
@@ -217,7 +249,7 @@ def report(stewards, rows, ordinary: str) -> None:
     for state, count in census(stewards, rows):
         print(f"  {count:>4}  {state}")
     for row in rows:
-        if row["refuse"] or row["cell"] != ordinary:
+        if row["refuse"] or row["cell"] != ordinary or row.get("named"):
             print(f"  {row['state']:>16}  {row['path']}  --  {row['why']}")
 
 

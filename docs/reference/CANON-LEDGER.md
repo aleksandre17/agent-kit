@@ -109,6 +109,9 @@ that leaves no trace is not.
 | **A SEEDED document's version cannot move without editing `kit/seeds/**`.** The first breaking bump of a seeded kind must change its seed in the same change, or a fresh host is born refused. | 2026-09-11, ADR-009 | OPEN — a trap with a known trigger |
 | **The orchestrator's grounds were wrong twice in one slice, and the agent measured past them.** Ground said 20 bare versions and 3 module constants; the truth was 24 and 5. A packet's GROUND is a reading taken at a moment by a grep, and a grep is a name, not a referent. The cure is already in the packet form — *measured, do not re-derive* — and it only works when the measurement is RIGHT; a wrong ground that says do-not-re-derive is worse than none. | 2026-09-11, ADR-009 | OBSERVATION — second sighting (first: the doctrine grep); a rule we are already paying for |
 
+| **A whole-seam `eject` is a DELIBERATE NON-GOAL; leaving the seam is a door-signed STEWARD TRANSFER of one path (`cede`).** The proposal's five-verb set is overturned on the field's evidence: CRA's eject (all-or-nothing, regretted, CRA deprecated), Angular removed `ng eject`, Vite/Next offer none. Every part of `eject` was destructive or already true — the host already holds every byte; "drop the lock" named the KIT's own file; deleting the estate destroys the record. A ceded row records `{signed_by, signed_at, held}`, the kit never writes it again, and every later reading NAMES it (`ceded`, `ceded-behind`, `ceded-absent`). Terraform `moved`/`removed` adopted at the path grain. Walked live: door at exit 3 stating what is lost, row signed, a second cede of one path refused. | 2026-09-12, ADR-010 | ADOPTED WHOLE · eject DELIBERATE NON-GOAL |
+| **No way to hand a ceded path BACK to the kit.** A one-way door that is one-way by omission rather than by decision. | 2026-09-12, ADR-010 §6 | OPEN — declared |
+
 ## Canon met — status per Law 13
 
 | Concept | Status | Note |

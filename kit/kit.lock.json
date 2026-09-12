@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 136,
+  "count": 137,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -11,7 +11,7 @@
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "73da69557b8ea3d2ed253daf15db8a679fd2a3253ac18df15a1c1aba72ae5aca",
+      "digest": "23388f2c0485907b1544c83c8c2db2cd7987e960f24ced04f292680af3e97394",
       "path": "README.md"
     },
     {
@@ -143,7 +143,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "fd4ad8ba579a60cacbc86e7a0dde64864d4fb982647a13eb6eecfe72378d5966",
+      "digest": "ff6527c3b03ec0651d73e0bbfa080886fdb1254d63db11dc73f2e4a70ece08a3",
       "path": "capabilities/governance/stewardship.json"
     },
     {
@@ -365,7 +365,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "f256d8ad21c4061195bb38ae83071087bba95eaef6b7535b1b6b738eb870ffa6",
+      "digest": "22b3a6d41566e2c131961708173d927050b95a7b0b035554cf513788c12b7c79",
       "path": "diagnostics.json"
     },
     {
@@ -383,7 +383,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d652dfd5ab3db8453454276f848344aab3886051a64d8e313c730593f22f89fe",
+      "digest": "b0c354297d7133e2b8ffcb68021ce4c708530d5fdeaef5a6f4c5e4e5f5fa3da1",
       "path": "interpreters/cli.py"
     },
     {
@@ -431,7 +431,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "bc7923f1b71888e71c7b8c18077becf5c0f9f6b1f7f3d33a38b2338226c51567",
+      "digest": "2b576b25726e057ff401ef0335ee8f3d3b3fde10c5bb5cbc1d7fe3592398ab4b",
       "path": "interpreters/estate.py"
     },
     {
@@ -551,7 +551,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0c6b2019a9f765159b63b39bb73f0632e4c184477f44eae7a56c4940cf968370",
+      "digest": "70b6a7e980beb43ed54daaf8b7c6d02b9da2f4a8cc1e552a545c0c8b10e4a4de",
       "path": "interpreters/reconcile.py"
     },
     {
@@ -587,6 +587,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "3f96b5ccc2bfb83806939975a3a8956bc16b0005b224bf1c2c4d20de04bd3216",
+      "path": "interpreters/verbs/cede.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "1fff8c0afaee91e214b9445961610cea2056ccb52057fc5f29fbba23305faa12",
       "path": "interpreters/verbs/check.py"
     },
@@ -599,7 +605,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f72c953ce30f8936d639d781d48d2aae4be4ea34a731ebd5e9497aa4f79f1acc",
+      "digest": "a975ffe6383694591354a6db61050d74b16688f058af2e31c12f57d9d39471ec",
       "path": "interpreters/verbs/init.py"
     },
     {
@@ -689,7 +695,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "dd3859417a448ebbe88eef04a7025e15ac4d510d815f27ab28eb0f3d77f28fb8",
+      "digest": "838002543f22972c1bd1f4a90b56197b8bafb9afe2fc3715adf294585fbcfa80",
       "path": "schemas/estate.schema.json"
     },
     {
@@ -797,7 +803,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "056a35e991a3149b340906d69b8936025f95e002ce6c9656ea0e54fb17ed2d62",
+      "digest": "a2ccbde2931289f8942070b5b9fdf11e0ec4c47dff45631cc8f69c4a11d92ed6",
       "path": "schemas/stewardship.schema.json"
     },
     {
@@ -822,5 +828,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-11T14:53:14+00:00"
+  "taken_at": "2026-09-12T16:20:54+00:00"
 }

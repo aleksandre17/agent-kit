@@ -36,8 +36,10 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `evaluate` | report the measure this host declared; with none declared, say the measure is zero | nothing |
 | `lock` | re-take `kit.lock.json` from the manifest's own declaration closure | the lock |
 | `move` | move a card to a declared state, recorded by who moved it | the card |
+| `cede` | hand paths the kit shipped to the host, through a door signed by name; the kit never writes them again and every reading names them | the estate row, and nothing at all if any asked path cannot change hands |
 
-`eject` is designed and not built. A verb is a file in `interpreters/verbs/`; the
+There is no `eject` (ADR-010): leaving the seam is `cede`, one path at a time; a capability is
+left with `--disable`, and the whole kit by no longer running it. A verb is a file in `interpreters/verbs/`; the
 entry point discovers it and knows no verb's name.
 
 ### Choosing, and approving

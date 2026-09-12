@@ -75,6 +75,8 @@ def main(argv=None) -> int:
     parser.add_argument("--card", default=None, help="the card a verb acts on, by id")
     parser.add_argument("--to", default=None, help="the state a card is being moved to")
     parser.add_argument("--by", default=None, help="who is making this move, recorded on the card")
+    parser.add_argument("--path", type=_ids, default=None,
+                        help="the host path(s) a verb acts on (comma-separated)")
     args = parser.parse_args(argv)
 
     host = Path(args.root).resolve()

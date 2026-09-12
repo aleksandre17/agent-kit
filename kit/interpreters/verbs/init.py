@@ -37,6 +37,7 @@ import journal
 import plan as plan_module
 import predicate
 import provenance
+import reconcile
 import render as render_verb
 from errors import KitError, PendingApproval
 
@@ -145,6 +146,9 @@ def _install_plan(ctx, enabled, state) -> list:
     """The write set an install would produce, as data. While the host is unapproved this is
     exactly the ANSWER -- the draft the owner is asked to accept -- and nothing else."""
     writes = []
+    # A path the host took over through a signed door is answered by the steward it transferred
+    # to, on THIS run too -- not only when `upgrade` has handed a verdict in (ADR-010).
+    held = reconcile.taken_over(ctx, enabled) if state["approved"] else {}
     for capability in enabled:
         scoped = state["scopes"][capability.id]
         for item in capability.installs:
@@ -158,7 +162,7 @@ def _install_plan(ctx, enabled, state) -> list:
             # the same question with more evidence, and the answer arrives here as data so that
             # foresee and apply remain ONE decision across both verbs.
             writes.append(plan_module.Write(
-                (ctx.decided.get(item["target"]) or {}).get("file")
+                (ctx.decided.get(item["target"]) or held.get(item["target"]) or {}).get("file")
                 or foresee(scoped, item, state),
                 item["class"], item["mode"], capability.id, item["target"], item))
     return writes

@@ -55,6 +55,10 @@ ADVANCE = "advance"
 CARRY = "carry"
 ORPHAN = "orphan"
 
+#: The row field that records a signed TRANSFER of a path to the host (ADR-010). Named here, the
+#: one module that reads and writes rows; its shape is the estate schema's.
+CEDED = "ceded"
+
 
 class EstateError(KitError):
     """The host's record of what it received is absent, or cannot be honestly taken."""
@@ -90,7 +94,9 @@ class Stewardship:
                         f"{row['file']!r}, which is not something a plan can do; the "
                         f"dispositions are {sorted(DISPOSITIONS)}"
                     )
-        undeclared = sorted(set(self._by_mode.values()) - set(self._stewards))
+        undeclared = sorted((set(self._by_mode.values())
+                             | {s["transfers_to"]["steward"] for s in raw["stewards"]
+                                if s.get("transfers_to")}) - set(self._stewards))
         if undeclared:
             raise EstateError(
                 f"stewardship names {undeclared} as owners and declares none of them; a steward "
@@ -112,6 +118,34 @@ class Stewardship:
 
     def measures(self, steward: str) -> bool:
         return self._steward(steward)["digest"] == RECORDED
+
+    def transfer(self, steward: str):
+        """Where a path this steward holds goes when a host takes it over -- `{steward, class}` --
+        or None where the declaration offers no transfer. None is an answer, not a default: it is
+        the declaration saying there is nothing here for a host to take (ADR-010)."""
+        return self._steward(steward).get("transfers_to")
+
+    def named(self, steward: str) -> bool:
+        """Whether every path this steward holds is printed on every reading, whatever its cell."""
+        return bool(self._steward(steward).get("named"))
+
+    def answering(self, mode: str, recorded=None) -> str:
+        """The steward that answers for a path NOW: its mode's, unless the row it was recorded on
+        carries a signed transfer, in which case the one that steward declares it transfers to.
+        A row claiming a transfer its steward does not offer is refused -- the record would then
+        be stating an ownership no declaration ever made possible."""
+        steward = self.of_mode(mode)
+        if not (recorded or {}).get(CEDED):
+            return steward
+        transfer = self.transfer(steward)
+        if transfer is None:
+            raise EstateError(
+                f"{recorded['path']}: the record says this path was taken over by "
+                f"{recorded[CEDED]['signed_by']} at {recorded[CEDED]['signed_at']}, and its "
+                f"steward {steward!r} declares no transfer. An ownership nothing could have "
+                f"granted is not read as one"
+            )
+        return transfer["steward"]
 
     def verdict(self, steward: str, cell: str) -> dict:
         for row in self._steward(steward)["cells"]:
@@ -203,7 +237,10 @@ def rows(ctx, capabilities, stewards: Stewardship, recorded=None, decided=None,
             taken = (stewards.measures(steward) and not is_root(path))
             outcome = (decided.get(path) or {}).get("record", ADVANCE)
             held = prior.get(path)
-            if outcome == CARRY and held is not None:
+            # A row the host has TAKEN OVER is carried whatever this run decided about the path:
+            # the kit rebuilding it would re-measure the host's bytes as though the kit had
+            # shipped them and erase the signature that says whose they are (ADR-010).
+            if held is not None and (outcome == CARRY or held.get(CEDED)):
                 found[path] = dict(held)
             else:
                 found[path] = {

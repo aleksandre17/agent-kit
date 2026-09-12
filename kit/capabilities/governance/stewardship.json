@@ -5,6 +5,10 @@
     {
       "id": "kit",
       "summary": "The kit owns these bytes. The host is not supposed to edit them -- and when it has, that is a divergence the kit reports at every run and never resolves on its own.",
+      "transfers_to": {
+        "steward": "ceded",
+        "class": "binding"
+      },
       "digest": "recorded",
       "cells": [
         {
@@ -368,6 +372,68 @@
           "state": "recorded",
           "file": "replace",
           "record": "advance"
+        }
+      ]
+    },
+    {
+      "id": "ceded",
+      "summary": "Bytes the kit shipped and the host has since TAKEN OVER through a signed door (ADR-010). The kit never writes one again -- not to replace it, not to restore it -- and it never vouches for it again either: every reconciliation names it, and where upstream has moved on it says so, because a host that stopped receiving a file must be able to see what it is no longer receiving. `introduced` and `collision` are deliberately unanswered: a path can only be ceded from a row, so neither can be computed, and one that were would be refused rather than defaulted.",
+      "named": true,
+      "digest": "recorded",
+      "cells": [
+        {
+          "cell": "forgotten",
+          "state": "forgotten",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "restored",
+          "state": "ceded-absent",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "retired",
+          "state": "retired",
+          "file": "keep",
+          "record": "orphan"
+        },
+        {
+          "cell": "retired-diverged",
+          "state": "retired",
+          "file": "keep",
+          "record": "orphan"
+        },
+        {
+          "cell": "unchanged",
+          "state": "ceded",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "advanced",
+          "state": "ceded-behind",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "diverged-kept",
+          "state": "ceded",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "conflicted",
+          "state": "ceded-behind",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "converged",
+          "state": "ceded",
+          "file": "keep",
+          "record": "carry"
         }
       ]
     }

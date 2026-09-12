@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 34,
+  "issued": 35,
   "codes": [
     {
       "code": "KIT0001",
@@ -206,6 +206,12 @@
       "status": "active",
       "title": "a document is at an older version this kit declares no migration for",
       "explanation": "A document the kit was about to read states a schema_version LOWER than the one this kit's schema for that kind declares, and this kit ships no migration from that version. It is refused by name rather than read as if it had the current shape (ADR-009). Nothing is written. Run the kit version that wrote the document, or re-create the document with this kit; before 1.0 the kit ships no migrations, and every kind is at version 1."
+    },
+    {
+      "code": "KIT0035",
+      "status": "active",
+      "title": "a path cannot change hands as asked",
+      "explanation": "A host asked to take over a path the kit shipped (ADR-010), and at least one named path cannot be handed over: the host's record does not carry it, it was already taken over (its row names who and when), its steward declares no transfer because the bytes are already the host's or are rebuilt from their inputs, or the transfer names a class this kit does not declare. Every such path is named and none changes hands. Nothing is written. Name only paths the record carries under a steward that offers a transfer."
     }
   ]
 }

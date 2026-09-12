@@ -95,6 +95,21 @@
           "signed_at": {
             "type": "string",
             "minLength": 1
+          },
+          "ceded": {
+            "description": "This path was TAKEN OVER by the host through the cede door (ADR-010): who opened it, when, and the digest the host held at that moment. From then on the steward that answers for it is the one its mode's steward declares it transfers to, and `class` on this row is the class it holds now. `mode` keeps saying what WROTE the bytes, because that is history, and history does not change hands.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["signed_by", "signed_at", "held"],
+            "properties": {
+              "signed_by": { "type": "string", "minLength": 1 },
+              "signed_at": { "type": "string", "minLength": 1 },
+              "held": {
+                "description": "What the host held at this path when it took it over, or null where nothing stood there to measure.",
+                "type": ["string", "null"],
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
           }
         }
       },
