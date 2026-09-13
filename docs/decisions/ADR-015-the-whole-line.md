@@ -186,6 +186,21 @@ ecosystem of host #2: **when the line reaches it, the FIRST step is deletion, no
 not serve the outcome is removed before anything is carried, and whatever survives is re-declared
 (amendment 2).
 
+**8. A place for everything: the layout declaration becomes the RECORDS MAP.** *Owner, 2026-09-13: "a
+structured, organised, logistical system where everything has its place, never chaos again; the path
+work must travel, as the big management companies do; so that we know where and when to look for what."*
+The field's answer is records management (ISO 15489) and information architecture: every KIND of
+information has one declared home, one writer, a moment it is read, and a lifecycle. Link L's layout
+declaration already names every place, so it is extended rather than doubled: each entry gains
+`holds` (the truth that lives there), `writer`, `read_when` (the task trigger that pulls it into
+context) and `lifecycle` (how it ages and where it goes). Consequences:
+- the floor gate refuses a document in a place whose `holds` it does not match, and a write by a
+  non-declared writer (Law 15, the Kind Law, made mechanical);
+- context is retrieved through the map by `read_when`, never by searching the tree (amendment 6);
+- every card state names the artifact it produces and that artifact's place, so the path of work is on
+  the map too.
+Built as link L3, right after L2, on the declaration L1 and L2 produced.
+
 ## Why this order, and not the audit's
 
 The audit ordered by RISK TO THE MIGRATION. The line orders by DEPENDENCY: the enforcement line (C) cannot
