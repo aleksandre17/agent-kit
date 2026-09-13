@@ -121,6 +121,8 @@ that leaves no trace is not.
 | **No-clobber rename is atomic on Windows only;** on POSIX the exists-check stands just before the rename (missing: `renameat2(RENAME_NOREPLACE)`). No purge for the aside place; one moment per ACT, not per path. A receiving space is checked by install mode only, not by its own schema — a map can move files into delivery cards and only `check` would judge them. | 2026-09-12, ADR-012 | PARTIAL — missing parts named |
 | **`succession_act` calls private helpers across modules** (`_is_link`, `_under`, `_on_target`). A seam that promises by accident. | 2026-09-12, ADR-012 | OPEN — small |
 
+| **CORRECTION: item #10 was reported "discharged" and only HALF of it was.** The two-host half ran live (`inherit` on national-accounts). The OTel `gen_ai` semantic-convention half (blueprint §VIII: `gen_ai.*`, trace/span/parent id, the `route-outcomes` rename) was never built and was silently folded into a claim of done. Also still unbuilt from the blueprint: contract-net naming for routing (the kit has no routing mechanism at all). An independent re-audit of both proposals against the kit, row by row, is queued after the migration map. | 2026-09-13, owner's question | OPEN — NOT BUILT, and the claim is withdrawn |
+
 ## Canon met — status per Law 13
 
 | Concept | Status | Note |
