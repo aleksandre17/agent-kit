@@ -168,6 +168,24 @@ checked at review:
 - **No double-running.** Amendment 3's objectives are read PASSIVELY from receipts. Nothing is run twice to
   prove it.
 
+**7. The cure is deletion, never another rule.** *Owner, 2026-09-13: "put this in the right place, so a
+new session carries it out."* The diagnosis of why a system built on the best patterns still never
+became what was wanted:
+1. every failure added a rule and none was ever deleted, so a model reading a hundred rules on every step
+   spends its effort navigating them instead of working;
+2. the orchestrator's own charter turns every sentence into a process (echo, ledger, capsule, packet,
+   check), so a simple question costs minutes. That is how it was built, not the model's nature;
+3. "done" was measured by process (green tests, an ADR written, the ledger updated), never by the
+   outcome the owner wants: fast, correct, simple;
+4. the same mind builds the system, judges it and uses it, so it cannot see the excess. The owner sees
+   it, every time.
+Therefore the framework is built with FEW, SHORT rules that a machine checks (amendment 6), ONE measure,
+the outcome (amendment 3), and everything that does not serve that outcome is deleted. Every link is
+reviewed against this, and a link that adds prose rules a machine could hold is not done. For the prior
+ecosystem of host #2: **when the line reaches it, the FIRST step is deletion, not migration.** What does
+not serve the outcome is removed before anything is carried, and whatever survives is re-declared
+(amendment 2).
+
 ## Why this order, and not the audit's
 
 The audit ordered by RISK TO THE MIGRATION. The line orders by DEPENDENCY: the enforcement line (C) cannot
