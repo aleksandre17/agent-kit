@@ -139,6 +139,16 @@ does not change that ratio is the best-designed bureaucracy, and that is now a m
 one suite on one role, accepted vs candidate on the same cases, verdict as a receipt, the promotion gate,
 and the owner's signature. A grammar no one has run is an unverified claim.
 
+**5. Standing delegation of design decisions.** *Owner: "I confirm that it must be whatever is the best
+concept, the best pattern, the best structure, the best modern architecture, the best standard and
+decision, agnostic — decide on that basis."* Inside the line, a design question is decided by the
+orchestrator against ONE criterion — the best form known to the field, agnostic — and recorded with its
+rejected alternatives. It is not brought to the owner as a menu. Still the owner's: the migration
+(Consequences), real spend, key custody (signing), and anything irreversible outside this repository.
+First application: host #0's install approval, signed `agent-linkB(owner-delegated:ADR-015)`, STANDS. An
+approval that names its delegation and its ADR is the canonical delegated-authority form. Re-signing it
+with the owner's name would claim a signature he never made (Cardinal V).
+
 ## Why this order, and not the audit's
 
 The audit ordered by RISK TO THE MIGRATION. The line orders by DEPENDENCY: the enforcement line (C) cannot
