@@ -13,6 +13,11 @@
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9-]*$"
     },
+    "surface": {
+      "description": "The surface this host SERVES this runtime through, by id -- which paths the product reads and the form each file takes there (ADR-013). This is the host's enabling choice and nothing more: the set of descriptors naming a surface IS the set of runtimes this host serves, and a descriptor that names none describes a runtime without serving it. The paths themselves are never written here -- they are true of the product everywhere, so they live in the surface registry, and a host that restated one would be a second home for it.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
     "claims": {
       "description": "What this host BELIEVES this runtime can do -- each naming a capability the class registry declares, and each carrying the reason the host believes it. The reason is required and it is required to be a sentence rather than a flag: `true` cannot be wrong out loud, and a belief that cannot be read cannot be contradicted.\n\nA capability the registry declares and this list omits is not silence -- it is an ABSENT capability, and it is named as one on the surface, because a short list of claims and a runtime that genuinely needs nothing read identically to anyone who is only shown what is present.",
       "type": "array",

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 38,
+  "issued": 40,
   "codes": [
     {
       "code": "KIT0001",
@@ -230,6 +230,18 @@
       "status": "active",
       "title": "the accepted roster is not the roster read now",
       "explanation": "A succession act was accepted by the digest of its roster, and the roster read at the moment of carrying it out has another digest: the map at its residence or a path of the prior system changed since the reading that was signed, or a path changed while the act was under way, or an interrupted act cannot be reconciled with the tree. Nothing further is moved. Read again with --plan, and sign the digest of what is there now."
+    },
+    {
+      "code": "KIT0039",
+      "status": "active",
+      "title": "a path a runtime reads is held by bytes the kit did not write",
+      "explanation": "A served surface would write a file at a path its runtime product reads -- outside the kit's four planes -- and the file already there matches neither what the kit would render now nor what the kit's own record says it last served there. Those are somebody's bytes, and a projection is rebuilt, never merged, so writing would destroy them. Nothing is written or removed, anywhere. Move the prior file aside, carry a prior agent system over with inherit or takeover (ADR-011, ADR-012), or stop serving the surface; then render again."
+    },
+    {
+      "code": "KIT0040",
+      "status": "active",
+      "title": "one path a runtime reads is claimed by two served files",
+      "explanation": "Two runtimes this host serves -- through one surface or two -- would write the same path, and the kit refuses to decide which one wins: last-writer-wins leaves the loser's declaration reading as delivered. Serve one of them, or declare a surface whose paths do not collide."
     }
   ]
 }

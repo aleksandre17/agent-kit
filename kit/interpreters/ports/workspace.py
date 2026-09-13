@@ -200,6 +200,19 @@ class Workspace:
             current = current.parent
         return removed
 
+    def remove_file(self, rel: str) -> None:
+        """Remove ONE file, scope-checked like every write. Additive (ADR-013): a projection
+        outside the planes is removed one path at a time, because there is no tree of it to
+        rebuild wholesale -- and the directories left empty are pruned up to its top segment,
+        never one that still holds anything."""
+        norm = self._permit(rel)
+        target = self._root / norm
+        if target.is_file():
+            target.unlink()
+            parent = PurePosixPath(norm).parent
+            if parent.parts:
+                self.unscoped().prune(parent.as_posix(), parent.parts[0])
+
     def remove_tree(self, rel: str) -> None:
         norm = self._permit(rel)
         target = self._root / norm

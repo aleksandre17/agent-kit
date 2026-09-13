@@ -15,6 +15,7 @@ import composition as composition_module
 import hostlock
 import lifecycle as lifecycle_module
 import plan as plan_module
+import runtime as runtime_port
 import template
 from errors import KitError
 
@@ -150,21 +151,37 @@ def _each_targets(ctx, item, view) -> list:
     return found
 
 
-#: How a projection is SHAPED, keyed by the shape its own declared target states. An open
-#: registry: a third shape is a row here and a function beside these two, and nothing that
-#: dispatches to it is ever edited.
-PROJECTION_SHAPES = {"document": _project_one, "collection": _project_each}
+#: How a projection is SHAPED, keyed by the shape its install declares -- or, when it declares
+#: none, by the shape its own target states. An open registry: a new shape is a row here and a
+#: function beside these, and nothing that dispatches to it is ever edited. Each row carries its
+#: STAGE: a shape that projects FROM this render's own projections (a runtime's served files are
+#: assembled from the plane) runs after every shape that does not, whatever order the
+#: capabilities arrive in.
+PROJECTION_SHAPES = {
+    "document": (0, lambda ctx, item, view, produced, capabilities: _project_one(ctx, item, view)),
+    "collection": (0, lambda ctx, item, view, produced, capabilities: _project_each(ctx, item, view)),
+    runtime_port.SHAPE: (1, runtime_port.project),
+}
+
+
+def _shape_of(item) -> str:
+    return item.get("shape") or collection.kind_of(item)
+
+
+def _staged(capabilities) -> list:
+    items = [item for capability in capabilities for item in capability.installs_of_class("projection")]
+    return sorted(items, key=lambda item: PROJECTION_SHAPES[_shape_of(item)][0])
 
 
 def projections(ctx, capabilities=None) -> dict:
     """Every projected path and its bytes, computed in memory. `check` uses this to prove the
-    plane on disk is exactly what the declaration implies."""
+    plane on disk -- and every path a runtime reads that this host serves -- is exactly what the
+    declaration implies."""
     capabilities = ctx.enabled_capabilities() if capabilities is None else capabilities
     view = view_model(ctx, capabilities)
     produced: dict[str, str] = {}
-    for capability in capabilities:
-        for item in capability.installs_of_class("projection"):
-            produced.update(PROJECTION_SHAPES[collection.kind_of(item)](ctx, item, view))
+    for item in _staged(capabilities):
+        produced.update(PROJECTION_SHAPES[_shape_of(item)][1](ctx, item, view, produced, capabilities))
     return produced
 
 
@@ -185,13 +202,19 @@ def _foreseen(ctx, item, capabilities) -> list:
     a host with no records genuinely gets no files, so the empty plan is not a gap in the reading
     but the reading itself.
     """
-    if collection.kind_of(item) == "document":
+    shape = _shape_of(item)
+    if shape == "document":
         return [item["target"]]
     try:
-        return sorted(target for target, _record
-                      in _each_targets(ctx, item, view_model(ctx, capabilities)))
+        view = view_model(ctx, capabilities)
+        if shape == "collection":
+            return sorted(target for target, _record in _each_targets(ctx, item, view))
+        return runtime_port.foresee(ctx, item, view, capabilities)
     except KitError:
-        return []
+        # A shape whose own target names ONE file writes that file whatever the bindings say --
+        # a served projection always writes its record, and the record of nothing is still
+        # written -- so the plan names it; a target naming a collection has nothing to promise.
+        return [] if item["target"].endswith("/") else [item["target"]]
 
 
 def plan_entries(ctx, capabilities=None) -> list:
@@ -214,6 +237,13 @@ def plan_entries(ctx, capabilities=None) -> list:
         plan_module.Write("remove", "projection", "projection", "-", rel)
         for rel in ctx.workspace.files_under(_plane(ctx)) if rel not in targets
     ]
+    # A path a runtime reads lies outside the plane, so the wholesale rebuild never reaches it:
+    # one the kit served last time and serves no longer is named here, from the kit's own
+    # record, because deletion is still the effect an operator most needs to see coming.
+    orphans += [
+        plan_module.Write("remove", "projection", "projection", "-", rel)
+        for rel in runtime_port.departing_planned(ctx, capabilities, targets)
+    ]
     return orphans + writes
 
 
@@ -226,9 +256,18 @@ def run(ctx, args, capabilities=None) -> int:
         return 0
 
     def write() -> int:
-        ctx.workspace.unscoped().remove_tree(_plane(ctx))
+        # Everything is computed, and every path outside the planes is judged, BEFORE a byte
+        # moves: a refusal must leave the host exactly as it was found (ADR-013).
         produced = projections(ctx, capabilities)
-        scopes = {c.id: ctx.workspace.scoped(c.targets()) for c in capabilities}
+        departing = runtime_port.admit(ctx, capabilities, produced)
+        ctx.workspace.unscoped().remove_tree(_plane(ctx))
+        for rel in departing:
+            ctx.workspace.scoped(departing).remove_file(rel)
+        # A capability writes only what it declared -- and a served path is declared by the plan
+        # computed from that same capability's declaration, never by this function.
+        scopes = {c.id: ctx.workspace.scoped(
+                      c.targets() + tuple(e.target for e in writes if e.capability == c.id))
+                  for c in capabilities}
         for entry in writes:
             if entry.disposition != "remove":
                 scopes[entry.capability].write_text(entry.target, produced[entry.target])

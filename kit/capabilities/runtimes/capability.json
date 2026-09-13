@@ -2,20 +2,25 @@
   "schema_version": 1,
   "id": "runtimes",
   "version": "0.1.0",
-  "summary": "Declares that a RUNTIME -- the tool a host actually executes its agents on -- is a declared subject rather than a thing each surface hand-writes its own version of. The kit ships CLASSES, which say what is true of a runtime as a KIND: how an agent reaches it at all, and which translation sits in the gap. The host authors DESCRIPTORS, which say only what a host legitimately says about its own tool. No vendor's name appears anywhere in the kit, because the name of a product is the one thing about a runtime guaranteed not to be true of the kind. The reason this exists as a capability at all is a failure that has already happened here: a runtime's capabilities were WRITTEN DOWN and believed, an invocation shape among them was never measured, and a peer runtime later reported all eight of its claimed capabilities as unproven -- correctly. So the grammar refuses to let a belief become a fact by being written confidently: a descriptor has no field a proof can be written in, the capability vocabulary is declared so that what a runtime does NOT claim has a name instead of being silence, and every surface places every declared capability in exactly one of CLAIMED, PROVEN and ABSENT. It ships no roster of runtimes: a host that runs none says so in those words.",
+  "summary": "Declares that a RUNTIME -- the tool a host actually executes its agents on -- is a declared subject rather than a thing each surface hand-writes its own version of. The kit ships CLASSES, which say what is true of a runtime as a KIND: how an agent reaches it at all, and which translation sits in the gap. The host authors DESCRIPTORS, which say only what a host legitimately says about its own tool. No vendor's name appears in a class or in the interpreter, because the name of a product is the one thing about a runtime guaranteed not to be true of the kind. Where a product LOOKS for its instructions is true of the product everywhere and of no kind and no host, so it is declared in exactly one place -- a SURFACE, the one declaration allowed to carry a product's name (ADR-013) -- and a host SERVES a surface by naming it from its own descriptor: the files that product reads at its fixed paths are then projections of what the host already declared, rebuilt on every render and recorded in the projection plane before a byte is written outside it. The reason this exists as a capability at all is a failure that has already happened here: a runtime's capabilities were WRITTEN DOWN and believed, an invocation shape among them was never measured, and a peer runtime later reported all eight of its claimed capabilities as unproven -- correctly. So the grammar refuses to let a belief become a fact by being written confidently: a descriptor has no field a proof can be written in, the capability vocabulary is declared so that what a runtime does NOT claim has a name instead of being silence, and every surface places every declared capability in exactly one of CLAIMED, PROVEN and ABSENT. It ships no roster of runtimes: a host that runs none says so in those words.",
   "requires": [
     { "kind": "capability", "id": "governance" }
   ],
   "provides": ["runtimes"],
   "conflicts": [],
   "declares": {
-    "schemas": ["runtime-class", "runtime"]
+    "schemas": ["runtime-class", "runtime", "runtime-surface"]
   },
   "documents": [
     {
       "id": "kit_runtime_classes",
       "source": "capabilities/runtimes/classes.json",
       "validates": "runtime-class"
+    },
+    {
+      "id": "kit_runtime_surfaces",
+      "source": "capabilities/runtimes/surfaces.json",
+      "validates": "runtime-surface"
     }
   ],
   "composes": {
@@ -81,9 +86,77 @@
         "named": "id",
         "suffix": ".md"
       }
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/SERVED.json",
+      "shape": "served",
+      "serves": {
+        "surfaces": {
+          "sources": ["kit_runtime_surfaces"],
+          "list": "surfaces"
+        },
+        "enabled_by": {
+          "over": "runtimes",
+          "field": "surface"
+        },
+        "views": [
+          {
+            "id": "briefing",
+            "sections": [
+              {
+                "id": "project-laws",
+                "heading": "Project laws -- this host's numbered bindings",
+                "from": ".agents/project/laws.md",
+                "absent": "This host declares no law page, so no runtime is told any project law -- a declared absence, and not a short list."
+              },
+              {
+                "id": "conduct-doctrine",
+                "heading": "Conduct doctrine -- as this host takes and qualifies it",
+                "from": ".agents/generated/DOCTRINE.md",
+                "absent": "This host takes no doctrine bundle, so no conduct doctrine reaches a runtime from here."
+              },
+              {
+                "id": "role-roll",
+                "heading": "Roles -- who this host has hired",
+                "from": ".agents/generated/ROLES.md",
+                "absent": "This host declares no roles, so no runtime is handed a role definition."
+              }
+            ]
+          },
+          {
+            "id": "role-definitions",
+            "over": "definitions",
+            "describes": "seam",
+            "undescribed": "A role whose archetype nobody declares -- UNBOUND. Read its definition before delegating to it."
+          }
+        ]
+      }
     }
   ],
   "gates": [
+    {
+      "id": "FF-RUNTIME-SURFACE",
+      "kind": "reference-declared-across",
+      "params": {
+        "over": "runtime_descriptors",
+        "references": [
+          {
+            "id": "a-descriptor-serving-a-surface-nobody-declares",
+            "field": "surface",
+            "among": {
+              "sources": ["kit_runtime_surfaces"],
+              "list": "surfaces"
+            },
+            "because": "this runtime asks to be served through a surface nobody declares, so nothing states which paths it reads or what form a file must take there -- and nothing is written for it. A host that believes it serves a runtime while that runtime reads nothing the kit produced is the most expensive silence there is: every instruction reads as delivered.",
+            "instead": "a surface the kit declares, or -- when the product is one the kit never anticipated -- a surface declared first, as a row naming the paths the product reads and the template each file takes. Served files are then projections like any other, and a new runtime is that row and nothing else.",
+            "proves": { "surface": "a-surface-nobody-declares" },
+            "admits": { "surface": "codex" }
+          }
+        ]
+      }
+    },
     {
       "id": "FF-RUNTIME-CLASS",
       "kind": "reference-declared-across",

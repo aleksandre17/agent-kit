@@ -212,6 +212,21 @@
             "type": "string",
             "minLength": 1
           },
+          "shape": {
+            "description": "How this projection is SHAPED when its target alone cannot say. Absent, the target decides -- one document, or a collection when it ends in '/'. A named shape is a row in the render interpreter's open registry; the one registered beside those two is 'served' (ADR-013), which projects the files a runtime product reads at paths OUTSIDE the kit's planes and writes, at this install's own target inside the projection plane, the record of every one of them.",
+            "type": "string",
+            "pattern": "^[a-z][a-z-]*$"
+          },
+          "serves": {
+            "description": "What a 'served' projection serves: where the surfaces are declared, which composed view holds the host's enabled runtimes and which of their fields names a surface, and the VIEWS a surface may render -- a document assembled from sections the host already owns, or one file per record of a composed view whose body is the projection this host already renders for that record. Every name here is data; the interpreter knows none of them.",
+            "type": "object",
+            "required": ["surfaces", "enabled_by", "views"],
+            "properties": {
+              "surfaces": { "type": "object", "required": ["sources", "list"] },
+              "enabled_by": { "type": "object", "required": ["over", "field"] },
+              "views": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["id"] } }
+            }
+          },
           "each": {
             "description": "This projection writes one file PER RECORD rather than one file about a set. Required exactly when the declared target names a collection -- the same '/' rule that decides whether a readable is one document or many, read once and never a second convention. A surface FOR each member, where the singular form gives a surface ABOUT them all.",
             "type": "object",
