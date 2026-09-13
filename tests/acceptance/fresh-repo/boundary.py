@@ -401,27 +401,58 @@ class AttributionRule:
 
         failures = []
 
-        def judge(what: str, where: str, told: set, spec: dict) -> None:
-            if not any(value in what for value in told):
-                failures.append(
-                    f"{spec['id']}:{where} -- {what.strip()!r} appears in this host and not in the "
-                    f"other, and carries nothing this host was told. {rule['because']} "
-                    f"It belongs {rule['instead']}")
+        def fail(what: str, where: str, spec: dict) -> None:
+            failures.append(
+                f"{spec['id']}:{where} -- {what.strip()!r} appears in this host and not in the "
+                f"other, and carries nothing this host was told. {rule['because']} "
+                f"It belongs {rule['instead']}")
 
+        #: A path is attributed only if told values, stripped out, account for the WHOLE string --
+        #: co-occurrence is not attribution. A leftover is what a residue still says once its own
+        #: punctuation and layout (dots, slashes, brackets, quotes) are discounted too, because
+        #: those are the framework's grammar, never a fact the host told it. Anything left after
+        #: that is a fact this host was never given.
         for rel in sorted(set(first.paths) ^ set(second.paths)):
             if rel in first.paths:
-                judge(rel, "a path", told_first, first_spec)
+                if AttributionRule._leftover(rel, told_first):
+                    fail(rel, "a path", first_spec)
             else:
-                judge(rel, "a path", told_second, second_spec)
+                if AttributionRule._leftover(rel, told_second):
+                    fail(rel, "a path", second_spec)
 
+        #: A saying differs from its counterpart, but the two lines usually share a template the
+        #: host never chose (surrounding words, punctuation). Stripping told values from EACH line
+        #: and comparing what is left isolates the part that actually varies: a fact this host alone
+        #: was told reduces to nothing on its own; shared boilerplate -- present on both sides for a
+        #: reason that is not a told fact either -- reduces to the SAME leftover on both sides and
+        #: clears by matching its counterpart; anything else, like a fragment merely DERIVED from a
+        #: stated fact, survives as a leftover the other host's line does not share, and that is the
+        #: leak.
         for rel in sorted(set(first.paths) & set(second.paths)):
             here = AttributionRule._said(first.paths[rel])
             there = AttributionRule._said(second.paths[rel])
+            here_leftovers = {AttributionRule._leftover(saying, told_first) for saying in here}
+            there_leftovers = {AttributionRule._leftover(saying, told_second) for saying in there}
             for saying in sorted(here - there):
-                judge(saying, rel, told_first, first_spec)
+                leftover = AttributionRule._leftover(saying, told_first)
+                if leftover and leftover not in there_leftovers:
+                    fail(saying, rel, first_spec)
             for saying in sorted(there - here):
-                judge(saying, rel, told_second, second_spec)
+                leftover = AttributionRule._leftover(saying, told_second)
+                if leftover and leftover not in here_leftovers:
+                    fail(saying, rel, second_spec)
         return failures
+
+    _NOT_CONTENT = re.compile(r"[^A-Za-z0-9]+")
+
+    @staticmethod
+    def _leftover(text: str, told: set) -> str:
+        """What a line still says once every told value has been cut out of it (longest first, so
+        a longer told value is never shadowed by a shorter one nested inside it) and its own
+        punctuation and layout are discounted. What remains is content, not grammar."""
+        for value in sorted(told, key=len, reverse=True):
+            text = text.replace(value, "")
+        return AttributionRule._NOT_CONTENT.sub("", text)
 
     @staticmethod
     def _said(text: str) -> set:
