@@ -201,6 +201,21 @@ context) and `lifecycle` (how it ages and where it goes). Consequences:
   the map too.
 Built as link L3, right after L2, on the declaration L1 and L2 produced.
 
+**9. Every agent receives exactly what it needs at that moment: nothing more, nothing less.** *Owner,
+2026-09-13.* This is Cardinal VIII (no client depends on what it does not use) bound to CONTEXT. It is
+the same identity as interface segregation in code, need-to-know and least privilege in security (NIST),
+and context engineering and progressive disclosure for agents. It is a binding, not a new cardinal.
+Mechanism:
+- **A context compiler.** `role × task × stage → the exact set`: knowledge pulled through the records map
+  by `read_when` (amendment 8), the narrowest tool loadout the task needs, memory by the task's vocabulary,
+  and detector facts (link D). An agent never assembles its own context by searching.
+- **Both directions measured, passively from receipts,** with the field's metrics for retrieval (RAGAS):
+  context PRECISION falls when something was loaded and never used; context RECALL falls when an agent had
+  to search for something the map already held. Both join amendment 3's objectives.
+- **Correction by declaration.** A recall miss widens a `read_when`, a precision miss narrows it. Each is
+  recorded and signed, never automatic, so the map learns and rules do not pile up.
+Built with L3 (the map) and C (receipts that record what was loaded, and what was then searched).
+
 ## Why this order, and not the audit's
 
 The audit ordered by RISK TO THE MIGRATION. The line orders by DEPENDENCY: the enforcement line (C) cannot
