@@ -38,7 +38,7 @@ import declared
 import provenance
 from manifest import Manifest
 import runtime as runtime_port
-from verbs.cede import CedeRefused
+from verbs.eject import EjectRefused
 
 #: Where the adapters are published: beside the kit, never inside it.
 ADAPTERS_HOME = REPO / "adapters"
@@ -225,9 +225,9 @@ class Adapters(Fixtures, unittest.TestCase):
         self.descriptor(host, "the-tool", **{ENABLING_FIELD: surface["id"]})
         self.assertEqual(0, self.run_kit(kit, host, "render").returncode)
         self.assertIn(entry, self.record(host))
-        ceded = self.run_kit(kit, host, "cede", "--path", entry, "--approve", "the-owner")
+        ceded = self.run_kit(kit, host, "eject", "--path", entry, "--approve", "the-owner")
         self.assertNotEqual(0, ceded.returncode)
-        self.assertIn(CedeRefused.code, said(ceded))
+        self.assertIn(EjectRefused.code, said(ceded))
         self.assertIn("SERVED", said(ceded))
         self.assertNotIn("was never given it", said(ceded),
                          "a file carrying the kit's recorded bytes was called one the host never had")

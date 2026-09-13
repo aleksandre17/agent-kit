@@ -86,6 +86,13 @@
       "path": ".agents/generated/runtimes/"
     },
     {
+      "capability": "governance",
+      "class": "vendor",
+      "digest": "c404c05b6627273946afd3537acc6c8c28ac53e66a72089211a223493df87cfa",
+      "mode": "vendor",
+      "path": ".agents/kit/HOST-LAYOUT.json"
+    },
+    {
       "capability": "delivery",
       "class": "vendor",
       "digest": "46f02ea4dae8c2e1c23f44a75567c5aaa474fc71326a057f5335f1ccb9fd6672",
@@ -288,5 +295,5 @@
   "signed_by": "agent-linkB(owner-delegated:ADR-015)",
   "succession_acts": [],
   "taken": [],
-  "taken_at": "2026-09-13T13:47:43+00:00"
+  "taken_at": "2026-09-13T18:58:33+00:00"
 }

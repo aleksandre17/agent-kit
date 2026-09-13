@@ -53,7 +53,10 @@ SCHEMA = "hold"
 #: The document's name inside the plane that holds observed state. It is the HOST's hold, not any
 #: one verb's: every writer of the host takes the same one. The kit's vocabulary; the PLACE it
 #: resolves to is the manifest's declaration and is never written here.
-NAME = "host.lock"
+#: Named `init.lock` per the Part VI drawing (`runtime/init.lock`) -- ADR-007 named it `host.lock`
+#: before the drawing existed; ADR-015 amendment 1 retires that name so the drawn tree has one lock
+#: under one name, never two for one truth.
+NAME = "init.lock"
 
 #: The one field that answers "is this hold still standing". Its ABSENCE is the held state, which
 #: is why the field is never written at open: a hold that declared its own ending in advance would

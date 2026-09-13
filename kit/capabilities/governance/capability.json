@@ -29,7 +29,8 @@
       "provenance",
       "succession",
       "migration-map",
-      "succession-act"
+      "succession-act",
+      "layout"
     ]
   },
   "documents": [
@@ -52,6 +53,11 @@
       "id": "succession",
       "source": "capabilities/governance/succession.json",
       "validates": "succession"
+    },
+    {
+      "id": "host_layout",
+      "source": "capabilities/governance/host-layout.json",
+      "validates": "layout"
     }
   ],
   "installs": [
@@ -101,6 +107,13 @@
       "class": "vendor",
       "target": ".agents/kit/doctrine/governance.md",
       "source": "capabilities/governance/payload/governance.md"
+    },
+    {
+      "mode": "vendor",
+      "class": "vendor",
+      "target": ".agents/kit/HOST-LAYOUT.json",
+      "source": "capabilities/governance/host-layout.json",
+      "validates": "layout"
     },
     {
       "mode": "projection",
@@ -177,6 +190,17 @@
       "kind": "pinned-kit-intact",
       "params": {
         "mode": "pinned"
+      },
+      "stance": {
+        "floor": "enforce"
+      }
+    },
+    {
+      "id": "FF-HOST-FLOOR",
+      "kind": "layout-floor-present",
+      "params": {
+        "declaration": ".agents/kit/HOST-LAYOUT.json",
+        "side": "host"
       },
       "stance": {
         "floor": "enforce"

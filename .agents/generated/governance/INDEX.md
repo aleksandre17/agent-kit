@@ -52,6 +52,7 @@ Declares the four-class seam for a host: the reading, the declaration, the seede
 | `.agents/.gitignore` | binding | seed |
 | `.agents/kit/pinned/` | vendor | pinned |
 | `.agents/kit/doctrine/governance.md` | vendor | vendor |
+| `.agents/kit/HOST-LAYOUT.json` | vendor | vendor |
 | `.agents/generated/governance/INDEX.md` | projection | projection |
 | `.agents/project/succession/migration-map.json` | binding | seed |
 
@@ -64,6 +65,7 @@ Gates declared by this capability:
 - **FF-READING-FRESH** — `reading-current`
 - **FF-PROVENANCE-PINNED** — `provenance-pinned`
 - **FF-KIT-PINNED** — `pinned-kit-intact`
+- **FF-HOST-FLOOR** — `layout-floor-present`
 
 ### observability 0.1.0
 

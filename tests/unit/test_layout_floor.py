@@ -30,13 +30,16 @@ for extra in [KIT / "interpreters", *sorted(p for p in (KIT / "interpreters").it
 from workspace import Workspace  # noqa: E402
 import floor  # noqa: E402
 
+#: The host-side reading is shipped by the kit itself (governance's `host_layout` document,
+#: vendored to `.agents/kit/HOST-LAYOUT.json`) so every installed host carries its own copy.
+#: Host #0 -- this repository's own `.agents/` -- reads that installed copy: the same file a
+#: freshly-installed host would read, never a second declaration kept only for this test.
+HOST_DECLARATION = REPO / ".agents" / "kit" / "HOST-LAYOUT.json"
 
-def test_upstream_tree_meets_the_floor_or_declares_why_not(capsys):
-    workspace = Workspace(REPO)
-    declaration_rel = DECLARATION.relative_to(REPO).as_posix()
+
+def _report(declaration: Path, workspace: Workspace, declaration_rel: str) -> tuple:
     failures, pending = floor.evaluate(workspace, declaration_rel)
-
-    doc = json.loads(DECLARATION.read_text(encoding="utf-8"))
+    doc = json.loads(declaration.read_text(encoding="utf-8"))
     print(f"floor: {declaration_rel} ({doc['side']}), {len(doc['entries'])} drawn path(s)")
     for entry in pending:
         print(f"  PENDING  {entry['path']}  (link {entry['pending']})  {entry.get('drawn_as', '')}")
@@ -44,9 +47,34 @@ def test_upstream_tree_meets_the_floor_or_declares_why_not(capsys):
         print(f"  MISSING  {failure}")
     met = len(doc["entries"]) - len(pending) - len(failures)
     print(f"floor: {met} present, {len(pending)} pending, {len(failures)} missing")
+    return failures, pending
+
+
+def test_upstream_tree_meets_the_floor_or_declares_why_not(capsys):
+    workspace = Workspace(REPO)
+    declaration_rel = DECLARATION.relative_to(REPO).as_posix()
+    failures, _pending = _report(DECLARATION, workspace, declaration_rel)
 
     assert not failures, (
         "a drawn path is neither present nor declared pending -- "
+        f"fix the tree or declare the gap: {failures}"
+    )
+
+
+def test_host_zero_meets_the_floor_or_declares_why_not(capsys):
+    """Host #0 is this repository's own `.agents/`, installed from this kit. The declaration read
+    is the INSTALLED copy (`.agents/kit/HOST-LAYOUT.json`), not the kit's shipping source --
+    proving the shipped document is the one an arbitrary host would actually have on disk."""
+    assert HOST_DECLARATION.exists(), (
+        f"{HOST_DECLARATION}: host #0 has not taken the governance capability's `host_layout` "
+        f"document -- run `upgrade --root .` first"
+    )
+    workspace = Workspace(REPO)
+    declaration_rel = HOST_DECLARATION.relative_to(REPO).as_posix()
+    failures, _pending = _report(HOST_DECLARATION, workspace, declaration_rel)
+
+    assert not failures, (
+        "a drawn HOST path is neither present nor declared pending -- "
         f"fix the tree or declare the gap: {failures}"
     )
 

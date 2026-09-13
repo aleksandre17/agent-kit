@@ -37,11 +37,13 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `evaluate` | report the measure this host declared; with none declared, say the measure is zero | nothing |
 | `lock` | re-take `kit.lock.json` from the manifest's own declaration closure | the lock |
 | `move` | move a card to a declared state, recorded by who moved it | the card |
-| `cede` | hand paths the kit shipped to the host, through a door signed by name; the kit never writes them again and every reading names them | the estate row, and nothing at all if any asked path cannot change hands |
+| `eject` | hand paths the kit shipped to the host, through a door signed by name; the kit never writes them again and every reading names them | the estate row, and nothing at all if any asked path cannot change hands |
 | `takeover` | carry out the migration map at its declared residence: rename each relocated path into a kit space and each removed path aside into the observed plane, at a door that accepts the roster BY ITS DIGEST, re-read at the act; a killed act is reconciled and finished by the next run (ADR-012) | the prior paths the signed roster names, the act record, the estate's account -- and nothing at all if any path is undecided or the roster moved |
 
-There is no `eject` (ADR-010): leaving the seam is `cede`, one path at a time; a capability is
-left with `--disable`, and the whole kit by no longer running it. A verb is a file in `interpreters/verbs/`; the
+`eject` is granular, one path at a time (ADR-010 rejected the all-or-nothing CRA/`ng eject` shape
+and named this verb `cede`; ADR-015 amendment 1 draws the verb list with the name `eject`, and one
+verb carries the act -- never two for one act). A capability is left with `--disable`, and the
+whole kit by no longer running it. A verb is a file in `interpreters/verbs/`; the
 entry point discovers it and knows no verb's name.
 
 ### Choosing, and approving

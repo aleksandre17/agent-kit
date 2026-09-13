@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 153,
+  "count": 154,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -11,7 +11,7 @@
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "f251e6eb40c2e2fa37d7fb16b002b0b107ed803550f4deed8eb99f9fceec7900",
+      "digest": "5e66748281823bade96c9658f17ee6946c908f34487c0019f65b0f4c506ee727",
       "path": "README.md"
     },
     {
@@ -119,8 +119,14 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "57236e92f8f0c77fa22f41772e2d14ff80b6142af681469a7fa47ca4dde7b1fe",
+      "digest": "7a39c6fa2430ecd127b6cd1aeb8dfc946c89711b3c3ae650fcbbba8b6b5385c7",
       "path": "capabilities/governance/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "c404c05b6627273946afd3537acc6c8c28ac53e66a72089211a223493df87cfa",
+      "path": "capabilities/governance/host-layout.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -485,7 +491,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "15a27ede2352f37be012e2e494194ebc21114cb2ce19da8f4ff94ee4e7eab788",
+      "digest": "b7a66ff03deba657992858bb9253e7a6d70d36ee22f9f297ad0fcdc273cf8c54",
       "path": "interpreters/hostlock.py"
     },
     {
@@ -623,14 +629,14 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1d5ca4869489aa99ee0a0351509f576c86fad8ec63d390e45c365f5717ce9e1d",
-      "path": "interpreters/verbs/cede.py"
+      "digest": "1fff8c0afaee91e214b9445961610cea2056ccb52057fc5f29fbba23305faa12",
+      "path": "interpreters/verbs/check.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1fff8c0afaee91e214b9445961610cea2056ccb52057fc5f29fbba23305faa12",
-      "path": "interpreters/verbs/check.py"
+      "digest": "fb16f4652c57e29fae59e710de157d1677ce9103c16145a1fa26f95db3d89203",
+      "path": "interpreters/verbs/eject.py"
     },
     {
       "accounted_by": "interpreter",
@@ -924,5 +930,5 @@
   "kit_version": "0.1.5",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-13T14:23:31+00:00"
+  "taken_at": "2026-09-13T18:58:32+00:00"
 }

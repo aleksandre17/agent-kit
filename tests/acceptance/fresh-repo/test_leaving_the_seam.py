@@ -66,7 +66,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
 
     def _ceded(self, kit=KIT):
         host = self.installed(kit)
-        done = self.run_kit(kit, host, "cede", "--path", A_VENDORED_FILE["target"],
+        done = self.run_kit(kit, host, "eject", "--path", A_VENDORED_FILE["target"],
                             "--approve", "the-owner")
         self.assertEqual(0, done.returncode, done.stderr)
         return host
@@ -83,13 +83,13 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
         host = self.installed()
         before = (host / ESTATE).read_bytes()
 
-        planned = self.run_kit(KIT, host, "cede", "--path", A_VENDORED_FILE["target"], "--plan")
+        planned = self.run_kit(KIT, host, "eject", "--path", A_VENDORED_FILE["target"], "--plan")
         self.assertEqual(0, planned.returncode, planned.stderr)
         self.assertIn(A_VENDORED_FILE["target"], planned.stdout)
         self.assertIn(RECEIVING["summary"], planned.stdout,
                       "the plan did not state what the host loses, in the declaration's words")
 
-        stalled = self.run_kit(KIT, host, "cede", "--path", A_VENDORED_FILE["target"])
+        stalled = self.run_kit(KIT, host, "eject", "--path", A_VENDORED_FILE["target"])
         self.assertEqual(3, stalled.returncode, "a transfer with nobody's name on it went through")
         self.assertIn("DOOR", stalled.stderr)
         self.assertEqual(before, (host / ESTATE).read_bytes(),
@@ -117,7 +117,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
                          "never happened")
 
     def _ceded_on(self, host):
-        done = self.run_kit(KIT, host, "cede", "--path", A_VENDORED_FILE["target"],
+        done = self.run_kit(KIT, host, "eject", "--path", A_VENDORED_FILE["target"],
                             "--approve", "the-owner")
         self.assertEqual(0, done.returncode, done.stderr)
 
@@ -178,7 +178,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
                           "precondition: the seed's steward is declared to offer no transfer")
         host = self.installed()
         before = (host / ESTATE).read_bytes()
-        refused = self.run_kit(KIT, host, "cede", "--path", A_SEEDED_FILE["target"],
+        refused = self.run_kit(KIT, host, "eject", "--path", A_SEEDED_FILE["target"],
                                "--approve", "the-owner")
         self.assertNotEqual(0, refused.returncode)
         self.assertIn(REFUSED, refused.stderr)
@@ -193,7 +193,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
                 s.pop("transfers_to", None) for s in d["stewards"]])
         closed = self.fixture_kit("no-transfer", withdraw)
         host = self.installed(closed)
-        refused = self.run_kit(closed, host, "cede", "--path", A_VENDORED_FILE["target"],
+        refused = self.run_kit(closed, host, "eject", "--path", A_VENDORED_FILE["target"],
                                "--approve", "the-owner")
         self.assertNotEqual(0, refused.returncode)
         self.assertIn(REFUSED, refused.stderr)
@@ -214,7 +214,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
         bad = self.fixture_kit("no-class", misdeclare)
         host = self.installed(bad)
         before = (host / ESTATE).read_bytes()
-        refused = self.run_kit(bad, host, "cede", "--path", A_VENDORED_FILE["target"],
+        refused = self.run_kit(bad, host, "eject", "--path", A_VENDORED_FILE["target"],
                                "--approve", "the-owner")
         self.assertNotEqual(0, refused.returncode)
         self.assertIn(REFUSED, refused.stderr)
@@ -240,7 +240,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
         host = self.installed()
         before = (host / ESTATE).read_bytes()
         asked = f"{A_VENDORED_FILE['target']},{A_SEEDED_FILE['target']}"
-        refused = self.run_kit(KIT, host, "cede", "--path", asked, "--approve", "the-owner")
+        refused = self.run_kit(KIT, host, "eject", "--path", asked, "--approve", "the-owner")
         self.assertNotEqual(0, refused.returncode)
         self.assertIn(REFUSED, refused.stderr)
         self.assertEqual(before, (host / ESTATE).read_bytes(),
@@ -249,7 +249,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
     def test_230_a_path_already_taken_over_is_not_signed_for_twice(self):
         host = self._ceded()
         row, _ = _row(host, A_VENDORED_FILE["target"])
-        again = self.run_kit(KIT, host, "cede", "--path", A_VENDORED_FILE["target"],
+        again = self.run_kit(KIT, host, "eject", "--path", A_VENDORED_FILE["target"],
                              "--approve", "someone-else")
         self.assertNotEqual(0, again.returncode)
         self.assertIn(REFUSED, again.stderr)

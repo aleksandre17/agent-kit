@@ -1,7 +1,11 @@
-"""cede -- hand a path the kit shipped to the host, by name, through a door, and record it.
+"""eject -- hand a path the kit shipped to the host, by name, through a door, and record it.
 
-This is the kit's whole answer to a host that wants to LEAVE the seam, and it is deliberately not
-an `eject` (ADR-010). Leaving is done one path at a time, because what a host loses by leaving is
+This is the kit's whole answer to a host that wants to LEAVE the seam. ADR-010 named this verb
+`cede` and rejected an all-or-nothing `eject` (the CRA / `ng eject` shape: one-way, everything at
+once, widely regretted). ADR-015 amendment 1 draws the verb list as init/render/check/upgrade/
+`eject`, and there are never two verbs for one act -- so this module now answers to the drawn
+name, and keeps ADR-010's per-path grain: leaving is granular by design, not the discredited
+all-or-nothing copy. Leaving is done one path at a time, because what a host loses by leaving is
 different at every grain, and an all-or-nothing verb would make it lose everything in order to
 own one file. The larger grains already exist and are not rebuilt here: a capability is left by
 disabling it, and the whole kit is left by no longer running it -- every byte it wrote is already
@@ -17,8 +21,8 @@ This verb decides nothing about ownership. Which stewards offer a transfer, what
 and what the host sees afterwards are all rows in `stewardship.json`. The interpreter privileges
 no path, no capability and no steward: it asks the declaration, and refuses where it is silent.
 
-    python kit/interpreters/cli.py cede --root <host> --path <path> --plan
-    python kit/interpreters/cli.py cede --root <host> --path <path> --approve <who>
+    python kit/interpreters/cli.py eject --root <host> --path <path> --plan
+    python kit/interpreters/cli.py eject --root <host> --path <path> --approve <who>
 """
 
 from __future__ import annotations
@@ -37,7 +41,7 @@ MUTATES = True
 REQUIRES_APPROVED_HOST = True
 
 
-class CedeRefused(KitError):
+class EjectRefused(KitError):
     """A path was asked to change hands that the record or the declaration cannot hand over."""
 
     code = "KIT0035"
@@ -46,8 +50,8 @@ class CedeRefused(KitError):
 def _asked(args) -> list:
     paths = getattr(args, "path", None)
     if not paths:
-        raise CedeRefused(
-            "cede needs --path <path>[,<path>...]: the grain of leaving the seam is a PATH, and "
+        raise EjectRefused(
+            "eject needs --path <path>[,<path>...]: the grain of leaving the seam is a PATH, and "
             "a transfer that names nothing would hand over whatever a default decided"
         )
     return paths
@@ -118,7 +122,7 @@ def _transfers(ctx, recorded, stewards, paths) -> list:
             continue
         found.append((row, steward, transfer))
     if problems:
-        raise CedeRefused(
+        raise EjectRefused(
             f"{len(problems)} of {len(paths)} path(s) cannot change hands, so none does:\n  "
             + "\n  ".join(problems))
     return found
@@ -128,7 +132,7 @@ def _report(stewards, found) -> None:
     """What changes hands and what the host loses, stated BEFORE the door -- so the person who
     signs it has read what they are signing. The loss is the receiving steward's own declaration,
     printed verbatim, never a paraphrase this verb keeps of it."""
-    print(f"cede: {len(found)} path(s) this kit shipped, to be taken over by this host")
+    print(f"eject: {len(found)} path(s) this kit shipped, to be taken over by this host")
     for row, steward, transfer in found:
         print(f"  {row['path']}  class {row['class']} -> {transfer['class']}  steward {steward} "
               f"-> {transfer['steward']}  (shipped by {row['capability']})")
@@ -145,10 +149,10 @@ def run(ctx, args) -> int:
     paths = _asked(args)
     recorded = estate_module.read(ctx)
     if recorded is None:
-        raise CedeRefused(
+        raise EjectRefused(
             f"{estate_module.target(ctx)}: this host has no record of what it was given, so "
             f"nothing here can say which bytes are the kit's to hand over. Take a first record "
-            f"with `init --root <host>`, then cede")
+            f"with `init --root <host>`, then eject")
     stewards = estate_module.stewardship(ctx)
     found = _transfers(ctx, recorded, stewards, paths)
     _report(stewards, found)
@@ -159,14 +163,14 @@ def run(ctx, args) -> int:
     owner = next(c for c in enabled for i in c.installs if i["target"] == path)
     writes = [plan_module.Write("replace", item["class"], item["mode"], owner.id, path, item)]
     if getattr(args, "plan", False):
-        print(plan_module.report("cede", writes))
+        print(plan_module.report("eject", writes))
         return 0
 
     if not args.approve:
         doors.refuse(
             f"{len(found)} path(s) would stop being the kit's: {', '.join(r['path'] for r, _, _ in found)}",
             "person who owns this host",
-            "cede --root <host> --path <path> --approve <who>",
+            "eject --root <host> --path <path> --approve <who>",
             "Taking a file over is one-way: the kit will never replace, restore or vouch for it "
             "again, and upgrades will only report what it no longer receives.",
         )

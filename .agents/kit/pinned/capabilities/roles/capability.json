@@ -14,7 +14,7 @@
   "documents": [
     {
       "id": "kit_archetypes",
-      "source": "capabilities/roles/archetypes.json",
+      "source": "roles/archetypes.json",
       "validates": "archetype"
     }
   ],
