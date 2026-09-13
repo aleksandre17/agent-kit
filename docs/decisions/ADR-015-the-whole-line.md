@@ -149,6 +149,25 @@ First application: host #0's install approval, signed `agent-linkB(owner-delegat
 approval that names its delegation and its ADR is the canonical delegated-authority form. Re-signing it
 with the owner's name would claim a signature he never made (Cardinal V).
 
+**6. Cheaper and better than a bare agent, BY CONSTRUCTION — not by a comparison ritual.** *Owner:
+"we are building a modern system; why should the architecture not be arranged so the result is better
+than alone?"* Measured on host #2: every call opens on ~12–15k tokens of prose rules (laws ~5k, charter,
+role definitions) and 22 hooks, before any work is done. A bare agent pays none of that. It pays
+instead for ARCHAEOLOGY: re-searching the repository every time (reads outnumber writes 125 to 1). The
+kit wins only if it removes the bare agent's cost without adding its own. Design law for every link,
+checked at review:
+- **A rule the machine checks is never loaded as prose.** Enforcement lives in gates and hooks, which cost
+  no context. The always-loaded entry is a short INDEX with a budget the kit gates, and everything else is
+  pulled by task vocabulary (progressive disclosure, the Agent-Skills pattern).
+- **Ground is precomputed and pulled, never re-searched.** The kit supplies detector facts, the knowledge
+  plane and distillates, so a task starts from a map instead of a grep.
+- **Verification is targeted.** A change runs the tests it affects (test-impact selection), and the full
+  suite runs once at the gate.
+- **Routing is part of the kit.** A task that needs no spawn gets none, and mechanical work goes to the
+  cheapest capable model.
+- **No double-running.** Amendment 3's objectives are read PASSIVELY from receipts. Nothing is run twice to
+  prove it.
+
 ## Why this order, and not the audit's
 
 The audit ordered by RISK TO THE MIGRATION. The line orders by DEPENDENCY: the enforcement line (C) cannot
