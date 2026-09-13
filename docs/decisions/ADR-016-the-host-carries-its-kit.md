@@ -93,10 +93,14 @@ ESTABLISHED` over a trust root nobody chose — the surface lying in its most co
   vendored, so a fetched release source (`#subdirectory=kit`) carries no record. Missing: a declared
   record location inside the release source and the `upgrade` surface that prints the sections
   between the pinned version and the target (apt-listchanges' question).
-- **A host that TAKES adapters pins a composition, labelled `+unreleased`.** Honest, but it erases
-  the fact that the core is a release: the pinned lock cannot say "release 0.1.5 + two taken
-  capabilities pinned by provenance". Missing: the pinned lock carrying release identity and taken
-  capabilities as two accounts.
+- **A host that TAKES adapters pins a composition, labelled `+unreleased`.** Taking an adapter edits
+  `MANIFEST.json` (ADR-014's door), so the composed kit is never byte-equal to the release. The
+  pinned lock keeps provenance's meaning of "issued": every path the source's own lock did not
+  issue is carried, digested and accounted `not-issued`, so a taken capability is still TAKEN when
+  the pinned copy speaks (the first draft absorbed them and reported every pin WITHDRAWN — found on
+  the live walk of host #2, `test_280`). Missing: the release identity of the CORE surviving the
+  composition — "release 0.1.5 + two taken capabilities" — which needs taken capabilities declared
+  outside the issued `MANIFEST.json`.
 - **The estate records the pinned install with a null digest.** The release identity lives in the
   pinned lock (one home), so reconciliation cannot tell a host-edited pinned tree from an upstream
   change and `upgrade` re-delivers the tree whenever it runs; integrity is judged by the gate
@@ -120,4 +124,9 @@ ESTABLISHED` over a trust root nobody chose — the surface lying in its most co
   failure is the true statement "this host cannot run a verb by itself".
 - New diagnostic `KIT0041`. `lock.schema.json` widens `kit_version` to admit a local label —
   additive: every document valid before remains valid (ADR-009 expand).
-- Fitness functions: `test_273`–`test_279` (`tests/acceptance/fresh-repo/test_pinned_kit.py`).
+- Fitness functions: `test_273`–`test_280` (`tests/acceptance/fresh-repo/test_pinned_kit.py`).
+- **Host #0 runs without `knowledge`** (`--disable knowledge`, a reversible host choice). Its seed
+  would write `docs/decisions/ADR-0001-…` beside this repository's `ADR-001…016` — two numbering
+  schemes in one declaring folder — and its kind gate would, by its declared patterns, judge
+  `docs/reference/CANON-LEDGER.md` (a `CANON-` name in a kind that cannot declare; predicted from
+  the declaration, not run). Both are link E's to settle; neither is hidden by the choice.

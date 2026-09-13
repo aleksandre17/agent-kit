@@ -503,7 +503,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3d3b0fb553a5f94ccae3260ec2d1138d716d268e509b1848e8c58971923b48d1",
+      "digest": "767fc8aa6aa59737f5e94fde9074936f24a1333b6fb899a2e5a4e867865e4102",
       "path": "interpreters/lockfile.py"
     },
     {
@@ -521,7 +521,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "e913f7e4c59e759e1bc3dc91badb3753a3d2402f03d09d55f840c118b98ef134",
+      "digest": "1f581bffc26d2d34a87bff076c8c3df1f98c849fc2755b1db3227aebf679e580",
       "path": "interpreters/pin.py"
     },
     {
@@ -569,7 +569,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "520c596577afb4b3423a03b36298fd0e2dcd156538c6347128ac34d151aea817",
+      "digest": "bba98f881198906f39cd070799710536cec45c088508eab44e9044a220ec2f1c",
       "path": "interpreters/provenance.py"
     },
     {
@@ -906,5 +906,5 @@
   "kit_version": "0.1.5",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-13T13:41:32+00:00"
+  "taken_at": "2026-09-13T13:45:37+00:00"
 }

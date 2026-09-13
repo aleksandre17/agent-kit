@@ -66,6 +66,18 @@ LINE_ENDINGS = "line-endings"
 
 STATES = (MATCHED, STALE, MISSING, UNACCOUNTED, LINE_ENDINGS)
 
+#: The account a PINNED lock gives a path the kit it was read from did not issue (ADR-016): a
+#: capability a host took, a file a working tree added. The pinned tree carries it and integrity
+#: covers it, but "the kit's lock accounts for it" must keep meaning "the kit ISSUED it" -- that is
+#: how provenance tells what a host took from what the kit shipped (ADR-008). A lock that absorbed
+#: taken capabilities would make every one of them read as withdrawn.
+NOT_ISSUED = "not-issued"
+
+
+def issued(lock: dict) -> set:
+    """Every path a lock says the kit ISSUED -- its rows, less those it carries as not issued."""
+    return {entry["path"] for entry in lock["files"] if entry["accounted_by"] != NOT_ISSUED}
+
 #: The class given to a file reached from a declaration. Which of the two it gets is MEASURED --
 #: a file the walk could parse as JSON is a declaration and is walked into; one it could not is
 #: payload and is carried. Neither is decided by a name.

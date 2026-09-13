@@ -140,11 +140,20 @@ def _require_shippable(manifest: Manifest, seen: dict) -> None:
 def lock_text(manifest: Manifest, seen: dict, moment: str) -> str:
     """The lock a delivery leaves beside the pinned tree. A release carries its OWN lock verbatim
     (its identity is that text); a working tree carries a fresh reading labelled `+unreleased`,
-    validated against the lock schema like any reading the kit writes down."""
+    validated against the lock schema like any reading the kit writes down.
+
+    What the fresh reading must NOT do is widen what the kit ISSUED. A path the source's own lock
+    did not issue -- a capability the host took, a file the working tree added -- is carried and
+    digested, and accounted `not-issued`, so provenance run from the pinned copy still sees a taken
+    capability as taken (and never as withdrawn)."""
     if seen["released"]:
         return Workspace(manifest.root).read_text(seen["lock_path"])
     doc = lockfile.document(manifest, seen["rows"], moment)
     doc["kit_version"] = f"{manifest.version}+{UNRELEASED}"
+    issued = lockfile.issued(seen["recorded"]) if seen["recorded"] is not None else set()
+    for entry in doc["files"]:
+        if entry["path"] not in issued:
+            entry["accounted_by"] = lockfile.NOT_ISSUED
     errors = manifest.validate(doc, "lock")
     if errors:
         raise ReleaseError("the pinned reading does not honour the lock schema:\n  "

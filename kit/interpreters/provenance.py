@@ -116,7 +116,7 @@ def _issued(ctx) -> set:
             f"{rel}: this kit has no reading of itself, so nothing can tell a capability it "
             f"issued from one a host took from elsewhere. Take the kit's lock, then run again"
         )
-    return {entry["path"] for entry in json.loads(path.read_text(encoding="utf-8"))["files"]}
+    return lockfile.issued(json.loads(path.read_text(encoding="utf-8")))
 
 
 def taken(ctx, capabilities) -> list:

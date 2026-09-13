@@ -167,6 +167,31 @@ class PinnedKit(Fixtures, unittest.TestCase):
         self.assertIn("README.md", refused.stderr)
 
 
+class PinnedComposition(Fixtures, unittest.TestCase):
+
+    def test_280_a_capability_the_host_took_is_still_taken_when_the_pinned_copy_speaks(self):
+        """Found on the live walk of host #2, not foreseen: the first pinned lock was a fresh
+        reading of EVERYTHING, so provenance run from the pinned copy saw the taken adapters as
+        issued by the kit and reported every pin WITHDRAWN -- while they were in force."""
+        from test_adapters import adapted_kit  # noqa: E402 -- the one way a host takes adapters
+        import lockfile  # noqa: E402
+        import provenance  # noqa: E402
+
+        kit = adapted_kit()
+        host = self.installed(kit)
+        held = json.loads((host / PINNED / LOCK).read_text(encoding="utf-8"))
+        not_issued = {e["path"] for e in held["files"] if e["accounted_by"] == lockfile.NOT_ISSUED}
+        self.assertTrue(not_issued, "the taken adapters were absorbed into what the kit issued")
+        self.assertEqual(set(), not_issued & lockfile.issued(json.loads(
+            (KIT / LOCK).read_text(encoding="utf-8"))), "a path the kit issued was marked not issued")
+        shutil.rmtree(kit.parent)
+        ran = pinned_cli(host, "check")
+        self.assertIn(f"integrity {provenance.PINNED.upper()}", ran.stdout)
+        self.assertNotIn(provenance.WITHDRAWN.upper(), ran.stdout)
+        self.assertIn("PASS  FF-PROVENANCE-PINNED", ran.stdout)
+        self.assertIn("PASS  FF-KIT-PINNED", ran.stdout)
+
+
 def pinned_lockfile_state(word: str) -> str:
     """The state word as the lock survey owns it -- imported, never restated."""
     import lockfile  # noqa: E402
