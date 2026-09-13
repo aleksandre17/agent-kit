@@ -117,7 +117,7 @@ class Adapters(Fixtures, unittest.TestCase):
 
     def hired(self, kit: Path) -> Path:
         host = self.installed(kit)
-        archetype = json.loads((KIT / "capabilities/roles/archetypes.json").read_text(
+        archetype = json.loads((KIT / "roles/archetypes.json").read_text(
             encoding="utf-8"))["archetypes"][0]["id"]
         (host / OVERLAYS).mkdir(parents=True, exist_ok=True)
         (host / OVERLAYS / f"{archetype}.json").write_text(json.dumps(

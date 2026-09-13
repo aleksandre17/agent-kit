@@ -38,7 +38,7 @@ from pathlib import Path
 from harness import KIT, Fixtures
 
 CAPABILITY = json.loads((KIT / "capabilities/roles/capability.json").read_text(encoding="utf-8"))
-ARCHETYPES = json.loads((KIT / "capabilities/roles/archetypes.json").read_text(encoding="utf-8"))
+ARCHETYPES = json.loads((KIT / "roles/archetypes.json").read_text(encoding="utf-8"))
 OVERLAY_SCHEMA = json.loads((KIT / "schemas/overlay.schema.json").read_text(encoding="utf-8"))
 
 #: The words the CONTRACTS give both sides, read from the capability's own block and from the
@@ -164,7 +164,7 @@ class Roles(Fixtures, unittest.TestCase):
         moved = "a line added to the ONE declaration, which every definition must now carry"
 
         def amend_the_one_declaration(kit: Path):
-            self.edit_json(kit, "capabilities/roles/archetypes.json", lambda document:
+            self.edit_json(kit, "roles/archetypes.json", lambda document:
                            document[SHARED_LIST].append({"id": "an-amended-line", "says": moved}))
 
         amended = self.fixture_kit("protocol-amended", amend_the_one_declaration)

@@ -129,6 +129,13 @@ def closure(ws, start: str, skip=frozenset(), view=None) -> dict:
     enter, and `view` lets a caller hide a part of one document that is not references. ONE walk,
     used for the kit's account of itself and for the account of any single capability in it --
     a second walker would be a second opinion about what a declaration points at."""
+    # A name is not a referent until it is measured (Cardinal VII): `Path.is_file()` answers on
+    # the OS's terms, and a case-insensitive filesystem would let the STRING "version" -- a JSON
+    # Schema `required` entry, nothing to do with any file -- resolve to a real file named
+    # `VERSION`, two names the walker would then treat as one path. The real directory listing,
+    # read once and compared byte-exact, is the boundary actually measured.
+    existing = set(ws.files_under("."))
+
     found: dict = {}
     queue = [start]
     while queue:
@@ -147,7 +154,7 @@ def closure(ws, start: str, skip=frozenset(), view=None) -> dict:
             value = view(rel, value)
         for text in _strings(value):
             candidate = _inside(text)
-            if candidate and candidate not in skip and ws.path(candidate).is_file():
+            if candidate and candidate not in skip and candidate in existing:
                 queue.append(candidate)
     return found
 

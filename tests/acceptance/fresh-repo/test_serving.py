@@ -52,8 +52,8 @@ ENABLING_FIELD = SPEC["enabled_by"]["field"]
 SURFACES_REL, SURFACES = surface_documents(KIT)
 DESCRIPTORS = next(i for i in CAPABILITY["installs"] if i.get("reads_as") == "runtime_descriptors")["target"]
 OVERLAYS = next(i for i in ROLES_CAPABILITY["installs"] if i.get("reads_as") == "role_overlays")["target"]
-AN_ARCHETYPE = json.loads((KIT / "capabilities/roles/archetypes.json").read_text(encoding="utf-8"))["archetypes"][0]
-A_CLASS = json.loads((KIT / "capabilities/runtimes/classes.json").read_text(encoding="utf-8"))["classes"][0]
+AN_ARCHETYPE = json.loads((KIT / "roles/archetypes.json").read_text(encoding="utf-8"))["archetypes"][0]
+A_CLASS = json.loads((KIT / "runtimes/classes.json").read_text(encoding="utf-8"))["classes"][0]
 SURFACE_GATE = next(g["id"] for g in CAPABILITY["gates"]
                     if g["params"]["references"][0]["field"] == ENABLING_FIELD)
 BINDING_ROOT = next(p["root"] for p in MANIFEST.planes if p["class"] == "binding").rstrip("/") + "/"

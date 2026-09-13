@@ -22,6 +22,11 @@
         "id": "diagnostics",
         "class": "declaration",
         "root": "diagnostics.json"
+      },
+      {
+        "id": "version",
+        "class": "declaration",
+        "root": "VERSION"
       }
     ]
   },
@@ -114,6 +119,7 @@
     "project": "schemas/project.schema.json",
     "profile": "schemas/profile.schema.json",
     "lifecycle": "schemas/lifecycle.schema.json",
+    "layout": "schemas/layout.schema.json",
     "card": "schemas/card.schema.json",
     "delivery-policy": "schemas/delivery-policy.schema.json",
     "residence": "schemas/residence.schema.json",

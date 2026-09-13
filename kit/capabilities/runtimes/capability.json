@@ -14,7 +14,7 @@
   "documents": [
     {
       "id": "kit_runtime_classes",
-      "source": "capabilities/runtimes/classes.json",
+      "source": "runtimes/classes.json",
       "validates": "runtime-class"
     }
   ],

@@ -40,7 +40,7 @@ import composition
 from harness import KIT, Fixtures
 
 CAPABILITY = json.loads((KIT / "capabilities/runtimes/capability.json").read_text(encoding="utf-8"))
-CLASSES = json.loads((KIT / "capabilities/runtimes/classes.json").read_text(encoding="utf-8"))
+CLASSES = json.loads((KIT / "runtimes/classes.json").read_text(encoding="utf-8"))
 RUNTIME_SCHEMA = json.loads((KIT / "schemas/runtime.schema.json").read_text(encoding="utf-8"))
 
 SPEC = CAPABILITY["composes"]
