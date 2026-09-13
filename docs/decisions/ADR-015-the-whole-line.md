@@ -64,10 +64,11 @@ The line lacks, in the order the line itself imposes — each link is useless un
 |---|---|---|---|
 | A | runtime surfaces | adapters leave the kit core as bundles; open publisher set | owner's agnostic rule; R1 residue (ADR-014, in flight) |
 | B | ① the host carries its kit | a RUNNABLE pinned copy of the kit in the host (interpreters + schemas + manifest), recorded in the estate; a release artifact (version, changelog, the kit's own signed digest) | H1; ADR-008 "signing the kit's own lock"; upgrade fetch + changelog delta |
+| L | the layout is the drawing, at least | the tree's shape as ONE machine-readable declaration; the Part VI drawing and a both-sides FLOOR check (every drawn path exists, by its drawn name) are its projections; every path beyond the drawing is a declared row naming its improvement | owner's rule (amendment 1); upstream floor gaps; H3–H6 placement; drawn `eject`, `init.lock`, `kit.lock.json` |
 | C | the enforcement line | served settings → vendored hook → HOST-DECLARED gates; the abstract ARROW capability; per-directory served entry files; `core.hooksPath`; CI projection from the `ci.*` fact | E1; blueprint `fitness`; H7; O-7 per-module laws |
 | D | facts drive projection | capabilities consume detector facts: `quality.tests.*` → a verification profile, or a DECLARED gap when no tests exist; `stack.*.workspaces` → per-module law blanks + arrow blank; `data.migrations` → a roster suggestion; `ci.workflows` → the CI projection. Profile drift: `check` compares the recorded reading with a fresh probe and reports, never overwrites | Part V; L4 drift |
-| E | knowledge + migration plumbing | a receiving BINDING plane for host knowledge (`.agents/knowledge/`, as drawn); `retained`; carry-into-seed; preview checks exactly what the act checks | K1/H2, S1, S2, X1, V1 |
-| F | the management spine | the continuity capsule as a kit capability (one CAS writer, a gate that says when the capsule no longer describes the tree); `evidence/<card>/` so `verified` has a referent; ARCHIVE dead by location; the intent documents (vision · roadmap · registry) seeded blank under the knowledge capability's Diátaxis form | H3, H4, B1; the owner's named failure: work laid down, never finished, lost |
+| E | the knowledge plane | the BINDING plane `.agents/knowledge/` (private/<role> · shared), as drawn; preview checks exactly what the act checks. *Cut by amendment 2: `retained`, carry-into-seed and a lane for foreign formats are OVERTURNED* | K1/H2, V1 (S1, S2, X1 overturned) |
+| F | the management spine | the continuity capsule as a kit capability (one CAS writer, a gate that says when the capsule no longer describes the tree); `evidence/<card>/` so `verified` has a referent; ARCHIVE dead by location; the intent documents (vision · roadmap · registry) seeded blank under the knowledge capability's Diátaxis form; ONE REAL EVALUATION run (amendment 4) | H3, H4, B1; L7-quality closed live; the owner's named failure: work laid down, never finished, lost |
 | G | ④ the lesson returns | a `learned` card or a ledger row marked universal is EXPORTED as a proposal text addressed to upstream — never a dependency, never automatic; seen twice first | the framework cannot learn from its hosts without a human copying |
 
 After G, the framework is complete for 1.0 and the migration runs (the map floors at zero undecided once
@@ -104,6 +105,40 @@ pointed at a project:
 Consequence for the order: link **B** lands first in the framework repository itself (host #0), then in
 the clone of host #2. Every later link is walked live in BOTH.
 
+## Amendments — the owner's rules, 2026-09-13 (restated on record)
+
+**1. The drawing is the FLOOR, never the ceiling.** *Owner: "what is on the drawing must be at least
+like that; what you improve, refine, add as mechanism, pattern, function — that is the question of
+improvement."* Every path in the blueprint's Part VI drawing, on both sides, exists in its drawn place by
+its drawn name. Anything beyond it is welcome when it improves, and says so in a declared row. Applied:
+`adapters/` outside the kit stays (an ADDITION: the kit core names no product) · `kit/runtimes/` must
+exist and holds the NEUTRAL runtime-class grammar, never a product · `estate.json` stays beside the drawn
+`project/kit.lock.json` only because they are two truths (what the tree IS vs the lock it was GIVEN) ·
+`host.lock` covers every mutating verb; the drawn `runtime/init.lock` still exists or is named as that
+lock · `eject` exists as a verb. ADR-002/007/010 are amended to this extent. Link **L** carries it.
+Measured floor gaps, 2026-09-13: UPSTREAM `kit/VERSION`, `kit/doctrine/`, `kit/roles/`,
+`capabilities-lib/`, `playbooks/`, `kit/runtimes/`, `capabilities/fitness/`, `interpreters/hooks/`,
+`tests/unit`, `examples/`; HOST H1–H7 and `docs/work/`, `docs/archive/` under `docs/`.
+
+**2. The old system is conceded NOTHING; the old adapts to the new.** A migration is a triage with two
+verbs, **re-declare in the new form | delete**, and the default for anything that does not fit is DELETE:
+git history is the archive. OVERTURNED as concessions to a prior system: S1 `retained` (nothing stays on
+the old's terms), S2 carry-into-seed (old content is RE-AUTHORED, never piped into seeds), X1 (a move in a
+format the kit cannot read is refused at preview, with no lane for it), and the "705 moves" reading of K1
+(a host's memory is distilled, never relocated wholesale). Kept, because the NEW system needs them on
+their own merits: the knowledge plane (H2) and V1.
+
+**3. Outcome objectives — the framework must prove it is not a bureaucracy.** The grammar is SRE's
+SLI/SLO. The observability capability ships the SLI grammar BLANK: token share per work class, cost per
+task (p90 peak), window, source = receipts, class carried by the card. The HOST declares its objectives;
+the kit never knows a number. Host #2's baseline is governance **78%** of all tokens, p90 peak **118k**.
+**The migration is DONE only when both are below baseline over the declared window.** A framework that
+does not change that ratio is the best-designed bureaucracy, and that is now a measured gate, not a hope.
+
+**4. The quality loop closes before 1.0.** Link F runs ONE real evaluation through Part VIII's grammar:
+one suite on one role, accepted vs candidate on the same cases, verdict as a receipt, the promotion gate,
+and the owner's signature. A grammar no one has run is an unverified claim.
+
 ## Why this order, and not the audit's
 
 The audit ordered by RISK TO THE MIGRATION. The line orders by DEPENDENCY: the enforcement line (C) cannot
@@ -128,7 +163,8 @@ a mechanism, not by a paragraph (the doctrine existed; the loss happened anyway)
 
 ## Consequences
 
-- The remaining work is seven links, A–G, finished one agent at a time, each walked live on the clone of
-  host #2 before it is called done.
+- The remaining work is the links A, B, L, C, D, E, F, G, finished one agent at a time, each walked live
+  on host #0 and the clone of host #2 before it is called done.
 - "How much is left" is answered by position on this line, never by a percentage of a list.
-- The migration of host #2 starts only after G; the map is re-run then, and must read zero undecided.
+- The migration of host #2 starts only after G; the map is re-run then, must read zero undecided, and
+  the migration is done only when amendment 3's objectives hold over their window.
