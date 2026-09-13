@@ -1,0 +1,80 @@
+# Runtimes — what this host runs its agents on, and what it has only been told
+
+> **Generated. Do not edit.** Recomputed from the classes declared and the descriptors this host
+> authored. Kit {{kit_version}}.
+
+A runtime descriptor is a PROJECTION. The kit ships classes — what is true of a runtime as a
+KIND, in no vendor's vocabulary — and this host authors descriptors, which say only what a host
+legitimately says about its own tool. No file anywhere holds a second body for a runtime, and
+that is not a rule anybody keeps: the descriptor schema is closed to the class's vocabulary, so
+the two-homes state cannot be written down.
+
+The second closure is the one that matters more here, and it is a closure by absence. **There is
+no field in a descriptor in which a proof can be written.** The strongest thing any authored file
+in this repository can say about a runtime is *we believe it can do this*. Whether it ever did is
+answered by a record of something that happened, and the two can never be confused, because they
+are not the same document and are not written by the same hand.
+
+## This host's runtimes
+
+{{#runtimes}}
+- **{{id}}** — class `{{class}}`{{#unbound}} · **UNBOUND: no class by that name is declared**{{/unbound}} · claimed {{capability_standing.counts.claimed}}, proven {{capability_standing.counts.proven}}, absent {{capability_standing.counts.absent}} of {{capability_standing.counts.total}}
+{{/runtimes}}
+{{^runtimes}}
+**This host has declared no runtime.** Not "none found" and not an empty page: the roster is the
+set of descriptors in the binding plane, and this host has authored none, so nothing is projected
+into `.agents/generated/runtimes/`. That is a complete and honest answer, and it is written here
+because a page that simply ended would read exactly like a page whose runtimes failed to render.
+{{/runtimes}}
+
+## The capability vocabulary — every word that may be claimed
+
+Declared so that an absence can be counted. A capability that has no name cannot be missing from
+anything: a runtime that never claimed it and a runtime that has no need of it are the same
+silence until somebody declares the word.
+
+Each is a QUESTION — what would have to be observed — and never an answer about any particular
+tool.
+
+{{#documents.kit_runtime_classes.capabilities}}
+- **{{id}}** — {{means}}
+  - observed by: {{observed_by}}
+{{/documents.kit_runtime_classes.capabilities}}
+{{#reads.host_runtime_classes.capabilities}}
+- **{{id}}** — {{means}} *(declared by this host)*
+  - observed by: {{observed_by}}
+{{/reads.host_runtime_classes.capabilities}}
+
+## Classes — the ones taken up, and a count of the ones that were not
+
+{{#runtime_class_census}}
+{{#taken}}
+### {{id}} — declared by `{{origin}}`
+
+{{reach}}
+
+Used here by:
+{{#instances}}
+- `{{id}}`
+{{/instances}}
+
+{{/taken}}
+{{^taken}}
+**No class has been taken up by this host.**
+
+{{/taken}}
+{{#untaken}}
+**{{.}} declared runtime class(es) are not used here.** Available, and this host runs none of
+them.
+
+They are not named on this page, deliberately. Which tools a host runs is the host's choice, and
+a framework that printed a list of kinds into a host that has chosen none of them would have
+taken a side in that choice before meeting it. The names are one file away, in the declarations
+that legitimately hold them: the kit's own class registry, and this host's
+`.agents/project/runtime-classes.json`. A count is a declared zero and a pointer; a roster is a
+decision nobody made.
+{{/untaken}}
+{{^untaken}}
+Every declared class is used by at least one runtime here.
+{{/untaken}}
+{{/runtime_class_census}}

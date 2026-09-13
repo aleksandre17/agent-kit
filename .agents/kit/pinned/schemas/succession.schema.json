@@ -1,0 +1,106 @@
+{
+  "$id": "succession",
+  "title": "Succession vocabulary -- what may become of a prior system's path, declared once (ADR-011)",
+  "description": "The one home of every DISPOSITION a migration map may assign to a path of a host's prior agent system. Each disposition names the fields a row assigning it must carry, and what each field REFERS to; the interpreter checks a reference by its kind and holds no disposition by name. `undecided` names the state of a path no row answers -- a declared absence that no row may assign. A new disposition is a row here, never an edit to the interpreter.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "residence",
+    "receives",
+    "undecided",
+    "dispositions"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "residence": {
+      "description": "The ONE place in a host where its migration map resides -- a host-relative path in a plane that a capability declares as an install target (seeded blank). A roster is carried out only from the map that lives here: a map passed from anywhere is a judgement with no home (ADR-012).",
+      "type": "string",
+      "minLength": 1
+    },
+    "receives": {
+      "description": "The install modes whose declared SPACES may receive a relocated path. A space outside these is one whose bytes a writer of this kit rebuilds or owns, and a path moved into it would be overwritten or unaccounted.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "undecided": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "says"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "says": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "dispositions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says",
+          "carries"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          },
+          "effect": {
+            "description": "What carrying this disposition out does to the path, named from the interpreter's effect registry (ADR-012). Declared, never inferred from the fields a row carries: a disposition whose effect had to be guessed would be a deletion by default. A disposition that declares NO effect is readable and is never carried out: a path it answers refuses the act, because an absent effect is not a default one.",
+            "type": "string",
+            "minLength": 1
+          },
+          "carries": {
+            "description": "Every field a row with this disposition must carry, and nothing else it may carry.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "field",
+                "refers"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "refers": {
+                  "description": "The kind of thing the value names; checked by the interpreter's reference registry.",
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

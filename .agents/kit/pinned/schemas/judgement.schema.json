@@ -1,0 +1,65 @@
+{
+  "$id": "judgement",
+  "title": "Judgement -- the QUALITY half of observation, and the record of one case read against one rubric",
+  "description": "A receipt proves that a run FIRED. A judgement is the other question: did it HIT. It is opened UNJUDGED the moment the pair (a case, a rubric) is known to exist, and rewritten when somebody or something actually judges it -- the same order as a run receipt, for the same reason. An absence cannot be counted, but a blank can: a host with cases and no verdicts holds a directory of records that each say, in a word, that nothing has judged this yet. That is the whole point. An evaluation surface that reports nothing because nothing was declared is indistinguishable from one reporting that everything is fine, and this record exists so that the two can never be confused. The verdict vocabulary is the framework's; what earns a verdict is the host's. There is no scale here and no number: a scale is a domain's way of saying how much better one answer is than another, and the framework has no way to know.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "case", "rubric", "verdict", "opened_at"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "id": {
+      "description": "This judgement's identity, and the name of the file that holds it. Thirty-two hex characters, the same width a run's record carries, because a member of a collection is identified once and the same way everywhere in this kit.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "case": {
+      "description": "The case this judgement is about, by the id the HOST declared. A judgement naming a case nobody declared is a verdict about a subject that does not exist.",
+      "type": "string",
+      "minLength": 1
+    },
+    "rubric": {
+      "description": "The rubric this case was read against, by the id the HOST declared. Two rubrics may reach opposite verdicts on one case and both be right; a verdict that cannot say which question it answered is not a reading, it is an opinion.",
+      "type": "string",
+      "minLength": 1
+    },
+    "verdict": {
+      "description": "UNJUDGED until something judges. It is not `unknown` and it is not a low score: it is the DECLARED state of a case that has been declared and never read, which is the state every case of every new host is in, and the state an evaluation surface most often hides. PASS and FAIL are the host's words applied by the host's judge against the host's rubric -- the framework ships the vocabulary and never the verdict. INCONCLUSIVE is the honest fourth: a judge that could not decide says so, because ambiguity resolves to nothing and never to a guess.",
+      "type": "string",
+      "enum": ["UNJUDGED", "PASS", "FAIL", "INCONCLUSIVE"]
+    },
+    "judge": {
+      "description": "Who or what reached this verdict, by the id the host declared on its roster. ABSENT while the verdict is UNJUDGED, because nothing has judged. Present afterwards, because a verdict with no author cannot be questioned, only believed -- and it will go on certifying for as long as it sits there.",
+      "type": "string",
+      "minLength": 1
+    },
+    "opened_at": {
+      "description": "The moment this pair was first known to need judging, taken from the clock port. A blank that cannot be dated cannot be aged, and an unjudged case that nobody can date is one nobody will ever chase.",
+      "type": "string",
+      "minLength": 1
+    },
+    "judged_at": {
+      "description": "The moment the verdict was reached. ABSENT is a state and not a gap while nothing has judged; present and stale is a different state again, and one a host may declare a reading for.",
+      "type": "string",
+      "minLength": 1
+    },
+    "because": {
+      "description": "Why the judge decided as it did, in the judge's own words. Never read by the machinery -- a reason is for the human who disagrees with it.",
+      "type": "string"
+    },
+    "scores": {
+      "description": "The verdict criterion by criterion, in the same vocabulary as the whole. A rubric that asks four questions and yields one word has thrown away the part a host could act on.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion", "verdict"],
+        "properties": {
+          "criterion": { "type": "string", "minLength": 1 },
+          "verdict": { "type": "string", "enum": ["UNJUDGED", "PASS", "FAIL", "INCONCLUSIVE"] },
+          "because": { "type": "string" }
+        }
+      }
+    },
+    "kit_version": { "type": "string", "minLength": 1 }
+  }
+}

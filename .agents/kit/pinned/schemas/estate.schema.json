@@ -1,0 +1,228 @@
+{
+  "$id": "estate",
+  "title": "The estate -- what this host RECEIVED from the kit, read at a stated moment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kit_version",
+    "algorithm",
+    "newline",
+    "taken_at",
+    "signed_by",
+    "files"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "kit_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "algorithm": {
+      "type": "string",
+      "minLength": 1
+    },
+    "newline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "taken_at": {
+      "description": "The moment this reading was taken. A digest reads afterwards exactly like a permanent property of a file; it is not one, and every comparison against this document states BOTH moments.",
+      "type": "string",
+      "minLength": 1
+    },
+    "signed_by": {
+      "description": "Who accepted the writes this document records. A record of what a machine did to a host, with no name on it, cannot be contradicted by anyone.",
+      "type": "string",
+      "minLength": 1
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "class",
+          "mode",
+          "capability",
+          "digest"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "class": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mode": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The install mode that wrote this path. WHO owns its bytes follows from the mode and is not restated here: a steward written into the record would be a second home for a truth stewardship.json declares, and -- being a short, generic word living in a host's own document -- it would also attribute any line that happened to contain it."
+          },
+          "capability": {
+            "type": "string",
+            "minLength": 1
+          },
+          "digest": {
+            "description": "What the bytes were when they were written -- or NULL where a digest would measure nothing: a directory the host fills, a projection recomputed every run, the estate itself. Null is a DECLARED absence of a measurement and never a stand-in for one.",
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "orphaned_at": {
+            "description": "The kit version that stopped shipping this path. The file stays -- the host owns it -- and this row keeps accounting for it, so a withdrawn path never becomes an unexplained file in a governed plane.",
+            "type": "string",
+            "minLength": 1
+          },
+          "superseded": {
+            "description": "The digest of what this host had at this path before a named human accepted its replacement. The bytes are not archived here; the refusal happens BEFORE the write, so the host still holds them at the moment it decides.",
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "signed_by": {
+            "description": "Who accepted a replacement at this path, and when. The two fields a door records are the door's vocabulary and are not renamed here: an acceptance is a NAME and a MOMENT wherever it is made, and a second spelling of it is how one half of a system goes on saying `accepted` while the other reads `adopted`.",
+            "type": "string",
+            "minLength": 1
+          },
+          "signed_at": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ceded": {
+            "description": "This path was TAKEN OVER by the host through the cede door (ADR-010): who opened it, when, and the digest the host held at that moment. From then on the steward that answers for it is the one its mode's steward declares it transfers to, and `class` on this row is the class it holds now. `mode` keeps saying what WROTE the bytes, because that is history, and history does not change hands.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "signed_by",
+              "signed_at",
+              "held"
+            ],
+            "properties": {
+              "signed_by": {
+                "type": "string",
+                "minLength": 1
+              },
+              "signed_at": {
+                "type": "string",
+                "minLength": 1
+              },
+              "held": {
+                "description": "What the host held at this path when it took it over, or null where nothing stood there to measure.",
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        }
+      },
+      "description": "Every path the kit wrote into this host. An empty list is a DECLARED zero and is written out as one -- but no count stands beside it: a derived number is a thing no host was ever told, and the honest place for one is the surface that prints it in front of the reader, computed where it can be seen to have been computed."
+    },
+    "taken": {
+      "description": "Every capability this host took that the kit did not issue, each pinned at the door that took it (ADR-008). Absent in a record written before pins existed, which is read as NO pins -- never as a pass. An empty list is a declared zero.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability",
+          "version",
+          "digest",
+          "pinned_by",
+          "pinned_at",
+          "authenticity"
+        ],
+        "properties": {
+          "capability": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^h1:[A-Za-z0-9+/]{43}=$"
+          },
+          "pinned_by": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pinned_at": {
+            "type": "string",
+            "minLength": 1
+          },
+          "supersedes": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "version",
+              "digest"
+            ],
+            "properties": {
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^h1:[A-Za-z0-9+/]{43}=$"
+              }
+            }
+          },
+          "authenticity": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "taken_at"
+            ],
+            "properties": {
+              "state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "taken_at": {
+                "type": "string",
+                "minLength": 1
+              },
+              "verifier": {
+                "type": "string",
+                "minLength": 1
+              },
+              "signer": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trust_root_digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "evidence": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "succession_acts": {
+      "description": "Every succession act carried out in this host (ADR-012): the signed roster it carried, and every path it moved or removed with the digest of its bytes and where they went. The host never RECEIVED these paths from the kit; it gave them up at a signed door, and this is the account that nothing left the tree unrecorded. Each act has the shape of the kit schema `succession-act`, validated by the one module that writes it.",
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+}

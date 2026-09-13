@@ -1,0 +1,19 @@
+{
+  "$id": "delivery-policy",
+  "title": "What the HOST tolerates -- capacity and staleness, per state",
+  "description": "Seeded once and owned by the host thereafter. The kit declares WHICH states exist; the host declares how many cards it will carry in one and how long it will let one sit there. Neither number may live in the interpreter: a limit compiled into the machinery is a policy nobody can change and nobody can see.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "wip_limit", "max_age_days"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "wip_limit": {
+      "description": "state id -> the greatest number of cards this host will carry in it.",
+      "type": "object"
+    },
+    "max_age_days": {
+      "description": "state id -> how long a card may sit in it before the surface says so.",
+      "type": "object"
+    }
+  }
+}

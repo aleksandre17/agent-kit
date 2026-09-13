@@ -1,0 +1,92 @@
+{
+  "$id": "boundary",
+  "title": "The framework's own boundary -- the process/domain line, stated as rules that can go red",
+  "description": "ADR-001 point 2 says where the line runs: the framework owns the truth about the PROCESS by which a domain is settled, never the decision itself. That sentence gates nothing. This declaration turns it into rules a machine applies, and every rule carries its own calibration -- one specimen it MUST flag and one it MUST admit -- because a boundary sensor that has never been shown a crossing is an opinion with a good record. There is no exemption field and there will not be one: a rule that names a crossing and then permits it has already stopped being a rule.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "rules"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "summary": { "type": "string" },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "where", "because", "instead", "proves", "admits"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "kind": {
+            "description": "WHICH sensor reads this rule. An open name, resolved against the kinds an interpreter of this declaration provides -- never a closed set switched on, so a new way of measuring the boundary is a module and a row, not an edit.",
+            "type": "string",
+            "minLength": 1
+          },
+          "where": {
+            "description": "The scopes this rule is pointed at, by declared name. A rule pointed at a scope its kind cannot read is refused rather than skipped: a rule that silently measures nothing reads exactly like a rule that found nothing.",
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "because": { "type": "string", "minLength": 1 },
+          "instead": { "type": "string", "minLength": 1 },
+          "proves": {
+            "description": "One specimen this rule MUST flag, in whatever form its kind reads. The evidence that the sensor can see the thing it claims to catch, carried in the declaration and not in somebody's memory of a test."
+          },
+          "admits": {
+            "description": "One lookalike specimen this rule MUST NOT flag. A rule that cannot state what it tolerates has no measured edge, and a rule with no edge eventually names everything."
+          },
+          "pattern": {
+            "description": "For kinds that read text: one regular expression. One matcher, one meaning -- a set of matcher kinds would be a closed discriminant an interpreter would have to switch on.",
+            "type": "string",
+            "minLength": 1
+          },
+          "ancestors": {
+            "description": "For kinds that compare two hosts: the documents in which a difference is allowed to have its cause. Everything a host is told about itself arrives through one of these, so a difference that none of them explains was invented by the framework.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "document", "because"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+                "document": { "type": "string", "minLength": 1 },
+                "because": { "type": "string", "minLength": 1 },
+                "chooses": {
+                  "description": "The field of this document that names what the host CHOSE. What a host chose is an ancestor of everything that choice brings with it, so the declarations of the chosen are ancestors too.",
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "hosts": {
+            "description": "The hosts a two-host rule is measured across, declared rather than improvised in a test. Maximal difference is the point: two hosts that resemble each other measure nothing, and the calibration says so.",
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "because"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+                "because": { "type": "string", "minLength": 1 },
+                "material": {
+                  "description": "path -> content the HOST already has before the kit ever runs. Never written by the kit; this is the repository as it was found.",
+                  "type": "object"
+                },
+                "enables": {
+                  "description": "The host's answer at P3, verbatim as it would be given on the command line.",
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

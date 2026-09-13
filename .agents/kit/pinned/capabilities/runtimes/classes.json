@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "protocol": [
+    {
+      "id": "a-claim-is-not-a-proof",
+      "says": "Everything a descriptor says about this runtime is a stated belief with an author. It is written as CLAIMED and it stays CLAIMED until a record of something that actually happened says otherwise -- and no document a host can author is such a record."
+    },
+    {
+      "id": "an-absence-has-a-name",
+      "says": "A capability this runtime does not claim is ABSENT, and it is named. A short list of claims and a runtime that genuinely needs nothing read identically to anyone who is only shown what is present."
+    },
+    {
+      "id": "a-setting-is-not-a-capability",
+      "says": "What this host CONFIGURED is not what the runtime DOES. A setting is carried as a setting, however confidently it was written: the one that cost most was an invocation shape recorded once and never measured."
+    },
+    {
+      "id": "the-boundary-is-measured-before-it-is-trusted",
+      "says": "Two components can agree perfectly on a NAME and disagree completely on what it points at, and when they do each behaves correctly while the work lands somewhere nobody chose. The translation in the gap -- paths, quoting, encodings, clocks, line endings -- is measured once at the boundary, cheaply, and never inferred from the fact that a name looked familiar."
+    },
+    {
+      "id": "when-a-run-is-cut-off-the-record-is-what-remains",
+      "says": "A run that dies mid-way leaves work that reads exactly like finished work. Whatever this runtime is asked to do, the record that it STARTED is written before the work, so that its silence is legible as a death rather than as a success nobody checked."
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "command-shape",
+      "means": "Work is handed over as an argument vector, so a value carrying a space, a quote or a backslash arrives at the far side with the bytes it left with.",
+      "observed_by": "a run in which a value carrying a space, a quote and a backslash is handed over and read back unchanged, with the reading recorded where a later reader can find it. This is the one that has already been wrong: it was assumed, and it was believed for as long as nothing happened to carry a space."
+    },
+    {
+      "id": "working-directory",
+      "means": "Relative names resolve against a directory the caller chose, rather than one the runtime inherited from whoever started it.",
+      "observed_by": "a run that writes to a relative name, and a later reading that finds the file where the caller said it would be and nowhere else."
+    },
+    {
+      "id": "line-ending",
+      "means": "Text authored through this runtime is written with the line ending the caller declared rather than the one the platform prefers.",
+      "observed_by": "a byte-level reading of a file this runtime authored -- never a reading of what it displayed, which is the same file after a second translation."
+    },
+    {
+      "id": "write-scope",
+      "means": "The runtime can be confined to a stated part of the workspace, and a write outside it is refused rather than performed and reported.",
+      "observed_by": "a run that attempts a write outside the stated scope, is refused, and leaves the refusal on record; a run that was simply never asked proves nothing."
+    },
+    {
+      "id": "delegation",
+      "means": "A run can start another run and receive its result, rather than only describing what another run should do.",
+      "observed_by": "a record naming the run that was started, and the started run's own record existing beside it."
+    },
+    {
+      "id": "interruption",
+      "means": "A run that is cut off mid-way is distinguishable afterwards from a run that finished, without anyone having to remember which it was.",
+      "observed_by": "a run stopped mid-way, followed by a reading that finds a record which opened and never declared an end."
+    },
+    {
+      "id": "refusal",
+      "means": "The runtime can decline an instruction and state why, rather than failing quietly or answering anyway.",
+      "observed_by": "a run handed something it must decline, and a record carrying both the declining and the reason it gave."
+    }
+  ],
+  "classes": [
+    {
+      "id": "an-interactive-session",
+      "reach": "An operator and the agent take turns inside a session that stays open between them, so work arrives as a turn and everything the run knows accumulates in the session rather than in the request.",
+      "boundary": "The session inherits a working directory, an environment, a locale and a line-ending convention from whoever opened it, and a turn states none of them. Every one of those is a name both sides will read confidently and may resolve differently, and the failure arrives as a thing that is simply not where it was put.",
+      "reference_class": [
+        "the Language Server Protocol's initialize handshake, which states the root once and assumes it never again",
+        "POSIX process environment inheritance, where what a child gets is what the parent happened to hold",
+        "terminal encoding negotiation, where both ends agree on a name and not on a byte"
+      ]
+    },
+    {
+      "id": "a-batch-invocation",
+      "reach": "Started once per unit of work, with everything it will be given fixed at the moment of launch, and finished when it returns.",
+      "boundary": "Everything crosses at launch and never again: an argument vector or a single command string, the quoting between them, the encoding of an environment value, and an exit status that is a number and not a result.",
+      "reference_class": [
+        "the argument vector of execve, which is a list of strings and not a line to be re-parsed",
+        "POSIX exit statuses, and the standing rule that an exit code is not a result",
+        "OpenTelemetry spans, where a unit of work carries a start, an end and a status that begins UNSET"
+      ]
+    },
+    {
+      "id": "a-called-service",
+      "reach": "Reached over a call boundary inside somebody else's process lifetime, owning no session and no working directory of its own.",
+      "boundary": "Everything is serialization: a schema at the wire, a clock that is not the caller's, a deadline neither side can see the other honour, and a failure that arrives as a payload rather than as an ending.",
+      "reference_class": [
+        "contract-first OpenAPI, where the shape is agreed before either side is written",
+        "gRPC deadlines and status codes, which make a timeout a stated outcome rather than a silence",
+        "idempotency keys, which exist because a retry cannot tell a lost answer from a lost request"
+      ]
+    }
+  ]
+}

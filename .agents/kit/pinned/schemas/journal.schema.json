@@ -1,0 +1,159 @@
+{
+  "$id": "journal",
+  "title": "Init journal -- every phase of an install, written before it runs and after it concludes",
+  "description": "Opened at the moment an install becomes a writer, holding every declared phase PENDING; each phase is rewritten UNSET with its start BEFORE its work and OK or ERROR after; the run closes it in a `finally`. A journal with no `ended_at` is a run that was INTERRUPTED -- killed, not refused, because a refusal is an ending -- and the next run carries it forward whole under `resumed_from` and replays. Status words are OpenTelemetry's (UNSET, OK, ERROR) plus PENDING: declared, never entered.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "verb",
+    "status",
+    "started_at",
+    "owner",
+    "kit_version",
+    "phases"
+  ],
+  "properties": {
+    "schema_version": {
+      "description": "The ONE declaration of this document's version; the writer reads it from here.",
+      "type": "integer",
+      "const": 1
+    },
+    "run_id": {
+      "description": "The run; the same identity its hold carries.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "verb": {
+      "description": "The verb of the run carrying out the install -- an install done by an upgrade is journalled as the upgrade.",
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "description": "UNSET until the run declares an end.",
+      "type": "string",
+      "enum": [
+        "UNSET",
+        "OK",
+        "ERROR"
+      ]
+    },
+    "status_message": {
+      "type": "string"
+    },
+    "started_at": {
+      "description": "The moment the run began.",
+      "type": "string",
+      "minLength": 1
+    },
+    "ended_at": {
+      "description": "The moment the run declared its end. ABSENT means the run never came back.",
+      "type": "string",
+      "minLength": 1
+    },
+    "exit_code": {
+      "type": "integer"
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kit_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phases": {
+      "description": "Every phase the verb declares, in its declared order, from the moment the journal opens.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "does",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "does": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "UNSET",
+              "OK",
+              "ERROR"
+            ]
+          },
+          "started_at": {
+            "description": "Written BEFORE the phase's work.",
+            "type": "string",
+            "minLength": 1
+          },
+          "ended_at": {
+            "description": "Written after the phase concluded.",
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "resumed_from": {
+      "description": "The interrupted run this one supersedes: which phase it was inside, what it concluded, what it never reached, and its whole record -- carried, never discarded.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id",
+        "started_at",
+        "interrupted_in",
+        "never_reached",
+        "concluded",
+        "record"
+      ],
+      "properties": {
+        "run_id": {
+          "type": "string"
+        },
+        "started_at": {
+          "type": "string"
+        },
+        "interrupted_in": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "never_reached": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "concluded": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "record": {
+          "type": "object"
+        }
+      }
+    },
+    "broke_lock": {
+      "description": "The other end of a hold broken by name: this record outlives the hold it broke.",
+      "type": "object"
+    }
+  }
+}

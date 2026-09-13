@@ -1,0 +1,10 @@
+{
+  "id": "pnpm-workspace",
+  "summary": "A node workspace declared by a pnpm workspace file rather than by package.json.",
+  "evidence": [
+    { "kind": "glob_any", "pattern": "pnpm-workspace.y*ml" }
+  ],
+  "emits": {
+    "stack.node.pnpm": true
+  }
+}

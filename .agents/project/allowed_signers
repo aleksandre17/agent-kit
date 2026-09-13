@@ -1,0 +1,5 @@
+# This host's trust root for signed capabilities (ADR-008). The HOST authors it; the kit reads
+# it and never writes it again. One line per signer, in OpenSSH allowed_signers form:
+#   <principal> <key-type> <public-key>
+# As seeded it names nobody, so no signature can be established on this host -- and every
+# taken capability says so, as `no-trust-root`, rather than being called verified.

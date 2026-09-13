@@ -1,0 +1,37 @@
+{
+  "$id": "profile",
+  "title": "Measured environment reading (BINDING)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "taken_at", "boundary", "facts", "detectors"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "taken_at": { "type": "string", "minLength": 1 },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["root", "os", "path_separator", "encoding", "line_ending", "interpreter"],
+      "properties": {
+        "root": { "type": "string", "minLength": 1 },
+        "os": { "type": "string", "minLength": 1 },
+        "path_separator": { "type": "string", "minLength": 1 },
+        "encoding": { "type": "string", "minLength": 1 },
+        "line_ending": { "type": "string", "minLength": 1 },
+        "interpreter": { "type": "string", "minLength": 1 }
+      }
+    },
+    "facts": { "type": "object" },
+    "detectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "matched"],
+        "properties": {
+          "id": { "type": "string" },
+          "matched": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

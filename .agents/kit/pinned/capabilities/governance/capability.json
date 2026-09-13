@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "id": "governance",
+  "version": "0.1.0",
+  "summary": "Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the pinned kit a host runs by itself, the vendored doctrine and the index projection, plus the gates that hold them.",
+  "requires": [
+    {
+      "kind": "fact",
+      "id": "vcs.git",
+      "equals": true
+    }
+  ],
+  "provides": [
+    "governance"
+  ],
+  "conflicts": [],
+  "declares": {
+    "detectors": [
+      "git-repository",
+      "node-workspace",
+      "python-project"
+    ],
+    "schemas": [
+      "project",
+      "profile",
+      "stewardship",
+      "estate",
+      "stance",
+      "provenance",
+      "succession",
+      "migration-map",
+      "succession-act"
+    ]
+  },
+  "documents": [
+    {
+      "id": "stewardship",
+      "source": "capabilities/governance/stewardship.json",
+      "validates": "stewardship"
+    },
+    {
+      "id": "stances",
+      "source": "capabilities/governance/stances.json",
+      "validates": "stance"
+    },
+    {
+      "id": "provenance",
+      "source": "capabilities/governance/provenance.json",
+      "validates": "provenance"
+    },
+    {
+      "id": "succession",
+      "source": "capabilities/governance/succession.json",
+      "validates": "succession"
+    }
+  ],
+  "installs": [
+    {
+      "mode": "reading",
+      "class": "binding",
+      "target": ".agents/project/profile.json",
+      "validates": "profile"
+    },
+    {
+      "mode": "declaration",
+      "class": "binding",
+      "target": ".agents/project/project.json",
+      "validates": "project"
+    },
+    {
+      "mode": "estate",
+      "class": "binding",
+      "target": ".agents/project/estate.json",
+      "validates": "estate"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/allowed_signers",
+      "source": "seeds/allowed_signers"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/laws.md",
+      "source": "seeds/laws.md"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/.gitignore",
+      "source": "seeds/agents.gitignore"
+    },
+    {
+      "mode": "pinned",
+      "class": "vendor",
+      "target": ".agents/kit/pinned/"
+    },
+    {
+      "mode": "vendor",
+      "class": "vendor",
+      "target": ".agents/kit/doctrine/governance.md",
+      "source": "capabilities/governance/payload/governance.md"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/governance/INDEX.md",
+      "source": "capabilities/governance/payload/INDEX.md.mustache"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/succession/migration-map.json",
+      "source": "capabilities/governance/payload/migration-map.json",
+      "validates": "migration-map"
+    }
+  ],
+  "gates": [
+    {
+      "id": "FF-BINDING-SCHEMA-PROJECT",
+      "kind": "schema-valid",
+      "params": {
+        "file": ".agents/project/project.json",
+        "schema": "project"
+      },
+      "stance": {
+        "floor": "enforce"
+      }
+    },
+    {
+      "id": "FF-BINDING-SCHEMA-PROFILE",
+      "kind": "schema-valid",
+      "params": {
+        "file": ".agents/project/profile.json",
+        "schema": "profile"
+      },
+      "stance": {
+        "floor": "enforce"
+      }
+    },
+    {
+      "id": "FF-KIT-CLASS",
+      "kind": "path-class-total",
+      "params": {
+        "root": ".agents"
+      },
+      "stance": {
+        "floor": "enforce"
+      }
+    },
+    {
+      "id": "FF-KIT-PROJECTION",
+      "kind": "projection-reproducible",
+      "params": {},
+      "stance": {
+        "floor": "enforce"
+      }
+    },
+    {
+      "id": "FF-READING-FRESH",
+      "kind": "reading-current",
+      "params": {
+        "file": ".agents/project/profile.json"
+      }
+    },
+    {
+      "id": "FF-PROVENANCE-PINNED",
+      "kind": "provenance-pinned",
+      "params": {},
+      "stance": {
+        "floor": "enforce"
+      }
+    },
+    {
+      "id": "FF-KIT-PINNED",
+      "kind": "pinned-kit-intact",
+      "params": {
+        "mode": "pinned"
+      },
+      "stance": {
+        "floor": "enforce"
+      }
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "boundary": {
+    "encoding": "utf-8",
+    "interpreter": "python-3.13",
+    "line_ending": "lf",
+    "os": "windows",
+    "path_separator": "/",
+    "root": "C:/Users/Test-User/WebstormProjects/agent-framework"
+  },
+  "detectors": [
+    {
+      "id": "ci-workflows",
+      "matched": false
+    },
+    {
+      "id": "container-compose",
+      "matched": false
+    },
+    {
+      "id": "database-migrations",
+      "matched": false
+    },
+    {
+      "id": "declared-test-runner",
+      "matched": false
+    },
+    {
+      "id": "git-repository",
+      "matched": true
+    },
+    {
+      "id": "go-module",
+      "matched": false
+    },
+    {
+      "id": "license-file",
+      "matched": false
+    },
+    {
+      "id": "node-workspace",
+      "matched": false
+    },
+    {
+      "id": "pnpm-workspace",
+      "matched": false
+    },
+    {
+      "id": "python-project",
+      "matched": false
+    }
+  ],
+  "facts": {
+    "vcs.git": true
+  },
+  "schema_version": 1,
+  "taken_at": "2026-09-13T13:47:43+00:00"
+}

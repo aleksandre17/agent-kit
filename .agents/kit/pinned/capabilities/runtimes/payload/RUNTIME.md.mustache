@@ -1,0 +1,140 @@
+# {{id}}
+
+> **Generated. Do not edit.** This descriptor is composed from a runtime class and this host's
+> own declaration, and it is rebuilt from scratch on every render. An edit here is a change the
+> next render discards without asking.
+> Class: `{{class}}` · kit {{kit_version}}
+
+{{#unbound}}
+## UNBOUND
+
+This runtime names the class `{{class}}`, and neither the kit nor this host declares one by that
+name. There is no body under the descriptor: nothing below states how an agent reaches this
+runtime at all, and nothing states which translation sits in the gap between it and this
+repository.
+
+Read this as a runtime that is **not yet described**, not as a simple one. A descriptor alone
+reads exactly like a complete account to anyone who only opens the file, which is why it says so
+here rather than rendering as though nothing were missing. `check` reports the same fact with an
+exit code, under `FF-RUNTIME-CLASS`.
+{{/unbound}}
+{{^unbound}}
+## Reach — how an agent gets to this runtime at all
+
+{{reach}}
+
+## The boundary — the translation that sits in the gap
+
+{{boundary}}
+
+## Reference class — what this kind of boundary is measured against
+
+{{#reference_class}}
+- {{.}}
+{{/reference_class}}
+{{/unbound}}
+
+## Capabilities — claimed, proven, absent
+
+Every capability any vocabulary declares is placed below, in exactly one of three groups. None is
+omitted, and that is the whole mechanism: a list of what a runtime can do reads identically to a
+list of what somebody once believed it could do, and both read identically to a short list
+belonging to a tool that genuinely needs nothing.
+
+{{#capability_standing}}
+### Proven — {{counts.proven}} of {{counts.total}}
+
+{{#proven}}
+- **{{id}}** — {{means}}
+{{/proven}}
+{{^proof_source}}
+**Nothing here can prove one.** Not "none proven": *no source of proof is declared at all*. No
+record kept in this repository names a runtime and a capability together, so this group is empty
+for a reason that has nothing to do with this runtime — and a zero taken against no instrument is
+an attribution that cannot fail, which certifies rather than measures. What would have to HAPPEN
+for each capability below is stated beside it, and until one of those things happens and leaves a
+record, everything this host says here is testimony.
+{{/proof_source}}
+{{#proof_source}}
+{{^proven}}
+Nothing has been observed of this runtime. The records that would say otherwise are read from
+`{{proof_source}}`, and none of them names this runtime and a declared capability. That is a
+measurement with an instrument behind it, and it says: nothing, yet.
+{{/proven}}
+{{/proof_source}}
+
+### Claimed — {{counts.claimed}} of {{counts.total}}
+
+Testimony. This host believes each of these; nothing here has been observed.
+
+{{#claimed}}
+- **{{id}}** — {{means}}
+  - this host says: {{says}}
+  - it would stop being a claim on: {{observed_by}}
+{{/claimed}}
+{{^claimed}}
+This host claims nothing of this runtime. Every declared capability is therefore absent below,
+and that is a complete answer rather than an empty one.
+{{/claimed}}
+
+### Absent — {{counts.absent}} of {{counts.total}}
+
+Declared, and not claimed. Named rather than omitted: a runtime that was never asked about
+something and a runtime that cannot do it are the same silence, and only one of them is a
+decision anyone made.
+
+{{#absent}}
+- **{{id}}** — {{means}}
+{{/absent}}
+{{^absent}}
+Every declared capability is claimed for this runtime. That is a strong statement about a tool
+nothing has yet observed, and it is worth reading twice.
+{{/absent}}
+{{/capability_standing}}
+
+## Binding protocol
+
+Declared once, for every runtime, and rendered into each. Not a link and not a reference: a
+reference can be left unfollowed.
+
+{{#protocol}}
+- **{{id}}** — {{says}}
+{{/protocol}}
+
+## This host's instance
+
+Everything above the settings is true of the runtime as a kind, or is a belief this host has
+stated as one. Everything below is what THIS repository configured, and nothing else may be said
+here.
+
+### Settings
+
+What this host's tooling was TOLD. Never what the runtime does: the setting that cost most was an
+invocation shape written down once, believed, and never measured.
+
+{{#settings}}
+- {{id}}: `{{value}}`
+{{/settings}}
+{{^settings}}
+This host declares no settings for this runtime.
+{{/settings}}
+
+### Used for
+
+{{#owns}}
+- `{{.}}`
+{{/owns}}
+{{^owns}}
+No part of this repository is declared as this runtime's. A declared state and not an oversight:
+the descriptor is where a scope would be written.
+{{/owns}}
+
+### Appendix
+
+{{#appendix}}
+{{.}}
+
+{{/appendix}}
+{{^appendix}}
+This host adds nothing beyond what is declared above.
+{{/appendix}}

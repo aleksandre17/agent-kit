@@ -1,0 +1,116 @@
+{
+  "$id": "succession-act",
+  "title": "Succession act -- one signed roster, carried out (ADR-012)",
+  "description": "The roster a named person accepted BY ITS DIGEST, and what became of every path in it. Written into the observed plane BEFORE the first path moves (the record an interrupted act is reconciled from) and, once every path is carried, appended to the host's estate as the permanent account. `roster` is the exact value the digest is taken over: the map's own digest and every path with the digest of its bytes, its disposition, its effect and where it goes. A path left the tree only by an act that names it here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "digest",
+    "roster",
+    "signed_by",
+    "signed_at",
+    "started_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "digest": {
+      "description": "sha256 of the canonical JSON of `roster` -- the value the door accepted.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "roster": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "map",
+        "residence",
+        "paths"
+      ],
+      "properties": {
+        "map": {
+          "description": "sha256 of the map's bytes at its residence.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "residence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paths": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "row",
+              "disposition",
+              "effect",
+              "digest",
+              "to"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "row": {
+                "description": "The map row that answered this path -- the most specific one. The directories it leaves empty are removed up to it, and never above it.",
+                "type": "string",
+                "minLength": 1
+              },
+              "disposition": {
+                "type": "string",
+                "minLength": 1
+              },
+              "effect": {
+                "type": "string",
+                "minLength": 1
+              },
+              "digest": {
+                "description": "sha256 of the bytes at `path` when the roster was read -- of the link target for a link, which is one path and never followed.",
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "to": {
+                "description": "Where the path's bytes are after the act: its destination in a space, or the place in the observed plane a removed path was moved aside to. Removal never destroys bytes the host authored.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "signed_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "signed_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "started_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "runs": {
+      "description": "Every run that carried part of this act -- more than one only where a run was killed and a later one finished it.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$"
+      }
+    },
+    "carried_at": {
+      "description": "The moment the last path was carried and the act accounted. ABSENT means the act is still open: a run carrying it never came back.",
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

@@ -1,0 +1,34 @@
+# Residence — what has no home in this installed surface
+
+> PROJECTION. Do not edit: delete this whole plane and run `render`, and it comes back byte-identical.
+> Kit version {{ kit_version }} · project status {{ project.status }}.
+
+Nothing on this page is ever removed by the kit. A residence rule NAMES a resident and says where it
+belongs; the move is a human act, recorded as such.
+
+## Declared by the kit
+
+{{#documents.residence_rules.genres}}
+### {{ id }}
+
+- matches `{{ pattern }}`
+- because {{ because }}
+- belongs {{ instead }}
+- calibrated on `{{ proves }}`, which it must see, and `{{ admits }}`, which it must tolerate
+
+{{/documents.residence_rules.genres}}
+## Declared by this host
+
+{{#reads.residence_local.genres}}
+### {{ id }}
+
+- matches `{{ pattern }}`
+- because {{ because }}
+- belongs {{ instead }}
+- calibrated on `{{ proves }}`, which it must see, and `{{ admits }}`, which it must tolerate
+
+{{/reads.residence_local.genres}}
+{{^reads.residence_local.genres}}
+_This host has declared no residence rules of its own. That is a state, not a gap: the kit's rules
+still hold, and a host adds a genre by declaring one._
+{{/reads.residence_local.genres}}

@@ -1,0 +1,292 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": "d4d7a2ef5c4527b89290e315aafd4a8a81f973059d6d8a8cde4f623292bc9f7b",
+      "mode": "seed",
+      "path": ".agents/.gitignore"
+    },
+    {
+      "capability": "doctrine",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/DOCTRINE.md"
+    },
+    {
+      "capability": "roles",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/ROLES.md"
+    },
+    {
+      "capability": "runtimes",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/RUNTIMES.md"
+    },
+    {
+      "capability": "runtimes",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/SERVED.json"
+    },
+    {
+      "capability": "delivery",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/delivery/BOARD.md"
+    },
+    {
+      "capability": "evaluation",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/evaluation/QUALITY.md"
+    },
+    {
+      "capability": "governance",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/governance/INDEX.md"
+    },
+    {
+      "capability": "hygiene",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/hygiene/RESIDENCE.md"
+    },
+    {
+      "capability": "observability",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/observability/RUNS.md"
+    },
+    {
+      "capability": "roles",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/roles/"
+    },
+    {
+      "capability": "runtimes",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/runtimes/"
+    },
+    {
+      "capability": "delivery",
+      "class": "vendor",
+      "digest": "46f02ea4dae8c2e1c23f44a75567c5aaa474fc71326a057f5335f1ccb9fd6672",
+      "mode": "vendor",
+      "path": ".agents/kit/doctrine/delivery.md"
+    },
+    {
+      "capability": "doctrine",
+      "class": "vendor",
+      "digest": "b21c8dc71a43ed4850a244535987d3fb6e2caffd9b5c041767248915a2213bfb",
+      "mode": "vendor",
+      "path": ".agents/kit/doctrine/doctrine.md"
+    },
+    {
+      "capability": "evaluation",
+      "class": "vendor",
+      "digest": "cf2a81af00691436a5f44a625415cfa978b9b0ecc4474f7785233c5469ca7607",
+      "mode": "vendor",
+      "path": ".agents/kit/doctrine/evaluation.md"
+    },
+    {
+      "capability": "governance",
+      "class": "vendor",
+      "digest": "0fe388b48fd7f98764e7355eb6fba41528e82366f2246238fbc1f86cfd170baf",
+      "mode": "vendor",
+      "path": ".agents/kit/doctrine/governance.md"
+    },
+    {
+      "capability": "hygiene",
+      "class": "vendor",
+      "digest": "93759c9475d6e78adb66800c02f8db7417ca35e33cdbcfa00a44c9386f539122",
+      "mode": "vendor",
+      "path": ".agents/kit/doctrine/hygiene.md"
+    },
+    {
+      "capability": "observability",
+      "class": "vendor",
+      "digest": "fd83c48f7bdcb1108b6e90403a5c6d767dbe81914e8e4d41233265461be13737",
+      "mode": "vendor",
+      "path": ".agents/kit/doctrine/observability.md"
+    },
+    {
+      "capability": "roles",
+      "class": "vendor",
+      "digest": "d1cc686a91a48afaa910596071bbb232480f5ebab819e2a938a683f1aa8d9ea3",
+      "mode": "vendor",
+      "path": ".agents/kit/doctrine/roles.md"
+    },
+    {
+      "capability": "runtimes",
+      "class": "vendor",
+      "digest": "ef55f0958ba6fec8f614301bf06f68dad81b4a578fcbf2c9fe8a9d1c91322165",
+      "mode": "vendor",
+      "path": ".agents/kit/doctrine/runtimes.md"
+    },
+    {
+      "capability": "governance",
+      "class": "vendor",
+      "digest": null,
+      "mode": "pinned",
+      "path": ".agents/kit/pinned/"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": "8dbec916c20deafb56c9b2c47decc68a477191310910ce200023249d668446db",
+      "mode": "seed",
+      "path": ".agents/project/allowed_signers"
+    },
+    {
+      "capability": "delivery",
+      "class": "binding",
+      "digest": null,
+      "mode": "space",
+      "path": ".agents/project/delivery/cards/"
+    },
+    {
+      "capability": "delivery",
+      "class": "binding",
+      "digest": "56cc6c4dd6fa60e51045c7c8bb0f81fe0498722b3251a143bc23967bdd22b0fa",
+      "mode": "seed",
+      "path": ".agents/project/delivery/policy.json"
+    },
+    {
+      "capability": "doctrine",
+      "class": "binding",
+      "digest": "97728928464b62510647cfce52cce01d085823ccd580c5bd2a996885fc001174",
+      "mode": "seed",
+      "path": ".agents/project/doctrine/doctrine.json"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": null,
+      "mode": "estate",
+      "path": ".agents/project/estate.json"
+    },
+    {
+      "capability": "evaluation",
+      "class": "binding",
+      "digest": "052768d43b751c6c7965d691403fae72035836cca4bf2aa3c3b5360356a5c24d",
+      "mode": "seed",
+      "path": ".agents/project/evaluation/evaluation.json"
+    },
+    {
+      "capability": "evaluation",
+      "class": "binding",
+      "digest": "56d0ac87835a434231065bb591cb8be50614adec598192a894a5992723893d3f",
+      "mode": "seed",
+      "path": ".agents/project/evaluation/readings.json"
+    },
+    {
+      "capability": "hygiene",
+      "class": "binding",
+      "digest": "6deb94730b99d898d2856b928a11921f5b7b0156589a3fd030bee4f2411012a6",
+      "mode": "seed",
+      "path": ".agents/project/hygiene/residence.json"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": "d16941c0a2132c9baea6fe36ad1f748093f5e871966503f708a7bcdc573a29fb",
+      "mode": "seed",
+      "path": ".agents/project/laws.md"
+    },
+    {
+      "capability": "observability",
+      "class": "binding",
+      "digest": "cfbb046379716f4ea73d42adf890b07e0452a3ee4c5960e1c02b763c4230f515",
+      "mode": "seed",
+      "path": ".agents/project/observability/observation.json"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": "8f271640f50afc66be66c86b3e5b65eacd635d482be55c399f2669ac04b7e15d",
+      "mode": "reading",
+      "path": ".agents/project/profile.json"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": "19355226dbd616055740e35a5512e4b96ac72dabe4a732fc37e75fc7769df6f1",
+      "mode": "declaration",
+      "path": ".agents/project/project.json"
+    },
+    {
+      "capability": "roles",
+      "class": "binding",
+      "digest": "197b5247beeea958df310d073b9472f6a2e2aa22500d37f96747a4cf2cd18e72",
+      "mode": "seed",
+      "path": ".agents/project/role-archetypes.json"
+    },
+    {
+      "capability": "roles",
+      "class": "binding",
+      "digest": null,
+      "mode": "space",
+      "path": ".agents/project/roles/"
+    },
+    {
+      "capability": "runtimes",
+      "class": "binding",
+      "digest": "784559404ae6fc7843c6da9eb59b47f926c3a80e7b234c27436126464eaa8b09",
+      "mode": "seed",
+      "path": ".agents/project/runtime-classes.json"
+    },
+    {
+      "capability": "runtimes",
+      "class": "binding",
+      "digest": null,
+      "mode": "space",
+      "path": ".agents/project/runtimes/"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": "2656118e2d7bc2678290b99cd6f4ceb6f98958fafb1ea34df1c4b996f91f79b8",
+      "mode": "seed",
+      "path": ".agents/project/succession/migration-map.json"
+    },
+    {
+      "capability": "evaluation",
+      "class": "ephemeral",
+      "digest": null,
+      "mode": "space",
+      "path": ".agents/runtime/evaluation/judgements/"
+    },
+    {
+      "capability": "observability",
+      "class": "ephemeral",
+      "digest": null,
+      "mode": "space",
+      "path": ".agents/runtime/observability/runs/"
+    }
+  ],
+  "kit_version": "0.1.5",
+  "newline": "lf",
+  "schema_version": 1,
+  "signed_by": "agent-linkB(owner-delegated:ADR-015)",
+  "succession_acts": [],
+  "taken": [],
+  "taken_at": "2026-09-13T13:47:43+00:00"
+}

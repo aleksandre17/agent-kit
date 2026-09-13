@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "kit": {
+    "id": "agent-kit",
+    "version": "0.1.5"
+  },
+  "ships": {
+    "lock": "kit.lock.json",
+    "accounts": [
+      {
+        "id": "interpreter",
+        "class": "interpreter",
+        "root": "interpreters/",
+        "suffix": ".py"
+      },
+      {
+        "id": "readme",
+        "class": "prose",
+        "root": "README.md"
+      },
+      {
+        "id": "diagnostics",
+        "class": "declaration",
+        "root": "diagnostics.json"
+      }
+    ]
+  },
+  "classes": [
+    "vendor",
+    "binding",
+    "projection",
+    "ephemeral"
+  ],
+  "planes": [
+    {
+      "class": "vendor",
+      "root": ".agents/kit",
+      "unaccounted": "refuse"
+    },
+    {
+      "class": "binding",
+      "root": ".agents/project",
+      "unaccounted": "refuse"
+    },
+    {
+      "class": "projection",
+      "root": ".agents/generated",
+      "unaccounted": "refuse"
+    },
+    {
+      "class": "ephemeral",
+      "root": ".agents/runtime",
+      "unaccounted": "report"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "governance",
+      "declaration": "capabilities/governance/capability.json",
+      "never_disabled": true
+    },
+    {
+      "id": "knowledge",
+      "declaration": "capabilities/knowledge/capability.json"
+    },
+    {
+      "id": "delivery",
+      "declaration": "capabilities/delivery/capability.json"
+    },
+    {
+      "id": "hygiene",
+      "declaration": "capabilities/hygiene/capability.json"
+    },
+    {
+      "id": "observability",
+      "declaration": "capabilities/observability/capability.json"
+    },
+    {
+      "id": "evaluation",
+      "declaration": "capabilities/evaluation/capability.json"
+    },
+    {
+      "id": "roles",
+      "declaration": "capabilities/roles/capability.json"
+    },
+    {
+      "id": "runtimes",
+      "declaration": "capabilities/runtimes/capability.json"
+    },
+    {
+      "id": "doctrine",
+      "declaration": "capabilities/doctrine/capability.json"
+    }
+  ],
+  "detectors": [
+    "detectors/ci-workflows.json",
+    "detectors/container-compose.json",
+    "detectors/database-migrations.json",
+    "detectors/declared-test-runner.json",
+    "detectors/git-repository.json",
+    "detectors/go-module.json",
+    "detectors/license-file.json",
+    "detectors/node-workspace.json",
+    "detectors/pnpm-workspace.json",
+    "detectors/python-project.json"
+  ],
+  "schemas": {
+    "manifest": "schemas/manifest.schema.json",
+    "lock": "schemas/lock.schema.json",
+    "stewardship": "schemas/stewardship.schema.json",
+    "estate": "schemas/estate.schema.json",
+    "capability": "schemas/capability.schema.json",
+    "detector": "schemas/detector.schema.json",
+    "project": "schemas/project.schema.json",
+    "profile": "schemas/profile.schema.json",
+    "lifecycle": "schemas/lifecycle.schema.json",
+    "card": "schemas/card.schema.json",
+    "delivery-policy": "schemas/delivery-policy.schema.json",
+    "residence": "schemas/residence.schema.json",
+    "boundary": "schemas/boundary.schema.json",
+    "receipt": "schemas/receipt.schema.json",
+    "observation": "schemas/observation.schema.json",
+    "quality": "schemas/quality.schema.json",
+    "judgement": "schemas/judgement.schema.json",
+    "archetype": "schemas/archetype.schema.json",
+    "overlay": "schemas/overlay.schema.json",
+    "runtime-class": "schemas/runtime-class.schema.json",
+    "runtime": "schemas/runtime.schema.json",
+    "runtime-surface": "schemas/runtime-surface.schema.json",
+    "doctrine": "schemas/doctrine.schema.json",
+    "cardinal": "schemas/cardinal.schema.json",
+    "diagnostics": "schemas/diagnostics.schema.json",
+    "stance": "schemas/stance.schema.json",
+    "hold": "schemas/hold.schema.json",
+    "journal": "schemas/journal.schema.json",
+    "provenance": "schemas/provenance.schema.json",
+    "succession": "schemas/succession.schema.json",
+    "migration-map": "schemas/migration-map.schema.json",
+    "succession-act": "schemas/succession-act.schema.json"
+  }
+}

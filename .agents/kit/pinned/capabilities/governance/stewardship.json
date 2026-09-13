@@ -1,0 +1,548 @@
+{
+  "schema_version": 1,
+  "summary": "Who owns a path's bytes after it is installed, and what the three readings of it mean. The reconciler computes WHICH CELL a path is in, from three digests and nothing else; what the cell MEANS is stated here. A new install mode is a row in `modes`; a new kind of ownership is an entry in `stewards`. Neither is an edit to an interpreter.",
+  "stewards": [
+    {
+      "id": "kit",
+      "summary": "The kit owns these bytes. The host is not supposed to edit them -- and when it has, that is a divergence the kit reports at every run and never resolves on its own.",
+      "transfers_to": {
+        "steward": "ceded",
+        "class": "binding"
+      },
+      "digest": "recorded",
+      "cells": [
+        {
+          "cell": "introduced",
+          "state": "introduced",
+          "file": "create",
+          "record": "advance"
+        },
+        {
+          "cell": "collision",
+          "state": "collision",
+          "file": "keep",
+          "record": "drop",
+          "refuse": true
+        },
+        {
+          "cell": "forgotten",
+          "state": "forgotten",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "restored",
+          "state": "restored",
+          "file": "create",
+          "record": "advance"
+        },
+        {
+          "cell": "retired",
+          "state": "retired",
+          "file": "keep",
+          "record": "orphan"
+        },
+        {
+          "cell": "retired-diverged",
+          "state": "retired",
+          "file": "keep",
+          "record": "orphan"
+        },
+        {
+          "cell": "unchanged",
+          "state": "unchanged",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "advanced",
+          "state": "advanced",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "diverged-kept",
+          "state": "diverged-kept",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "conflicted",
+          "state": "conflicted",
+          "file": "keep",
+          "record": "carry",
+          "refuse": true,
+          "adoptable": "advanced"
+        },
+        {
+          "cell": "converged",
+          "state": "converged",
+          "file": "keep",
+          "record": "advance"
+        }
+      ]
+    },
+    {
+      "id": "host",
+      "summary": "Created once, and from then on the host's. The kit never rewrites one of these, and an upgrade does not suspend that: new content is REPORTED as available and left unwritten. A shipped path that is withdrawn upstream is ORPHANED rather than deleted -- the file stays, and the record keeps knowing about it, so it never becomes an unexplained path in a governed plane.",
+      "digest": "recorded",
+      "cells": [
+        {
+          "cell": "introduced",
+          "state": "introduced",
+          "file": "create",
+          "record": "advance"
+        },
+        {
+          "cell": "collision",
+          "state": "collision",
+          "file": "keep",
+          "record": "drop",
+          "refuse": true
+        },
+        {
+          "cell": "forgotten",
+          "state": "forgotten",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "restored",
+          "state": "restored",
+          "file": "create",
+          "record": "advance"
+        },
+        {
+          "cell": "retired",
+          "state": "retired",
+          "file": "keep",
+          "record": "orphan"
+        },
+        {
+          "cell": "retired-diverged",
+          "state": "retired-diverged",
+          "file": "keep",
+          "record": "orphan"
+        },
+        {
+          "cell": "unchanged",
+          "state": "unchanged",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "advanced",
+          "state": "available",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "diverged-kept",
+          "state": "authored",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "conflicted",
+          "state": "authored",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "converged",
+          "state": "converged",
+          "file": "keep",
+          "record": "advance"
+        }
+      ]
+    },
+    {
+      "id": "derived",
+      "summary": "A projection has no history: it is deleted and rebuilt from VENDOR + BINDING on every run, so there is nothing for it to drift FROM and nothing to reconcile. Its digest is never recorded, because a digest of a thing recomputed every run is a reading that measures the clock.",
+      "digest": "not-taken",
+      "cells": [
+        {
+          "cell": "introduced",
+          "state": "rebuilt",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "collision",
+          "state": "rebuilt",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "forgotten",
+          "state": "forgotten",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "restored",
+          "state": "rebuilt",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "retired",
+          "state": "retired",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "retired-diverged",
+          "state": "retired",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "unchanged",
+          "state": "rebuilt",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "advanced",
+          "state": "rebuilt",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "diverged-kept",
+          "state": "rebuilt",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "conflicted",
+          "state": "rebuilt",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "converged",
+          "state": "rebuilt",
+          "file": "replace",
+          "record": "carry"
+        }
+      ]
+    },
+    {
+      "id": "release",
+      "summary": "The pinned kit: a whole tree the kit delivers verbatim from a release, beside the lock it is judged against (ADR-016). The host never edits it and the kit never merges into it -- it is REPLACED WHOLE by whatever kit is being delivered, and its integrity is measured against the lock it carries by a gate, not by a digest here. The row's digest is not taken because a directory has none; the one home for what this tree IS is the lock inside it.",
+      "digest": "not-taken",
+      "cells": [
+        {
+          "cell": "introduced",
+          "state": "delivered",
+          "file": "create",
+          "record": "advance"
+        },
+        {
+          "cell": "collision",
+          "state": "delivered",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "forgotten",
+          "state": "forgotten",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "restored",
+          "state": "delivered",
+          "file": "create",
+          "record": "advance"
+        },
+        {
+          "cell": "retired",
+          "state": "retired",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "retired-diverged",
+          "state": "retired",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "unchanged",
+          "state": "delivered",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "advanced",
+          "state": "delivered",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "diverged-kept",
+          "state": "delivered",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "conflicted",
+          "state": "delivered",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "converged",
+          "state": "delivered",
+          "file": "replace",
+          "record": "carry"
+        }
+      ]
+    },
+    {
+      "id": "host-space",
+      "summary": "A root the host authors into. The kit accounts for the DIRECTORY and never for what is in it -- which is why a file under one of these is out of account by DECLARATION, and not because a folder happened to look like the kind of place a host writes in.",
+      "digest": "not-taken",
+      "cells": [
+        {
+          "cell": "introduced",
+          "state": "introduced",
+          "file": "create",
+          "record": "advance"
+        },
+        {
+          "cell": "collision",
+          "state": "unchanged",
+          "file": "keep",
+          "record": "advance"
+        },
+        {
+          "cell": "forgotten",
+          "state": "forgotten",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "restored",
+          "state": "restored",
+          "file": "create",
+          "record": "advance"
+        },
+        {
+          "cell": "retired",
+          "state": "retired",
+          "file": "keep",
+          "record": "orphan"
+        },
+        {
+          "cell": "retired-diverged",
+          "state": "retired",
+          "file": "keep",
+          "record": "orphan"
+        },
+        {
+          "cell": "unchanged",
+          "state": "unchanged",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "advanced",
+          "state": "unchanged",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "diverged-kept",
+          "state": "unchanged",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "conflicted",
+          "state": "unchanged",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "converged",
+          "state": "unchanged",
+          "file": "keep",
+          "record": "carry"
+        }
+      ]
+    },
+    {
+      "id": "record",
+      "summary": "The estate itself. It cannot be part of the set it describes -- the same reason the lockfile is not one of its own files -- but it is still a path in a governed plane, so it is ACCOUNTED FOR here rather than exempted anywhere. Rewritten by every run that takes a reading; never compared, because comparing a file against a reading taken before that file was rewritten measures nothing.",
+      "digest": "not-taken",
+      "cells": [
+        {
+          "cell": "introduced",
+          "state": "recorded",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "collision",
+          "state": "recorded",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "forgotten",
+          "state": "forgotten",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "restored",
+          "state": "recorded",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "retired",
+          "state": "retired",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "retired-diverged",
+          "state": "retired",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "unchanged",
+          "state": "recorded",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "advanced",
+          "state": "recorded",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "diverged-kept",
+          "state": "recorded",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "conflicted",
+          "state": "recorded",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "converged",
+          "state": "recorded",
+          "file": "replace",
+          "record": "advance"
+        }
+      ]
+    },
+    {
+      "id": "ceded",
+      "summary": "Bytes the kit shipped and the host has since TAKEN OVER through a signed door (ADR-010). The kit never writes one again -- not to replace it, not to restore it -- and it never vouches for it again either: every reconciliation names it, and where upstream has moved on it says so, because a host that stopped receiving a file must be able to see what it is no longer receiving. `introduced` and `collision` are deliberately unanswered: a path can only be ceded from a row, so neither can be computed, and one that were would be refused rather than defaulted.",
+      "named": true,
+      "digest": "recorded",
+      "cells": [
+        {
+          "cell": "forgotten",
+          "state": "forgotten",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "restored",
+          "state": "ceded-absent",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "retired",
+          "state": "retired",
+          "file": "keep",
+          "record": "orphan"
+        },
+        {
+          "cell": "retired-diverged",
+          "state": "retired",
+          "file": "keep",
+          "record": "orphan"
+        },
+        {
+          "cell": "unchanged",
+          "state": "ceded",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "advanced",
+          "state": "ceded-behind",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "diverged-kept",
+          "state": "ceded",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "conflicted",
+          "state": "ceded-behind",
+          "file": "keep",
+          "record": "carry"
+        },
+        {
+          "cell": "converged",
+          "state": "ceded",
+          "file": "keep",
+          "record": "carry"
+        }
+      ]
+    }
+  ],
+  "modes": [
+    {
+      "mode": "vendor",
+      "steward": "kit"
+    },
+    {
+      "mode": "seed",
+      "steward": "host"
+    },
+    {
+      "mode": "reading",
+      "steward": "host"
+    },
+    {
+      "mode": "declaration",
+      "steward": "host"
+    },
+    {
+      "mode": "projection",
+      "steward": "derived"
+    },
+    {
+      "mode": "space",
+      "steward": "host-space"
+    },
+    {
+      "mode": "estate",
+      "steward": "record"
+    },
+    {
+      "mode": "pinned",
+      "steward": "release"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+# Delivery board
+
+> **PROJECTION — do not edit.** Every column below is computed from the cards in
+> `.agents/project/delivery/cards/` and the lifecycle those cards move through. Delete this file
+> and run `render`: it comes back byte-identical. Edit it and run `check`: the edit is caught,
+> because a projection that survives editing has become a second home for a state.
+
+kit {{kit_version}}
+
+{{#columns}}
+## {{title}} — {{count}} card(s), limit {{limit}}
+
+*owner: {{owner}}* — {{intent}}
+
+{{^items}}
+_empty_
+{{/items}}
+{{#items}}
+- **{{id}}** — {{title}} · owner {{owner}} · class {{class}} · entered {{entered_at}} by {{last_by}}
+{{/items}}
+
+{{/columns}}
+## The transitions, as declared
+
+{{#documents.lifecycle.transitions}}
+- `{{from}}` → `{{to}}` · owner **{{owner}}**{{#door}} · DOOR: only the {{.}} may open it{{/door}}{{#when}} · only when `{{field}}` = `{{equals}}`{{/when}}
+  - exit: {{exit}}
+{{/documents.lifecycle.transitions}}

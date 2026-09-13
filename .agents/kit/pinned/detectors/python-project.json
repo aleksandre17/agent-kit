@@ -1,0 +1,9 @@
+{
+  "id": "python-project",
+  "evidence": [
+    { "kind": "glob_any", "pattern": "pyproject.toml" }
+  ],
+  "emits": {
+    "stack.python": true
+  }
+}

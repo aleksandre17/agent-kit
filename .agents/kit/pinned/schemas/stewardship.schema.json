@@ -1,0 +1,95 @@
+{
+  "$id": "stewardship",
+  "title": "Stewardship -- who owns an installed path's bytes, and what each cell of a three-way reading means",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "stewards", "modes"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "summary": { "type": "string" },
+    "stewards": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "summary", "digest", "cells"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "summary": { "type": "string", "minLength": 1 },
+          "transfers_to": {
+            "description": "Whether a host may TAKE OVER a path this steward holds, and what the path becomes when it does (ADR-010). Absent means no transfer exists: a host cannot take over what is already its own, and a projection or a record has no bytes anyone could own. `steward` names who answers for the path afterwards; `class` is the one class it holds afterwards, so the four-class seam still resolves every path to exactly one. The transfer is a DOOR, signed on the estate row -- never inferred from an edit.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["steward", "class"],
+            "properties": {
+              "steward": { "type": "string", "minLength": 1 },
+              "class": { "type": "string", "minLength": 1 }
+            }
+          },
+          "named": {
+            "description": "Every path this steward holds is PRINTED on every reconciliation, whatever its cell. For a steward whose paths the kit no longer vouches for, an unremarkable cell is not a reason for silence: a path read as if the kit still stood behind it is the surface lying by omission.",
+            "type": "boolean"
+          },
+          "digest": {
+            "description": "Whether a digest of these paths MEANS anything. `not-taken` is a declared absence of a measurement -- a directory the host fills has no bytes of its own, and the estate cannot record a digest of itself. The estate writes null there, and null is never read as a value.",
+            "type": "string", "enum": ["recorded", "not-taken"]
+          },
+          "cells": {
+            "description": "One verdict per cell. WHICH cell a path is in is computed from three digests and is a finite, DERIVED space; what a cell MEANS is policy and lives here. A cell the reconciler computes and this table does not answer is refused at the moment it is met -- never defaulted, because a default is how a reconciliation acquires a rule nobody declared.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["cell", "state", "file", "record"],
+              "properties": {
+                "cell": {
+                  "description": "Which of the three-way readings this row answers. The space is FINITE and DERIVED -- three readings, each present, absent or changed -- so it is enumerated here, where the contract between the reconciler and this declaration belongs. It is not an open registry and must not pretend to be one: a cell nobody can compute is a rule that certifies.",
+                  "type": "string",
+                  "enum": [
+                    "introduced", "collision", "forgotten", "restored",
+                    "retired", "retired-diverged",
+                    "unchanged", "advanced", "diverged-kept", "conflicted", "converged"
+                  ]
+                },
+                "state": {
+                  "description": "The word the surface prints for this reading. Distinct from the cell, on purpose: `advanced` under a host steward is `available`, because what happened to the path and what the operator must understand are two different statements.",
+                  "type": "string", "minLength": 1
+                },
+                "file": {
+                  "description": "What happens to the path. The words are the PLAN's own disposition vocabulary, which the interpreter provides and this declaration consumes -- restated here only because a schema is where a contract between the two is legible, and held to that one home by a gate rather than by care.",
+                  "type": "string",
+                  "enum": ["create", "keep", "replace", "remove"]
+                },
+                "record": {
+                  "description": "What happens to the ROW, which is a separate axis from what happens to the file: a path can be kept on disk and dropped from the account, or left untouched and have its digest advanced. Collapsing the two is how a file the kit stopped shipping becomes an unexplained path in a governed plane.",
+                  "type": "string",
+                  "enum": ["advance", "carry", "forget", "orphan", "drop"]
+                },
+                "refuse": { "type": "boolean" },
+                "adoptable": {
+                  "description": "This refusal is one a NAMED HUMAN may accept, and the cell it becomes when they do. Absent means the refusal stands whoever is asking -- a structural contradiction is not a thing anyone has the standing to wave through, and a flag that could wave it through would be an exemption field on a gate. Adoption is not that: it is a door, and it leaves a name, a moment and the digest it superseded on the row itself.",
+                  "type": "string", "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "modes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mode", "steward"],
+        "properties": {
+          "mode": { "type": "string", "minLength": 1 },
+          "steward": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

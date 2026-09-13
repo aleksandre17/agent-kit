@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "summary": "Residence rules this HOST declares, beside the kit's own. A host may ADD a genre; it may not exempt a path from one, because a gate that names a defect and then permits it has stopped being a gate. If a kit rule is wrong here, the answer is to say so upstream, not to silence it locally.",
+  "genres": []
+}

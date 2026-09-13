@@ -1,0 +1,11 @@
+{
+  "id": "database-migrations",
+  "summary": "Schema change sets kept as an ordered directory of migrations.",
+  "evidence": [
+    { "kind": "glob_any", "pattern": "*migrat*" }
+  ],
+  "emits": {
+    "data.migrations": true,
+    "data.migrations.paths": "$1"
+  }
+}

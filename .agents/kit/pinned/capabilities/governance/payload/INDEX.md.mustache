@@ -1,0 +1,30 @@
+# Agent framework — installed surface
+
+> PROJECTION. Do not edit: delete this whole plane and run `render`, and it comes back byte-identical.
+> Kit version {{ kit_version }} · project status {{ project.status }}.
+
+## Capabilities installed here
+
+{{#capabilities}}
+### {{ id }} {{ version }}
+
+{{ summary }}
+
+| path | class | mode |
+| --- | --- | --- |
+{{#installs}}
+| `{{ target }}` | {{ class }} | {{ mode }} |
+{{/installs}}
+
+Gates declared by this capability:
+
+{{#gates}}
+- **{{ id }}** — `{{ kind }}`
+{{/gates}}
+
+{{/capabilities}}
+## Facts this install was adapted to
+
+{{#facts}}
+- `{{ key }}` = {{ value }}
+{{/facts}}

@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "summary": "What a capability this kit did not issue means at each state it can be measured in, and how its publisher's signature may be checked (ADR-008). Integrity and authenticity are separate propositions and are answered separately: a digest pinned at a door, and a verification delegated to a declared tool whose absence is a named state.",
+  "digest": "h1",
+  "statement": "{capability}@{version} {digest}\n",
+  "states": [
+    {
+      "state": "pinned",
+      "disposition": "hold",
+      "says": "the bytes are the bytes this host pinned, at the version it pinned"
+    },
+    {
+      "state": "withdrawn",
+      "disposition": "carry",
+      "says": "no longer taken; the pin is kept so that this capability can never return OLDER than it was"
+    },
+    {
+      "state": "first-contact",
+      "disposition": "door",
+      "says": "never pinned by this host; taking it is a door a named person walks, and the pin records who and when"
+    },
+    {
+      "state": "advanced",
+      "disposition": "door",
+      "says": "a newer version than the one pinned; a new version is new bytes from a publisher, and is met as first contact is"
+    },
+    {
+      "state": "drifted",
+      "disposition": "refuse",
+      "says": "the same version with different bytes; never re-pinned, because a pin that could be re-taken would pin nothing"
+    },
+    {
+      "state": "rolled-back",
+      "disposition": "refuse",
+      "says": "an older version than the one pinned; a rollback to bytes once superseded is refused, whoever signed them"
+    }
+  ],
+  "authenticity": [
+    {
+      "state": "signature-verified",
+      "standing": "established",
+      "says": "the declared verifier accepted the publisher's signature over the pinned digest, against this host's trust root, at the moment stated"
+    },
+    {
+      "state": "unsigned",
+      "standing": "not established",
+      "says": "the publisher claimed no signature; integrity is pinned and nothing proves who released these bytes"
+    },
+    {
+      "state": "signature-missing",
+      "standing": "not established",
+      "says": "the publisher claimed a signature and the kit does not contain it"
+    },
+    {
+      "state": "unknown-verifier",
+      "standing": "not established",
+      "says": "the publisher's claim names a verifier this kit does not declare"
+    },
+    {
+      "state": "no-trust-root",
+      "standing": "not established",
+      "says": "this host's trust root names nobody, so there is nobody it trusts to have signed"
+    },
+    {
+      "state": "verifier-absent",
+      "standing": "not established",
+      "says": "the declared verifier is not on this machine, so no verification ran"
+    },
+    {
+      "state": "signature-refuted",
+      "standing": "refused",
+      "says": "the declared verifier rejected the signature; that is evidence against, and is never recorded as an absence"
+    }
+  ],
+  "verifiers": [
+    {
+      "id": "ssh-keygen",
+      "summary": "OpenSSH signature verification, as git's SSH signing uses it: an allowed_signers file the host authors maps principals to keys.",
+      "argv": [
+        "ssh-keygen",
+        "-Y",
+        "verify",
+        "-f",
+        "{trust_root}",
+        "-I",
+        "{signer}",
+        "-n",
+        "{namespace}",
+        "-s",
+        "{signature}"
+      ],
+      "namespace": "agent-kit-capability",
+      "trust_root": ".agents/project/allowed_signers",
+      "comment": "#"
+    }
+  ]
+}

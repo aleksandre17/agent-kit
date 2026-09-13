@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "prefix": "KIT",
+  "issued": 41,
+  "codes": [
+    {
+      "code": "KIT0001",
+      "status": "active",
+      "title": "paths this kit may not touch stand where it must install",
+      "explanation": "Adoption found paths in a governed plane that no reading explains, and the kit has no permission to take them over. Every such path is named, and the operation stops rather than the path being overwritten. Give each named path a class (or move it), then run again."
+    },
+    {
+      "code": "KIT0002",
+      "status": "active",
+      "title": "a readable declaration is absent, unreadable, invalid, or claims one identity twice",
+      "explanation": "A collection the kit reads could not be read honestly: a member is missing, is not valid for its schema, or two members claim the same identity. A collection with two answers for one identity has no answer. Repair or remove the named member."
+    },
+    {
+      "code": "KIT0003",
+      "status": "active",
+      "title": "an instance and its base both carry one key",
+      "explanation": "A composed declaration and the base it extends both set the same key. The kit refuses rather than choosing a winner, because the losing side would go on declaring a value the composition does not have. Remove the key from one side."
+    },
+    {
+      "code": "KIT0004",
+      "status": "active",
+      "title": "a host truth is absent, unreadable, or does not honour its schema",
+      "explanation": "A binding the host owns (under its project plane) could not be read as the schema declares it. The kit will not act on a host it cannot measure. Restore or correct the named binding."
+    },
+    {
+      "code": "KIT0005",
+      "status": "active",
+      "title": "a declared source of rules is missing, or a name resolves to two things",
+      "explanation": "A declaration names a source of rules that does not exist, or a name reaches two sources. Rules read from an ambiguous source would be obeyed by whichever was found first. Declare the source once."
+    },
+    {
+      "code": "KIT0006",
+      "status": "active",
+      "title": "no plane, or more than one, is declared for observed state",
+      "explanation": "Observed (ephemeral) state needs exactly one declared plane to live in. None means it has nowhere to go; two means a name resolves to two places. Declare exactly one ephemeral plane in the manifest."
+    },
+    {
+      "code": "KIT0007",
+      "status": "active",
+      "title": "the install is drafted and waits at the human door",
+      "explanation": "Not a failure: a declared state. The host was measured, a set was resolved and an answer drafted, and the one human approval in the design has not been given. Review the draft and run again with --approve <who>. Exits 3 so a stalled install is never mistaken for a broken one."
+    },
+    {
+      "code": "KIT0008",
+      "status": "active",
+      "title": "the host's record of what it received is absent or cannot be honestly taken",
+      "explanation": "The estate -- the host's record of what the kit delivered -- is missing or unreadable, so no reconciliation against it can be trusted. Restore the estate record, or adopt the host afresh."
+    },
+    {
+      "code": "KIT0009",
+      "status": "active",
+      "title": "a residence rule carries a pattern that is not a pattern",
+      "explanation": "A hygiene residence rule declares a path pattern that cannot be compiled. A rule that matches nothing reports a clean host that was never measured. Correct the named pattern."
+    },
+    {
+      "code": "KIT0010",
+      "status": "active",
+      "title": "a host lock document exists and cannot be read as one",
+      "explanation": "The host's lock (the hold a running verb takes) is present but unreadable. It is refused rather than overwritten, because a hold nobody can read may still have somebody standing behind it. Confirm nothing is running, then release it with --break-lock <who>."
+    },
+    {
+      "code": "KIT0011",
+      "status": "active",
+      "title": "a card, a move or a board contradicts the declared lifecycle",
+      "explanation": "Work cards move only along the transitions the lifecycle declares. The named card, move or board breaks that declaration. Move the card along a declared transition, or change the lifecycle declaration."
+    },
+    {
+      "code": "KIT0012",
+      "status": "active",
+      "title": "the kit cannot state what it is made of",
+      "explanation": "Building the kit's own lock found a rule that measures nothing, a directory account with no suffix, or one path accounted for twice. A kit that cannot enumerate itself cannot be shipped honestly. Correct the manifest's accounts."
+    },
+    {
+      "code": "KIT0013",
+      "status": "active",
+      "title": "an observer kind is unprovided, or claimed by two modules",
+      "explanation": "A declaration names an observer kind that no discovered module provides, or two modules claim the same kind. A name resolving to two meanings is refused rather than ordered. Provide the kind once."
+    },
+    {
+      "code": "KIT0014",
+      "status": "active",
+      "title": "a record was asked for in a readable the capability does not declare",
+      "explanation": "A receipt was to be written into a readable its capability does not declare. It is refused rather than defaulted: a record written where nobody reads is worse than none, because its absence from the report reads as nothing having happened. Declare the readable, or target a declared one."
+    },
+    {
+      "code": "KIT0015",
+      "status": "active",
+      "title": "a payload declaration is missing, unreadable, or does not honour its schema",
+      "explanation": "The kit's own manifest or one of the declarations it names could not be read as its schema declares. The payload is defective, not the host. Repair the named declaration in the kit."
+    },
+    {
+      "code": "KIT0016",
+      "status": "active",
+      "title": "a detector declares an evidence kind the interpreter cannot evaluate",
+      "explanation": "A detector asked for evidence of a kind no probe knows how to take. A probe that guessed would report a fact nobody measured. Use a declared evidence kind."
+    },
+    {
+      "code": "KIT0017",
+      "status": "active",
+      "title": "a path could not be resolved inside the workspace",
+      "explanation": "A path escapes, or cannot be placed inside, the host workspace. The kit acts only on paths that resolve under the host root. Correct the named path."
+    },
+    {
+      "code": "KIT0018",
+      "status": "active",
+      "title": "a write was attempted outside the declared scope",
+      "explanation": "A verb tried to write a path outside the write set it declared. Refused, never warned about: an undeclared write is how work lands somewhere nobody chose. This is a defect in the declaration that asked for the write."
+    },
+    {
+      "code": "KIT0019",
+      "status": "active",
+      "title": "the three readings cannot be reconciled, or one cannot be taken",
+      "explanation": "Reconciliation compares what the kit ships, what the host received, and what the host holds now. One of the three could not be read honestly, or they contradict in a way no rule resolves. Resolve the named paths."
+    },
+    {
+      "code": "KIT0020",
+      "status": "active",
+      "title": "the declared capability set cannot compose",
+      "explanation": "An unmet provision, a declared conflict, or two capabilities installing to one path. Composition is never resolved by preference; it is refused. Change the selection so every requirement is met exactly once."
+    },
+    {
+      "code": "KIT0021",
+      "status": "active",
+      "title": "the host asked for a capability set it may not have",
+      "explanation": "The selection names a capability nobody declares, or disables one the kit declares structural. Refused before composition, because a selection naming nothing real is a typo the operator must see. Correct --enable / --disable."
+    },
+    {
+      "code": "KIT0022",
+      "status": "active",
+      "title": "a template uses syntax outside the supported subset, or names something absent",
+      "explanation": "A projection template could not be rendered: its syntax is outside the subset the kit supports, or it names a value the view does not carry. Rendering a blank would be a plausible lie. Correct the template."
+    },
+    {
+      "code": "KIT0023",
+      "status": "active",
+      "title": "a gate kind is unprovided, or claimed by two modules",
+      "explanation": "A declaration names a gate kind that no discovered module can evaluate, or two modules claim it. Refused rather than ordered. Provide the kind once."
+    },
+    {
+      "code": "KIT0024",
+      "status": "active",
+      "title": "nothing, or more than one capability, declares what to judge",
+      "explanation": "Evaluation needs exactly one enabled capability declaring what is judged. None leaves nothing to evaluate; two are two homes for one question. Enable exactly one."
+    },
+    {
+      "code": "KIT0025",
+      "status": "active",
+      "title": "an install cannot proceed as declared",
+      "explanation": "A declaration names an install mode the interpreter does not know, the selection contradicts host truth, or a file written does not honour its own schema. Correct the named declaration or selection."
+    },
+    {
+      "code": "KIT0026",
+      "status": "active",
+      "title": "the kit no longer matches its own lock",
+      "explanation": "The kit could not honestly state what it is, or what it is no longer matches kit.lock.json. A kit that differs from its record is not the kit that was reviewed. Re-lock deliberately after review."
+    },
+    {
+      "code": "KIT0027",
+      "status": "active",
+      "title": "a move names something the host does not have, or is incomplete",
+      "explanation": "A card move needs --card, --to and --by, and the card and state must exist in the host. Supply the missing or corrected argument."
+    },
+    {
+      "code": "KIT0028",
+      "status": "active",
+      "title": "a projection cannot be rendered without a name meaning two things",
+      "explanation": "Rendering a projection found two capabilities claiming one view-model name, a record shadowing a view name, or a plural projection whose target, iteration or file naming is not declared soundly. The kit refuses rather than letting one side silently win. Correct the named declaration."
+    },
+    {
+      "code": "KIT0029",
+      "status": "active",
+      "title": "an upgrade meets readings that cannot be reconciled",
+      "explanation": "Upgrading found paths where the shipped, received and held readings contradict. The paths and both moments are named. Resolve each named path, then upgrade again."
+    },
+    {
+      "code": "KIT0030",
+      "status": "active",
+      "title": "a gate's stance cannot be honoured as declared",
+      "explanation": "A stance names no row of the stance vocabulary, a host lowers a gate below the floor its publisher declared, one gate is answered twice, or the kit holds no single stance vocabulary to read. The kit refuses rather than choosing a stance, because a gate standing in a stance nobody declared would report a verdict nobody asked for. Correct the named stance; a floor is lowered only by the gate's publisher, never by a host."
+    },
+    {
+      "code": "KIT0031",
+      "status": "active",
+      "title": "an init journal exists and cannot be read as one",
+      "explanation": "The host's init journal -- the only account of how far an interrupted install got -- is present but unreadable or does not honour the kit's journal schema, or a run was about to write one that does not. It is refused rather than overwritten, because replacing it would destroy the evidence the next run exists to read. Read it, move it aside by hand, then run again."
+    },
+    {
+      "code": "KIT0032",
+      "status": "active",
+      "title": "a capability this kit did not issue cannot be taken as it stands",
+      "explanation": "A capability the kit's own lock does not account for is not the bytes this host pinned when it first took it, is at a version older than the one pinned, or claims a signature its declared verifier refuted -- or the kit holds no single provenance declaration or no lock to tell what it issued. It is refused before any write and no approval opens it: a pin that could be re-taken would pin nothing. Restore the pinned bytes, or have the publisher release a NEWER version, which is met at the door as first contact is."
+    },
+    {
+      "code": "KIT0033",
+      "status": "active",
+      "title": "a document was written by a newer kit than this one",
+      "explanation": "A document the kit was about to read states a schema_version HIGHER than the one this kit's schema for that kind declares. It is refused before its shape is judged, because a shape from the future read through today's schema is a guess, and a guess read as understanding is a surface that lies (ADR-009). Nothing is written. Run the kit version that wrote the document, or upgrade this kit to one that reads its version."
+    },
+    {
+      "code": "KIT0034",
+      "status": "active",
+      "title": "a document is at an older version this kit declares no migration for",
+      "explanation": "A document the kit was about to read states a schema_version LOWER than the one this kit's schema for that kind declares, and this kit ships no migration from that version. It is refused by name rather than read as if it had the current shape (ADR-009). Nothing is written. Run the kit version that wrote the document, or re-create the document with this kit; before 1.0 the kit ships no migrations, and every kind is at version 1."
+    },
+    {
+      "code": "KIT0035",
+      "status": "active",
+      "title": "a path cannot change hands as asked",
+      "explanation": "A host asked to take over a path the kit shipped (ADR-010), and at least one named path cannot be handed over: the host's record does not carry it, it was already taken over (its row names who and when), its steward declares no transfer because the bytes are already the host's or are rebuilt from their inputs, or the transfer names a class this kit does not declare. Every such path is named and none changes hands. Nothing is written. Name only paths the record carries under a steward that offers a transfer."
+    },
+    {
+      "code": "KIT0036",
+      "status": "active",
+      "title": "a migration map cannot be read as declared",
+      "explanation": "A host asked what becomes of its prior agent system (ADR-011), and the migration map it gave -- or the succession vocabulary it is read against -- cannot be read as declared: it is not JSON or not the declared shape, a root or row leaves the host, two rows name one path, a row names a disposition the vocabulary does not declare or omits or adds a field its disposition declares, a reference names no plane or no capability, or two paths are sent to one destination. Every fault is named and no roster is printed. Nothing is written. Correct the map and read again."
+    },
+    {
+      "code": "KIT0037",
+      "status": "active",
+      "title": "a succession cannot be carried out as read",
+      "explanation": "A host asked to carry out its migration map (ADR-012), and the act cannot be carried out whole: no map resides at the declared residence (a map passed from anywhere is refused), the host has no record of what it was given, a path of the prior boundary is still undecided, a row would move or remove a path this kit itself installed or the map itself, a destination already exists, or a destination lies in no space whose mode the succession vocabulary declares may receive a path. Every fault is named and nothing is moved or removed. Answer or correct the map and read again."
+    },
+    {
+      "code": "KIT0038",
+      "status": "active",
+      "title": "the accepted roster is not the roster read now",
+      "explanation": "A succession act was accepted by the digest of its roster, and the roster read at the moment of carrying it out has another digest: the map at its residence or a path of the prior system changed since the reading that was signed, or a path changed while the act was under way, or an interrupted act cannot be reconciled with the tree. Nothing further is moved. Read again with --plan, and sign the digest of what is there now."
+    },
+    {
+      "code": "KIT0039",
+      "status": "active",
+      "title": "a path a runtime reads is held by bytes the kit did not write",
+      "explanation": "A served surface would write a file at a path its runtime product reads -- outside the kit's four planes -- and the file already there matches neither what the kit would render now nor what the kit's own record says it last served there. Those are somebody's bytes, and a projection is rebuilt, never merged, so writing would destroy them. Nothing is written or removed, anywhere. Move the prior file aside, carry a prior agent system over with inherit or takeover (ADR-011, ADR-012), or stop serving the surface; then render again."
+    },
+    {
+      "code": "KIT0040",
+      "status": "active",
+      "title": "one path a runtime reads is claimed by two served files",
+      "explanation": "Two runtimes this host serves -- through one surface or two -- would write the same path, and the kit refuses to decide which one wins: last-writer-wins leaves the loser's declaration reading as delivered. Serve one of them, or declare a surface whose paths do not collide."
+    },
+    {
+      "code": "KIT0041",
+      "status": "active",
+      "title": "a kit that is not what it says it is was asked to be pinned or taken as a release",
+      "explanation": "Delivering the kit into a host (ADR-016) requires a kit that can state what it is: every path accounted for, present and LF. A pinned kit asked to re-deliver ITSELF must still equal the lock it carries -- re-stamping it would launder a change into a fresh reading. A release source (git+<repo>@<rev>#subdirectory=<dir>) must be readable at that revision and its tree must equal its own lock. The paths are named; nothing in the host was written. Fix the kit, or deliver a real release over the pinned copy with upgrade --kit <release>."
+    }
+  ]
+}

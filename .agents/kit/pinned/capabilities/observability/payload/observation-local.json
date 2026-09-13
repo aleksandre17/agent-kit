@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "summary": "Dispositions this HOST declares, beside the kit's own. A host may ADD a way of reading a run's record; it may not exempt a run from one, because a gate that names a defect and then permits it has stopped being a gate. If a kit disposition is wrong here, the answer is to say so upstream, not to silence it locally.",
+  "dispositions": []
+}

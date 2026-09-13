@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "genres": [
+    {
+      "id": "cardinal",
+      "means": "a standing verdict about conduct, stated by its publisher in no repository's vocabulary, addressed so that it can be cited rather than quoted."
+    },
+    {
+      "id": "chapter",
+      "means": "a body of conduct doctrine about one subject -- an economy, a risk posture, an environment -- distributed as one document and answered as one. A chapter that applies only in some environments is not gated by a condition inside itself: its bundle declares a `requires` on a profile fact, so the condition lives in the declaration and never in an interpreter."
+    }
+  ],
+  "stance_vocabulary": [
+    {
+      "id": "adopts",
+      "means": "this host holds the cardinal as published, whole. A complete answer, and the only one that needs no further words."
+    },
+    {
+      "id": "narrows",
+      "means": "this host holds less than the cardinal says, and states exactly how much less. A narrowing is a smaller claim, not a disagreement."
+    },
+    {
+      "id": "extends",
+      "means": "this host holds everything the cardinal says and more, and states the addition. The publisher's sentence is untouched."
+    },
+    {
+      "id": "declares-a-gap",
+      "means": "this host has met a question the cardinal does not answer, and says so where the answer would have been. A gap declared is a hole that leaves a trace; a gap improvised is a doctrine acquiring clauses nobody can date."
+    },
+    {
+      "id": "refuses",
+      "means": "this host does not hold the cardinal, and states the reason. A refusal on the record is the one form of disagreement that stays legible to the publisher and to every later reader."
+    }
+  ],
+  "reading": [
+    {
+      "id": "one-home-each",
+      "says": "A cardinal states what its publisher holds true; a stance states what this host does with it. Two propositions, one home each -- there is nothing here to keep in step."
+    },
+    {
+      "id": "never-edited-here",
+      "says": "Nothing on this page is edited where it landed. A distributed document is replaced wholesale by its publisher, because a document a host may edit is a fork taken silently."
+    },
+    {
+      "id": "silence-is-named",
+      "says": "A cardinal this host has said nothing about is NAMED as unanswered. A page that showed only the answered ones would read exactly like a host that had answered everything."
+    },
+    {
+      "id": "cited-by-address",
+      "says": "Every answer cites `bundle@semver#id` and never the prose, so two hosts that disagree produce a delta that can be printed instead of two texts that cannot be compared."
+    }
+  ],
+  "stances": []
+}

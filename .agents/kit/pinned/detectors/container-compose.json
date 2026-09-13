@@ -1,0 +1,11 @@
+{
+  "id": "container-compose",
+  "summary": "A multi-container composition, under any of the spelling variants of its file.",
+  "evidence": [
+    { "kind": "glob_any", "pattern": "*compose.y*ml" }
+  ],
+  "emits": {
+    "stack.container": true,
+    "stack.container.compose": "$1"
+  }
+}

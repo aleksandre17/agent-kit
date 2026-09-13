@@ -1,0 +1,37 @@
+{
+  "$id": "card",
+  "title": "A card -- the unit of work, and the ONE home of its state",
+  "description": "BINDING, authored by the host. Its `state` field is the single place its state lives: the board is a projection of it and may never be a second home. `history` is not a second home either -- it is the record of WHO moved it and WHEN, and the moment a card entered its current state is DERIVED from it rather than stored beside it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "title", "state", "created_at"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "state": { "type": "string", "minLength": 1 },
+    "class": {
+      "description": "The change class a declared bypass may name. Absent means the ordinary way.",
+      "type": "string",
+      "minLength": 1
+    },
+    "owner": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "minLength": 1 },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to", "at", "by"],
+        "properties": {
+          "from": { "type": "string", "minLength": 1 },
+          "to": { "type": "string", "minLength": 1 },
+          "at": { "type": "string", "minLength": 1 },
+          "by": { "type": "string", "minLength": 1 },
+          "signed_by": { "type": "string", "minLength": 1 },
+          "signed_at": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
