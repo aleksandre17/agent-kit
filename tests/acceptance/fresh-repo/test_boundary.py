@@ -17,7 +17,7 @@ under which the universal is indistinguishable from the familiar.
     framework that is merely careful. Install into two maximally different repositories and every
     difference must trace to something the framework was TOLD.
 
-Nothing here restates the rules. They are READ from `kit/fitness/boundary.json` and this suite is
+Nothing here restates the rules. They are READ from `tests/acceptance/fresh-repo/boundary.json` and this suite is
 driven by them, and two of these tests exist only to prove that the sensors are pointed at
 something: an attribution that cannot fail does not measure, it certifies.
 """

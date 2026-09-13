@@ -1,7 +1,7 @@
 """The boundary declaration, READ -- the machinery behind ADR-001's T1, T2 and T3.
 
 Held apart from any suite, like the harness, and for the same reason: nothing here asserts. It
-reads `kit/fitness/boundary.json`, points each declared rule at each declared scope, and returns
+reads `tests/acceptance/fresh-repo/boundary.json`, points each declared rule at each declared scope, and returns
 findings. Which rules exist, what they catch, what they tolerate and which hosts they are measured
 across are all in the declaration; a rule added there is measured by the existing tests, and a new
 WAY of measuring is a class in `KINDS` -- never an edit to a test.
@@ -37,7 +37,11 @@ from pathlib import Path
 from harness import KIT, applied
 
 MANIFEST = json.loads((KIT / "MANIFEST.json").read_text(encoding="utf-8"))
-DECLARATION = json.loads((KIT / "fitness/boundary.json").read_text(encoding="utf-8"))
+#: The rows live beside this suite, NOT in the kit: they are the kit-AUTHORING repository's
+#: measurements of the kit, and a guard must name what it forbids -- so shipping it would hand every
+#: host the very names it exists to keep out (owner's rule, 2026-09-13: the framework carries no
+#: brand and no project identity). The shipped kit keeps the GRAMMAR (the registered schema).
+DECLARATION = json.loads((Path(__file__).resolve().parent / "boundary.json").read_text(encoding="utf-8"))
 #: The schema is found through the kit's own registry, by the declaration's own id. A second way
 #: of knowing which schema governs this document would be a second home for that truth.
 SCHEMA = json.loads(

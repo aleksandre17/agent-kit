@@ -153,7 +153,7 @@ class Lock(Fixtures, unittest.TestCase):
     def test_118_one_path_accounted_for_twice_is_a_name_with_two_meanings(self):
         """Refused here rather than settled by a precedence ladder somewhere else."""
         kit = self.fixture_kit("twice", patch=_rule(
-            {"id": "again", "class": "prose", "root": "fitness/", "suffix": ".json"}))
+            {"id": "again", "class": "prose", "root": "interpreters/", "suffix": ".py"}))
         result, _states = survey(kit)
         self.assertNotEqual(0, result.returncode)
         self.assertIn("accounted for twice", result.stderr)

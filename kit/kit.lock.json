@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 146,
+  "count": 145,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "7b9efcd12457463aa8afb8171934948c578007bd1ec66f38b4dbed47632d8c7b",
+      "digest": "8a66c4858f54148ed6ad0ffd81e328308cd4074c7b21b1ebfe73c0648b2208ff",
       "path": "MANIFEST.json"
     },
     {
@@ -379,12 +379,6 @@
       "class": "declaration",
       "digest": "bbf5ecee183ad09d8562896fe0f33b7d3c5dd384e34a535c6bd589833b747941",
       "path": "diagnostics.json"
-    },
-    {
-      "accounted_by": "fitness",
-      "class": "declaration",
-      "digest": "b4575ab5af45155ce1d90661f1761726c4c3540b5e1789648d8ba16d64db1f8a",
-      "path": "fitness/boundary.json"
     },
     {
       "accounted_by": "interpreter",
@@ -882,5 +876,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-12T17:43:27+00:00"
+  "taken_at": "2026-09-13T07:49:31+00:00"
 }
