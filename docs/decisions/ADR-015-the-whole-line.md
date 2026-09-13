@@ -166,5 +166,8 @@ a mechanism, not by a paragraph (the doctrine existed; the loss happened anyway)
 - The remaining work is the links A, B, L, C, D, E, F, G, finished one agent at a time, each walked live
   on host #0 and the clone of host #2 before it is called done.
 - "How much is left" is answered by position on this line, never by a percentage of a list.
-- The migration of host #2 starts only after G; the map is re-run then, must read zero undecided, and
+- **The migration is an OWNER DOOR (owner, 2026-09-13: "when you reach the migration, do not start it —
+  say you are ready").** After G, the orchestrator STOPS and reports readiness; nothing moves in host #2
+  until the owner says so.
+- The migration of host #2 starts only after G and the owner's word; the map is re-run then, must read zero undecided, and
   the migration is done only when amendment 3's objectives hold over their window.
