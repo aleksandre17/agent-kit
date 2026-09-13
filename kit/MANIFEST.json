@@ -14,12 +14,6 @@
         "suffix": ".py"
       },
       {
-        "id": "fitness",
-        "class": "declaration",
-        "root": "fitness/",
-        "suffix": ".json"
-      },
-      {
         "id": "readme",
         "class": "prose",
         "root": "README.md"
