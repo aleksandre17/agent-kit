@@ -75,6 +75,35 @@ C and E hold). Honestly post-1.0, and recorded as such: OTel `gen_ai` naming, `-
 freeze and transparency log, detector `any_of`, one home for the stance and status vocabularies, POSIX
 no-clobber rename, the trust class for foreign content, judging the judge.
 
+## One body — how the framework and its host are one organism (owner, 2026-09-13)
+
+*Restated on the owner's instruction: "the two systems must be one body, with the natural structural
+function of successfully established systems."*
+
+Today they are two bodies. The host is driven from OUTSIDE — `python <framework>/kit/interpreters/cli.py
+--root <host>` — and the framework repository manages its own development by hand, with none of the
+instruments it installs into others. Successful systems are one organism with a membrane, never a tool
+pointed at a project:
+
+- **Genome and organism.** The upstream kit is the genome: it changes only by selection — a lesson seen
+  twice, returned as text (④), accepted in an ADR, released. The host is the organism: it lives by its
+  metabolism — cards, capsule, receipts. One body, two rates of change, and exactly three things cross
+  the membrane (①③④). That is the structure; the drawing already had it.
+- **One nervous system.** Every event a host produces — a runtime hook, a git hook, a CI run, an operator's
+  command — reaches ONE interpreter (the host's own pinned copy, link B), is judged by ONE set of declared
+  gates (link C), and leaves ONE receipt stream (L7). After a migration there is no second enforcement
+  layer beside the kit's: a parallel old hook system is a second nervous system, and two nervous systems
+  in one body is the Cardinal-III failure in its most expensive form.
+- **SELF-HOSTING is the proof.** A compiler compiles itself; git is developed in git; the platforms that
+  last run their own delivery on themselves. **The framework repository becomes host #0 of its own kit**,
+  the first host link B lands in: its ADRs, ledger, cards and continuity run on the kit it ships. Then
+  host #0 and host #2 are two installs of one kit, the lesson loop (④) runs between two living hosts
+  instead of by hand, and "is the framework complete" gets its only honest answer — *it can run its own
+  development*. Until it can, it is a library, not a framework.
+
+Consequence for the order: link **B** lands first in the framework repository itself (host #0), then in
+the clone of host #2. Every later link is walked live in BOTH.
+
 ## Why this order, and not the audit's
 
 The audit ordered by RISK TO THE MIGRATION. The line orders by DEPENDENCY: the enforcement line (C) cannot
