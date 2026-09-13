@@ -115,6 +115,18 @@ ESTABLISHED` over a trust root nobody chose — the surface lying in its most co
   names IT (unverified whether a reconciliation does). A single atomic exchange (`renameat2(RENAME_EXCHANGE)`) is POSIX-only and already on
   ADR-015's post-1.0 list.
 
+## Relation to ADR-015 amendment 1 (the drawing is the floor)
+
+Read at ~13:50 on 2026-09-13 as an UNCOMMITTED edit to ADR-015 in the working tree (not made by this
+slice, and not staged by it): every path in the Part VI drawing must exist in its drawn place by its
+drawn name, and link **L** carries that. The drawing places the pinned copy AT `.agents/kit/` and the
+lock the host was given at `.agents/project/kit.lock.json`. This ADR's `.agents/kit/pinned/` (with the
+lock inside the tree) is therefore a **scaffold, not the destination**: the target is ONE declaration
+(governance's `pinned` install) and the lock's seat is one field, so L moves both without touching the
+mechanism. Alternative A was rejected on the CURRENT upstream layout — doctrine pages vendored beside a
+kit that has no `kit/doctrine/`. Once the drawn upstream `kit/doctrine/` exists, the pages ARE part of
+the pinned tree, the interleave disappears, and so does the second copy named above.
+
 ## Consequences
 
 - A host runs `python .agents/kit/pinned/interpreters/cli.py <verb> --root .` with no framework
