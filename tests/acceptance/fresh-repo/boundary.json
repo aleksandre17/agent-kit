@@ -168,6 +168,18 @@
           "enables": "governance,hygiene"
         }
       ]
+    },
+    {
+      "id": "a-product-named-in-the-shipped-kit",
+      "kind": "absent-pattern",
+      "where": [
+        "shipped"
+      ],
+      "pattern": "(?i:claude|codex|anthropic|openai|chatgpt|copilot|gemini)|\bCursor\b",
+      "because": "the kit core is the CARRIER and the GRAMMAR, and a product's name inside it -- a surface row, a template, a target path, a gate specimen -- is a runtime the framework has chosen for every host before meeting one. ADR-013 put the name in the right KIND of declaration; ADR-014 says the kind is right and the residence is not: a declaration allowed to carry a product's name ships OUTSIDE the kit core, in an adapter a host takes.",
+      "instead": "in an adapter bundle beside the kit (adapters/<id>/), taken through the provenance door like any capability the kit did not issue -- where the name is the whole point of the file, and the host that took it can see that it did.",
+      "proves": "\"target\": \".claude/agents/\"",
+      "admits": "a clause of the codec, read by the cursor of a claudication-free parser"
     }
   ]
 }

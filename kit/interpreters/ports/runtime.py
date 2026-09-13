@@ -210,6 +210,43 @@ def prior(ctx, capabilities) -> dict:
     return last
 
 
+def reach(ctx, capabilities) -> list:
+    """(path, who) for every path OUTSIDE the planes that is the kit's surface through this port:
+    every target a surface from these capabilities declares -- whether or not this host enables
+    it, because a prior system at one of those paths is exactly what a later render would refuse
+    to clobber -- and every path the kit's own record says it served. One home for the answer to
+    *what outside the planes is ours*, read by every verb that must account for it."""
+    found = {}
+    for item in _records(capabilities):
+        spec = item["serves"]["surfaces"]
+        for name in declared.named(capabilities, spec["sources"]):
+            for capability in capabilities:
+                document = capability.documents.get(name)
+                for surface in (document or {}).get(spec["list"], []):
+                    for rendered in surface["renders"]:
+                        found.setdefault(rendered["target"].rstrip("/"),
+                                         f"served through the surface {surface['id']} "
+                                         f"(declared by {capability.id})")
+    for rel in prior(ctx, capabilities):
+        found.setdefault(rel, "served, by the kit's own record")
+    return sorted(found.items())
+
+
+def served_rows(ctx, capabilities) -> dict:
+    """path -> a row in the ESTATE's shape for every file the kit's record says it served: the
+    class and mode of the install that recorded it and the capability that owns it. A served file
+    is a path this host WAS given, and a verb that reads only the estate would say it was not."""
+    rows = {}
+    for capability in capabilities:
+        for item in capability.installs_of_class("projection"):
+            if item.get("shape") != SHAPE or not ctx.workspace.exists(item["target"]):
+                continue
+            for row in ctx.workspace.read_json(item["target"]).get("served", []):
+                rows[row["path"]] = {"path": row["path"], "class": item["class"], "mode": item["mode"],
+                                     "capability": capability.id, "served": True}
+    return rows
+
+
 def _in_a_plane(ctx, rel: str) -> bool:
     return any(rel == p["root"].rstrip("/") or rel.startswith(p["root"].rstrip("/") + "/")
                for p in ctx.manifest.planes)

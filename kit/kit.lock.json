@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 151,
+  "count": 147,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -281,7 +281,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "b3ca326eb33cc6d8bbc7553e8b0c217e2b1443e897568403c294f6ca1e739163",
+      "digest": "98560d10afed11b54d3e3930a172e4cd2216de0ef3690f5cfec8d88de0390960",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -313,30 +313,6 @@
       "class": "payload",
       "digest": "ef55f0958ba6fec8f614301bf06f68dad81b4a578fcbf2c9fe8a9d1c91322165",
       "path": "capabilities/runtimes/payload/runtimes.md"
-    },
-    {
-      "accounted_by": "declaration-closure",
-      "class": "payload",
-      "digest": "0f3c8bed85f625d0380e6b57b19c9937cf8d617dba77b081d4c42a6c2df7153a",
-      "path": "capabilities/runtimes/payload/surfaces/entry.md.mustache"
-    },
-    {
-      "accounted_by": "declaration-closure",
-      "class": "payload",
-      "digest": "f9734163dcf05a4c77a131729934ac9a99ab62389c43ef81634b33dec25d2a3b",
-      "path": "capabilities/runtimes/payload/surfaces/role-front-matter.md.mustache"
-    },
-    {
-      "accounted_by": "declaration-closure",
-      "class": "payload",
-      "digest": "c3c934b0c13f56cc038630a7581673cbe6bc16894184a28aab4bce336adbdc9a",
-      "path": "capabilities/runtimes/payload/surfaces/role.toml.mustache"
-    },
-    {
-      "accounted_by": "declaration-closure",
-      "class": "declaration",
-      "digest": "0c8ae9f8682bd6439dae8f75915cb2512144af312130f26d0ecfa065bdf66001",
-      "path": "capabilities/runtimes/surfaces.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -437,7 +413,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "701a5bebffe738711f67397e8024c6529878c876d710f13db141bda84626cad3",
+      "digest": "557296a17bf8cb7459a28b567418cee026ea78b7697b795e667fe5d7dfb0e932",
       "path": "interpreters/declared.py"
     },
     {
@@ -563,7 +539,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "954abde1f0d30cc1745b9d3f766ea9bef410e0da098c9e828e9d045ec0515652",
+      "digest": "98d3461c1b1b211bb084fe0c71c0b2715798bd9163dc2c28acee8bde4986292c",
       "path": "interpreters/ports/runtime.py"
     },
     {
@@ -605,7 +581,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "2da22ab3d59d8b5112ba141ce1b3d188ab4f276fe0a1a89ccf141427c81002dd",
+      "digest": "50f77b2b0306f3bfbc4280214a5e19861dc2ec0606fa3d900f4f6dfdf2967b4a",
       "path": "interpreters/succession.py"
     },
     {
@@ -635,7 +611,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3f96b5ccc2bfb83806939975a3a8956bc16b0005b224bf1c2c4d20de04bd3216",
+      "digest": "1d5ca4869489aa99ee0a0351509f576c86fad8ec63d390e45c365f5717ce9e1d",
       "path": "interpreters/verbs/cede.py"
     },
     {
@@ -912,5 +888,5 @@
   "kit_version": "0.1.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-13T08:13:55+00:00"
+  "taken_at": "2026-09-13T08:46:49+00:00"
 }

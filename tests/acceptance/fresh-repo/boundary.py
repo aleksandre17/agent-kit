@@ -195,6 +195,15 @@ class World:
     def emitted_texts(self) -> list:
         return sorted(self.surface(self.AS_FOUND).paths.items())
 
+    def shipped_texts(self) -> list:
+        """Every file the kit states it is made of -- enumerated from ITS lock, never walked off
+        the disk -- as text. The kit core as a publisher hands it over, before any host, any
+        adapter or any render has touched it (ADR-014)."""
+        from harness import LOCK as _LOCK
+        entries = json.loads((self.kit / _LOCK).read_text(encoding="utf-8"))["files"]
+        return [(entry["path"], (self.kit / entry["path"]).read_text(encoding="utf-8", errors="replace"))
+                for entry in sorted(entries, key=lambda e: e["path"])]
+
     def seeded_declarations(self) -> list:
         """Every seeded file that reached this host, beside the schema that governs it. A seed
         with no schema is yielded WITHOUT one rather than dropped: a file nobody can judge blank
@@ -259,6 +268,10 @@ class PatternRule:
     @staticmethod
     def of_emitted(world, rule) -> list:
         return world.emitted_texts()
+
+    @staticmethod
+    def of_shipped(world, rule) -> list:
+        return world.shipped_texts()
 
     @staticmethod
     def specimen(rule, which, world):
@@ -515,6 +528,7 @@ SCOPES = {
     "interpreters": _reader("interpreters", "of_interpreters"),
     "emitted": _reader("emitted", "of_emitted"),
     "two-hosts": _reader("two-hosts", "of_two_hosts"),
+    "shipped": _reader("shipped", "of_shipped"),
 }
 
 

@@ -23,6 +23,7 @@ runtime and no product is named here.
 from __future__ import annotations
 
 import json
+import re
 import tomllib
 import unittest
 from pathlib import Path
@@ -32,6 +33,12 @@ from harness import KIT, Fixtures, host_digest
 import runtime as runtime_port  # noqa: E402 -- reachable once the harness has placed the kit
 from manifest import Manifest  # noqa: E402
 
+from test_adapters import adapted_kit, surface_documents  # noqa: E402
+
+#: The FIXTURE these tests serve through (ADR-014): the real kit with every published adapter
+#: taken. The kit core ships no surface, so a kit serving something is a kit a host took adapters
+#: into -- exactly as a host does. Every assertion below is unchanged.
+KIT = adapted_kit()
 MANIFEST = Manifest(KIT)
 CAPABILITY = json.loads((KIT / "capabilities/runtimes/capability.json").read_text(encoding="utf-8"))
 ROLES_CAPABILITY = json.loads((KIT / "capabilities/roles/capability.json").read_text(encoding="utf-8"))
@@ -42,9 +49,7 @@ SERVED = SERVED[0]
 RECORD = SERVED["target"]
 SPEC = SERVED["serves"]
 ENABLING_FIELD = SPEC["enabled_by"]["field"]
-SURFACES_DOC = next(d for d in CAPABILITY["documents"] if d["id"] in SPEC["surfaces"]["sources"])
-SURFACES_REL = SURFACES_DOC["source"]
-SURFACES = json.loads((KIT / SURFACES_REL).read_text(encoding="utf-8"))[SPEC["surfaces"]["list"]]
+SURFACES_REL, SURFACES = surface_documents(KIT)
 DESCRIPTORS = next(i for i in CAPABILITY["installs"] if i.get("reads_as") == "runtime_descriptors")["target"]
 OVERLAYS = next(i for i in ROLES_CAPABILITY["installs"] if i.get("reads_as") == "role_overlays")["target"]
 AN_ARCHETYPE = json.loads((KIT / "capabilities/roles/archetypes.json").read_text(encoding="utf-8"))["archetypes"][0]
@@ -54,6 +59,8 @@ SURFACE_GATE = next(g["id"] for g in CAPABILITY["gates"]
 BINDING_ROOT = next(p["root"] for p in MANIFEST.planes if p["class"] == "binding").rstrip("/") + "/"
 LAW_SECTIONS = [s for v in SPEC["views"] for s in v.get("sections", []) if s["from"].startswith(BINDING_ROOT)]
 INTERPRETERS = KIT / "interpreters"
+STANCES = next(d for c in MANIFEST.capabilities for d in c.documents.values()
+               if isinstance(d, dict) and "unanswered" in d and "stances" in d)
 #: The one plane a refusal may legitimately touch: a run records that it started and how it ended.
 EPHEMERAL = next(p["root"] for p in MANIFEST.planes if p["class"] == "ephemeral").rstrip("/") + "/"
 
@@ -210,7 +217,7 @@ class Serving(Fixtures, unittest.TestCase):
                               "target": ".a-product/" if view != "briefing" else ".a-product/READ-ME-FIRST.md",
                               **({"suffix": ".md"} if view != "briefing" else {})}
                              for view, source in template_of.items()]}
-        kit = self.fixture_kit("third", patch=lambda k: self.edit_json(
+        kit = adapted_kit(patch=lambda k: self.edit_json(
             k, SURFACES_REL, lambda doc: doc[SPEC["surfaces"]["list"]].append(third)))
         for path in (kit / "interpreters").rglob("*.py"):
             self.assertEqual(path.read_bytes(), (INTERPRETERS / path.relative_to(kit / "interpreters")).read_bytes())
@@ -246,6 +253,15 @@ class Serving(Fixtures, unittest.TestCase):
         checked = self.run_kit(KIT, host, "check")
         self.assertNotEqual(0, checked.returncode)
         self.assertIn(f"FAIL  {SURFACE_GATE}", checked.stdout)
+        # Strengthened (ADR-014): the refusal must be THIS gate's, under a stance that fails --
+        # a non-zero exit carried by some other gate, or this gate's failure demoted to a stance
+        # that only observes, used to pass here while proving nothing about the surface.
+        failing = {m.group(1) for m in re.finditer(r"^\s+FAIL\s+(\S+)\s", checked.stdout, re.M)}
+        self.assertEqual({SURFACE_GATE}, failing, "another gate carried this refusal")
+        line = next(l for l in checked.stdout.splitlines() if re.match(rf"\s+FAIL\s+{re.escape(SURFACE_GATE)}\s", l))
+        self.assertIn(f"[{STANCES['unanswered']}:", line, "the gate did not fail under a stance that fails")
+        self.assertTrue(next(r for r in STANCES["stances"] if r["id"] == STANCES["unanswered"])["fails"])
+        self.assertRegex(checked.stdout, re.compile(r"^check: 1 gate\(s\) failed$", re.M))
 
 
 if __name__ == "__main__":

@@ -35,9 +35,41 @@ class DeclarationError(KitError):
     code = "KIT0005"
 
 
-def sources(ctx, names: list) -> dict:
+#: The word that turns a source list from a CLOSED enumeration into an OPEN set (ADR-014). It is
+#: the word a document and a readable install already use to state the contract they keep, so the
+#: selector adds no vocabulary: `{"validates": "<schema>"}` means every source, from every enabled
+#: capability, that keeps that contract -- found by the contract, exactly as the stance vocabulary
+#: is found, never by a publisher's name.
+CONTRACT = "validates"
+
+
+def named(capabilities, spec) -> list:
+    """The source names a declaration reads. A LIST is a closed set its author enumerated; an
+    OBJECT carrying the contract word is the open set of every source any of these capabilities
+    ships (a document) or declares readable (an install read back) under that contract -- sorted,
+    so the order is the declaration's and never a manifest's. An open set that finds nothing is
+    a DECLARED ZERO, not a missing source: nobody having published is a state, and the reader
+    that asked says so in its own words."""
+    if isinstance(spec, list):
+        return spec
+    if not isinstance(spec, dict) or set(spec) != {CONTRACT}:
+        raise DeclarationError(
+            f"a source set is either a list of names or {{{CONTRACT!r}: <schema>}}; {spec!r} is "
+            f"neither, and a selector nobody can read would select whatever a guess decided")
+    contract = spec[CONTRACT]
+    found = set()
+    for capability in capabilities:
+        found |= {d["id"] for d in capability.raw.get("documents", []) if d.get(CONTRACT) == contract}
+        found |= {item["reads_as"] for item in capability.installs
+                  if item.get(CONTRACT) == contract and item.get("reads_as")}
+    return sorted(found)
+
+
+def sources(ctx, names) -> dict:
     """The named documents, wherever they were declared: SHIPPED by a capability, or AUTHORED by
-    the host in a path a capability declared readable. Both arrive by name."""
+    the host in a path a capability declared readable. Both arrive by name -- or by the contract
+    they keep, when the set is open (`named`)."""
+    names = named(ctx.enabled_capabilities(), names)
     found: dict = {}
     owners: dict = {}
 
@@ -70,6 +102,7 @@ def sources(ctx, names: list) -> dict:
 def rules(ctx, names: list, field: str) -> list:
     """Every row of every named source, in the order the sources were declared, with each id
     claimed exactly once. `field` is the word the source's own SCHEMA gives its rows."""
+    names = named(ctx.enabled_capabilities(), names)
     found = sources(ctx, names)
     rows, owners = [], {}
     for name in names:

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "surfaces": [
+    {
+      "id": "codex",
+      "says": "Codex reads AGENTS.md at the repository root as project instructions, and one agent definition per TOML file under .codex/agents/ -- name, description and developer_instructions as strings. Taken from the product's documentation; a claim until a run of the product is observed reading what was served.",
+      "renders": [
+        {
+          "view": "briefing",
+          "target": "AGENTS.md",
+          "template": "capabilities/codex/payload/entry.md.mustache"
+        },
+        {
+          "view": "role-definitions",
+          "target": ".codex/agents/",
+          "suffix": ".toml",
+          "template": "capabilities/codex/payload/role.toml.mustache"
+        }
+      ]
+    }
+  ]
+}

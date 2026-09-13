@@ -29,6 +29,7 @@ import doors
 import estate as estate_module
 import hostlock
 import plan as plan_module
+import runtime as runtime_port
 from errors import KitError
 
 SUMMARY = "hand a path the kit shipped to the host, through a signed door"
@@ -64,9 +65,31 @@ def _transfers(ctx, recorded, stewards, paths) -> list:
     change hands, at once. Not the first one and then the next: a door walked for half a request
     leaves a host in a state nobody asked for."""
     rows = {row["path"]: row for row in recorded["files"]}
+    # A file served to a runtime is a path this host WAS given, recorded in the projection plane
+    # rather than the estate (ADR-013). Reading only the estate would answer "never given it" --
+    # a confident lie about a file carrying the kit's bytes. Asked of the port that owns the record.
+    served = runtime_port.served_rows(ctx, ctx.enabled_capabilities())
     classes = {plane["class"] for plane in ctx.manifest.planes}
     found, problems = [], []
     for path in paths:
+        if path not in rows and path in served:
+            row = served[path]
+            steward = stewards.of_mode(row["mode"])
+            if stewards.transfer(steward) is None:
+                problems.append(
+                    f"{path}: SERVED to a runtime by {row['capability']} (the kit's record in "
+                    f"the projection plane), held by the steward {steward!r}, which declares no "
+                    f"transfer -- a served file is rebuilt from what this host declares, so it has "
+                    f"no bytes anyone could own. It is left by no longer serving it: drop the "
+                    f"surface from the runtime descriptor that names it, or stop taking the adapter "
+                    f"that declares it, and render -- the kit then removes it while it still holds "
+                    f"the kit's recorded bytes, and refuses if it does not")
+            else:
+                problems.append(
+                    f"{path}: SERVED to a runtime by {row['capability']}, and its steward "
+                    f"{steward!r} declares a transfer this verb cannot carry for a path outside "
+                    f"the estate -- NOT BUILT (ADR-014), refused rather than recorded nowhere")
+            continue
         row = rows.get(path)
         if row is None:
             problems.append(

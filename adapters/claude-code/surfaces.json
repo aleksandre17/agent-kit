@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "surfaces": [
+    {
+      "id": "claude-code",
+      "says": "Claude Code reads CLAUDE.md at the repository root as project instructions, and one sub-agent definition per Markdown file under .claude/agents/ -- YAML front-matter carrying name and description, the body as the agent's instructions. Taken from the product's documentation; a claim until a run of the product is observed reading what was served.",
+      "renders": [
+        {
+          "view": "briefing",
+          "target": "CLAUDE.md",
+          "template": "capabilities/claude-code/payload/entry.md.mustache"
+        },
+        {
+          "view": "role-definitions",
+          "target": ".claude/agents/",
+          "suffix": ".md",
+          "template": "capabilities/claude-code/payload/role.md.mustache"
+        }
+      ]
+    }
+  ]
+}
