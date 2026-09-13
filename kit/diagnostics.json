@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 40,
+  "issued": 41,
   "codes": [
     {
       "code": "KIT0001",
@@ -242,6 +242,12 @@
       "status": "active",
       "title": "one path a runtime reads is claimed by two served files",
       "explanation": "Two runtimes this host serves -- through one surface or two -- would write the same path, and the kit refuses to decide which one wins: last-writer-wins leaves the loser's declaration reading as delivered. Serve one of them, or declare a surface whose paths do not collide."
+    },
+    {
+      "code": "KIT0041",
+      "status": "active",
+      "title": "a kit that is not what it says it is was asked to be pinned or taken as a release",
+      "explanation": "Delivering the kit into a host (ADR-016) requires a kit that can state what it is: every path accounted for, present and LF. A pinned kit asked to re-deliver ITSELF must still equal the lock it carries -- re-stamping it would launder a change into a fresh reading. A release source (git+<repo>@<rev>#subdirectory=<dir>) must be readable at that revision and its tree must equal its own lock. The paths are named; nothing in the host was written. Fix the kit, or deliver a real release over the pinned copy with upgrade --kit <release>."
     }
   ]
 }

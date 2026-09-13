@@ -152,6 +152,39 @@ class Workspace:
             temporary.unlink(missing_ok=True)
             raise
 
+    def write_tree(self, rel: str, files: dict) -> None:
+        """Replace the DIRECTORY `rel` whole with exactly `files` (paths relative to it -> bytes,
+        written verbatim). A tree is not a file, and writing it one file at a time would leave a
+        reader -- or a run killed half-way -- a directory that is neither the old tree nor the new
+        one: a mixture no record describes, which then reads exactly like a whole one.
+
+        So the tree is STAGED in a sibling and SWAPPED in by rename, the way `write_text` swaps a
+        document. The one honest difference is stated rather than hidden: a directory cannot be
+        renamed over an existing one on every platform, so the swap is two renames -- the old tree
+        aside, the new one in. A process killed between them leaves `.<name>.<pid>.kit-old` and no
+        `<name>`: a visible, named residue that the next reading refuses, never a torn tree. Both
+        sibling names are the port's own mechanism, exactly as the `.kit-tmp` of a document is."""
+        norm = self._permit(rel)
+        target = self._root / norm
+        target.parent.mkdir(parents=True, exist_ok=True)
+        stage = target.with_name(f".{target.name}.{os.getpid()}.kit-tmp")
+        aside = target.with_name(f".{target.name}.{os.getpid()}.kit-old")
+        try:
+            stage.mkdir(parents=True, exist_ok=True)
+            for sub, content in files.items():
+                dest = stage / _normalise(sub)
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                dest.write_bytes(content)
+            if target.exists():
+                _replace(target, aside)
+            _replace(stage, target)
+        except BaseException:
+            shutil.rmtree(stage, ignore_errors=True)
+            if aside.exists() and not target.exists():
+                _replace(aside, target)
+            raise
+        shutil.rmtree(aside, ignore_errors=True)
+
     def write_json(self, rel: str, value) -> None:
         self.write_text(rel, json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n")
 

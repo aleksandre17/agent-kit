@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 147,
+  "count": 150,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "df51ad7356fe25c0cadb60b2c696dd3fd3459d56ec160f6491d55af53e6022d6",
+      "digest": "864b9587c83742942f3d37110c764db87075183d3f776f8d4d38a466d7d648f2",
       "path": "MANIFEST.json"
     },
     {
@@ -113,7 +113,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "863d0f134e05933f81134867918d8dc85f73b3db453d9fddcc4853954a2d7ae0",
+      "digest": "57236e92f8f0c77fa22f41772e2d14ff80b6142af681469a7fa47ca4dde7b1fe",
       "path": "capabilities/governance/capability.json"
     },
     {
@@ -149,7 +149,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "ff6527c3b03ec0651d73e0bbfa080886fdb1254d63db11dc73f2e4a70ece08a3",
+      "digest": "284107df3ffeb1423074b227a2fafdf8dbc320774dd2d6f00dcd151c4579f25f",
       "path": "capabilities/governance/stewardship.json"
     },
     {
@@ -377,7 +377,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "7e5b877a15cecf6ab0a8cb167b9473505c9ea6d97448e440f88f5d98330c31af",
+      "digest": "6a525cd9fffc1546e77012d229b85dc258b2c97bf2b89e61c32fbef515e1b534",
       "path": "diagnostics.json"
     },
     {
@@ -389,7 +389,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "fe94656578ad57d91e9a90264f4d369ccfd6f963f5c82251ee863c5f071b6113",
+      "digest": "674df898b5499aa32a47e949722024a2088dae2a7c14777f2f74e50a2007ea1f",
       "path": "interpreters/cli.py"
     },
     {
@@ -461,6 +461,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "990bfcac7b4b7c5dfb93966801963d4bf3dbc5bf6fbc5b2f1eae5adaf32f252d",
+      "path": "interpreters/gates/pinned.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "7fd8e6637a3b379683ab4b68019b1774423987cd0f2e355b13bf21fe70854b40",
       "path": "interpreters/gates/quality.py"
     },
@@ -515,6 +521,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "e913f7e4c59e759e1bc3dc91badb3753a3d2402f03d09d55f840c118b98ef134",
+      "path": "interpreters/pin.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "bd2e971a712302bbfe99a5dac68ed26efe5538b18e6a2648c8c77d78dc8e5346",
       "path": "interpreters/plan.py"
     },
@@ -545,7 +557,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "895b37ed5a6362851beba0f5857e506bebed88daebe6dd053ed6e7281408e005",
+      "digest": "93a908c65d227f72a8a957add33ff0222d93052504fa49966004645f130ee5eb",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -635,7 +647,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a975ffe6383694591354a6db61050d74b16688f058af2e31c12f57d9d39471ec",
+      "digest": "4173bbcea6021d4894e771f4fb1e0b0a3384de1380beb607ab5b4fbdb46b3eac",
       "path": "interpreters/verbs/init.py"
     },
     {
@@ -649,6 +661,12 @@
       "class": "interpreter",
       "digest": "7a2cbd05c3627563d788b3c6170cd74689e9ca2f9f0ceec47a4f019cc4302932",
       "path": "interpreters/verbs/move.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "65a2b5d807bf45e4489d3fd4e4977ed6b341ac3c1cab813e2de3849ddd25f3dc",
+      "path": "interpreters/verbs/release.py"
     },
     {
       "accounted_by": "interpreter",
@@ -761,7 +779,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d9276b5f600df94fc76e705d4db995828f2113de5b21cea2c6158f3653eb2e18",
+      "digest": "ddbce7680b2e52e5e2968dca30c049da29769166c0fea4048e39cbba49afda4e",
       "path": "schemas/lock.schema.json"
     },
     {
@@ -885,8 +903,8 @@
       "path": "seeds/laws.md"
     }
   ],
-  "kit_version": "0.1.4",
+  "kit_version": "0.1.5",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-13T08:46:49+00:00"
+  "taken_at": "2026-09-13T13:41:32+00:00"
 }

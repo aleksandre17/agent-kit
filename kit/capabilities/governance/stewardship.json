@@ -230,6 +230,79 @@
       ]
     },
     {
+      "id": "release",
+      "summary": "The pinned kit: a whole tree the kit delivers verbatim from a release, beside the lock it is judged against (ADR-016). The host never edits it and the kit never merges into it -- it is REPLACED WHOLE by whatever kit is being delivered, and its integrity is measured against the lock it carries by a gate, not by a digest here. The row's digest is not taken because a directory has none; the one home for what this tree IS is the lock inside it.",
+      "digest": "not-taken",
+      "cells": [
+        {
+          "cell": "introduced",
+          "state": "delivered",
+          "file": "create",
+          "record": "advance"
+        },
+        {
+          "cell": "collision",
+          "state": "delivered",
+          "file": "replace",
+          "record": "advance"
+        },
+        {
+          "cell": "forgotten",
+          "state": "forgotten",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "restored",
+          "state": "delivered",
+          "file": "create",
+          "record": "advance"
+        },
+        {
+          "cell": "retired",
+          "state": "retired",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "retired-diverged",
+          "state": "retired",
+          "file": "keep",
+          "record": "forget"
+        },
+        {
+          "cell": "unchanged",
+          "state": "delivered",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "advanced",
+          "state": "delivered",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "diverged-kept",
+          "state": "delivered",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "conflicted",
+          "state": "delivered",
+          "file": "replace",
+          "record": "carry"
+        },
+        {
+          "cell": "converged",
+          "state": "delivered",
+          "file": "replace",
+          "record": "carry"
+        }
+      ]
+    },
+    {
       "id": "host-space",
       "summary": "A root the host authors into. The kit accounts for the DIRECTORY and never for what is in it -- which is why a file under one of these is out of account by DECLARATION, and not because a folder happened to look like the kind of place a host writes in.",
       "digest": "not-taken",
@@ -466,6 +539,10 @@
     {
       "mode": "estate",
       "steward": "record"
+    },
+    {
+      "mode": "pinned",
+      "steward": "release"
     }
   ]
 }

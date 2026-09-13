@@ -369,7 +369,16 @@ class Evaluation(Fixtures, unittest.TestCase):
                                      f"framework's opinion wearing the host's signature")
 
         host = self.installed()
-        emitted = [p for p in (host / ".agents").rglob("*.json") if p.is_file()]
+        # The pinned kit (ADR-016) is the KIT, carried verbatim -- its schemas declare the verdict
+        # vocabulary, which is not a verdict. The kit half is measured above, over the payload;
+        # this half is about what the host was GIVEN as its own, so the pinned tree is excluded by
+        # the declaration that places it, never by a spelled path.
+        import pin  # noqa: E402 -- the interpreter's path is set by the harness
+        from manifest import Manifest  # noqa: E402
+        pinned = [host / i["target"] for c in Manifest(KIT).capabilities
+                  for i in c.installs if i["mode"] == pin.MODE]
+        emitted = [p for p in (host / ".agents").rglob("*.json") if p.is_file()
+                   and not any(p.is_relative_to(root) for root in pinned)]
         self.assertTrue(emitted, "a host that emitted no declaration measures nothing here")
         reached = [verdict for verdict in JUDGEMENT_SCHEMA["properties"][VERDICT]["enum"]
                    if verdict != UNJUDGED

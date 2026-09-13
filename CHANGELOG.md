@@ -5,6 +5,25 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade`, which is not built yet.
 
+## 0.1.5 — unreleased
+
+The host carries its kit (ADR-016, link B of ADR-015's line). Until now a host held doctrine pages
+and no interpreter, and was driven from outside by a framework checkout.
+
+**Added**
+- **The pinned kit.** `governance` installs the WHOLE kit — every path its lock enumerates,
+  verbatim, beside the lock — at `.agents/kit/pinned/` (install mode `pinned`, steward `release`). A
+  host runs `python .agents/kit/pinned/interpreters/cli.py <verb> --root .` with no framework on the
+  machine. The tree is staged and swapped in by rename (`Workspace.write_tree`).
+- **What a release is.** A kit whose bytes equal its own lock; identity = SHA-256 of that lock. A
+  working tree pins as `X.Y.Z+unreleased`. `release` states the identity — and `authenticity NOT
+  ESTABLISHED`, because the lock is not signed — or refuses a working tree.
+- **`--kit git+<repo>@<rev>#subdirectory=<dir>`**: a release read at a revision, never a working tree.
+- Gate `FF-KIT-PINNED`; diagnostic `KIT0041`; every run's first line names the kit that spoke.
+
+**Not recorded:** 0.1.3 and 0.1.4 shipped without a section here. The absence is declared, not
+reconstructed.
+
 ## 0.1.2 — unreleased
 
 Host choice, and the one door where a human stands. Until now a `capabilities` field existed that

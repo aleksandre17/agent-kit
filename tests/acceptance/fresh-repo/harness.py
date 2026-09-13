@@ -200,7 +200,11 @@ class Fixtures:
         target = kit / rel
         value = json.loads(target.read_text(encoding="utf-8"))
         mutate(value)
-        target.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+        # LF, stated: the repository's own boundary rule (`.gitattributes`). A fixture kit written
+        # with the platform's line ending would be a kit no release is -- and since ADR-016 a kit
+        # that cannot state what it is cannot be pinned into a host, so the harness would be
+        # manufacturing the refusal it then reports.
+        target.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
 
     @classmethod
     def run_kit(cls, kit: Path, host: Path, verb: str = "init", *flags):

@@ -36,7 +36,11 @@ class Selection(Fixtures, unittest.TestCase):
         self.assertEqual(["governance"], self.answers(host)["capabilities"])
         present = set(host_digest(host))
         for target in self.targets_of("governance"):
-            self.assertIn(target, present, f"{target} was chosen and is missing")
+            # A target ending in '/' names a TREE (the kit's one '/' rule): it is present when
+            # something was written under it, never as a file of that name.
+            written = ([p for p in present if p.startswith(target)] if target.endswith("/")
+                       else [target] if target in present else [])
+            self.assertTrue(written, f"{target} was chosen and is missing")
         for target in self.targets_of("knowledge"):
             self.assertNotIn(target, present, f"{target} belongs to a capability nobody enabled")
         self.assertFalse((host / "docs").exists(),

@@ -6,7 +6,11 @@
   "required": ["schema_version", "kit_version", "algorithm", "newline", "taken_at", "count", "files"],
   "properties": {
     "schema_version": { "type": "integer", "const": 1 },
-    "kit_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "kit_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(\\+[a-z0-9]+(\\.[a-z0-9]+)*)?$",
+      "description": "The kit version, with a local label (PEP 440 local version / SemVer build metadata) where the reading is of a tree that is not the release: a pinned kit delivered from a working tree reads X.Y.Z+unreleased (ADR-016). Additive: every document valid before remains valid."
+    },
     "algorithm": { "type": "string", "minLength": 1 },
     "newline": { "type": "string", "minLength": 1 },
     "taken_at": { "type": "string", "minLength": 1 },

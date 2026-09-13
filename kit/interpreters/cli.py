@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import importlib
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -33,6 +34,7 @@ for extra in [HERE, *sorted(p for p in HERE.iterdir()
 
 import clock as clock_port  # noqa: E402
 import observation  # noqa: E402
+import pin  # noqa: E402
 from context import Context  # noqa: E402
 from errors import KitError  # noqa: E402
 
@@ -59,7 +61,9 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="kit", description="Install and hold an agent kit in a host repository.")
     parser.add_argument("verb", choices=verbs, help="one of the declared verbs")
     parser.add_argument("--root", required=True, help="the host repository to act on")
-    parser.add_argument("--kit", default=str(HERE.parent), help="the kit payload directory")
+    parser.add_argument("--kit", default=str(HERE.parent),
+                        help="the kit payload directory, or a release SOURCE read at a revision: "
+                             "git+<repo>@<rev>#subdirectory=<dir> (ADR-016)")
     parser.add_argument("--plan", action="store_true",
                         help="print the exact set of writes and exit without touching a byte")
     parser.add_argument("--enable", type=_ids, default=None,
@@ -90,7 +94,21 @@ def main(argv=None) -> int:
         print(f"kit: --root {host} is not a directory", file=sys.stderr)
         return 2
 
-    ctx = Context(kit_root=Path(args.kit), host_root=host,
+    # A release SOURCE is resolved here, at the boundary, into a directory holding exactly that
+    # revision -- and refused if that revision is not a release. The scratch it lands in is outside
+    # every host and is removed however the run ends (ADR-016).
+    kit_root, scratch = Path(args.kit), None
+    if pin.is_source(args.kit):
+        kit_root, scratch = pin.fetched(args.kit)
+    try:
+        return _run(args, host, kit_root)
+    finally:
+        if scratch is not None:
+            shutil.rmtree(scratch, ignore_errors=True)
+
+
+def _run(args, host: Path, kit_root: Path) -> int:
+    ctx = Context(kit_root=kit_root, host_root=host,
                   clock=clock_port.from_environment(os.environ))
     module = importlib.import_module(args.verb)
 
@@ -101,7 +119,11 @@ def main(argv=None) -> int:
         print(f"kit: {args.verb} writes nothing, so there is nothing to plan", file=sys.stderr)
         return 2
 
-    print(f"kit {ctx.manifest.version} · {args.verb} · {host.as_posix()}")
+    # WHICH kit is speaking is stated on the first line of every run. A host that carries its own
+    # pinned kit and a host driven from a working tree read identically otherwise -- and the one
+    # question a reader of any output must be able to answer is what actually ran (ADR-016).
+    print(f"kit {ctx.manifest.version} · {args.verb} · {host.as_posix()} · "
+          f"kit at {ctx.manifest.root.as_posix()}")
 
     # Whatever the enabled capabilities declared should watch a run like this one is opened HERE
     # -- before the verb, before even the precondition that could refuse it -- and closed in a

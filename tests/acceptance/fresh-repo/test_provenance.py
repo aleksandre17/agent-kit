@@ -100,7 +100,7 @@ class Provenance(Fixtures, unittest.TestCase):
         before = pins(host)
         payload = next(kit / item["source"] for item in BUNDLE["installs"] if item.get("source"))
         payload.write_text(payload.read_text(encoding="utf-8") + "\nA line nobody released.\n",
-                           encoding="utf-8")
+                           encoding="utf-8", newline="\n")
         read = self.run_kit(kit, host, "check")
         self.assertEqual(1, read.returncode, "check was green over bytes that are not the pin")
         self.assertIn(f"FAIL  {GATE}", read.stdout)
@@ -161,7 +161,7 @@ class Provenance(Fixtures, unittest.TestCase):
         """A claim establishes nothing. A bundle that says it was signed, on a host that has said
         whom it trusts to nobody, is pinned with the word for that -- never verified."""
         kit = bundle_kit(claimed)
-        (kit / SIGNATURE).write_text("not a signature anybody checked\n", encoding="utf-8")
+        (kit / SIGNATURE).write_text("not a signature anybody checked\n", encoding="utf-8", newline="\n")
         host = self.installed(kit)
         self.assertEqual(provenance.NO_TRUST_ROOT, pins(host)[0]["authenticity"]["state"])
 
@@ -205,7 +205,7 @@ class DelegatedVerifier(Fixtures, unittest.TestCase):
 
     def _drafted(self):
         kit, host = bundle_kit(claimed), self.host()
-        (kit / SIGNATURE).write_text("placeholder\n", encoding="utf-8")
+        (kit / SIGNATURE).write_text("placeholder\n", encoding="utf-8", newline="\n")
         drafted = self.run_kit(kit, host, "init")
         return kit, host, H1.search(drafted.stdout).group(0)
 

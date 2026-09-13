@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "governance",
   "version": "0.1.0",
-  "summary": "Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the vendored doctrine and the index projection, plus the gates that hold them.",
+  "summary": "Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the pinned kit a host runs by itself, the vendored doctrine and the index projection, plus the gates that hold them.",
   "requires": [
     {
       "kind": "fact",
@@ -92,6 +92,11 @@
       "source": "seeds/agents.gitignore"
     },
     {
+      "mode": "pinned",
+      "class": "vendor",
+      "target": ".agents/kit/pinned/"
+    },
+    {
       "mode": "vendor",
       "class": "vendor",
       "target": ".agents/kit/doctrine/governance.md",
@@ -163,6 +168,16 @@
       "id": "FF-PROVENANCE-PINNED",
       "kind": "provenance-pinned",
       "params": {},
+      "stance": {
+        "floor": "enforce"
+      }
+    },
+    {
+      "id": "FF-KIT-PINNED",
+      "kind": "pinned-kit-intact",
+      "params": {
+        "mode": "pinned"
+      },
       "stance": {
         "floor": "enforce"
       }

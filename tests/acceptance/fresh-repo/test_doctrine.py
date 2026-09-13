@@ -102,7 +102,7 @@ def bundle_kit(mutate=None) -> Path:
         if mutate:
             value = json.loads((kit / declaration).read_text(encoding="utf-8"))
             mutate(value)
-            (kit / declaration).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+            (kit / declaration).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
         Fixtures.edit_json(kit, "MANIFEST.json", lambda m: m["capabilities"].append(
             {"id": BUNDLE["id"], "declaration": declaration}))
 

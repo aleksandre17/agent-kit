@@ -34,6 +34,7 @@ import ephemeral
 import estate as estate_module
 import hostlock
 import journal
+import pin
 import plan as plan_module
 import predicate
 import provenance
@@ -62,6 +63,13 @@ def _once(ws, item, state):
 def _always(ws, item, state):
     """Framework payload: replaced wholesale, never edited downstream."""
     return "replace" if ws.exists(item["target"]) else "create"
+
+
+def _pinned(ws, item, state):
+    """The kit itself: created where nothing is pinned, KEPT where the host already holds exactly
+    this kit intact, replaced otherwise -- and refused here, in the plan, where it cannot be done
+    honestly (ADR-016). Decided by `pin`, which owns what a release is."""
+    return pin.foresee(state["manifest"], ws, item["target"])
 
 
 def _answer(ws, item, state):
@@ -106,6 +114,15 @@ def _mode_vendor(ctx, ws, item, state):
     ws.write_text(item["target"], ctx.manifest.payload_text(item["source"]))
 
 
+def _mode_pinned(ctx, ws, item, state):
+    """The WHOLE kit, verbatim, beside the lock it is judged against: from now on this host can
+    run every verb by itself, from its own copy (ADR-016)."""
+    given = pin.deliver(ctx.manifest, ws, item["target"], state["reading"]["taken_at"])
+    what = "a release" if given["released"] else f"a working tree (+{pin.UNRELEASED})"
+    print(f"  pinned     {given['count']} path(s) of {what}, lock sha256:{given['lock'][:16]} -- "
+          f"this host now runs: python {item['target']}interpreters/cli.py <verb> --root .")
+
+
 def _mode_space(ctx, ws, item, state):
     """A place the HOST authors into, owned by the capability that declared it. The kit creates
     it and puts nothing in it: seeding an example would be the kit authoring the host's content,
@@ -121,6 +138,7 @@ INSTALL_MODES = {
     "seed": ("install", _once, _mode_seed),
     "vendor": ("install", _always, _mode_vendor),
     "space": ("install", _once, _mode_space),
+    "pinned": ("install", _pinned, _mode_pinned),
     "projection": ("render", None, None),
     "estate": ("record", None, None),
 }
@@ -362,6 +380,7 @@ def _phase_answer(ctx, args, state):
         "approved": approved,
         "approving_draft": bool(args.approve) and status == "draft",
         "by_id": {c.id: c for c in enabled},
+        "manifest": ctx.manifest,
         "scopes": {c.id: ctx.workspace.scoped(c.targets()) for c in enabled},
     })
 

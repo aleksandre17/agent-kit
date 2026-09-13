@@ -199,8 +199,8 @@ class Adapters(Fixtures, unittest.TestCase):
                         f"capabilities/{before['id']}/", f"capabilities/{identity}/")
                     tail = "/" if rendered["target"].endswith("/") else ""
                     rendered["target"] = f".{identity}/{rendered['view']}{tail}"
-            rel.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
-        (third / "capability.json").write_text(json.dumps(declaration, indent=2) + "\n", encoding="utf-8")
+            rel.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
+        (third / "capability.json").write_text(json.dumps(declaration, indent=2) + "\n", encoding="utf-8", newline="\n")
         kit = adapted_kit(extra=[third])
         for rel in [f"capabilities/{RUNTIMES.id}/capability.json",
                     *[p.relative_to(KIT).as_posix() for p in (KIT / "interpreters").rglob("*.py")]]:
