@@ -42,6 +42,11 @@
             "description": "The link (A, B, C, D, E, F, G, L, or a sub-step of one) whose work gives this path real content. Present only when the path is not yet built for real; its absence from disk is then not a floor failure -- it is printed, not hidden.",
             "type": "string",
             "minLength": 1
+          },
+          "capability": {
+            "description": "The id of the one capability whose own `installs` puts this path in place. Present only when the path belongs to a capability that is not always enabled; a row with no `capability` always applies. On a host that has not enabled it, the row is skipped and printed as NOT ENABLED, never counted as a floor failure -- read from that capability's own declaration, never restated here.",
+            "type": "string",
+            "minLength": 1
           }
         }
       }

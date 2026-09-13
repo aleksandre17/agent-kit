@@ -38,7 +38,7 @@ HOST_DECLARATION = REPO / ".agents" / "kit" / "HOST-LAYOUT.json"
 
 
 def _report(declaration: Path, workspace: Workspace, declaration_rel: str) -> tuple:
-    failures, pending = floor.evaluate(workspace, declaration_rel)
+    failures, pending, _not_enabled = floor.evaluate(workspace, declaration_rel)
     doc = json.loads(declaration.read_text(encoding="utf-8"))
     print(f"floor: {declaration_rel} ({doc['side']}), {len(doc['entries'])} drawn path(s)")
     for entry in pending:
@@ -104,9 +104,10 @@ def test_gate_bites_when_a_drawn_path_is_missing(tmp_path):
             target.write_text("x", encoding="utf-8")
 
     workspace = Workspace(root)
-    failures, pending = floor.evaluate(workspace, layout_rel)
+    failures, pending, not_enabled = floor.evaluate(workspace, layout_rel)
     assert failures == []
     assert pending == []
+    assert not_enabled == []
 
     # Remove ONE drawn path: the gate must fail on that path, and only that path.
     victim = fixture["entries"][0]
@@ -116,6 +117,32 @@ def test_gate_bites_when_a_drawn_path_is_missing(tmp_path):
     else:
         victim_path.unlink()
 
-    failures, _pending = floor.evaluate(workspace, layout_rel)
+    failures, _pending, _not_enabled = floor.evaluate(workspace, layout_rel)
     assert len(failures) == 1
     assert victim["path"] in failures[0]
+
+
+def test_a_row_for_a_disabled_capability_is_skipped_and_printed_not_failed(tmp_path):
+    """A row naming a `capability` this host has not enabled is neither missing nor `pending` --
+    it is skipped and reported in `not_enabled`, and never counted as a floor failure."""
+    fixture = {
+        "schema_version": 1,
+        "side": "host",
+        "source": "fixture, for this test only",
+        "entries": [
+            {"path": "roles/", "kind": "dir", "drawn_as": "roles/", "capability": "roles"},
+        ],
+    }
+    root = tmp_path / "host"
+    root.mkdir()
+    layout_rel = "layout.json"
+    (root / layout_rel).write_text(json.dumps(fixture), encoding="utf-8")
+
+    workspace = Workspace(root)
+    # "roles/" does not exist on disk, and "roles" is not in the enabled set.
+    failures, pending, not_enabled = floor.evaluate(workspace, layout_rel, enabled={"governance"})
+    assert failures == []
+    assert pending == []
+    assert len(not_enabled) == 1
+    assert not_enabled[0]["path"] == "roles/"
+    assert not_enabled[0]["capability"] == "roles"

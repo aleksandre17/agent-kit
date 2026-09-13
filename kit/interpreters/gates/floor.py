@@ -12,6 +12,15 @@ present nor declared pending. That is the honesty rule this gate exists to hold:
 no content and no `pending` entry is a defect, and a fabricated placeholder would hide it, not fix
 it.
 
+A row whose `capability` names a capability id is installed by that capability alone -- read from
+`kit/capabilities/<id>/capability.json`'s own `installs`, never guessed here. On a host that has
+not enabled it, the row's path simply does not exist yet, by that host's own declared choice, and
+that is not a floor failure: the row is SKIPPED and printed as `NOT ENABLED`, so it is named rather
+than silently dropped (Cardinal V). A row with no `capability` always applies. The enabled set is
+supplied by the caller (`ctx.enabled_capabilities()`, the one reading every gate uses); a caller
+that passes none gets the old, unfiltered behaviour -- every entry is checked regardless of any
+`capability` it names.
+
 `side` in params narrows the reading to one box of the drawing when a declaration ever carries
 both (it does not yet -- L2 adds the host side as a document of its own, read the same way).
 """
@@ -30,32 +39,47 @@ def _schema() -> dict:
     return json.loads(_SCHEMA_PATH.read_text(encoding="utf-8"))
 
 
-def evaluate(workspace, declaration_rel: str, side: str | None = None):
-    """Pure: given a workspace and a layout declaration path, return `(failures, pending)`.
+def evaluate(workspace, declaration_rel: str, side: str | None = None, enabled=None):
+    """Pure: given a workspace and a layout declaration path, return
+    `(failures, pending, not_enabled)`.
+
+    `enabled`, when given, is an iterable of enabled capability ids. A row naming a `capability`
+    not in that set is skipped -- it is neither a failure nor a `pending` entry, it is reported in
+    `not_enabled` instead. `enabled=None` (the default) checks every row regardless of any
+    `capability` it names, which is the behaviour a caller with no host context gets.
 
     Exposed apart from the KIND entry so a caller outside `check` -- a unit test, a future host
     wiring -- can read the same report without a `check`-shaped `ctx`."""
     if not workspace.exists(declaration_rel):
-        return [f"{declaration_rel}: the layout declaration itself is absent"], []
+        return [f"{declaration_rel}: the layout declaration itself is absent"], [], []
     doc = workspace.read_json(declaration_rel)
     errors = validation.validate(doc, _schema())
     if errors:
-        return [f"{declaration_rel}: {e}" for e in errors], []
+        return [f"{declaration_rel}: {e}" for e in errors], [], []
 
-    failures, pending = [], []
+    enabled_ids = None if enabled is None else set(enabled)
+    failures, pending, not_enabled = [], [], []
     for entry in doc["entries"]:
         if side is not None and doc.get("side") != side:
+            continue
+        if enabled_ids is not None and entry.get("capability") and entry["capability"] not in enabled_ids:
+            not_enabled.append(entry)
             continue
         if "pending" in entry:
             pending.append(entry)
             continue
         if not workspace.exists(entry["path"]):
             failures.append(f"{entry['path']}: drawn path is missing ({entry.get('drawn_as', entry['path'])})")
-    return failures, pending
+    return failures, pending, not_enabled
 
 
 def _layout_floor_present(ctx, params):
-    failures, _pending = evaluate(ctx.workspace, params["declaration"], params.get("side"))
+    enabled = {c.id for c in ctx.enabled_capabilities()}
+    failures, _pending, not_enabled = evaluate(
+        ctx.workspace, params["declaration"], params.get("side"), enabled=enabled
+    )
+    for entry in not_enabled:
+        print(f"        NOT ENABLED  {entry['path']}  ({entry['capability']})")
     return failures
 
 
