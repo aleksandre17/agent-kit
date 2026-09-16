@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "id": "knowledge",
+  "version": "0.1.0",
+  "summary": "Grants a host the ability to hold knowledge with DECLARED AUTHORITY: a document's KIND decides whether it may declare a rule at all, and the gate catches a title claiming an authority its location cannot grant.",
+  "doctrine": "capabilities/knowledge/payload/knowledge.md",
+  "requires": [
+    { "kind": "capability", "id": "governance" }
+  ],
+  "provides": ["knowledge"],
+  "conflicts": [],
+  "declares": {},
+  "installs": [
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": "docs/decisions/ADR-0001-a-documents-kind-decides-its-authority.md",
+      "source": "capabilities/knowledge/payload/ADR-0001.md"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": "docs/reference/README.md",
+      "source": "capabilities/knowledge/payload/reference-README.md"
+    }
+  ],
+  "gates": [
+    {
+      "id": "FF-KIND-AUTHORITY",
+      "kind": "title-claim-within-authority",
+      "params": {
+        "root": "docs",
+        "kinds": [
+          { "path": "docs/intent", "declares": false },
+          { "path": "docs/decisions", "declares": true },
+          { "path": "docs/reference", "declares": false },
+          { "path": "docs/guides", "declares": false },
+          { "path": "docs/archive", "declares": false }
+        ],
+        "claims": [
+          { "id": "adr", "pattern": "^ADR-[0-9]" },
+          { "id": "canon", "pattern": "^CANON-" },
+          { "id": "design", "pattern": "^DESIGN-" },
+          { "id": "law", "pattern": "^LAW-" }
+        ]
+      }
+    }
+  ]
+}

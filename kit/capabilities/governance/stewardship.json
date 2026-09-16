@@ -231,7 +231,7 @@
     },
     {
       "id": "release",
-      "summary": "The pinned kit: a whole tree the kit delivers verbatim from a release, beside the lock it is judged against (ADR-016). The host never edits it and the kit never merges into it -- it is REPLACED WHOLE by whatever kit is being delivered, and its integrity is measured against the lock it carries by a gate, not by a digest here. The row's digest is not taken because a directory has none; the one home for what this tree IS is the lock inside it.",
+      "summary": "The pinned kit and the lock the host was given: a whole tree the kit delivers verbatim from a release, and the lock it is judged against at its own seat (ADR-016). The host never edits either and the kit never merges into them -- both are REPLACED WHOLE by whatever kit is being delivered, and the tree's integrity is measured against that lock by a gate, not by a digest here. No digest is taken: a directory has none, and the one home for what this tree IS is the lock at its seat.",
       "digest": "not-taken",
       "cells": [
         {
@@ -542,6 +542,10 @@
     },
     {
       "mode": "pinned",
+      "steward": "release"
+    },
+    {
+      "mode": "pinned-lock",
       "steward": "release"
     }
   ]

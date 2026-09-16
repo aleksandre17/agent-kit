@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "id": "hygiene",
+  "version": "0.1.0",
+  "summary": "Declares RESIDENCE: the genres of document that have no home in an installed surface, why each has none, and where each belongs instead. It is a sensor and never a broom -- it names a resident and stops, because removing something is a decision with an author, and a machine cannot be that author. Every genre ships its own calibration, one path it must see and one lookalike it must tolerate, so the sensor proves what it sees before anything is believed on its word. The kit's genres are shipped and versioned with the kit; the host may declare more of its own and may exempt nothing, since a gate that names a defect and then permits it has already stopped being a gate.",
+  "doctrine": "capabilities/hygiene/payload/hygiene.md",
+  "requires": [
+    { "kind": "capability", "id": "governance" }
+  ],
+  "provides": ["hygiene"],
+  "conflicts": [],
+  "declares": {
+    "schemas": ["residence"]
+  },
+  "documents": [
+    {
+      "id": "residence_rules",
+      "source": "capabilities/hygiene/residence.json",
+      "validates": "residence"
+    }
+  ],
+  "installs": [
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/hygiene/residence.json",
+      "source": "capabilities/hygiene/payload/residence-local.json",
+      "validates": "residence",
+      "reads_as": "residence_local"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/hygiene/RESIDENCE.md",
+      "source": "capabilities/hygiene/payload/RESIDENCE.md.mustache"
+    }
+  ],
+  "gates": [
+    {
+      "id": "FF-RESIDENCE",
+      "kind": "residence-declared",
+      "params": {
+        "root": ".agents",
+        "sources": ["residence_rules", "residence_local"]
+      }
+    }
+  ]
+}

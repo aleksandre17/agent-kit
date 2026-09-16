@@ -48,6 +48,16 @@
         "schemas": { "type": "array", "items": { "type": "string" } }
       }
     },
+    "doctrine": {
+      "description": "Kit-relative path of this capability's own doctrine page. It is carried in the kit tree -- and so in every host's pinned copy, at `.agents/kit/<this path>` -- and read THERE; it is never vendored as a second copy beside the pinned tree (ADR-016, link L3a).",
+      "type": "string",
+      "minLength": 1
+    },
+    "floor": {
+      "description": "Paths this capability adds to the HOST floor when a host enables it (ADR-015 amendment 1, link L3a). Each row has the shape of one `entries` row of the `layout` schema, which is the one home of that shape and is applied by the floor gate; a row here needs no `capability` field, because the capability that declares it IS its condition.",
+      "type": "array",
+      "items": { "type": "object" }
+    },
     "documents": {
       "description": "Declarations this capability SHIPS and the interpreter reads: a name, a payload file, and the schema that judges it. The base declaration stays thin -- a capability that needs a lifecycle brings its own document and its own schema rather than growing a field on every other capability.",
       "type": "array",
@@ -195,8 +205,9 @@
       }
     },
     "installs": {
+      "description": "What this capability writes into a host -- its whole write permission. May be empty: a capability that only DECLARES (a runtime adapter's surface, read from the kit tree where the pinned copy carries it) writes nothing of its own.",
       "type": "array",
-      "minItems": 1,
+      "minItems": 0,
       "items": {
         "type": "object",
         "additionalProperties": false,

@@ -1,7 +1,7 @@
 # Agent framework — installed surface
 
 > PROJECTION. Do not edit: delete this whole plane and run `render`, and it comes back byte-identical.
-> Kit version 0.1.5 · project status accepted.
+> Kit version 0.1.6 · project status accepted.
 
 ## Capabilities installed here
 
@@ -13,7 +13,6 @@ Declares the task lifecycle as data: cards are BINDING and carry exactly one sta
 | --- | --- | --- |
 | `.agents/project/delivery/policy.json` | binding | seed |
 | `.agents/project/delivery/cards/` | binding | space |
-| `.agents/kit/doctrine/delivery.md` | vendor | vendor |
 | `.agents/generated/delivery/BOARD.md` | projection | projection |
 
 Gates declared by this capability:
@@ -30,7 +29,6 @@ Declares the GRAMMAR of judgement and never a judgement. A run's receipt proves 
 | `.agents/project/evaluation/evaluation.json` | binding | seed |
 | `.agents/project/evaluation/readings.json` | binding | seed |
 | `.agents/runtime/evaluation/judgements/` | ephemeral | space |
-| `.agents/kit/doctrine/evaluation.md` | vendor | vendor |
 | `.agents/generated/evaluation/QUALITY.md` | projection | projection |
 
 Gates declared by this capability:
@@ -40,7 +38,7 @@ Gates declared by this capability:
 
 ### governance 0.1.0
 
-Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the pinned kit a host runs by itself, the vendored doctrine and the index projection, plus the gates that hold them.
+Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the pinned kit a host runs by itself with the lock it was given, and the index projection, plus the gates that hold them.
 
 | path | class | mode |
 | --- | --- | --- |
@@ -50,9 +48,8 @@ Declares the four-class seam for a host: the reading, the declaration, the seede
 | `.agents/project/allowed_signers` | binding | seed |
 | `.agents/project/laws.md` | binding | seed |
 | `.agents/.gitignore` | binding | seed |
-| `.agents/kit/pinned/` | vendor | pinned |
-| `.agents/kit/doctrine/governance.md` | vendor | vendor |
-| `.agents/kit/HOST-LAYOUT.json` | vendor | vendor |
+| `.agents/kit/` | vendor | pinned |
+| `.agents/project/kit.lock.json` | binding | pinned-lock |
 | `.agents/generated/governance/INDEX.md` | projection | projection |
 | `.agents/project/succession/migration-map.json` | binding | seed |
 
@@ -74,8 +71,7 @@ Declares that a run leaves a RECEIPT: written the moment it begins, holding a st
 | path | class | mode |
 | --- | --- | --- |
 | `.agents/project/observability/observation.json` | binding | seed |
-| `.agents/runtime/observability/runs/` | ephemeral | space |
-| `.agents/kit/doctrine/observability.md` | vendor | vendor |
+| `.agents/runtime/receipts/` | ephemeral | space |
 | `.agents/generated/observability/RUNS.md` | projection | projection |
 
 Gates declared by this capability:
@@ -89,7 +85,6 @@ Carries conduct doctrine and ships none of it. A sentence about how a host shoul
 | path | class | mode |
 | --- | --- | --- |
 | `.agents/project/doctrine/doctrine.json` | binding | seed |
-| `.agents/kit/doctrine/doctrine.md` | vendor | vendor |
 | `.agents/generated/DOCTRINE.md` | projection | projection |
 
 Gates declared by this capability:
@@ -102,7 +97,6 @@ Declares RESIDENCE: the genres of document that have no home in an installed sur
 | path | class | mode |
 | --- | --- | --- |
 | `.agents/project/hygiene/residence.json` | binding | seed |
-| `.agents/kit/doctrine/hygiene.md` | vendor | vendor |
 | `.agents/generated/hygiene/RESIDENCE.md` | projection | projection |
 
 Gates declared by this capability:
@@ -117,7 +111,6 @@ Declares that a role DEFINITION is a PROJECTION and never a document anybody wri
 | --- | --- | --- |
 | `.agents/project/role-archetypes.json` | binding | seed |
 | `.agents/project/roles/` | binding | space |
-| `.agents/kit/doctrine/roles.md` | vendor | vendor |
 | `.agents/generated/ROLES.md` | projection | projection |
 | `.agents/generated/roles/` | projection | projection |
 
@@ -133,7 +126,6 @@ Declares that a RUNTIME -- the tool a host actually executes its agents on -- is
 | --- | --- | --- |
 | `.agents/project/runtime-classes.json` | binding | seed |
 | `.agents/project/runtimes/` | binding | space |
-| `.agents/kit/doctrine/runtimes.md` | vendor | vendor |
 | `.agents/generated/RUNTIMES.md` | projection | projection |
 | `.agents/generated/runtimes/` | projection | projection |
 | `.agents/generated/SERVED.json` | projection | projection |

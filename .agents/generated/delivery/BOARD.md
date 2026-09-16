@@ -5,7 +5,7 @@
 > and run `render`: it comes back byte-identical. Edit it and run `check`: the edit is caught,
 > because a projection that survives editing has become a second home for a state.
 
-kit 0.1.5
+kit 0.1.6
 
 ## Intake — 0 card(s), limit -
 

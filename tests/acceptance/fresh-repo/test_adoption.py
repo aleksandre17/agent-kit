@@ -41,6 +41,7 @@ import unittest
 
 from harness import (  # noqa: I001 -- sets the interpreter's path before the imports below
     KIT,
+    VENDORED,
     Fixtures,
     census,
     host_digest,
@@ -58,7 +59,9 @@ GOVERNANCE = json.loads(
 #: Two paths this kit installs, under two different stewards -- read from the declarations, never
 #: spelled here. A collision is a refusal for both, and for different reasons: the kit may not
 #: overwrite bytes it never wrote, and it may not create-once over a file already authored.
-A_KIT_OWNED_PATH = next(i["target"] for i in GOVERNANCE["installs"] if i["mode"] == "vendor")
+#: The kit-owned one is the harness's vendored page: the shipped kit vendors nothing since link L3a
+#: (its vendor plane IS the pinned tree), so this suite runs on the vendoring kit, which does.
+A_KIT_OWNED_PATH = VENDORED["target"]
 A_HOST_OWNED_PATH = next(i["target"] for i in GOVERNANCE["installs"] if i["mode"] == "seed")
 
 #: A plane this kit governs entirely, taken from the manifest.
@@ -95,6 +98,11 @@ def _plant(host, rel: str, text: str = "bytes this kit never wrote\n"):
 
 class Adoption(Fixtures, unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.vkit = cls.vendoring_kit()
+
     # -- 1. the foreign path halts, and the host does not move ----------------------------
     def test_132_a_path_the_host_authored_where_this_kit_installs_halts_the_whole_install(self):
         """Two stewards, one answer. The kit may not overwrite bytes it never wrote, and it may
@@ -105,7 +113,7 @@ class Adoption(Fixtures, unittest.TestCase):
                 host = self.host()
                 _plant(host, target)
                 before = host_digest(host)
-                refused = self.run_kit(KIT, host, "init")
+                refused = self.run_kit(self.vkit, host, "init")
                 self.assertNotEqual(0, refused.returncode, f"{target} was installed over")
                 self.assertIn(target, refused.stderr)
                 self.assertIn("no permission", refused.stderr)
@@ -121,7 +129,7 @@ class Adoption(Fixtures, unittest.TestCase):
         for rel in planted:
             _plant(host, rel)
         before = host_digest(host)
-        refused = self.run_kit(KIT, host, "init")
+        refused = self.run_kit(self.vkit, host, "init")
         self.assertNotEqual(0, refused.returncode)
         for rel in planted:
             self.assertIn(rel, refused.stderr, f"{rel} was left out of the roster")
@@ -137,7 +145,7 @@ class Adoption(Fixtures, unittest.TestCase):
         unrecognisable_but_governed = f"{VENDOR_PLANE}/{A_NAME_NOTHING_RESEMBLES}"
         host = self.host()
         _plant(host, unrecognisable_but_governed)
-        halted = self.run_kit(KIT, host, "adopt")
+        halted = self.run_kit(self.vkit, host, "adopt")
         self.assertNotEqual(0, halted.returncode, "a governed plane admitted an unexplained path")
         self.assertIn(unrecognisable_but_governed, halted.stderr)
         self.assertEqual(reconcile.UNACCOUNTED,
@@ -146,7 +154,7 @@ class Adoption(Fixtures, unittest.TestCase):
         familiar_but_ungoverned = f"somebody-elses/{A_NAME_THE_KIT_ALSO_USES}"
         clean = self.host()
         _plant(clean, familiar_but_ungoverned)
-        adopted = self.run_kit(KIT, clean, "adopt")
+        adopted = self.run_kit(self.vkit, clean, "adopt")
         self.assertEqual(0, adopted.returncode,
                          f"{familiar_but_ungoverned} was seized because its NAME looked familiar")
         self.assertNotIn(familiar_but_ungoverned, adopted.stdout)
@@ -157,7 +165,7 @@ class Adoption(Fixtures, unittest.TestCase):
         nothing. Every word any steward can produce is printed with its count."""
         host = self.host()
         _plant(host, f"{VENDOR_PLANE}/{A_NAME_NOTHING_RESEMBLES}")
-        read = self.run_kit(KIT, host, "adopt")
+        read = self.run_kit(self.vkit, host, "adopt")
         counted = census(read.stdout)
         self.assertEqual(reconciliation_words(), set(counted),
                          "a state the reconciliation can produce went unprinted")
@@ -170,7 +178,7 @@ class Adoption(Fixtures, unittest.TestCase):
         host = self.host()
         _plant(host, A_KIT_OWNED_PATH)
         _plant(host, f"{VENDOR_PLANE}/{A_NAME_NOTHING_RESEMBLES}")
-        read = self.run_kit(KIT, host, "adopt")
+        read = self.run_kit(self.vkit, host, "adopt")
         printed = set(states(read.stdout).values()) | set(census(read.stdout))
         self.assertTrue(printed <= reconciliation_words(),
                         f"adoption invented {sorted(printed - reconciliation_words())}")
@@ -182,7 +190,7 @@ class Adoption(Fixtures, unittest.TestCase):
         by writing into the host it is surveying -- not a plane, not a record, not a marker."""
         host = self.host()
         before = host_digest(host)
-        read = self.run_kit(KIT, host, "adopt")
+        read = self.run_kit(self.vkit, host, "adopt")
         self.assertEqual(0, read.returncode, read.stderr)
         self.assertEqual(before, host_digest(host), "the reading half wrote into the host")
         self.assertIn("no path in this host stands foreign", read.stdout)
@@ -197,7 +205,7 @@ class Adoption(Fixtures, unittest.TestCase):
                 host = self.host()
                 _plant(host, A_KIT_OWNED_PATH)
                 before = host_digest(host)
-                refused = self.run_kit(KIT, host, "init", *flags)
+                refused = self.run_kit(self.vkit, host, "init", *flags)
                 self.assertNotEqual(0, refused.returncode,
                                     f"adoption was walked past with {flags}")
                 self.assertIn(A_KIT_OWNED_PATH, refused.stderr)
@@ -206,8 +214,8 @@ class Adoption(Fixtures, unittest.TestCase):
     def test_139_a_host_that_has_already_answered_is_carried_forward_and_never_re_adopted(self):
         """Adopting an installed host would take a reading saying it was given nothing, over a
         host that was given something -- and every reading built on that is a fiction."""
-        host = self.installed()
-        refused = self.run_kit(KIT, host, "adopt")
+        host = self.installed(self.vkit)
+        refused = self.run_kit(self.vkit, host, "adopt")
         self.assertNotEqual(0, refused.returncode, "an installed host was adopted a second time")
         self.assertIn("already ANSWERED", refused.stderr)
         self.assertIn("upgrade", refused.stderr)
@@ -217,13 +225,13 @@ class Adoption(Fixtures, unittest.TestCase):
         and never by classing it. So the same command, run again, says something different."""
         host = self.host()
         planted = _plant(host, f"{VENDOR_PLANE}/{A_NAME_NOTHING_RESEMBLES}")
-        self.assertNotEqual(0, self.run_kit(KIT, host, "adopt").returncode)
+        self.assertNotEqual(0, self.run_kit(self.vkit, host, "adopt").returncode)
         moved = host / A_NAME_NOTHING_RESEMBLES
         planted.rename(moved)
-        self.assertEqual(0, self.run_kit(KIT, host, "adopt").returncode,
+        self.assertEqual(0, self.run_kit(self.vkit, host, "adopt").returncode,
                          "a resolved roster still refused")
         moved.rename(planted)
-        self.assertNotEqual(0, self.run_kit(KIT, host, "adopt").returncode,
+        self.assertNotEqual(0, self.run_kit(self.vkit, host, "adopt").returncode,
                             "the reading did not change back, so it was not a reading")
 
     # -- 6. the seam's own gate must still be able to fail -----------------------------------
@@ -231,11 +239,11 @@ class Adoption(Fixtures, unittest.TestCase):
         """The whole argument against a fifth class. Had `foreign` become one, every unexplained
         path would resolve to exactly one class and this gate could never fail again -- an
         attribution that cannot fail certifies rather than measures."""
-        host = self.installed()
-        clean = self.run_kit(KIT, host, "check")
+        host = self.installed(self.vkit)
+        clean = self.run_kit(self.vkit, host, "check")
         self.assertEqual(0, clean.returncode, clean.stderr)
         _plant(host, f"{GOVERNED_ROOT}/{A_NAME_NOTHING_RESEMBLES}")
-        red = self.run_kit(KIT, host, "check")
+        red = self.run_kit(self.vkit, host, "check")
         self.assertNotEqual(0, red.returncode, "an unclassed path passed the class-total gate")
         self.assertIn("no class", red.stdout)
 
@@ -244,7 +252,7 @@ class Adoption(Fixtures, unittest.TestCase):
         """Every verb takes one --root and installs one surface, and nothing states what a nested
         host inherits or may contradict. Two hosts, each internally right, is the failure no
         participant can detect from where it stands -- so it is refused rather than survived."""
-        outer = self.installed()
+        outer = self.installed(self.vkit)
         inner = outer / "packages" / "core"
         inner.mkdir(parents=True)
         #: The path that made the outer directory a HOST -- asked of the declarations, so the
@@ -254,7 +262,7 @@ class Adoption(Fixtures, unittest.TestCase):
         for verb in ("adopt", "init"):
             with self.subTest(verb=verb):
                 before = host_digest(outer)
-                refused = self.run_kit(KIT, inner, verb)
+                refused = self.run_kit(self.vkit, inner, verb)
                 self.assertNotEqual(0, refused.returncode, f"{verb} nested one host inside another")
                 self.assertIn("INSIDE a host this kit already holds", refused.stderr)
                 self.assertIn(identifying, refused.stderr,
@@ -277,7 +285,7 @@ class Adoption(Fixtures, unittest.TestCase):
                 dropping = f"{plane['root']}/{A_NAME_NOTHING_RESEMBLES}"
                 host = self.host()
                 _plant(host, dropping)
-                read = self.run_kit(KIT, host, "adopt")
+                read = self.run_kit(self.vkit, host, "adopt")
                 self.assertEqual(0, read.returncode,
                                  f"{plane['class']!r} obstructed an install over a path it disclaims")
                 self.assertIn(dropping, read.stdout, "a reported path was not printed at all")
@@ -297,7 +305,7 @@ class Adoption(Fixtures, unittest.TestCase):
                 host = self.host()
                 _plant(host, intruder)
                 before = host_digest(host)
-                refused = self.run_kit(KIT, host, "init")
+                refused = self.run_kit(self.vkit, host, "init")
                 self.assertNotEqual(0, refused.returncode,
                                     f"{plane['class']!r} admitted an unexplained path")
                 self.assertIn(intruder, refused.stderr)

@@ -3,6 +3,7 @@
   "id": "doctrine",
   "version": "0.1.0",
   "summary": "Carries conduct doctrine and ships none of it. A sentence about how a host should work can only become false if the HOST changed, which is exactly the measure that says it is not this kit's to hold: a framework that shipped a starter cardinal set would be installing an opinion on behalf of a party nobody asked. So this capability ships the CARRIER -- the shape of a distributed cardinal, the shape of a host's answer to one, and the page where the two are read side by side -- and no cardinal whatsoever. Doctrine arrives, if a host wants any, as a BUNDLE: an ordinary capability with an id, a semver and an `installs`, resolved by the same resolver as everything else, with no privileged plane, no second install grammar and no condition language -- a chapter that applies only in some environments is a `requires` on a profile fact, which keeps the condition in the declaration where a host can read it. A host never edits what a bundle publishes; it declares a STANCE in its own plane, naming `bundle@semver#id` and one word of a declared vocabulary, which is a different proposition from the cardinal and therefore not a second home for it. And a host that has taken no doctrine at all projects a page that SAYS SO, in those words: the doctrine in force is none. That is a complete and legal state, `check` stays green on it, and it is written down because a page that simply ended would read exactly like a host whose doctrine failed to render.",
+  "doctrine": "capabilities/doctrine/payload/doctrine.md",
   "requires": [
     {
       "kind": "capability",
@@ -34,12 +35,6 @@
       "source": "capabilities/doctrine/payload/doctrine-local.json",
       "validates": "doctrine",
       "reads_as": "doctrine_local"
-    },
-    {
-      "mode": "vendor",
-      "class": "vendor",
-      "target": ".agents/kit/doctrine/doctrine.md",
-      "source": "capabilities/doctrine/payload/doctrine.md"
     },
     {
       "mode": "projection",

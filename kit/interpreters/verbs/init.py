@@ -69,7 +69,14 @@ def _pinned(ws, item, state):
     """The kit itself: created where nothing is pinned, KEPT where the host already holds exactly
     this kit intact, replaced otherwise -- and refused here, in the plan, where it cannot be done
     honestly (ADR-016). Decided by `pin`, which owns what a release is."""
-    return pin.foresee(state["manifest"], ws, item["target"])
+    tree, lock = pin.seats(state["manifest"])
+    return pin.foresee(state["manifest"], ws, tree, lock)
+
+
+def _pinned_lock(ws, item, state):
+    """The seat of the lock the host was given: one act with the tree, so one decision."""
+    tree, lock = pin.seats(state["manifest"])
+    return pin.foresee_lock(state["manifest"], ws, tree, lock)
 
 
 def _answer(ws, item, state):
@@ -123,6 +130,12 @@ def _mode_pinned(ctx, ws, item, state):
           f"this host now runs: python {item['target']}interpreters/cli.py <verb> --root .")
 
 
+def _mode_pinned_lock(ctx, ws, item, state):
+    """The lock the host was given, at its declared seat -- the other half of the pinned act."""
+    tree, _lock = pin.seats(ctx.manifest)
+    pin.deliver_lock(ctx.manifest, ws, tree, item["target"], state["reading"]["taken_at"])
+
+
 def _mode_space(ctx, ws, item, state):
     """A place the HOST authors into, owned by the capability that declared it. The kit creates
     it and puts nothing in it: seeding an example would be the kit authoring the host's content,
@@ -139,6 +152,7 @@ INSTALL_MODES = {
     "vendor": ("install", _always, _mode_vendor),
     "space": ("install", _once, _mode_space),
     "pinned": ("install", _pinned, _mode_pinned),
+    "pinned-lock": ("install", _pinned_lock, _mode_pinned_lock),
     "projection": ("render", None, None),
     "estate": ("record", None, None),
 }

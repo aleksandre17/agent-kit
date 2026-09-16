@@ -38,6 +38,7 @@ import subprocess
 import doors
 import estate as estate_module
 import lockfile
+import pin
 import version_range
 from errors import KitError
 from workspace import Workspace
@@ -109,11 +110,10 @@ def _issued(ctx) -> set:
     """Every path the kit's own lock accounts for. The lock is the kit's reading of ITSELF; a
     capability whose declaration is not in it was not issued by this kit, and that is MEASURED
     against the lock rather than claimed by the capability."""
-    rel = ctx.manifest.raw_ships()["lock"]
-    path = ctx.manifest.root / rel
+    path = pin.lock_file(ctx.manifest)
     if not path.is_file():
         raise ProvenanceRefused(
-            f"{rel}: this kit has no reading of itself, so nothing can tell a capability it "
+            f"{path.as_posix()}: this kit has no reading of itself, so nothing can tell a capability it "
             f"issued from one a host took from elsewhere. Take the kit's lock, then run again"
         )
     return lockfile.issued(json.loads(path.read_text(encoding="utf-8")))

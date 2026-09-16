@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "residence",
+  "summary": "The genres this kit refuses to let an installed surface accumulate. Each was ruled out by name during the layout study; each is stated here as DATA so that the ruling is executable rather than advisory, and so that a host can see the whole of it without reading a proposal.",
+  "genres": [
+    {
+      "id": "dead-by-location-archive",
+      "pattern": "(^|/)archive/",
+      "because": "vendored superseded text carries no date and no author, so a later reader finds it, cannot tell when it stopped being true, and obeys it.",
+      "instead": "in the upstream repository's history, indexed by its changelog -- a chapter worth keeping is not archived, it is current.",
+      "proves": ".agents/project/doctrine/archive/superseded-chapter.md",
+      "admits": ".agents/project/doctrine/archived-decisions-and-how-to-read-them.md"
+    },
+    {
+      "id": "graveyard-by-name-feedback",
+      "pattern": "(^|/)feedback/",
+      "because": "the genre records HOW a rule was learned, which is a lifecycle stage and not a home; a folder named after the intake is a graveyard by construction, and its rows never leave it.",
+      "instead": "under the concern it governs -- portable identity in the doctrine plane, environment-conditional doctrine beside the condition it declares, a host incident in the host's own shared knowledge.",
+      "proves": ".agents/project/doctrine/feedback/how-we-learned-it.md",
+      "admits": ".agents/project/knowledge/shared/feedback-loops-in-review.md"
+    },
+    {
+      "id": "vendored-release-record",
+      "pattern": "(^|/)(UPGRADE-NOTES|CHANGELOG)\\.md$",
+      "because": "an append-only release record grows with the framework's age rather than this host's needs, so every host would carry the full history of versions it never ran.",
+      "instead": "upstream, read at the moment of need: the delta between the version this host has and the version it is moving to is a projection computed at upgrade time, never a vendored artifact.",
+      "proves": ".agents/project/UPGRADE-NOTES.md",
+      "admits": ".agents/project/doctrine/upgrade.md"
+    }
+  ]
+}

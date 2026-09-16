@@ -1,0 +1,278 @@
+{
+  "$id": "capability",
+  "title": "Capability declaration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "version", "requires", "provides", "conflicts", "installs", "declares", "gates"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "summary": { "type": "string" },
+    "provenance": {
+      "description": "A publisher's CLAIM of a signature over this capability's digest (ADR-008): which declared verifier checks it, the principal who signed, and the kit-relative signature file. A claim establishes nothing until the verifier ran.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verifier", "signer", "signature"],
+      "properties": {
+        "verifier": { "type": "string", "minLength": 1 },
+        "signer": { "type": "string", "minLength": 1 },
+        "signature": { "type": "string", "minLength": 1 }
+      }
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "id"],
+        "properties": {
+          "kind": { "type": "string", "enum": ["capability", "fact"] },
+          "id": { "type": "string", "minLength": 1 },
+          "equals": {},
+          "version": {
+            "description": "A version RANGE the declared `version` of every provider must satisfy -- a subset of npm node-semver: comparator sets joined by `||`, comparators inside a set joined by whitespace, each comparator an operator followed by a full MAJOR.MINOR.PATCH. This pattern holds only that SHAPE; which operators exist, and what each means, is declared once in kit/interpreters/version_range.py, where a new operator is one row. ABSENT means ANY version.",
+            "type": "string",
+            "pattern": "^[^0-9\\s|]*[0-9]+\\.[0-9]+\\.[0-9]+(\\s+[^0-9\\s|]*[0-9]+\\.[0-9]+\\.[0-9]+)*(\\s*\\|\\|\\s*[^0-9\\s|]*[0-9]+\\.[0-9]+\\.[0-9]+(\\s+[^0-9\\s|]*[0-9]+\\.[0-9]+\\.[0-9]+)*)*$"
+          }
+        }
+      }
+    },
+    "provides": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "conflicts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "declares": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "detectors": { "type": "array", "items": { "type": "string" } },
+        "schemas": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "doctrine": {
+      "description": "Kit-relative path of this capability's own doctrine page. It is carried in the kit tree -- and so in every host's pinned copy, at `.agents/kit/<this path>` -- and read THERE; it is never vendored as a second copy beside the pinned tree (ADR-016, link L3a).",
+      "type": "string",
+      "minLength": 1
+    },
+    "floor": {
+      "description": "Paths this capability adds to the HOST floor when a host enables it (ADR-015 amendment 1, link L3a). Each row has the shape of one `entries` row of the `layout` schema, which is the one home of that shape and is applied by the floor gate; a row here needs no `capability` field, because the capability that declares it IS its condition.",
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "documents": {
+      "description": "Declarations this capability SHIPS and the interpreter reads: a name, a payload file, and the schema that judges it. The base declaration stays thin -- a capability that needs a lifecycle brings its own document and its own schema rather than growing a field on every other capability.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source", "validates"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "source": { "type": "string", "minLength": 1 },
+          "validates": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "governs": {
+      "description": "This capability holds a collection of things that move through a declared lifecycle. Every name here points at something declared elsewhere in THIS file -- never at a path, because the path is already declared by the install that owns it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collection", "state_field", "lifecycle", "policy", "board"],
+      "properties": {
+        "collection": { "type": "string", "minLength": 1 },
+        "state_field": { "type": "string", "minLength": 1 },
+        "lifecycle": { "type": "string", "minLength": 1 },
+        "policy": { "type": "string", "minLength": 1 },
+        "board": { "type": "string", "minLength": 1 }
+      }
+    },
+    "composes": {
+      "description": "This capability holds things that are COMPOSED rather than authored: a BASE stating what is true of a kind, an INSTANCE stating what is true of one of them, and a definition that is the projection of the two. Every name here points at something declared elsewhere in THIS file. What the block is FOR is what it makes unreachable: the base is declared once and rendered into every definition, so a binding line is not a line anyone is trusted to keep in step -- it is a line nobody can restate. An instance never overrides; a key carried by both sides is refused, because precedence is how the loser's declaration goes on reading as true while the value came from somewhere else.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "instances", "base", "shared", "census"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "instances": { "type": "string", "minLength": 1 },
+        "base": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sources", "list", "named_by"],
+          "properties": {
+            "sources": {
+              "description": "The named documents holding bases -- SHIPPED by this capability, or AUTHORED by the host in a path it declared readable. Both arrive by name and neither outranks the other: a base a host declares is a base, which is what lets a thing with no shipped ancestor be the same grammar rather than an exception to it.",
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "list": { "type": "string", "minLength": 1 },
+            "named_by": {
+              "description": "The field on an instance that names its base.",
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "shared": {
+          "description": "Lines carried by EVERY definition whatever its base -- declared once, rendered into all. This is the half a reference could not do, because a reference can be left unfollowed.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sources", "list"],
+          "properties": {
+            "sources": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+            "list": { "type": "string", "minLength": 1 }
+          }
+        },
+        "census": {
+          "description": "The view-model name for the roll of BASES with the instances each one has -- including the ones with none. A base shipped and never taken up is a fact; a surface that merely omitted it would read exactly like a kit that never shipped it.",
+          "type": "string",
+          "minLength": 1
+        },
+        "accounts": {
+          "description": "Every member of a declared VOCABULARY placed against every composed row, so that what an instance CLAIMS, what has been PROVEN of it and what it does not claim AT ALL are three groups rather than one list. Declared where the composition is, because it is the same reading: an instance's list of what it can do is meaningless without the list of what it could have said and did not, and the two are only comparable if some document declared the words first.\n\nWithout this block a capability composes exactly as before. With it, no member of the vocabulary can be omitted from any row -- which is the point, since a short list of claims and an instance that genuinely needs nothing read identically to anyone shown only what is present.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "vocabulary", "claimed"],
+          "properties": {
+            "id": {
+              "description": "The field each composed row carries the accounting under.",
+              "type": "string",
+              "minLength": 1
+            },
+            "vocabulary": {
+              "description": "The named documents and the list within them declaring every member that may be claimed. Several sources for the same reason bases have several: a vocabulary the kit ships and a vocabulary this host adds are both vocabulary, and a member declared twice is refused rather than ordered.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["sources", "list"],
+              "properties": {
+                "sources": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+                "list": { "type": "string", "minLength": 1 }
+              }
+            },
+            "claimed": {
+              "description": "Where an instance's own words live: the field holding its claims, and the sub-field of each naming the vocabulary member it is about. A claim reaches the CLAIMED group and no other, whatever it says -- not by a check, but because an authored document and a record of something that happened are not the same document.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["field", "names"],
+              "properties": {
+                "field": { "type": "string", "minLength": 1 },
+                "names": { "type": "string", "minLength": 1 }
+              }
+            },
+            "proven": {
+              "description": "The readable whose RECORDS may turn a claim into an observation: which reading holds them, which field of a record names the row it is about, and which names the vocabulary member. ABSENT where nothing in this kit can yet observe such a thing -- and absent is a declared gap, carried to every surface as the name that is missing rather than as a count of zero. A zero taken against no instrument is an attribution that cannot fail, and an attribution that cannot fail certifies rather than measures.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["reading", "of", "names"],
+              "properties": {
+                "reading": { "type": "string", "minLength": 1 },
+                "of": { "type": "string", "minLength": 1 },
+                "names": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "evaluates": {
+      "description": "This capability holds things that are JUDGED: a declaration the host owns, naming what is judged and how, and a collection of judgements over it. Every name here points at something declared elsewhere in THIS file, or at a field of the document it names -- never at a path, and never at a case, a rubric or a verdict, because those are the host's and the framework has no way to know a good one. The verb that reads this block opens a judgement for every pair that lacks one and writes no verdict at all.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declaration", "rubrics", "cases", "judged_by", "judgements"],
+      "properties": {
+        "declaration": { "type": "string", "minLength": 1 },
+        "rubrics": { "type": "string", "minLength": 1 },
+        "cases": { "type": "string", "minLength": 1 },
+        "judged_by": { "type": "string", "minLength": 1 },
+        "judgements": { "type": "string", "minLength": 1 }
+      }
+    },
+    "observes": {
+      "description": "This capability declares that something WATCHES a run: which kind of observer, and the runs it applies to. An observer is opened before the verb and closed after it, so a run that never comes back has already said that it started. WHICH runs are worth watching is stated here, as data, never decided in the machinery -- a rule about a host's runs spelled in an interpreter is a judgement in the one place a host cannot reach.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "when", "params"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "kind": { "type": "string", "minLength": 1 },
+          "when": {
+            "description": "The fields of the run's own reading this row reads, and the values it reads them as. Equality only: the instant a declaration can express a comparison it can express a policy, and a policy inside a declaration is a thing no machine may generate and no host may safely edit.",
+            "type": "object"
+          },
+          "params": { "type": "object" }
+        }
+      }
+    },
+    "installs": {
+      "description": "What this capability writes into a host -- its whole write permission. May be empty: a capability that only DECLARES (a runtime adapter's surface, read from the kit tree where the pinned copy carries it) writes nothing of its own.",
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mode", "class", "target"],
+        "properties": {
+          "mode": { "type": "string", "minLength": 1 },
+          "class": { "type": "string", "enum": ["vendor", "binding", "projection", "ephemeral"] },
+          "target": { "type": "string", "minLength": 1 },
+          "source": { "type": "string", "minLength": 1 },
+          "validates": { "type": "string", "minLength": 1 },
+          "reads_as": {
+            "description": "This installed path is READ BACK under this name, and reaches every projection. A target ending in '/' is a collection of JSON files; anything else is one document. The path is stated once, here, by the install that owns it.",
+            "type": "string",
+            "minLength": 1
+          },
+          "shape": {
+            "description": "How this projection is SHAPED when its target alone cannot say. Absent, the target decides -- one document, or a collection when it ends in '/'. A named shape is a row in the render interpreter's open registry; the one registered beside those two is 'served' (ADR-013), which projects the files a runtime product reads at paths OUTSIDE the kit's planes and writes, at this install's own target inside the projection plane, the record of every one of them.",
+            "type": "string",
+            "pattern": "^[a-z][a-z-]*$"
+          },
+          "serves": {
+            "description": "What a 'served' projection serves: where the surfaces are declared, which composed view holds the host's enabled runtimes and which of their fields names a surface, and the VIEWS a surface may render -- a document assembled from sections the host already owns, or one file per record of a composed view whose body is the projection this host already renders for that record. Every name here is data; the interpreter knows none of them.",
+            "type": "object",
+            "required": ["surfaces", "enabled_by", "views"],
+            "properties": {
+              "surfaces": { "type": "object", "required": ["sources", "list"] },
+              "enabled_by": { "type": "object", "required": ["over", "field"] },
+              "views": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["id"] } }
+            }
+          },
+          "each": {
+            "description": "This projection writes one file PER RECORD rather than one file about a set. Required exactly when the declared target names a collection -- the same '/' rule that decides whether a readable is one document or many, read once and never a second convention. A surface FOR each member, where the singular form gives a surface ABOUT them all.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["over", "named"],
+            "properties": {
+              "over": { "type": "string", "minLength": 1 },
+              "named": { "type": "string", "minLength": 1 },
+              "suffix": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "kind": { "type": "string", "minLength": 1 },
+          "params": { "type": "object" },
+          "stance": {
+            "description": "What the PUBLISHER of this gate declares about its enforcement (ADR-006). `ships` is the stance the gate stands in until the host answers -- absent, it stands in the vocabulary's declared `unanswered` stance. `floor` is the lowest stance any host may declare for it: a gate that holds the kit's own integrity declares a floor, as Rust's `forbid` cannot be lowered by an inner scope. Both name rows of the one stance vocabulary; neither is ever a list inside the interpreter.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ships": { "type": "string", "minLength": 1 },
+              "floor": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

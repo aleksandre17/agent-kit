@@ -95,6 +95,37 @@ def ship(dest: Path) -> Path:
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
 
+#: The capability that pins the kit, and the two modes of that one act -- read from the kit.
+_PINNING = next(c for c in Manifest(KIT).capabilities
+                if any(i["mode"] == "pinned" for i in c.installs))
+_PINNING_MODES = {i["mode"] for i in _PINNING.installs if i["mode"].startswith("pinned")}
+
+#: The KIT STEWARD's exemplar: one page vendored into the vendor plane, owned by the kit and
+#: editable by the host. Since link L3a the shipped kit vendors nothing -- its vendor plane IS the
+#: pinned tree, replaced whole and judged against its lock -- yet the three-way reading of a file
+#: the kit owns and a host may have edited is a mechanism the kit still carries (`vendor -> kit` in
+#: stewardship). It is exercised on a kit that USES it: the shipped kit with its pinning act
+#: withdrawn and this page vendored in its place (the pre-L3a shape, minus the pinned copy).
+VENDORED = {"mode": "vendor", "class": "vendor",
+            "target": f".agents/kit/doctrine/{_PINNING.raw['doctrine'].rsplit('/', 1)[1]}",
+            "source": _PINNING.raw["doctrine"]}
+
+
+def vendoring(kit: Path) -> None:
+    """Patch a fixture kit into one that pins nothing and vendors `VENDORED`."""
+    rel = Manifest(KIT).declaration_of(_PINNING.id)
+    target = kit / rel
+    value = json.loads(target.read_text(encoding="utf-8"))
+    value["installs"] = [i for i in value["installs"] if i["mode"] not in _PINNING_MODES]
+    value["installs"].append(dict(VENDORED))
+    # A kit that pins nothing cannot meet the drawn floor (the drawing places a pinned copy and its
+    # lock), so the gates that hold those two are withdrawn with the act they judge.
+    value["gates"] = [g for g in value["gates"]
+                      if g.get("params", {}).get("mode") not in _PINNING_MODES
+                      and g["kind"] != "layout-floor-present"]
+    target.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+
 def reconciliation_words() -> set:
     """Every state word a reconciliation can print, taken from the DECLARATION that enumerates
     them plus the two the surface states in its own words. One home: `upgrade` and `adopt` are one
@@ -194,6 +225,16 @@ class Fixtures:
         if patch:
             patch(base)
         return base
+
+    @classmethod
+    def vendoring_kit(cls, name: str = "vendoring", patch=None, add=()) -> Path:
+        """A fixture kit that exercises the kit steward (`VENDORED`), with `patch` applied on
+        top -- an upstream release of THAT kit, in the only way a reconciliation can tell."""
+        def both(kit):
+            vendoring(kit)
+            if patch:
+                patch(kit)
+        return cls.fixture_kit(name, patch=both, add=add)
 
     @staticmethod
     def edit_json(kit: Path, rel: str, mutate) -> None:

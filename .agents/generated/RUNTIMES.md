@@ -1,7 +1,7 @@
 # Runtimes — what this host runs its agents on, and what it has only been told
 
 > **Generated. Do not edit.** Recomputed from the classes declared and the descriptors this host
-> authored. Kit 0.1.5.
+> authored. Kit 0.1.6.
 
 A runtime descriptor is a PROJECTION. The kit ships classes — what is true of a runtime as a
 KIND, in no vendor's vocabulary — and this host authors descriptors, which say only what a host

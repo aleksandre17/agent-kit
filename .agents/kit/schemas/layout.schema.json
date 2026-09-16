@@ -1,0 +1,55 @@
+{
+  "$id": "layout",
+  "title": "One machine-readable reading of a drawn tree (ADR-015 amendment 1)",
+  "description": "The blueprint (docs/proposals/PROPOSAL-agent-framework-blueprint.md, Part VI) draws two trees, UPSTREAM and HOST, as a fixed set of paths that must exist in their drawn place by their drawn name -- the FLOOR, never the ceiling (amendment 1). This is the ONE declaration of that floor for one side; a floor gate is a GENERIC projection of it, never a hand-written list of paths inside an interpreter. A path whose real content belongs to a later link is named `pending` with the link that carries it -- never a fabricated placeholder (Cardinal V).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "side", "source", "entries"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "side": {
+      "description": "Which box of the Part VI drawing this reading is of.",
+      "type": "string",
+      "enum": ["upstream", "host"]
+    },
+    "source": {
+      "description": "Where the drawing that this declaration transcribes lives -- file and line range.",
+      "type": "string",
+      "minLength": 1
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "kind"],
+        "properties": {
+          "path": {
+            "description": "Root-relative, POSIX-formed. A directory path ends in '/'.",
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["dir", "file"]
+          },
+          "drawn_as": {
+            "description": "The label the drawing itself uses for this path, for a reader comparing the two.",
+            "type": "string"
+          },
+          "pending": {
+            "description": "The link (A, B, C, D, E, F, G, L, or a sub-step of one) whose work gives this path real content. Present only when the path is not yet built for real; its absence from disk is then not a floor failure -- it is printed, not hidden.",
+            "type": "string",
+            "minLength": 1
+          },
+          "capability": {
+            "description": "The id of the one capability whose own `installs` puts this path in place. Present only when the path belongs to a capability that is not always enabled; a row with no `capability` always applies. On a host that has not enabled it, the row is skipped and printed as NOT ENABLED, never counted as a floor failure -- read from that capability's own declaration, never restated here.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

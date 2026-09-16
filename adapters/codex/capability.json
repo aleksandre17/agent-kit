@@ -19,14 +19,14 @@
       "validates": "runtime-surface"
     }
   ],
-  "installs": [
+  "floor": [
     {
-      "mode": "vendor",
-      "class": "vendor",
-      "target": ".agents/kit/runtimes/surfaces/codex.json",
-      "source": "capabilities/codex/surfaces.json",
-      "validates": "runtime-surface"
+      "path": ".codex/",
+      "kind": "dir",
+      "drawn_as": ".codex/",
+      "pending": "C"
     }
   ],
+  "installs": [],
   "gates": []
 }

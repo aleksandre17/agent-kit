@@ -5,8 +5,8 @@ kit plane is a PINNED COPY of the kit. Measured before this slice, a clean host 
 pages and no interpreter: it could run nothing by itself. These tests hold the opposite, and each
 one is a mutation against a real fixture kit or a real host:
 
-  1. an approved host holds the WHOLE kit, verbatim, beside the lock it is judged against -- and
-     a release pins its own lock byte for byte;
+  1. an approved host holds the WHOLE kit, verbatim, at its tree target, and the lock it is judged
+     against at the declared seat -- and a release pins its own lock byte for byte;
   2. a verb runs from that copy with the kit that installed it GONE, and says which kit spoke;
   3. a working tree pins honestly, as `+unreleased`, never as the release it is not;
   4. a changed pinned file fails its gate by name, and the pinned copy refuses to re-stamp itself;
@@ -31,9 +31,9 @@ from harness import CLI, KIT, LOCK, Fixtures, applied, ship  # noqa: I001 -- set
 import pin  # noqa: E402
 from manifest import Manifest  # noqa: E402
 
-#: Where the pinned kit lands -- asked of the declarations, never spelled here.
-PINNED = next(item["target"] for c in Manifest(KIT).capabilities for item in c.installs
-              if item["mode"] == pin.MODE)
+#: Where the pinned kit lands, and where the lock the host was given sits -- asked of the
+#: declarations, never spelled here.
+PINNED, SEAT = pin.seats(Manifest(KIT))
 CODE = pin.ReleaseError.code
 
 
@@ -59,18 +59,19 @@ def from_source(source: str, host: Path, verb: str, *flags):
 
 class PinnedKit(Fixtures, unittest.TestCase):
 
-    def test_273_an_approved_host_carries_the_whole_kit_beside_the_lock_it_carries(self):
+    def test_273_an_approved_host_carries_the_whole_kit_and_the_lock_at_its_seat(self):
         host = self.installed()
         lock = json.loads((KIT / LOCK).read_text(encoding="utf-8"))
         for entry in lock["files"]:
             self.assertEqual((KIT / entry["path"]).read_bytes(),
                              (host / PINNED / entry["path"]).read_bytes(), entry["path"])
-        self.assertEqual((KIT / LOCK).read_bytes(), (host / PINNED / LOCK).read_bytes(),
-                         "a release pins its OWN lock, verbatim: its identity is that text")
+        self.assertEqual((KIT / LOCK).read_bytes(), (host / SEAT).read_bytes(),
+                         "a release pins its OWN lock, verbatim, at the declared seat")
         on_disk = {p.relative_to(host / PINNED).as_posix()
                    for p in (host / PINNED).rglob("*") if p.is_file()}
-        self.assertEqual({e["path"] for e in lock["files"]} | {LOCK}, on_disk,
-                         "the pinned tree is exactly the release: nothing missing, nothing extra")
+        self.assertEqual({e["path"] for e in lock["files"]}, on_disk,
+                         "the pinned tree is exactly the release: nothing missing, nothing extra "
+                         "-- and no second copy of any page beside it")
 
     def test_274_a_verb_runs_from_the_pinned_copy_with_the_installing_kit_gone(self):
         kit = self.fixture_kit("gone")
@@ -89,7 +90,7 @@ class PinnedKit(Fixtures, unittest.TestCase):
             (k / "README.md").read_text(encoding="utf-8") + "\nan uncommitted line\n",
             encoding="utf-8", newline="\n"))
         host = self.installed(kit)
-        held = json.loads((host / PINNED / LOCK).read_text(encoding="utf-8"))
+        held = json.loads((host / SEAT).read_text(encoding="utf-8"))
         version = Manifest(kit).version
         self.assertEqual(f"{version}+{pin.UNRELEASED}", held["kit_version"])
         self.assertIn("an uncommitted line", (host / PINNED / "README.md").read_text(encoding="utf-8"))
@@ -155,7 +156,7 @@ class PinnedKit(Fixtures, unittest.TestCase):
         self.assertEqual(3, drafted.returncode, said(drafted))
         done = from_source(source, host, "init", "--approve", "acceptance-suite")
         self.assertEqual(0, done.returncode, said(done))
-        self.assertEqual((KIT / LOCK).read_bytes(), (host / PINNED / LOCK).read_bytes())
+        self.assertEqual((KIT / LOCK).read_bytes(), (host / SEAT).read_bytes())
         self.assertEqual([], list(Path(tempfile.gettempdir()).glob("kit-release-*")),
                          "the fetched release is removed after the run")
         (repo / "kit" / "README.md").write_text("not the release\n", encoding="utf-8")
@@ -179,7 +180,7 @@ class PinnedComposition(Fixtures, unittest.TestCase):
 
         kit = adapted_kit()
         host = self.installed(kit)
-        held = json.loads((host / PINNED / LOCK).read_text(encoding="utf-8"))
+        held = json.loads((host / SEAT).read_text(encoding="utf-8"))
         not_issued = {e["path"] for e in held["files"] if e["accounted_by"] == lockfile.NOT_ISSUED}
         self.assertTrue(not_issued, "the taken adapters were absorbed into what the kit issued")
         self.assertEqual(set(), not_issued & lockfile.issued(json.loads(

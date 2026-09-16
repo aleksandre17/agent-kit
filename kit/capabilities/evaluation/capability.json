@@ -3,6 +3,7 @@
   "id": "evaluation",
   "version": "0.1.0",
   "summary": "Declares the GRAMMAR of judgement and never a judgement. A run's receipt proves that it fired; this is the other half -- whether it HIT -- and that question is domain, so the framework ships the shape of a rubric, the verb that evaluates, the schema of a quality receipt and the vocabulary of a verdict, while every case, every criterion and every threshold belongs to the host. What it therefore ships is a ZERO MEASURE: the declaration arrives with no rubric, no case and no judge in it, and the surface says so in those words. An evaluation page that reports nothing because nothing was declared reads exactly like one reporting that everything is fine, and this capability exists so that the two can never be confused. The blank is materialised rather than implied: a judgement is opened UNJUDGED the moment a case and a rubric are known to need each other, so `never judged` is a record that can be counted instead of an absence that cannot.",
+  "doctrine": "capabilities/evaluation/payload/evaluation.md",
   "requires": [],
   "provides": ["evaluation"],
   "conflicts": [],
@@ -46,12 +47,6 @@
       "target": ".agents/runtime/evaluation/judgements/",
       "validates": "judgement",
       "reads_as": "judgements"
-    },
-    {
-      "mode": "vendor",
-      "class": "vendor",
-      "target": ".agents/kit/doctrine/evaluation.md",
-      "source": "capabilities/evaluation/payload/evaluation.md"
     },
     {
       "mode": "projection",

@@ -12,7 +12,7 @@ lie — so each page is worth more when it says *when it was last measured* than
 sounds current.
 
 The other kinds live beside this one, and what each of them is for is explained in
-`.agents/kit/doctrine/knowledge.md`. Which of them may DECLARE is stated in exactly one place —
+`.agents/kit/capabilities/knowledge/payload/knowledge.md` (in the pinned kit). Which of them may DECLARE is stated in exactly one place —
 the `knowledge` capability's own declaration, which is also what the `FF-KIND-AUTHORITY` gate
 reads. No page repeats that list, including this one: a table with two homes drifts while both
 copies still read as correct.

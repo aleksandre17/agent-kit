@@ -88,72 +88,9 @@
     {
       "capability": "governance",
       "class": "vendor",
-      "digest": "c404c05b6627273946afd3537acc6c8c28ac53e66a72089211a223493df87cfa",
-      "mode": "vendor",
-      "path": ".agents/kit/HOST-LAYOUT.json"
-    },
-    {
-      "capability": "delivery",
-      "class": "vendor",
-      "digest": "46f02ea4dae8c2e1c23f44a75567c5aaa474fc71326a057f5335f1ccb9fd6672",
-      "mode": "vendor",
-      "path": ".agents/kit/doctrine/delivery.md"
-    },
-    {
-      "capability": "doctrine",
-      "class": "vendor",
-      "digest": "b21c8dc71a43ed4850a244535987d3fb6e2caffd9b5c041767248915a2213bfb",
-      "mode": "vendor",
-      "path": ".agents/kit/doctrine/doctrine.md"
-    },
-    {
-      "capability": "evaluation",
-      "class": "vendor",
-      "digest": "cf2a81af00691436a5f44a625415cfa978b9b0ecc4474f7785233c5469ca7607",
-      "mode": "vendor",
-      "path": ".agents/kit/doctrine/evaluation.md"
-    },
-    {
-      "capability": "governance",
-      "class": "vendor",
-      "digest": "0fe388b48fd7f98764e7355eb6fba41528e82366f2246238fbc1f86cfd170baf",
-      "mode": "vendor",
-      "path": ".agents/kit/doctrine/governance.md"
-    },
-    {
-      "capability": "hygiene",
-      "class": "vendor",
-      "digest": "93759c9475d6e78adb66800c02f8db7417ca35e33cdbcfa00a44c9386f539122",
-      "mode": "vendor",
-      "path": ".agents/kit/doctrine/hygiene.md"
-    },
-    {
-      "capability": "observability",
-      "class": "vendor",
-      "digest": "fd83c48f7bdcb1108b6e90403a5c6d767dbe81914e8e4d41233265461be13737",
-      "mode": "vendor",
-      "path": ".agents/kit/doctrine/observability.md"
-    },
-    {
-      "capability": "roles",
-      "class": "vendor",
-      "digest": "d1cc686a91a48afaa910596071bbb232480f5ebab819e2a938a683f1aa8d9ea3",
-      "mode": "vendor",
-      "path": ".agents/kit/doctrine/roles.md"
-    },
-    {
-      "capability": "runtimes",
-      "class": "vendor",
-      "digest": "ef55f0958ba6fec8f614301bf06f68dad81b4a578fcbf2c9fe8a9d1c91322165",
-      "mode": "vendor",
-      "path": ".agents/kit/doctrine/runtimes.md"
-    },
-    {
-      "capability": "governance",
-      "class": "vendor",
       "digest": null,
       "mode": "pinned",
-      "path": ".agents/kit/pinned/"
+      "path": ".agents/kit/"
     },
     {
       "capability": "governance",
@@ -210,6 +147,13 @@
       "digest": "6deb94730b99d898d2856b928a11921f5b7b0156589a3fd030bee4f2411012a6",
       "mode": "seed",
       "path": ".agents/project/hygiene/residence.json"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": null,
+      "mode": "pinned-lock",
+      "path": ".agents/project/kit.lock.json"
     },
     {
       "capability": "governance",
@@ -286,14 +230,14 @@
       "class": "ephemeral",
       "digest": null,
       "mode": "space",
-      "path": ".agents/runtime/observability/runs/"
+      "path": ".agents/runtime/receipts/"
     }
   ],
-  "kit_version": "0.1.5",
+  "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
   "signed_by": "agent-linkB(owner-delegated:ADR-015)",
   "succession_acts": [],
   "taken": [],
-  "taken_at": "2026-09-13T18:58:33+00:00"
+  "taken_at": "2026-09-14T06:27:16+00:00"
 }

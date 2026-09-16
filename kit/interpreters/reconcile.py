@@ -122,7 +122,15 @@ def survey(ctx, capabilities, recorded, stewards, adoptions=None) -> list:
     for path in sorted(set(was) | set(will)):
         shipped, ahead = was.get(path), will.get(path)
         item = ahead[0] if ahead else None
-        mode = item["mode"] if item else shipped["mode"]
+        # A path this host was given on its own, which the new kit no longer declares on its own
+        # but which now lies INSIDE a collection the new kit declares, is not retired: it is
+        # ABSORBED, and the collection's steward answers for it (link L3a -- an older host whose
+        # vendored pages and pinned copy sat inside what is now the pinned tree). Saying `retired,
+        # kept` would promise a file the delivery of that collection is about to replace.
+        home = None if item or not shipped else next(
+            (root for root in will if estate_module.is_root(root) and path != root
+             and path.startswith(root)), None)
+        mode = item["mode"] if item else (will[home][0]["mode"] if home else shipped["mode"])
         if shipped and item and shipped["mode"] != item["mode"]:
             held, taking = stewards.of_mode(shipped["mode"]), stewards.of_mode(item["mode"])
             if held != taking:
@@ -135,13 +143,14 @@ def survey(ctx, capabilities, recorded, stewards, adoptions=None) -> list:
         # Who answers for the path NOW -- its mode's steward, or, where the row carries a signed
         # transfer, the steward that one declares it transfers to. Read from the record and the
         # declaration; this module privileges no steward and no path (ADR-010).
-        steward = stewards.answering(mode, shipped)
+        steward = stewards.answering(mode, None if home else shipped)
         taken = stewards.measures(steward) and not estate_module.is_root(path)
         present = ws.exists(path)
         here = hashlib.sha256(ws.read_bytes(path)).hexdigest() if (present and taken) else None
         found = cell(shipped is not None, shipped["digest"] if shipped else None,
                      present, here,
-                     item is not None, _incoming_digest(ctx, item) if item else None)
+                     item is not None or home is not None,
+                     _incoming_digest(ctx, item) if item else None)
         verdict = stewards.verdict(steward, found)
         if verdict.get("refuse") and path in adoptions:
             found = verdict["adoptable"]
@@ -151,8 +160,13 @@ def survey(ctx, capabilities, recorded, stewards, adoptions=None) -> list:
             "mode": mode, "file": verdict["file"], "record": verdict["record"],
             "refuse": bool(verdict.get("refuse")), "adoptable": verdict.get("adoptable"),
             "here": here, "shipped": shipped["digest"] if shipped else None,
-            "why": _transferred(shipped) + _why(found, recorded["taken_at"], shipped, here),
+            "why": ((f"inside {home}, which this kit now delivers whole as {mode!r} -- " if home
+                     else _transferred(shipped))
+                    + _why(found, recorded["taken_at"], shipped, here)),
             "named": stewards.named(steward),
+            # Where the row was ABSORBED into a collection the new kit delivers whole: always
+            # printed, whatever its cell, because the path is about to change hands.
+            "absorbed": home,
         })
 
     # Anything in a governed plane that none of the three readings explains. It is never deleted --
@@ -249,7 +263,7 @@ def report(stewards, rows, ordinary: str) -> None:
     for state, count in census(stewards, rows):
         print(f"  {count:>4}  {state}")
     for row in rows:
-        if row["refuse"] or row["cell"] != ordinary or row.get("named"):
+        if row["refuse"] or row["cell"] != ordinary or row.get("named") or row.get("absorbed"):
             print(f"  {row['state']:>16}  {row['path']}  --  {row['why']}")
 
 

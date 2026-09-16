@@ -118,21 +118,32 @@ def read(ctx, item, name=None) -> Reading:
 
 
 def read_all(ctx, capabilities) -> dict:
-    """Every readable of every enabled capability, by name. Two capabilities claiming one name is
-    refused for the same reason two capabilities claiming one path is: the loser's declaration
-    would go on reading as true while the value came from somewhere else."""
+    """Every readable of every enabled capability, by name: what a HOST authored at a path a
+    capability declared readable (`reads_as`), and what a capability SHIPS as a document (its id),
+    read where the kit that speaks carries it -- on a host running its pinned copy, the in-tree
+    file, never a vendored second copy (link L3a). Two claims on one name are refused for the same
+    reason two capabilities claiming one path is: the loser's declaration would go on reading as
+    true while the value came from somewhere else."""
     readings: dict = {}
     owners: dict = {}
+
+    def claim(name, owner, reading):
+        if name in readings:
+            raise CollectionError(
+                f"capabilities {owners[name]!r} and {owner!r} both declare a readable "
+                f"named {name!r}; a name that resolves to two things is not a name"
+            )
+        owners[name] = owner
+        readings[name] = reading
+
     for capability in capabilities:
         for item in capability.installs:
             name = item.get("reads_as")
-            if not name:
-                continue
-            if name in readings:
-                raise CollectionError(
-                    f"capabilities {owners[name]!r} and {capability.id!r} both declare a readable "
-                    f"named {name!r}; a name that resolves to two things is not a name"
-                )
-            owners[name] = capability.id
-            readings[name] = read(ctx, item, name)
+            if name:
+                claim(name, capability.id, read(ctx, item, name))
+        for declared in capability.raw.get("documents", []):
+            value = capability.documents[declared["id"]]
+            claim(declared["id"], capability.id,
+                  Reading(declared["id"], "document", value, [(declared["source"], value)],
+                          declared["validates"]))
     return readings

@@ -3,6 +3,7 @@
   "id": "knowledge",
   "version": "0.1.0",
   "summary": "Grants a host the ability to hold knowledge with DECLARED AUTHORITY: a document's KIND decides whether it may declare a rule at all, and the gate catches a title claiming an authority its location cannot grant.",
+  "doctrine": "capabilities/knowledge/payload/knowledge.md",
   "requires": [
     { "kind": "capability", "id": "governance" }
   ],
@@ -10,12 +11,6 @@
   "conflicts": [],
   "declares": {},
   "installs": [
-    {
-      "mode": "vendor",
-      "class": "vendor",
-      "target": ".agents/kit/doctrine/knowledge.md",
-      "source": "capabilities/knowledge/payload/knowledge.md"
-    },
     {
       "mode": "seed",
       "class": "binding",

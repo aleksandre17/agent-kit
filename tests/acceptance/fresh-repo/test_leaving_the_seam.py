@@ -25,7 +25,7 @@ import hashlib
 import json
 import unittest
 
-from harness import KIT, Fixtures, states  # noqa: I001 -- sets the path
+from harness import KIT, VENDORED, Fixtures, states  # noqa: I001 -- sets the path
 
 import estate  # noqa: E402
 
@@ -38,7 +38,9 @@ GOVERNANCE = json.loads(
 #: Everything below is READ from the declarations. A test holding its own copy of a path, a
 #: steward or a class would go on passing after the declaration moved.
 ESTATE = next(i["target"] for i in GOVERNANCE["installs"] if i["mode"] == estate.MODE)
-A_VENDORED_FILE = next(i for i in GOVERNANCE["installs"] if i["mode"] == "vendor")
+#: The kit steward's exemplar -- the shipped kit vendors nothing since link L3a, so this suite runs
+#: on the harness's vendoring kit, which does.
+A_VENDORED_FILE = VENDORED
 A_SEEDED_FILE = next(i for i in GOVERNANCE["installs"] if i["mode"] == "seed")
 _STEWARD_OF = {row["mode"]: row["steward"] for row in STEWARDSHIP["modes"]}
 _BY_ID = {s["id"]: s for s in STEWARDSHIP["stewards"]}
@@ -64,7 +66,13 @@ def _row(host, path):
 
 class LeavingTheSeam(Fixtures, unittest.TestCase):
 
-    def _ceded(self, kit=KIT):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.vkit = cls.vendoring_kit()
+
+    def _ceded(self, kit=None):
+        kit = kit or self.vkit
         host = self.installed(kit)
         done = self.run_kit(kit, host, "eject", "--path", A_VENDORED_FILE["target"],
                             "--approve", "the-owner")
@@ -80,16 +88,16 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
     # -- 1. nothing changes hands without a name ----------------------------------------------
     def test_219_a_cede_with_no_approver_stalls_at_the_door_and_a_plan_writes_nothing(self):
         """A one-way door for a host is a HUMAN door. Neither asking nor planning opens it."""
-        host = self.installed()
+        host = self.installed(self.vkit)
         before = (host / ESTATE).read_bytes()
 
-        planned = self.run_kit(KIT, host, "eject", "--path", A_VENDORED_FILE["target"], "--plan")
+        planned = self.run_kit(self.vkit, host, "eject", "--path", A_VENDORED_FILE["target"], "--plan")
         self.assertEqual(0, planned.returncode, planned.stderr)
         self.assertIn(A_VENDORED_FILE["target"], planned.stdout)
         self.assertIn(RECEIVING["summary"], planned.stdout,
                       "the plan did not state what the host loses, in the declaration's words")
 
-        stalled = self.run_kit(KIT, host, "eject", "--path", A_VENDORED_FILE["target"])
+        stalled = self.run_kit(self.vkit, host, "eject", "--path", A_VENDORED_FILE["target"])
         self.assertEqual(3, stalled.returncode, "a transfer with nobody's name on it went through")
         self.assertIn("DOOR", stalled.stderr)
         self.assertEqual(before, (host / ESTATE).read_bytes(),
@@ -97,7 +105,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
 
     # -- 2. what changed hands is on the row --------------------------------------------------
     def test_220_the_row_records_who_when_what_was_held_and_the_one_class_it_holds_now(self):
-        host = self.installed()
+        host = self.installed(self.vkit)
         held = hashlib.sha256((host / A_VENDORED_FILE["target"]).read_bytes()).hexdigest()
         _, before = _row(host, A_VENDORED_FILE["target"])
         self._ceded_on(host)
@@ -117,7 +125,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
                          "never happened")
 
     def _ceded_on(self, host):
-        done = self.run_kit(KIT, host, "eject", "--path", A_VENDORED_FILE["target"],
+        done = self.run_kit(self.vkit, host, "eject", "--path", A_VENDORED_FILE["target"],
                             "--approve", "the-owner")
         self.assertEqual(0, done.returncode, done.stderr)
 
@@ -128,7 +136,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
         that upstream has bytes this host will not receive."""
         host = self._ceded()
         target, mine = self._edit(host)
-        moved = self.fixture_kit("ceded-moved", _payload(A_VENDORED_FILE["source"], UPSTREAM_NOW))
+        moved = self.vendoring_kit("ceded-moved", _payload(A_VENDORED_FILE["source"], UPSTREAM_NOW))
 
         done = self.run_kit(moved, host, "upgrade")
         self.assertEqual(0, done.returncode, done.stderr)
@@ -145,7 +153,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
         record says so, with a name on it, and a second `init` is not a way around a door."""
         host = self._ceded()
         target, mine = self._edit(host)
-        again = self.run_kit(KIT, host, "init")
+        again = self.run_kit(self.vkit, host, "init")
         self.assertEqual(0, again.returncode, again.stderr)
         self.assertEqual(mine, target.read_text(encoding="utf-8"),
                          "init replaced a file the host had taken over")
@@ -154,7 +162,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
     def test_223_a_file_the_host_took_over_and_then_deleted_is_not_restored(self):
         host = self._ceded()
         (host / A_VENDORED_FILE["target"]).unlink()
-        done = self.run_kit(KIT, host, "upgrade")
+        done = self.run_kit(self.vkit, host, "upgrade")
         self.assertEqual(0, done.returncode, done.stderr)
         self.assertFalse((host / A_VENDORED_FILE["target"]).exists(),
                          "the kit restored a file the host had taken over and removed")
@@ -166,7 +174,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
         longer vouches for, silence would read as the kit still standing behind it."""
         host = self._ceded()
         for run in range(2):
-            done = self.run_kit(KIT, host, "upgrade")
+            done = self.run_kit(self.vkit, host, "upgrade")
             self.assertEqual(0, done.returncode, done.stderr)
             self.assertEqual(SAYS["unchanged"], states(done.stdout).get(A_VENDORED_FILE["target"]),
                              f"run {run}: a taken-over path went unnamed")
@@ -176,9 +184,9 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
         """A seed is already the host's; there is nothing to take over and no door to sign."""
         self.assertIsNone(_BY_ID[_STEWARD_OF[A_SEEDED_FILE["mode"]]].get("transfers_to"),
                           "precondition: the seed's steward is declared to offer no transfer")
-        host = self.installed()
+        host = self.installed(self.vkit)
         before = (host / ESTATE).read_bytes()
-        refused = self.run_kit(KIT, host, "eject", "--path", A_SEEDED_FILE["target"],
+        refused = self.run_kit(self.vkit, host, "eject", "--path", A_SEEDED_FILE["target"],
                                "--approve", "the-owner")
         self.assertNotEqual(0, refused.returncode)
         self.assertIn(REFUSED, refused.stderr)
@@ -191,7 +199,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
         def withdraw(kit):
             self.edit_json(kit, STEWARDSHIP_SOURCE, lambda d: [
                 s.pop("transfers_to", None) for s in d["stewards"]])
-        closed = self.fixture_kit("no-transfer", withdraw)
+        closed = self.vendoring_kit("no-transfer", withdraw)
         host = self.installed(closed)
         refused = self.run_kit(closed, host, "eject", "--path", A_VENDORED_FILE["target"],
                                "--approve", "the-owner")
@@ -211,7 +219,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
                     if s.get("transfers_to"):
                         s["transfers_to"]["class"] = nowhere
             self.edit_json(kit, STEWARDSHIP_SOURCE, patch)
-        bad = self.fixture_kit("no-class", misdeclare)
+        bad = self.vendoring_kit("no-class", misdeclare)
         host = self.installed(bad)
         before = (host / ESTATE).read_bytes()
         refused = self.run_kit(bad, host, "eject", "--path", A_VENDORED_FILE["target"],
@@ -224,23 +232,23 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
     def test_228_a_record_claiming_a_transfer_no_declaration_offers_is_refused_not_read(self):
         """Hand-writing a signature onto a row is not a door. Where the steward offers no
         transfer, the record states an ownership nothing could have granted."""
-        host = self.installed()
+        host = self.installed(self.vkit)
         target = host / ESTATE
         record = json.loads(target.read_text(encoding="utf-8"))
         for row in record["files"]:
             if row["path"] == A_SEEDED_FILE["target"]:
                 row[estate.CEDED] = {"signed_by": "nobody", "signed_at": "never", "held": None}
         target.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8", newline="\n")
-        refused = self.run_kit(KIT, host, "upgrade")
+        refused = self.run_kit(self.vkit, host, "upgrade")
         self.assertNotEqual(0, refused.returncode, "a forged transfer was read as ownership")
         self.assertIn(A_SEEDED_FILE["target"], refused.stderr)
 
     # -- 6. whole or nothing ----------------------------------------------------------------
     def test_229_one_path_that_cannot_change_hands_stops_the_whole_request(self):
-        host = self.installed()
+        host = self.installed(self.vkit)
         before = (host / ESTATE).read_bytes()
         asked = f"{A_VENDORED_FILE['target']},{A_SEEDED_FILE['target']}"
-        refused = self.run_kit(KIT, host, "eject", "--path", asked, "--approve", "the-owner")
+        refused = self.run_kit(self.vkit, host, "eject", "--path", asked, "--approve", "the-owner")
         self.assertNotEqual(0, refused.returncode)
         self.assertIn(REFUSED, refused.stderr)
         self.assertEqual(before, (host / ESTATE).read_bytes(),
@@ -249,7 +257,7 @@ class LeavingTheSeam(Fixtures, unittest.TestCase):
     def test_230_a_path_already_taken_over_is_not_signed_for_twice(self):
         host = self._ceded()
         row, _ = _row(host, A_VENDORED_FILE["target"])
-        again = self.run_kit(KIT, host, "eject", "--path", A_VENDORED_FILE["target"],
+        again = self.run_kit(self.vkit, host, "eject", "--path", A_VENDORED_FILE["target"],
                              "--approve", "someone-else")
         self.assertNotEqual(0, again.returncode)
         self.assertIn(REFUSED, again.stderr)

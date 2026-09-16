@@ -19,14 +19,14 @@
       "validates": "runtime-surface"
     }
   ],
-  "installs": [
+  "floor": [
     {
-      "mode": "vendor",
-      "class": "vendor",
-      "target": ".agents/kit/runtimes/surfaces/claude-code.json",
-      "source": "capabilities/claude-code/surfaces.json",
-      "validates": "runtime-surface"
+      "path": ".claude/",
+      "kind": "dir",
+      "drawn_as": ".claude/",
+      "pending": "C"
     }
   ],
+  "installs": [],
   "gates": []
 }

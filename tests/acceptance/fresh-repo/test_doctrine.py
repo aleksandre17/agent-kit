@@ -36,6 +36,9 @@ from pathlib import Path
 
 from harness import FIXTURES, KIT, Fixtures
 
+import pin  # noqa: E402
+from manifest import Manifest  # noqa: E402
+
 MANIFEST = json.loads((KIT / "MANIFEST.json").read_text(encoding="utf-8"))
 CARRIER = json.loads((KIT / "capabilities/doctrine/capability.json").read_text(encoding="utf-8"))
 GRAMMAR = json.loads((KIT / "capabilities/doctrine/grammar.json").read_text(encoding="utf-8"))
@@ -48,7 +51,8 @@ CARDINALS = json.loads((BUNDLE_FIXTURE / "cardinals.json").read_text(encoding="u
 #: asked of the capability that declares it, so that renaming it cannot leave this suite agreeing
 #: with a memory of the kit.
 CARDINAL_SCHEMA = next(name for name in CARRIER["declares"]["schemas"]
-                       if name in {item.get("validates") for item in BUNDLE["installs"]})
+                       if name in {item.get("validates")
+                                   for item in BUNDLE["installs"] + BUNDLE.get("documents", [])})
 
 #: Where a host's answers live, and under which word -- asked of the BUNDLE's own composition,
 #: which is the declaration that names the source it reads them from.
@@ -68,13 +72,18 @@ def carrier_install(name: str) -> dict:
 PAGE = next(item["target"] for item in CARRIER["installs"] if item["mode"] == "projection")
 LAW_PAGE = carrier_install(STANCE_SOURCE)["target"]
 ROLL = next(item["target"] for item in BUNDLE["installs"] if item["mode"] == "projection")
-PUBLISHED = next(item["target"] for item in BUNDLE["installs"]
-                 if item.get("reads_as") == BUNDLE["composes"]["instances"])
+#: Where the published set sits in a host: the IN-TREE seat of the bundle's own document, inside
+#: the pinned kit (link L3a) -- the bytes the host took, never a vendored second copy of them.
+PUBLISHED = pin.seats(Manifest(KIT))[0] + next(
+    document["source"] for document in BUNDLE["documents"]
+    if document["id"] == BUNDLE["composes"]["instances"])
 
 #: Where a bundle's payload lives inside a kit, derived from the bundle's own declaration: the
 #: same route the kit uses for every other capability, and never a path this suite invented.
-PAYLOAD = {item["source"]: BUNDLE_FIXTURE / Path(item["source"]).name
-           for item in BUNDLE["installs"] if item.get("source")}
+PAYLOAD = {source: BUNDLE_FIXTURE / Path(source).name
+           for source in [item["source"] for item in BUNDLE["installs"] if item.get("source")]
+           + [document["source"] for document in BUNDLE.get("documents", [])]
+           + ([BUNDLE["doctrine"]] if BUNDLE.get("doctrine") else [])}
 
 
 #: Every file the CARRIER is made of, asked of its own declaration: the declaration, the grammar
@@ -162,7 +171,8 @@ class DoctrineCarrier(Fixtures, unittest.TestCase):
         publishers = []
         for entry in MANIFEST["capabilities"]:
             declaration = json.loads((KIT / entry["declaration"]).read_text(encoding="utf-8"))
-            if any(item.get("validates") == CARDINAL_SCHEMA for item in declaration["installs"]):
+            if any(item.get("validates") == CARDINAL_SCHEMA
+                   for item in declaration["installs"] + declaration.get("documents", [])):
                 publishers.append(entry["id"])
         self.assertEqual([], publishers,
                          f"this kit ships doctrine of its own, in {publishers}; the carrier is no "
@@ -279,8 +289,10 @@ class DoctrineCarrier(Fixtures, unittest.TestCase):
                          "a bundle whose environment was never measured was installed anyway")
         self.assertIn(BUNDLE["id"], [row["id"] for row in chosen.get("unavailable", [])],
                       "an unavailable bundle was dropped silently instead of being named")
-        self.assertFalse((host / PUBLISHED).exists(),
-                         "a chapter that does not apply here published its documents anyway")
+        # Its bytes travel in the pinned kit the host took (the whole kit is pinned); what must
+        # not happen is that it comes INTO FORCE -- no roll is projected for it.
+        self.assertFalse((host / ROLL).exists(),
+                         "a chapter that does not apply here was put in force anyway")
         self.assertEqual(0, self.run_kit(kit, host, "check").returncode,
                          "an environment that does not hold was treated as a failure")
 

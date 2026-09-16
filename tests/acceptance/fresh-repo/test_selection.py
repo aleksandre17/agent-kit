@@ -136,7 +136,12 @@ class Selection(Fixtures, unittest.TestCase):
         foreseen = dict((path, word) for word, path in planned(second.stdout))
         self.assertEqual("kept", foreseen[".agents/project/project.json"])
         self.assertEqual("kept", foreseen[".agents/project/laws.md"])
-        self.assertEqual("replaced", foreseen[".agents/kit/doctrine/governance.md"])
+        # The kit a host was given is KEPT when the same release is delivered again -- the tree and
+        # the lock at its seat, one act (the shipped kit vendors no page to replace since L3a).
+        import pin  # noqa: E402
+        from manifest import Manifest  # noqa: E402
+        for seat in pin.seats(Manifest(KIT)):
+            self.assertEqual("kept", foreseen[seat])
         self.assertEqual(applied(self.run_kit(KIT, host, "init").stdout), planned(second.stdout))
 
     def test_38_check_writes_nothing_so_it_cannot_be_asked_for_a_plan(self):

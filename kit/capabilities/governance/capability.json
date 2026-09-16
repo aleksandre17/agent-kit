@@ -2,7 +2,8 @@
   "schema_version": 1,
   "id": "governance",
   "version": "0.1.0",
-  "summary": "Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the pinned kit a host runs by itself, the vendored doctrine and the index projection, plus the gates that hold them.",
+  "summary": "Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the pinned kit a host runs by itself with the lock it was given, and the index projection, plus the gates that hold them.",
+  "doctrine": "capabilities/governance/payload/governance.md",
   "requires": [
     {
       "kind": "fact",
@@ -100,20 +101,13 @@
     {
       "mode": "pinned",
       "class": "vendor",
-      "target": ".agents/kit/pinned/"
+      "target": ".agents/kit/"
     },
     {
-      "mode": "vendor",
-      "class": "vendor",
-      "target": ".agents/kit/doctrine/governance.md",
-      "source": "capabilities/governance/payload/governance.md"
-    },
-    {
-      "mode": "vendor",
-      "class": "vendor",
-      "target": ".agents/kit/HOST-LAYOUT.json",
-      "source": "capabilities/governance/host-layout.json",
-      "validates": "layout"
+      "mode": "pinned-lock",
+      "class": "binding",
+      "target": ".agents/project/kit.lock.json",
+      "validates": "lock"
     },
     {
       "mode": "projection",
@@ -189,7 +183,8 @@
       "id": "FF-KIT-PINNED",
       "kind": "pinned-kit-intact",
       "params": {
-        "mode": "pinned"
+        "mode": "pinned",
+        "lock_mode": "pinned-lock"
       },
       "stance": {
         "floor": "enforce"
@@ -199,7 +194,7 @@
       "id": "FF-HOST-FLOOR",
       "kind": "layout-floor-present",
       "params": {
-        "declaration": ".agents/kit/HOST-LAYOUT.json",
+        "document": "host_layout",
         "side": "host"
       },
       "stance": {

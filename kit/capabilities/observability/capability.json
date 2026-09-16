@@ -3,6 +3,7 @@
   "id": "observability",
   "version": "0.1.0",
   "summary": "Declares that a run leaves a RECEIPT: written the moment it begins, holding a status that means nothing has been concluded yet, and rewritten exactly once when the run reports its end. The order is the mechanism -- a receipt written only at the end proves nothing about a run that never reached the end, and a run killed mid-way leaves artifacts that read exactly like finished ones. It is the LIFE half of observation and only that half: it records that a run fired, never that it hit. Whether the work was any good is a domain question, it is asked of cases and rubrics a host owns, and this capability deliberately ships no opinion about it. It is a sensor and never a broom: a record naming a run that died is evidence, and evidence is not swept up by the thing being questioned.",
+  "doctrine": "capabilities/observability/payload/observability.md",
   "requires": [],
   "provides": ["observability"],
   "conflicts": [],
@@ -42,15 +43,9 @@
     {
       "mode": "space",
       "class": "ephemeral",
-      "target": ".agents/runtime/observability/runs/",
+      "target": ".agents/runtime/receipts/",
       "validates": "receipt",
       "reads_as": "receipts"
-    },
-    {
-      "mode": "vendor",
-      "class": "vendor",
-      "target": ".agents/kit/doctrine/observability.md",
-      "source": "capabilities/observability/payload/observability.md"
     },
     {
       "mode": "projection",

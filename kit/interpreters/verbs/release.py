@@ -8,7 +8,7 @@ carries no signature yet. It writes nothing. A working tree is refused by name: 
 sentence that called it a release would be the surface lying.
 
     python kit/interpreters/cli.py release --root <any repo>
-    python .agents/kit/pinned/interpreters/cli.py release --root .     # what does this host run?
+    python .agents/kit/interpreters/cli.py release --root .     # what does this host run?
 
 The subject is the KIT the interpreter was started from (`--kit`), never the host `--root` names.
 """

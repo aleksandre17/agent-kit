@@ -32,7 +32,7 @@ import unittest
 #: `states` is IMPORTED, not kept here. It parses the vocabulary the interpreter prints, and that
 #: vocabulary has one home; a second copy of the parser in this file would go on reading a surface
 #: that had already moved -- and would keep passing while it did.
-from harness import KIT, Fixtures, applied, planned, states  # noqa: I001 -- sets the path
+from harness import KIT, VENDORED, Fixtures, applied, planned, states  # noqa: I001 -- sets the path
 
 import estate  # noqa: E402
 import reconcile  # noqa: E402
@@ -48,7 +48,9 @@ SCHEMA = json.loads((KIT / "schemas" / "stewardship.schema.json").read_text(enco
 GOVERNANCE = json.loads(
     (KIT / "capabilities" / "governance" / "capability.json").read_text(encoding="utf-8"))
 ESTATE = next(i["target"] for i in GOVERNANCE["installs"] if i["mode"] == estate.MODE)
-A_VENDORED_FILE = next(i for i in GOVERNANCE["installs"] if i["mode"] == "vendor")
+#: The kit steward's exemplar. The shipped kit vendors nothing since link L3a (its vendor plane IS
+#: the pinned tree), so this suite runs on the harness's vendoring kit, which does.
+A_VENDORED_FILE = VENDORED
 A_SEEDED_FILE = next(i for i in GOVERNANCE["installs"] if i["mode"] == "seed")
 
 #: What an upstream release says at a source that used to say something else. One string, used
@@ -73,13 +75,18 @@ def _payload(rel: str, text: str):
 
 class Upgrade(Fixtures, unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.vkit = cls.vendoring_kit()
+
     # -- 1. the record, or nothing --------------------------------------------------------
     def test_119_a_host_with_no_record_of_what_it_received_is_refused_by_name(self):
         """The cell most likely to be quietly bridged. A tree that LOOKS untouched is not a tree
         that was measured, and treating it as one would make every other reading here a fiction."""
-        host = self.installed()
+        host = self.installed(self.vkit)
         (host / ESTATE).unlink()
-        refused = self.run_kit(KIT, host, "upgrade")
+        refused = self.run_kit(self.vkit, host, "upgrade")
         self.assertNotEqual(0, refused.returncode, "an unreadable host was upgraded anyway")
         self.assertIn(ESTATE, refused.stderr)
         self.assertIn("never what it RECEIVED", refused.stderr)
@@ -87,8 +94,8 @@ class Upgrade(Fixtures, unittest.TestCase):
     def test_120_a_clean_upgrade_states_every_state_including_the_ones_with_none(self):
         """A surface that lists only what it found reads identically to a survey that found
         nothing. Every word any steward can produce is printed with its count, zeros included."""
-        host = self.installed()
-        clean = self.run_kit(KIT, host, "upgrade")
+        host = self.installed(self.vkit)
+        clean = self.run_kit(self.vkit, host, "upgrade")
         self.assertEqual(0, clean.returncode, clean.stderr)
         printed = {line.split()[1] for line in clean.stdout.splitlines()
                    if len(line.split()) == 2 and line.split()[0].isdigit()}
@@ -101,13 +108,13 @@ class Upgrade(Fixtures, unittest.TestCase):
     def test_121_a_host_edit_upstream_did_not_touch_is_kept_and_named_every_run(self):
         """Silently keeping is also a decision, and it leaves no trace: the host then believes it
         is on this version while carrying its own bytes at that path. So it is KEPT and SAID."""
-        host = self.installed()
+        host = self.installed(self.vkit)
         target = host / A_VENDORED_FILE["target"]
         mine = target.read_text(encoding="utf-8") + "a line this host added\n"
         target.write_text(mine, encoding="utf-8", newline="\n")
 
         for run in range(2):
-            done = self.run_kit(KIT, host, "upgrade")
+            done = self.run_kit(self.vkit, host, "upgrade")
             self.assertEqual(0, done.returncode, done.stderr)
             self.assertEqual(reconcile.DIVERGED_KEPT,
                              states(done.stdout).get(A_VENDORED_FILE["target"]),
@@ -118,11 +125,11 @@ class Upgrade(Fixtures, unittest.TestCase):
     def test_122_a_host_edit_upstream_also_changed_stops_the_whole_upgrade(self):
         """The cell this slice exists for. Not the path skipped and the rest applied -- a partial
         upgrade leaves a host in a state no version describes."""
-        host = self.installed()
+        host = self.installed(self.vkit)
         target = host / A_VENDORED_FILE["target"]
         mine = target.read_text(encoding="utf-8") + "a line this host added\n"
         target.write_text(mine, encoding="utf-8", newline="\n")
-        moved = self.fixture_kit("moved", _payload(A_VENDORED_FILE["source"],
+        moved = self.vendoring_kit("moved", _payload(A_VENDORED_FILE["source"],
                                                    UPSTREAM_NOW))
 
         refused = self.run_kit(moved, host, "upgrade")
@@ -137,12 +144,12 @@ class Upgrade(Fixtures, unittest.TestCase):
 
     def test_123_a_named_human_may_accept_it_and_what_they_accepted_is_on_the_row(self):
         """A decision whose only record is a terminal session answers differently on Tuesday."""
-        host = self.installed()
+        host = self.installed(self.vkit)
         target = host / A_VENDORED_FILE["target"]
         target.write_text(target.read_text(encoding="utf-8") + "mine\n",
                           encoding="utf-8", newline="\n")
         was = estate.__dict__["hashlib"].sha256(target.read_bytes()).hexdigest()
-        moved = self.fixture_kit("adopted", _payload(A_VENDORED_FILE["source"],
+        moved = self.vendoring_kit("adopted", _payload(A_VENDORED_FILE["source"],
                                                      UPSTREAM_NOW))
 
         walked = self.run_kit(moved, host, "upgrade", "--approve", "the-owner")
@@ -160,7 +167,7 @@ class Upgrade(Fixtures, unittest.TestCase):
     def test_124_a_path_the_host_authored_where_this_kit_now_ships_one_is_refused(self):
         """No class permits overwriting bytes the kit never wrote -- and no approver either: a
         structural contradiction is not a thing anyone has the standing to wave through."""
-        host = self.installed()
+        host = self.installed(self.vkit)
         arriving = f"{VENDOR_PLANE}/doctrine/a-file-this-host-wrote-first.md"
 
         def bring(kit):
@@ -172,7 +179,7 @@ class Upgrade(Fixtures, unittest.TestCase):
         (host / arriving).write_text("mine, and here first\n", encoding="utf-8", newline="\n")
 
         for flags in ([], ["--approve", "the-owner"]):
-            refused = self.run_kit(self.fixture_kit("collides", bring), host, "upgrade", *flags)
+            refused = self.run_kit(self.vendoring_kit("collides", bring), host, "upgrade", *flags)
             self.assertNotEqual(0, refused.returncode, f"a collision was resolved by {flags}")
             self.assertIn(arriving, refused.stdout + refused.stderr)
             self.assertEqual("mine, and here first\n",
@@ -181,11 +188,11 @@ class Upgrade(Fixtures, unittest.TestCase):
     def test_125_a_file_nothing_explains_is_refused_and_is_not_taken_away(self):
         """An unexplained path in a plane whose whole premise is that every path resolves to a
         declared class. The kit did not put it there and will not remove it."""
-        host = self.installed()
+        host = self.installed(self.vkit)
         stray = host / VENDOR_PLANE / "a-file-nothing-declares.md"
         stray.write_text("who put me here\n", encoding="utf-8", newline="\n")
 
-        refused = self.run_kit(KIT, host, "upgrade")
+        refused = self.run_kit(self.vkit, host, "upgrade")
         self.assertNotEqual(0, refused.returncode, "an unaccounted path was upgraded past")
         self.assertIn("a-file-nothing-declares.md", refused.stdout + refused.stderr)
         self.assertTrue(stray.exists(), "the kit deleted a file it never wrote")
@@ -194,8 +201,8 @@ class Upgrade(Fixtures, unittest.TestCase):
     def test_126_an_untouched_kit_owned_file_takes_the_new_bytes_and_the_record_advances(self):
         """The ordinary upgrade, and the one doctrine self-versioning rides on: the change is
         listed path by path before it happens, and the record afterwards says which version."""
-        host = self.installed()
-        moved = self.fixture_kit("advances", _payload(A_VENDORED_FILE["source"],
+        host = self.installed(self.vkit)
+        moved = self.vendoring_kit("advances", _payload(A_VENDORED_FILE["source"],
                                                       UPSTREAM_NOW))
         before = json.loads((host / ESTATE).read_text(encoding="utf-8"))
 
@@ -215,10 +222,10 @@ class Upgrade(Fixtures, unittest.TestCase):
     def test_127_a_seed_the_host_owns_is_offered_and_never_rewritten(self):
         """Create-once is not suspended by an upgrade. A kit that 'just updates' a seed is a kit
         editing the host's own words, and the host would have no way to know it had happened."""
-        host = self.installed()
+        host = self.installed(self.vkit)
         target = host / A_SEEDED_FILE["target"]
         mine = target.read_text(encoding="utf-8")
-        moved = self.fixture_kit("offered", _payload(A_SEEDED_FILE["source"],
+        moved = self.vendoring_kit("offered", _payload(A_SEEDED_FILE["source"],
                                                      "a seed upstream rewrote\n"))
 
         done = self.run_kit(moved, host, "upgrade")
@@ -233,8 +240,8 @@ class Upgrade(Fixtures, unittest.TestCase):
     def test_128_what_the_reconciliation_foresaw_is_what_the_installer_carried_out(self):
         """A plan that can drift from its apply is worse than no plan: it is a promise the
         operator believes exactly once. The two are the same value, so they are compared."""
-        host = self.installed()
-        moved = self.fixture_kit("foreseen", _payload(A_VENDORED_FILE["source"],
+        host = self.installed(self.vkit)
+        moved = self.vendoring_kit("foreseen", _payload(A_VENDORED_FILE["source"],
                                                       UPSTREAM_NOW))
         foreseen = self.run_kit(moved, host, "upgrade", "--plan")
         self.assertEqual(0, foreseen.returncode, foreseen.stderr)
@@ -249,27 +256,27 @@ class Upgrade(Fixtures, unittest.TestCase):
     # -- 6. the declaration decides, and its silence is a refusal ---------------------------
     def test_129_a_cell_no_steward_answers_is_refused_rather_than_defaulted(self):
         """A reconciliation that always finds a safe answer certifies rather than measures."""
-        host = self.installed()
+        host = self.installed(self.vkit)
 
         def forget(kit):
             self.edit_json(kit, "capabilities/governance/stewardship.json",
                            lambda d: [s.__setitem__("cells", [c for c in s["cells"]
                                                               if c["cell"] != reconcile.UNCHANGED])
                                       for s in d["stewards"]])
-        refused = self.run_kit(self.fixture_kit("silent-cell", forget), host, "upgrade")
+        refused = self.run_kit(self.vendoring_kit("silent-cell", forget), host, "upgrade")
         self.assertNotEqual(0, refused.returncode, "a cell nothing answers was answered anyway")
         self.assertIn(reconcile.UNCHANGED, refused.stderr)
 
     def test_130_an_install_mode_with_no_steward_is_refused(self):
         """Nothing states who owns the bytes it writes, so no reconciliation may be attempted
         over it. Declared, not defaulted -- a default is a rule arriving with a new mode."""
-        host = self.installed()
+        host = self.installed(self.vkit)
 
         def unown(kit):
             self.edit_json(kit, "capabilities/governance/stewardship.json",
                            lambda d: d.__setitem__(
                                "modes", [m for m in d["modes"] if m["mode"] != "vendor"]))
-        refused = self.run_kit(self.fixture_kit("unowned-mode", unown), host, "upgrade")
+        refused = self.run_kit(self.vendoring_kit("unowned-mode", unown), host, "upgrade")
         self.assertNotEqual(0, refused.returncode, "a path with no declared owner was upgraded")
         self.assertIn("vendor", refused.stderr)
 
