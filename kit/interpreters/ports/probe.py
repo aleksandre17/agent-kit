@@ -25,6 +25,18 @@ def _file_exists(ws, spec):
     return ws.path(spec["path"]).is_file(), True
 
 
+def _path_exists(ws, spec):
+    """A path is THERE -- whether it is a file, a directory, or a link to either.
+
+    Some truths are about presence, not shape, and asserting the shape is how a detector
+    starts lying about a tree that is perfectly valid. `.git` is the standing example: a
+    normal clone holds a DIRECTORY, while a submodule, a linked worktree and
+    `--separate-git-dir` all hold a FILE pointing elsewhere. Git reads all four as a working
+    tree; a `dir_exists` check reads three of them as "not a repository".
+    """
+    return ws.path(spec["path"]).exists(), True
+
+
 def _glob_any(ws, spec):
     matches = sorted(p.name for p in ws.root.glob(spec["pattern"]))
     return bool(matches), matches or None
@@ -49,6 +61,7 @@ def _json_path(ws, spec):
 EVIDENCE_KINDS = {
     "dir_exists": _dir_exists,
     "file_exists": _file_exists,
+    "path_exists": _path_exists,
     "glob_any": _glob_any,
     "json_path": _json_path,
 }

@@ -30,11 +30,15 @@ for extra in [KIT / "interpreters", *sorted(p for p in (KIT / "interpreters").it
 from workspace import Workspace  # noqa: E402
 import floor  # noqa: E402
 
-#: The host-side reading is shipped by the kit itself (governance's `host_layout` document,
-#: vendored to `.agents/kit/HOST-LAYOUT.json`) so every installed host carries its own copy.
-#: Host #0 -- this repository's own `.agents/` -- reads that installed copy: the same file a
-#: freshly-installed host would read, never a second declaration kept only for this test.
-HOST_DECLARATION = REPO / ".agents" / "kit" / "HOST-LAYOUT.json"
+#: The host-side reading is shipped by the kit itself (governance's `host_layout` document).
+#: Host #0 -- this repository's own `.agents/` -- reads the PINNED copy in its own tree: the same
+#: file a freshly-installed host would read, never the kit's shipping source under `kit/`, and
+#: never a second declaration kept only for this test.
+#:
+#: L3a flattened the pinned copy to `.agents/kit/` and REMOVED the separate vendor install at
+#: `.agents/kit/HOST-LAYOUT.json`, so a host carries these bytes once instead of twice. The
+#: reading moved with it; the property under test did not change.
+HOST_DECLARATION = REPO / ".agents" / "kit" / "capabilities" / "governance" / "host-layout.json"
 
 
 def _report(declaration: Path, workspace: Workspace, declaration_rel: str) -> tuple:
@@ -63,8 +67,8 @@ def test_upstream_tree_meets_the_floor_or_declares_why_not(capsys):
 
 def test_host_zero_meets_the_floor_or_declares_why_not(capsys):
     """Host #0 is this repository's own `.agents/`, installed from this kit. The declaration read
-    is the INSTALLED copy (`.agents/kit/HOST-LAYOUT.json`), not the kit's shipping source --
-    proving the shipped document is the one an arbitrary host would actually have on disk."""
+    is the INSTALLED copy inside the host's pinned tree, not the kit's shipping source under
+    `kit/` -- proving the shipped document is the one an arbitrary host would have on disk."""
     assert HOST_DECLARATION.exists(), (
         f"{HOST_DECLARATION}: host #0 has not taken the governance capability's `host_layout` "
         f"document -- run `upgrade --root .` first"

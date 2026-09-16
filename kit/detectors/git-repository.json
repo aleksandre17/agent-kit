@@ -1,7 +1,7 @@
 {
   "id": "git-repository",
   "evidence": [
-    { "kind": "dir_exists", "path": ".git" }
+    { "kind": "path_exists", "path": ".git" }
   ],
   "emits": {
     "vcs.git": true
