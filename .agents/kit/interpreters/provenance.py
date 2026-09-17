@@ -67,6 +67,38 @@ SIGNATURE_MISSING = "signature-missing"
 UNKNOWN_VERIFIER = "unknown-verifier"
 NO_TRUST_ROOT = "no-trust-root"
 VERIFIER_ABSENT = "verifier-absent"
+NOT_YET_READ = "not-yet-read"
+
+#: How a pin stands (ADR-018 amendment 2): written at arrival on first use, or attested since.
+TRUST_ON_FIRST_USE = "trust-on-first-use"
+ATTESTED = "attested"
+
+
+def unattested(pin) -> bool:
+    return bool(pin) and (pin.get("trust") or {}).get("basis") == TRUST_ON_FIRST_USE
+
+
+def arrival(capability: str, version: str, measured: str, who: str, when: str, prior=None) -> dict:
+    """The pin a take writes AT ARRIVAL (ADR-018 amendment 2), marked trust-on-first-use: the
+    digest of what arrived, so that nothing between the take and its attestation is admitted
+    silently. A prior pin is judged first: bytes that differ at the same version, or an older
+    version, are refused -- a take never re-pins a drift or walks a rollback."""
+    if prior:
+        now, then = (version_range.parse_version(v) for v in (version, prior["version"]))
+        if now < then or (now == then and prior["digest"] != measured):
+            raise ProvenanceRefused(
+                f"{capability}@{version} {measured} would replace the pin {prior['version']} "
+                f"{prior['digest']} (pinned by {prior['pinned_by']} at {prior['pinned_at']}); "
+                f"a take never re-pins changed bytes or an older version")
+        if now == then:
+            return prior
+    pin = {"capability": capability, "version": version, "digest": measured,
+           "pinned_by": who, "pinned_at": when,
+           "trust": {"basis": TRUST_ON_FIRST_USE},
+           "authenticity": {"state": NOT_YET_READ, "taken_at": when}}
+    if prior:
+        pin["supersedes"] = {"version": prior["version"], "digest": prior["digest"]}
+    return pin
 
 #: The field of a capability declaration in which a publisher CLAIMS a signature. A claim, and
 #: never proof: it names what to check, and establishes nothing until something checked it.
@@ -290,7 +322,10 @@ def judge(ctx, capabilities, who, when: str, at_door: bool) -> list:
                           f"  -- pinned {row['pin']['version']} {row['pin']['digest']} by "
                           f"{row['pin']['pinned_by']} at {row['pin']['pinned_at']}"
                           for row in refused))
-    waiting = [row for row in rows if row["disposition"] == DOOR]
+    # A pin written at arrival (trust-on-first-use) waits at the same door as a first contact: its
+    # bytes already equal it (a drift was refused above), and the approval ATTESTS it here.
+    waiting = [row for row in rows if row["disposition"] == DOOR
+               or (row["disposition"] == HOLD and unattested(row["pin"]))]
     if waiting and not who:
         if at_door:
             doors.refuse(
@@ -304,10 +339,20 @@ def judge(ctx, capabilities, who, when: str, at_door: bool) -> list:
         return [row["pin"] for row in rows if row["pin"] and row["disposition"] != DOOR]
     pins = []
     for row in rows:
-        if row["disposition"] != DOOR:
+        attesting = row["disposition"] == HOLD and unattested(row["pin"])
+        if row["disposition"] != DOOR and not attesting:
             pins.append(row["pin"])
             continue
         found = authenticate(ctx, row["declared"], row["digest"], when)
+        if attesting and found["state"] != REFUTED:
+            pin = dict(row["pin"], authenticity=found,
+                       trust={"basis": ATTESTED, "attested_by": who, "attested_at": when})
+            pins.append(pin)
+            row.update({"pin": pin})
+            print(f"  ATTESTED {row['capability']}@{row['version']}  {row['digest']}  pinned at "
+                  f"arrival by {pin['pinned_by']} at {pin['pinned_at']}; attested by {who} at "
+                  f"{when}  -- authenticity {found['state']}")
+            continue
         if found["state"] == REFUTED:
             raise ProvenanceRefused(
                 f"{row['capability']}@{row['version']} claims a signature by {found['signer']!r} "

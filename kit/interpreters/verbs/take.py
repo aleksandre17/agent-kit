@@ -24,6 +24,7 @@ import json
 from pathlib import Path
 
 import doors
+import estate as estate_module
 import hostlock
 import manifest as manifest_port
 import provenance
@@ -116,7 +117,6 @@ def run(ctx, args) -> int:
     # A row carried from before amendment 1 sheds its digest here: the reading has one home, the pin.
     rows = {row["id"]: {k: v for k, v in row.items() if k != "digest"} for row in current["takes"]}
     for identity, source, files, measured in takes:
-        ws.write_tree(plane["target"] + identity, files)
         rows[identity] = {"id": identity, "source": source.as_posix(),
                           "taken_by": args.approve, "at": moment}
     document = {"schema_version": current["schema_version"],
@@ -124,8 +124,38 @@ def run(ctx, args) -> int:
     errors = ctx.manifest.validate(document, statement["validates"])
     if errors:
         raise TakeError(f"{statement['target']} would not honour its schema:\n  " + "\n  ".join(errors))
-    ws.write_json(statement["target"], document)
-    for identity, _source, _files, measured in takes:
-        print(f"  TAKEN  {identity}  {measured}  by {args.approve} at {moment} -- enable it in the "
-              f"host's declaration, then `init --approve <who>` pins its provenance")
-    return 0
+
+    # The provenance pin is written HERE, at arrival (ADR-018 amendment 2): the digest of the bytes
+    # that arrived, marked trust-on-first-use, so a change between this take and the approval that
+    # attests it is a drift, never a first contact.
+    at = estate_module.target(ctx, required=False)
+    recorded = estate_module.read(ctx)
+    if at is None or recorded is None:
+        raise TakeError("this host holds no estate reading, so there is nowhere to pin what "
+                        "arrives; `init --approve <who>` first (ADR-018 amendment 2)")
+    estate_owner = next(c for c in ctx.manifest.capabilities for i in c.installs if i["target"] == at)
+    pins = {p["capability"]: p for p in recorded.get("taken", [])}
+    for identity, _source, files, measured in takes:
+        version = json.loads(files[plane["declaration"]].decode("utf-8"))["version"]
+        try:
+            pins[identity] = provenance.arrival(identity, version, measured, args.approve, moment,
+                                                pins.get(identity))
+        except provenance.ProvenanceRefused as exc:
+            raise TakeError(str(exc)) from exc
+    estate = dict(recorded, taken=[pins[k] for k in sorted(pins)])
+    errors = ctx.manifest.validate(estate, ctx.install_of_mode(estate_module.MODE)["validates"])
+    if errors:
+        raise TakeError(f"{at} would not honour its schema:\n  " + "\n  ".join(errors))
+
+    def write() -> int:
+        for identity, _source, files, _measured in takes:
+            ws.write_tree(plane["target"] + identity, files)
+        ws.write_json(statement["target"], document)
+        ctx.workspace.scoped(estate_owner.targets()).write_json(at, estate)
+        for identity, _source, _files, measured in takes:
+            print(f"  TAKEN  {identity}  {measured}  by {args.approve} at {moment} -- PINNED at "
+                  f"arrival, {provenance.TRUST_ON_FIRST_USE}; enable it in the host's declaration, "
+                  f"then `init --approve <who>` attests the pin")
+        return 0
+
+    return hostlock.held(ctx, args, write)

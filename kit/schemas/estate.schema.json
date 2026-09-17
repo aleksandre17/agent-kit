@@ -163,6 +163,17 @@
             "type": "string",
             "minLength": 1
           },
+          "trust": {
+            "description": "How this pin stands (ADR-018 amendment 2). `trust-on-first-use`: written by the take at arrival, not yet attested. `attested`: an approval held the bytes to this pin and found them equal. Absent in a pin written before amendment 2, which was pinned at an approved door and reads as attested there.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["basis"],
+            "properties": {
+              "basis": {"type": "string", "enum": ["trust-on-first-use", "attested"]},
+              "attested_by": {"type": "string", "minLength": 1},
+              "attested_at": {"type": "string", "minLength": 1}
+            }
+          },
           "supersedes": {
             "type": "object",
             "additionalProperties": false,

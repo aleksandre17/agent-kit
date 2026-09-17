@@ -86,6 +86,7 @@
             "type": "string",
             "enum": [
               "signature-verified",
+              "not-yet-read",
               "unsigned",
               "signature-missing",
               "unknown-verifier",

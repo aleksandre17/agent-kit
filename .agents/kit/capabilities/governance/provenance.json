@@ -42,6 +42,11 @@
       "says": "the declared verifier accepted the publisher's signature over the pinned digest, against this host's trust root, at the moment stated"
     },
     {
+      "state": "not-yet-read",
+      "standing": "not established",
+      "says": "trust on first use: the bytes were pinned as they arrived, and no verification has run over them yet; the approval that attests this pin is where it runs"
+    },
+    {
       "state": "unsigned",
       "standing": "not established",
       "says": "the publisher claimed no signature; integrity is pinned and nothing proves who released these bytes"

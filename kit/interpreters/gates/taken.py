@@ -56,14 +56,18 @@ def _taken_intact(ctx, params) -> list:
         measured = provenance.tree_digest(home, f"{plane['namespace']}{row['id']}/", signature)
         held = pins.get(row["id"])
         if held is None:
-            # A declared state, never a silent pass: until a pin is taken there is no reading of
-            # what arrived to hold these bytes to, and none is invented here.
-            print(f"        {at}/: taken by {row['taken_by']} at {row['at']}, NOT YET PINNED -- "
-                  f"measures {measured}; its integrity is judged from the pin `init --approve` takes")
+            # Amendment 2: `take` pins at arrival, so a take with no pin has no reading of what
+            # arrived to be held to -- there is no honest "not yet pinned" state, and none passes.
+            failures.append(f"{at}/: taken by {row['taken_by']} at {row['at']} from "
+                            f"{row['source']}, and no provenance pin holds it -- measures "
+                            f"{measured}, against nothing")
         elif measured != held["digest"]:
             failures.append(f"{at}/: measures {measured}, and its pin holds {held['digest']} "
                             f"(pinned by {held['pinned_by']} at {held['pinned_at']}; taken by "
                             f"{row['taken_by']} at {row['at']} from {row['source']})")
+        elif provenance.unattested(held):
+            print(f"        {at}/: pinned at arrival by {held['pinned_by']} at {held['pinned_at']}, "
+                  f"{provenance.TRUST_ON_FIRST_USE} -- bytes equal the pin; not yet attested")
     root = ctx.workspace.path(plane["target"])
     declared_ids = {row["id"] for row in rows}
     for found in sorted(p.name for p in root.iterdir() if p.is_dir()) if root.is_dir() else []:

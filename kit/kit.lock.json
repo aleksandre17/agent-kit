@@ -167,7 +167,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "8f8f6374f6219480e75e4f94dacae64a392d000af06dd5433e2411c8a8764e99",
+      "digest": "9da54ac1ffc1f767ca3d13a0777aab8f8b050d2d9e356e3562f2fe6d14fa7d38",
       "path": "capabilities/governance/provenance.json"
     },
     {
@@ -515,7 +515,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b8d110168c654463fc233e278a9574747a55c9ab3b34f39d713f1b8f2b4615da",
+      "digest": "3b58fe3015f579a0f27fa942b81d3af8544d9c385a9c2f91ab18ee2c4d939024",
       "path": "interpreters/gates/taken.py"
     },
     {
@@ -605,7 +605,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0ddf5e54e6e85ba80c38727ccbc34a74c34b4f0063b126fcd5fd18ebe490dd3c",
+      "digest": "b52200c17608230cdd9a46e75c80b52c3e6aace28751d254885210104bf61647",
       "path": "interpreters/provenance.py"
     },
     {
@@ -725,7 +725,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "684f34ca0a4c3e9de92d8609fe29af608a973a138f585e742be1a97f9dcbe690",
+      "digest": "1f4f0a8217edd1858f664d9395de9cc71ce036781cd069bd1960272ff1ddda49",
       "path": "interpreters/verbs/take.py"
     },
     {
@@ -821,7 +821,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "a58cffde79c11de24067bc7814345980b81da17a8ae7857f13a6770877c89517",
+      "digest": "9a9c802e576ba963f596072cac56381c60c1cf934165fa940bda7a3bd26725ee",
       "path": "schemas/estate.schema.json"
     },
     {
@@ -899,7 +899,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "a5e9f0f5e90c6502b509dd03b8248fa6d3b078587f4691bb3b787fac4c93ff7e",
+      "digest": "9cb54b5a6be3ff463226fddb08159837d6700672f1902624ba1bce62e1134c5f",
       "path": "schemas/provenance.schema.json"
     },
     {
@@ -1002,5 +1002,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-17T11:55:54+00:00"
+  "taken_at": "2026-09-17T12:32:26+00:00"
 }

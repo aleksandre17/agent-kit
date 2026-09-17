@@ -12,6 +12,20 @@ moment of need by `upgrade`, which is not built yet.
   normalised by ONE form rule in `gates/edits.py`; any other rooted path without a drive raises
   `Unplaceable` and `judge` REFUSES. Previously both read as "outside this host" and passed (fail-open).
 
+**Changed — the pin is written when the bytes arrive (ADR-018 amendment 2; closes the take→init window)**
+- `take --approve` writes the ADR-008 provenance pin for each take AT ARRIVAL, marked
+  `trust: {basis: trust-on-first-use}` with authenticity `not-yet-read` (new declared word in
+  `provenance.json`); a retake of equal bytes keeps its pin, a newer version supersedes it, changed
+  bytes at the same version or an older version are refused (KIT0045).
+- `take` now HOLDS the host as its one writer (ADR-007): its writes run under `hostlock.held`.
+  Still not built: a take journal.
+- `init --approve` ATTESTS a trust-on-first-use pin (authenticity read, `trust: {basis: attested,
+  attested_by, attested_at}`); bytes that no longer equal the pin read `drifted` and init refuses.
+  Without an approval an unattested pin waits at the provenance door like a first contact.
+- `taken-intact` FAILS on a take with no pin; the `NOT YET PINNED` pass state is removed. A pin
+  written before amendment 2 carries no `trust` field and reads as attested (it was pinned at an
+  approved door). `estate.schema.json` gains optional `trust`.
+
 **Changed — the take digest has one home (ADR-018 amendment 1)**
 - `taken-intact` judges each take against its ADR-008 provenance pin, never its row; a take not yet
   pinned is printed `NOT YET PINNED` (not failed). `take` no longer writes `digest` and sheds it from

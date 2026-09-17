@@ -25,7 +25,10 @@ from pathlib import Path
 
 from harness import KIT, LOCK, Fixtures
 
+import ephemeral
+import hostlock
 import manifest as manifest_port
+import provenance
 from errors import PendingApproval
 from manifest import Manifest
 import declared
@@ -39,6 +42,8 @@ PLANE = _INSTALLS[manifest_port.TAKEN_MODE]
 STATEMENT = _INSTALLS[manifest_port.TAKEN_DECLARATION_MODE]
 ANSWERS = _INSTALLS["declaration"]["target"]
 GATE = next(g["id"] for c in CORE.capabilities for g in c.gates if g["kind"] == "taken-intact")
+HOLD = (f"{[p['root'].rstrip('/') for p in CORE.planes if p['class'] == ephemeral.OBSERVED][0]}"
+        f"/{hostlock.NAME}")
 PIN_GATE = next(g["id"] for c in CORE.capabilities for g in c.gates if g["kind"] == "pinned-kit-intact")
 
 
@@ -159,9 +164,66 @@ class Taken(Fixtures, unittest.TestCase):
         self.assertEqual(0, took.returncode, said(took))
         rows = json.loads((host / STATEMENT["target"]).read_text(encoding="utf-8"))["takes"]
         self.assertFalse([r for r in rows if "digest" in r])
-        # An unpinned take is NAMED as unpinned, never passed in silence.
-        unpinned = pinned_cli(self.taken_host(), "check")
-        self.assertIn("NOT YET PINNED", unpinned.stdout, said(unpinned))
+
+    # == 4b. the pin is written when the bytes arrive (amendment 2) =============================
+    def pins(self, host: Path) -> dict:
+        estate = json.loads((host / _INSTALLS["estate"]["target"]).read_text(encoding="utf-8"))
+        return {p["capability"]: p for p in estate.get("taken", [])}
+
+    def test_305_an_approved_take_pins_at_arrival_trust_on_first_use_and_init_attests_it(self):
+        host = self.taken_host()
+        pins = self.pins(host)
+        self.assertEqual(self.ids, sorted(pins))
+        for identity in self.ids:
+            self.assertEqual({"basis": provenance.TRUST_ON_FIRST_USE}, pins[identity]["trust"])
+            self.assertEqual(provenance.NOT_YET_READ, pins[identity]["authenticity"]["state"])
+        green = pinned_cli(host, "check")
+        self.assertIn(f"PASS  {GATE}", green.stdout, said(green))
+        self.assertIn(provenance.TRUST_ON_FIRST_USE, green.stdout)
+        attested = self.pins(self.composed_host())
+        for identity in self.ids:
+            self.assertEqual(provenance.ATTESTED, attested[identity]["trust"]["basis"])
+            self.assertEqual("acceptance-suite", attested[identity]["trust"]["attested_by"])
+
+    def test_306_bytes_changed_between_take_and_init_are_refused_by_init_and_fail_check(self):
+        host = self.taken_host()
+        answers = json.loads((host / ANSWERS).read_text(encoding="utf-8"))
+        answers["capabilities"] = sorted(set(answers["capabilities"]) | set(self.ids))
+        (host / ANSWERS).write_text(json.dumps(answers, indent=2) + "\n", encoding="utf-8", newline="\n")
+        changed = next(p for p in (host / PLANE["target"] / self.ids[0]).rglob("*") if p.is_file())
+        changed.write_bytes(changed.read_bytes() + b"\n")
+        before = self.pins(host)
+        init = pinned_cli(host, "init", "--approve", "acceptance-suite")
+        self.assertNotEqual(0, init.returncode, said(init))
+        self.assertIn("drifted", init.stdout + init.stderr)
+        self.assertEqual(before, self.pins(host), "a refused attestation re-pinned the drift")
+        ran = pinned_cli(host, "check")
+        self.assertIn(f"FAIL  {GATE}", ran.stdout, said(ran))
+        self.assertIn("its pin holds h1:", ran.stdout)
+
+    def test_307_a_take_with_no_pin_fails_the_gate(self):
+        host = self.taken_host()
+        at = host / _INSTALLS["estate"]["target"]
+        estate = json.loads(at.read_text(encoding="utf-8"))
+        estate["taken"] = []
+        at.write_text(json.dumps(estate, indent=2) + "\n", encoding="utf-8", newline="\n")
+        ran = pinned_cli(host, "check")
+        self.assertIn(f"FAIL  {GATE}", ran.stdout, said(ran))
+        self.assertIn("no provenance pin holds it", ran.stdout)
+        self.assertNotIn("NOT YET PINNED", ran.stdout)
+
+    def test_308_a_take_holds_the_host_as_its_one_writer(self):
+        host = self.taken_host()
+        hold = json.loads((host / HOLD).read_text(encoding="utf-8"))
+        self.assertEqual("take", hold["verb"], "take wrote the host without holding it")
+        self.assertFalse(hostlock.standing(hold), "take walked away still holding the host")
+        # A second writer meeting a standing hold is refused at the door, and writes nothing.
+        hold.pop(hostlock.RELEASED_AT, None)
+        (host / HOLD).write_text(json.dumps(hold) + "\n", encoding="utf-8", newline="\n")
+        before = self.pins(host)
+        again = pinned_cli(host, "take", "--path", self.paths, "--approve", "acceptance-suite")
+        self.assertEqual(3, again.returncode, said(again))
+        self.assertEqual(before, self.pins(host))
 
     # == 5. a take never shadows the release ====================================================
     def test_304_an_id_the_release_issued_is_refused_at_the_take_and_at_every_load(self):
