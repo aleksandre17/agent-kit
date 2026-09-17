@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "summary": "Edit gates this HOST declares. The kit ships none: what an edit here may not introduce is this host's policy. Declared empty, every edit is judged and none is refused -- a declared zero, and not a gate that is switched off.",
+  "gates": []
+}

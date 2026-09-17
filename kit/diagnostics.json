@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 42,
+  "issued": 43,
   "codes": [
     {
       "code": "KIT0001",
@@ -254,6 +254,12 @@
       "status": "active",
       "title": "no capability declares how a DECLARED DIRECTORY is carried by a repository",
       "explanation": "A space a capability declares, and a collection projection a host has put nothing into, are directories -- and version control carries files, not directories, so such a path is gone from the next clone and the floor then reports a DRAWN path as missing. The kit writes one marker into every such directory to carry it, and the marker's FILENAME is a declaration: a capability names it in its `space` block, and exactly one capability must -- two would drift, and none would leave the interpreter to invent a name no host was ever told. Declare it in the capability that can never be disabled, so every host is told it."
+    },
+    {
+      "code": "KIT0043",
+      "status": "active",
+      "title": "a runtime hook asked to be judged through a surface that declares no hand",
+      "explanation": "The judge verb (the hook a served runtime setting runs) reads where a product puts the edit it is making -- the edited paths, the introduced text, the exit code that means no -- from that product's surface `hands` declaration. A surface no taken adapter declares, or one without a `hands` block, states none of that, so no edit can be judged and the verb refuses rather than guess. Take the adapter that declares the surface, or declare its `hands`."
     }
   ]
 }

@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 158,
+  "count": 163,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "2e46a0a1d5ae90becad16fde81a80655a3a5c655f76bcd5f1d130887bea7baf4",
+      "digest": "47bafe7e5832b863efa8a65b76d23a00f36884a87f4663ab8c7ea71b2a75c90f",
       "path": "MANIFEST.json"
     },
     {
@@ -79,6 +79,18 @@
       "class": "payload",
       "digest": "b21c8dc71a43ed4850a244535987d3fb6e2caffd9b5c041767248915a2213bfb",
       "path": "capabilities/doctrine/payload/doctrine.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "503bfc076003fa53e5ec4832c78d77a1d678c76467dd56cdecb0f0e025ebfa95",
+      "path": "capabilities/enforcement/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "8e46cda136642cf0a995b63940a24acd48446e7c96b9983fa6eff78176fc74cb",
+      "path": "capabilities/enforcement/payload/edit-gates-local.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -299,7 +311,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "aabb7d70eb8ce252047da0e1726ceb9d85bdf890f7ad2199583fd60eb64fc2f7",
+      "digest": "4b45c415054ffc1f0499e0530a43620345c0411dc4e61ff5f395f5df28a2439a",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -389,7 +401,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "492a383f26228396c3197271d719854d543f93251032751cc617cf0a4bc48ba0",
+      "digest": "439a4697539fa5fda2378a508cc038c625ef16e1530a2e3a5ca59c90416bbb2d",
       "path": "diagnostics.json"
     },
     {
@@ -401,7 +413,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "674df898b5499aa32a47e949722024a2088dae2a7c14777f2f74e50a2007ea1f",
+      "digest": "45fc64c6e83b08f226fcf17fb77edc83e671b38f6fc8466567a8c853751aec2f",
       "path": "interpreters/cli.py"
     },
     {
@@ -463,6 +475,12 @@
       "class": "interpreter",
       "digest": "c8c58c3d6b864341fceccb2e46baf7deccb566a6d4e6e032d42b0cec7f8a58a0",
       "path": "interpreters/gates/delivery.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "ef61dcc21763c71472de944723d76e8220a1494a33448492dc38ef6134e208d7",
+      "path": "interpreters/gates/edits.py"
     },
     {
       "accounted_by": "interpreter",
@@ -569,7 +587,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "98d3461c1b1b211bb084fe0c71c0b2715798bd9163dc2c28acee8bde4986292c",
+      "digest": "7f5b36cc51d653c3007af7ce27c40d6b66a8ba9fdea692d8999d01e0da16e4d0",
       "path": "interpreters/ports/runtime.py"
     },
     {
@@ -673,6 +691,12 @@
       "class": "interpreter",
       "digest": "d0f031542ad57cd70ee3bb07b78947b2c91f2256276bb5cf610a4fa3a9991736",
       "path": "interpreters/verbs/init.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "10c5f9c728e64fc8c064a31abbaeba9172d77eb892566866bc2d09e6d1a99abd",
+      "path": "interpreters/verbs/judge.py"
     },
     {
       "accounted_by": "interpreter",
@@ -781,6 +805,12 @@
       "class": "declaration",
       "digest": "a08f7f068d402a21d48263aa12a405a2464b4c2b36c5df71dec7c948b60f2f06",
       "path": "schemas/doctrine.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "e98e775403817cbca0da770ddf652ca350c7f5ceafbbcd1806693a6c1ef4d581",
+      "path": "schemas/edit-gate.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -899,7 +929,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "7317401b1e8e2e69af2793060395bca460e49d1ebcad165c23f0520f2ded792b",
+      "digest": "5498eb0167dcf36049f7d02916f53ab6c495d65727f2e65e413519a58c8ca1e0",
       "path": "schemas/runtime-surface.schema.json"
     },
     {
@@ -954,5 +984,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-17T10:42:15+00:00"
+  "taken_at": "2026-09-17T11:09:13+00:00"
 }

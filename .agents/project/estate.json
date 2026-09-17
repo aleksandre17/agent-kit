@@ -128,6 +128,13 @@
       "path": ".agents/project/doctrine/doctrine.json"
     },
     {
+      "capability": "enforcement",
+      "class": "binding",
+      "digest": "8e46cda136642cf0a995b63940a24acd48446e7c96b9983fa6eff78176fc74cb",
+      "mode": "seed",
+      "path": ".agents/project/enforcement/edit-gates.json"
+    },
+    {
       "capability": "governance",
       "class": "binding",
       "digest": null,
@@ -246,5 +253,5 @@
   "signed_by": "agent-linkB(owner-delegated:ADR-015)",
   "succession_acts": [],
   "taken": [],
-  "taken_at": "2026-09-17T10:33:08+00:00"
+  "taken_at": "2026-09-17T10:53:23+00:00"
 }

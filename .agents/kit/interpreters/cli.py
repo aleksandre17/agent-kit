@@ -81,6 +81,9 @@ def main(argv=None) -> int:
     parser.add_argument("--by", default=None, help="who is making this move, recorded on the card")
     parser.add_argument("--path", type=_ids, default=None,
                         help="the host path(s) a verb acts on (comma-separated)")
+    parser.add_argument("--surface", default=None,
+                        help="the runtime surface a verb speaks through, by id -- how a served hook "
+                             "says which product handed it the event on stdin")
     parser.add_argument("--map", default=None,
                         help="a migration map: the host's signed statement of what becomes of "
                              "its prior agent system (ADR-011)")

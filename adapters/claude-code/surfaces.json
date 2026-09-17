@@ -3,7 +3,7 @@
   "surfaces": [
     {
       "id": "claude-code",
-      "says": "Claude Code reads CLAUDE.md at the repository root as project instructions, and one sub-agent definition per Markdown file under .claude/agents/ -- YAML front-matter carrying name and description, the body as the agent's instructions. Taken from the product's documentation; a claim until a run of the product is observed reading what was served.",
+      "says": "Claude Code reads CLAUDE.md at the repository root as project instructions, and one sub-agent definition per Markdown file under .claude/agents/ -- YAML front-matter carrying name and description, the body as the agent's instructions. Taken from the product's documentation; a claim until a run of the product is observed reading what was served. It reads project settings at .claude/settings.json, whose PreToolUse hooks receive the tool event as JSON on stdin (tool_input.file_path, and content / new_string / edits[].new_string) and refuse the tool call when the command exits 2, its stderr shown to the model. Hook payload keys and the exit-2 refusal are measured on a prior hand-built system on this machine (pre_write_context, post_write_block, pre_exec_block proven by receipt); served by THIS kit, not yet observed.",
       "renders": [
         {
           "view": "briefing",
@@ -15,8 +15,28 @@
           "target": ".claude/agents/",
           "suffix": ".md",
           "template": "capabilities/claude-code/payload/role.md.mustache"
+        },
+        {
+          "view": "enforcement",
+          "target": ".claude/settings.json",
+          "template": "capabilities/claude-code/payload/settings.json.mustache"
         }
-      ]
+      ],
+      "hands": {
+        "paths": [
+          "tool_input.file_path",
+          "tool_input.notebook_path"
+        ],
+        "texts": [
+          "tool_input.content",
+          "tool_input.new_string",
+          "tool_input.edits.*.new_string",
+          "tool_input.new_source"
+        ],
+        "refusal": {
+          "exit": 2
+        }
+      }
     }
   ]
 }

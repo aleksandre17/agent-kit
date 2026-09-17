@@ -289,3 +289,10 @@ that leaves no trace is not.
 > the old one nor the new one, and nothing on disk says which. The partial application is worse
 > than the failure it was trying to survive, because the failure was legible. Every mechanism that
 > can refuse must refuse entirely, in the plan, before a byte moves.
+| **Ports & Adapters for edit-time enforcement (one judge, per-product `hands` rows)** | *adopted whole* | `judge` verb + `gates/edits.py` name no product; each product's event shape and refusal code is a `hands` row in its surface. `test_291`. | 2026-09-17, C1a |
+| **Fitness-function calibration for host edit gates (proves/admits)** | *adopted whole* | `edit-gate` schema; `FF-EDIT-GATE`. Same stance as residence genres. | 2026-09-17, C1a |
+| **Ratchet (judge introduced text, not the file)** | *adopted* | `edit-gate` schema description; deliberate trade-off: a violation re-typed inside an unchanged line is not seen at edit time. | 2026-09-17, C1a |
+| **Fail-closed on an unjudgeable write** | *adopted* | `judge` refuses an event naming no path (exit = surface `refusal.exit`). | 2026-09-17, C1a |
+| **Claude Code / Codex hook payload keys and exit-2 refusal** | *unverified* | Taken from a prior hand-built system's receipts; codex `tool_input.*` keys unverified even there. Measured when a product runs the served hook. | 2026-09-17, C1a |
+| **GAP-E1 (edit-time enforcement, host-declared gates)** | *partial* -- missing: served hooks observed live on host #0; the abstract ARROW capability; per-directory entry files; `core.hooksPath`; CI projection | C1a CHANGELOG entry. | 2026-09-17, C1a |
+| **GAP-T1 -- a pinned-kit host cannot take an adapter (ADR-014 x ADR-016)** | *decided (ADR-018), not built -- C1b* | Taking = editing the vendor tree, which the kit lock then refuses (KIT0041, FF-KIT-PINNED). Proposed: taken capabilities reside outside the vendor tree. Needs an ADR. | 2026-09-17, C1a, measured on a copy of host #0 |

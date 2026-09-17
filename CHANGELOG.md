@@ -7,8 +7,56 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — link C, slice C1a: THE ENFORCEMENT LINE (ADR-017 row C1, first part; UNFINISHED on host #0 — see Blocked)**
+- **`enforcement` capability** (kit core, names no product): the host declares EDIT GATES in
+  `.agents/project/enforcement/edit-gates.json` (schema `edit-gate`: a path pattern, a pattern over the
+  text an edit INTRODUCES, `because`/`instead`, and a calibration pair `proves`/`admits`). The kit ships
+  zero gates. `FF-EDIT-GATE` (kind `edit-gates-calibrated`) fails an uncalibrated gate. Gates judge the
+  introduced text, never the whole file -- a ratchet: new lines are held, the edit repairing an old one
+  is not refused.
+- **`judge` verb -- the hook.** Vendored in the pinned kit; reads the product event on stdin; resolves
+  `--surface <id>` to that surface's new `hands` block (dotted event keys for paths and introduced text,
+  an optional patch grammar as two patterns, the refusal exit code). Holds no policy and no product
+  (`test_291`). An event naming no path is REFUSED as unjudged; an uncalibrated gate is named as NOT
+  APPLIED (and `check` fails it) rather than refusing every edit on its word. Refusal code KIT0043.
+- **Served settings.** The runtimes served install offers a new `enforcement` view; `vendor` (the
+  manifest's vendor plane root) joins the served frame so a template never spells `.agents/kit`. Adapters:
+  claude-code serves `.claude/settings.json` (PreToolUse, `Write|Edit|MultiEdit|NotebookEdit`, blocks
+  before the write); codex serves `.codex/hooks.json` (post_tool_use, `apply_patch`, flags AFTER the write
+  -- codex has not proven `pre_exec_block`; ADR-017 decision 5). New CLI option `--surface`.
+- Host #0 enables `enforcement` (`project.json`); `check: 0 gate(s) failed` with FF-EDIT-GATE PASS.
+- Tests: `test_enforcement.py` 288-291.
+
+**UNVERIFIED (Cardinal VII)**
+- codex: every `tool_input.*` key and the apply_patch grammar in `hands`; the `.codex/hooks.json` location
+  and exit-2 semantics on `post_tool_use` are taken from a prior hand-built system's receipts on this
+  machine, not observed through THIS kit. claude-code keys and exit-2 PreToolUse refusal: same provenance.
+- Neither product has been observed RUNNING the served hook. Windows 8.3 short vs long path forms are
+  compared by `normcase`/`abspath` only.
+
+**Blocked -- the host #0 live walk of served settings (GAP, owner door + a seam defect)**
+- Taking an adapter on a host that carries a pinned kit is IMPOSSIBLE today: ADR-014 takes an adapter by
+  placing it in the kit tree and adding a MANIFEST row, and ADR-016 holds that tree to its own lock.
+  Measured on a scratch copy of host #0: `init --approve` pins both adapters and then refuses KIT0041
+  (pinned kit no longer equals its lock, 11 paths); `check` fails FF-KIT-PINNED and FF-PROVENANCE-PINNED.
+  Proposed cure (needs an ADR): a TAKEN capability resides outside the vendor tree in its own declared
+  place, found by the manifest loader beside the pinned kit, pinned by provenance, never by the kit lock.
+- The take is also a DOOR only the owner may walk; no agent approved it on host #0. On the scratch copy
+  the served hook commands, run verbatim, refused a violating Claude Write (absolute Windows path, exit 2),
+  passed a clean Edit (exit 0), refused a violating codex patch (exit 2) and an unreadable event (exit 2).
+
 The host tree meets the drawn floor (link L3a of ADR-015's line), and the last thing that kept it
 from meeting it: a declared empty directory could not survive a clone.
+
+**Fixed within C1a -- the suite made green again (4 failures, each at its root)**
+- `KIT0043` was appended but the registry's `issued` high-water mark stayed 42; now 43
+  (`test_180` held the density law, correctly).
+- `test_260` asserted the host's law in EVERY document render; it now selects by the render's
+  declared VIEW -- only a view with a section reading the binding plane carries law. A settings
+  file is not a briefing; the design was right, the test inferred shape from "not a directory".
+- `test_264` built its third runtime as "briefing = document, every other view = collection", a
+  privileged view name: the `enforcement` document became a collection with no `over`
+  (`KeyError`). The copied row now keeps the SHAPE of the row it copies; interpreter untouched.
 
 **Fixed**
 - **A declared space now survives the repository.** `mode: space` and a collection projection over

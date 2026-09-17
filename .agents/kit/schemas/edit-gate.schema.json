@@ -1,0 +1,55 @@
+{
+  "$id": "edit-gate",
+  "title": "Edit gates -- what a HOST forbids an edit to introduce, and where",
+  "description": "A HOST's own judgement over the edits made in it, declared as data and applied by one generic judge that runs from whatever runtime hook the host is served. The kit ships the GRAMMAR and no gate: which paths, which text and why are the host's policy, never the kit's (Cardinal IV). A gate judges the TEXT AN EDIT INTRODUCES -- never the whole file -- so a gate declared today holds every new line to it without refusing the edit that repairs an old one: a ratchet, not an amnesty and not a wall. Every gate carries its own calibration, one edit it MUST refuse and one lookalike it MUST admit, and `check` proves both before the judge is believed on its word.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "gates"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "summary": { "type": "string" },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "paths", "forbids", "because", "instead", "proves", "admits"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "paths": {
+            "description": "One regular expression over the host-relative POSIX path of the edited file. One matcher, one meaning.",
+            "type": "string",
+            "minLength": 1
+          },
+          "forbids": {
+            "description": "One regular expression (multi-line) over the text the edit introduces.",
+            "type": "string",
+            "minLength": 1
+          },
+          "because": { "type": "string", "minLength": 1 },
+          "instead": { "type": "string", "minLength": 1 },
+          "proves": {
+            "description": "An edit this gate MUST refuse: the evidence it sees what it claims to catch.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "text"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "text": { "type": "string", "minLength": 1 }
+            }
+          },
+          "admits": {
+            "description": "A lookalike edit this gate MUST admit: its measured edge.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "text"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "text": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

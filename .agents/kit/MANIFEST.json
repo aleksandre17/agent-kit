@@ -95,6 +95,10 @@
     {
       "id": "doctrine",
       "declaration": "capabilities/doctrine/capability.json"
+    },
+    {
+      "id": "enforcement",
+      "declaration": "capabilities/enforcement/capability.json"
     }
   ],
   "detectors": [
@@ -143,6 +147,7 @@
     "provenance": "schemas/provenance.schema.json",
     "succession": "schemas/succession.schema.json",
     "migration-map": "schemas/migration-map.schema.json",
-    "succession-act": "schemas/succession-act.schema.json"
+    "succession-act": "schemas/succession-act.schema.json",
+    "edit-gate": "schemas/edit-gate.schema.json"
   }
 }

@@ -2,6 +2,7 @@
   "capabilities": [
     "delivery",
     "doctrine",
+    "enforcement",
     "evaluation",
     "governance",
     "hygiene",

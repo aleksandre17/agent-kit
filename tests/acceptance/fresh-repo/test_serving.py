@@ -148,7 +148,11 @@ class Serving(Fixtures, unittest.TestCase):
                                        if "generated" in p.parts).read_text(encoding="utf-8")
                 for rendered in surface["renders"]:
                     if not rendered["target"].endswith("/"):
-                        self.assertIn(canary, (host / rendered["target"]).read_text(encoding="utf-8"))
+                        # Only a document whose VIEW declares a section reading the host's law page
+                        # carries that law; a view of other sections (a settings file) does not.
+                        view = next(v for v in SPEC["views"] if v["id"] == rendered["view"])
+                        if any(s in LAW_SECTIONS for s in view.get("sections", [])):
+                            self.assertIn(canary, (host / rendered["target"]).read_text(encoding="utf-8"))
                         continue
                     rel = f"{rendered['target']}{AN_ARCHETYPE['id']}{rendered.get('suffix', '')}"
                     text = (host / rel).read_text(encoding="utf-8")
@@ -211,12 +215,14 @@ class Serving(Fixtures, unittest.TestCase):
         self.assertEqual(0, self.run_kit(KIT, host, "check").returncode)
 
     def test_264_a_third_runtime_is_a_surface_row_and_the_interpreter_is_not_touched(self):
-        template_of = {r["view"]: r["template"] for r in SURFACES[0]["renders"]}
+        template_of = {r["view"]: (r["template"], r["target"]) for r in SURFACES[0]["renders"]}
         third = {"id": "a-product-nobody-shipped", "says": "declared by this test alone",
                  "renders": [{"view": view, "template": source,
-                              "target": ".a-product/" if view != "briefing" else ".a-product/READ-ME-FIRST.md",
-                              **({"suffix": ".md"} if view != "briefing" else {})}
-                             for view, source in template_of.items()]}
+                              # The render's SHAPE is kept from the row it copies (a collection
+                              # stays a collection); only the product's place is renamed.
+                              "target": ".a-product/" if target.endswith("/") else f".a-product/copied-{view}",
+                              **({"suffix": ".md"} if target.endswith("/") else {})}
+                             for view, (source, target) in template_of.items()]}
         kit = adapted_kit(patch=lambda k: self.edit_json(
             k, SURFACES_REL, lambda doc: doc[SPEC["surfaces"]["list"]].append(third)))
         for path in (kit / "interpreters").rglob("*.py"):

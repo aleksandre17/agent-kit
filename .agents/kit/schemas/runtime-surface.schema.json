@@ -15,6 +15,32 @@
         "required": ["id", "says", "renders"],
         "properties": {
           "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "hands": {
+            "description": "How this product hands a hook the edit it is making, and how the hook tells it no -- read by the one judge a served setting runs (the `judge` verb), which names no product. Dotted keys into the event the product writes to the hook's stdin (`*` fans over a list); the first key that holds a value wins. A product that speaks in patches declares the two patterns that read one: the line naming a file (group 1 is its path) and a line the patch adds (group 1 is its text). Like `says`, a claim about somebody else's software until a run is observed.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["paths", "texts", "refusal"],
+            "properties": {
+              "paths": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              "texts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              "patch": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["from", "file", "line"],
+                "properties": {
+                  "from": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+                  "file": { "type": "string", "minLength": 1 },
+                  "line": { "type": "string", "minLength": 1 }
+                }
+              },
+              "refusal": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["exit"],
+                "properties": { "exit": { "type": "integer" } }
+              }
+            }
+          },
           "says": {
             "description": "Which product reads these paths, and where that claim comes from. Testimony, labelled as testimony.",
             "type": "string",

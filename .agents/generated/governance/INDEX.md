@@ -92,6 +92,18 @@ Carries conduct doctrine and ships none of it. A sentence about how a host shoul
 Gates declared by this capability:
 
 
+### enforcement 0.1.0
+
+Declares the ENFORCEMENT LINE: a host's own edit gates, judged at the moment an edit is made, from whichever runtime the host serves. The host declares the gates -- which paths, which introduced text, why, and what instead -- and the kit ships only their grammar and ONE judge (the `judge` verb), vendored in the pinned kit and run by the hook a runtime adapter serves. The judge holds no policy and knows no product: how a product hands a hook its edit, and how it is told no, is declared by that product's surface (ADR-013/014). Every gate is calibrated before it is believed; `check` fails an uncalibrated one, and the judge names it as unjudged rather than refusing on its word.
+
+| path | class | mode |
+| --- | --- | --- |
+| `.agents/project/enforcement/edit-gates.json` | binding | seed |
+
+Gates declared by this capability:
+
+- **FF-EDIT-GATE** — `edit-gates-calibrated`
+
 ### hygiene 0.1.0
 
 Declares RESIDENCE: the genres of document that have no home in an installed surface, why each has none, and where each belongs instead. It is a sensor and never a broom -- it names a resident and stops, because removing something is a decision with an author, and a machine cannot be that author. Every genre ships its own calibration, one path it must see and one lookalike it must tolerate, so the sensor proves what it sees before anything is believed on its word. The kit's genres are shipped and versioned with the kit; the host may declare more of its own and may exempt nothing, since a gate that names a defect and then permits it has already stopped being a gate.

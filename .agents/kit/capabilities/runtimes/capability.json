@@ -116,6 +116,10 @@
             ]
           },
           {
+            "id": "enforcement",
+            "sections": []
+          },
+          {
             "id": "role-definitions",
             "over": "definitions",
             "describes": "seam",

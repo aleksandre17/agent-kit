@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "post_tool_use": [
+      {
+        "matcher": "apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"{{vendor}}/interpreters/cli.py\" judge --root . --surface {{surface}}"
+          }
+        ]
+      }
+    ]
+  }
+}

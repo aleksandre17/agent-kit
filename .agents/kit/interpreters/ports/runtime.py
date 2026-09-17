@@ -140,8 +140,11 @@ def _targets(ctx, item: dict, view: dict, produced: dict, capabilities) -> list:
     views = _views(spec)
     found, owner = [], {}
     for row, surface in _served(ctx, spec, view):
+        # `vendor` is where this host carries its pinned kit -- the manifest's own plane, so a
+        # served setting that runs a vendored interpreter never spells that path a second time.
         base = {"kit_version": view["kit_version"], "runtime": row[collection.IDENTITY],
-                "surface": surface[collection.IDENTITY]}
+                "surface": surface[collection.IDENTITY],
+                "vendor": next(p["root"] for p in ctx.manifest.planes if p["class"] == "vendor")}
         for rendered in surface["renders"]:
             view_spec = views.get(rendered["view"])
             if view_spec is None:
