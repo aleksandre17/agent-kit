@@ -169,7 +169,7 @@
             "additionalProperties": false,
             "required": ["basis"],
             "properties": {
-              "basis": {"type": "string", "enum": ["trust-on-first-use", "attested"]},
+              "basis": {"type": "string", "minLength": 1},
               "attested_by": {"type": "string", "minLength": 1},
               "attested_at": {"type": "string", "minLength": 1}
             }

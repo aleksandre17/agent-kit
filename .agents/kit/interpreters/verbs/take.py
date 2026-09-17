@@ -138,7 +138,7 @@ def run(ctx, args) -> int:
     for identity, _source, files, measured in takes:
         version = json.loads(files[plane["declaration"]].decode("utf-8"))["version"]
         try:
-            pins[identity] = provenance.arrival(identity, version, measured, args.approve, moment,
+            pins[identity] = provenance.arrival(ctx, identity, version, measured, args.approve, moment,
                                                 pins.get(identity))
         except provenance.ProvenanceRefused as exc:
             raise TakeError(str(exc)) from exc
@@ -154,7 +154,7 @@ def run(ctx, args) -> int:
         ctx.workspace.scoped(estate_owner.targets()).write_json(at, estate)
         for identity, _source, _files, measured in takes:
             print(f"  TAKEN  {identity}  {measured}  by {args.approve} at {moment} -- PINNED at "
-                  f"arrival, {provenance.TRUST_ON_FIRST_USE}; enable it in the host's declaration, "
+                  f"arrival, {provenance.basis_at(ctx, provenance.ARRIVAL)}; enable it in the host's declaration, "
                   f"then `init --approve <who>` attests the pin")
         return 0
 

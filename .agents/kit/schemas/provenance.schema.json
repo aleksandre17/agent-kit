@@ -9,6 +9,7 @@
     "statement",
     "states",
     "authenticity",
+    "trust",
     "verifiers"
   ],
   "properties": {
@@ -62,6 +63,37 @@
               "door",
               "refuse"
             ]
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "trust": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "basis",
+          "written_at",
+          "says"
+        ],
+        "properties": {
+          "written_at": {
+            "description": "The moment the interpreter writes this basis: a take at arrival, or an approval that attests. Exactly one row per moment.",
+            "type": "string",
+            "enum": [
+              "arrival",
+              "approval"
+            ]
+          },
+          "basis": {
+            "type": "string",
+            "minLength": 1
           },
           "says": {
             "type": "string",

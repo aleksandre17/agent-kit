@@ -25,6 +25,7 @@ moment of need by `upgrade`, which is not built yet.
 - `taken-intact` FAILS on a take with no pin; the `NOT YET PINNED` pass state is removed. A pin
   written before amendment 2 carries no `trust` field and reads as attested (it was pinned at an
   approved door). `estate.schema.json` gains optional `trust`.
+- `trust.basis` is an open word declared in `provenance.json` `trust` (no schema enum), each row naming the moment the interpreter writes it (`written_at`: `arrival` | `approval`, a schema enum; exactly one row per moment); `taken-intact` fails an undeclared basis, and an unapproved `init` says a trust-on-first-use pin awaits attestation.
 
 **Changed — the take digest has one home (ADR-018 amendment 1)**
 - `taken-intact` judges each take against its ADR-008 provenance pin, never its row; a take not yet

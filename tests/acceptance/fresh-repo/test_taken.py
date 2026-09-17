@@ -175,15 +175,25 @@ class Taken(Fixtures, unittest.TestCase):
         pins = self.pins(host)
         self.assertEqual(self.ids, sorted(pins))
         for identity in self.ids:
-            self.assertEqual({"basis": provenance.TRUST_ON_FIRST_USE}, pins[identity]["trust"])
+            self.assertEqual({"basis": "trust-on-first-use"}, pins[identity]["trust"])
             self.assertEqual(provenance.NOT_YET_READ, pins[identity]["authenticity"]["state"])
         green = pinned_cli(host, "check")
         self.assertIn(f"PASS  {GATE}", green.stdout, said(green))
-        self.assertIn(provenance.TRUST_ON_FIRST_USE, green.stdout)
+        self.assertIn("trust-on-first-use", green.stdout)
         attested = self.pins(self.composed_host())
         for identity in self.ids:
-            self.assertEqual(provenance.ATTESTED, attested[identity]["trust"]["basis"])
+            self.assertEqual("attested", attested[identity]["trust"]["basis"])
             self.assertEqual("acceptance-suite", attested[identity]["trust"]["attested_by"])
+
+    def test_305b_a_trust_basis_the_declaration_does_not_name_is_refused(self):
+        host = self.taken_host()
+        path = host / _INSTALLS["estate"]["target"]
+        estate = json.loads(path.read_text(encoding="utf-8"))
+        estate["taken"][0]["trust"] = {"basis": "vouched-for"}
+        path.write_text(json.dumps(estate, indent=2) + "\n", encoding="utf-8", newline="\n")
+        ran = pinned_cli(host, "check")
+        self.assertNotIn(f"PASS  {GATE}", ran.stdout, said(ran))
+        self.assertIn("vouched-for", ran.stdout + ran.stderr)
 
     def test_306_bytes_changed_between_take_and_init_are_refused_by_init_and_fail_check(self):
         host = self.taken_host()

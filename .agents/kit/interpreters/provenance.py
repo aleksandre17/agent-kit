@@ -69,17 +69,33 @@ NO_TRUST_ROOT = "no-trust-root"
 VERIFIER_ABSENT = "verifier-absent"
 NOT_YET_READ = "not-yet-read"
 
-#: How a pin stands (ADR-018 amendment 2): written at arrival on first use, or attested since.
-TRUST_ON_FIRST_USE = "trust-on-first-use"
-ATTESTED = "attested"
+#: The MOMENTS at which the interpreter writes a trust basis (ADR-018 amendment 2): a take writes
+#: one at arrival, an approval writes one when it attests. The moments are the interpreter's
+#: extension points; which basis WORD each writes is the declaration's `trust[].written_at`.
+ARRIVAL = "arrival"
+APPROVAL = "approval"
 
 
-def unattested(pin) -> bool:
-    return bool(pin) and (pin.get("trust") or {}).get("basis") == TRUST_ON_FIRST_USE
+def basis_at(ctx, moment: str) -> str:
+    """The basis word the provenance declaration says is written at `moment`, or a refusal: none
+    would leave the moment with no declared word, two would be two answers to one moment."""
+    found = [row["basis"] for row in declaration(ctx)["trust"] if row["written_at"] == moment]
+    if len(found) != 1:
+        raise ProvenanceRefused(
+            f"the provenance declaration names {len(found)} trust basis(es) written at "
+            f"{moment!r}; exactly one is required, because a moment writes exactly one word")
+    return found[0]
 
 
-def arrival(capability: str, version: str, measured: str, who: str, when: str, prior=None) -> dict:
-    """The pin a take writes AT ARRIVAL (ADR-018 amendment 2), marked trust-on-first-use: the
+def unattested(ctx, pin) -> bool:
+    """Whether a pin stands on a basis other than the one an approval writes. A pin with no
+    `trust` field predates amendment 2 and reads as attested."""
+    basis = ((pin or {}).get("trust") or {}).get("basis")
+    return bool(pin) and basis is not None and basis != basis_at(ctx, APPROVAL)
+
+
+def arrival(ctx, capability: str, version: str, measured: str, who: str, when: str, prior=None) -> dict:
+    """The pin a take writes AT ARRIVAL (ADR-018 amendment 2), marked with the basis declared as written at arrival: the
     digest of what arrived, so that nothing between the take and its attestation is admitted
     silently. A prior pin is judged first: bytes that differ at the same version, or an older
     version, are refused -- a take never re-pins a drift or walks a rollback."""
@@ -94,7 +110,7 @@ def arrival(capability: str, version: str, measured: str, who: str, when: str, p
             return prior
     pin = {"capability": capability, "version": version, "digest": measured,
            "pinned_by": who, "pinned_at": when,
-           "trust": {"basis": TRUST_ON_FIRST_USE},
+           "trust": {"basis": basis_at(ctx, ARRIVAL)},
            "authenticity": {"state": NOT_YET_READ, "taken_at": when}}
     if prior:
         pin["supersedes"] = {"version": prior["version"], "digest": prior["digest"]}
@@ -132,6 +148,14 @@ def _row(rows: list, key: str, word: str, what: str) -> dict:
         f"the provenance declaration says nothing about the {what} {word!r}. It was measured and "
         f"has no declared meaning, and a meaning supplied here would be a rule nobody declared"
     )
+
+
+def basis_declared(ctx, pin) -> bool:
+    """Whether a pin's trust basis is a word the provenance declaration names (ADR-018 amendment
+    2). The words are the document's, read as the authenticity words are; an undeclared one has
+    no meaning and is refused by the reader, never defaulted."""
+    word = ((pin or {}).get("trust") or {}).get("basis")
+    return any(row["basis"] == word for row in declaration(ctx)["trust"])
 
 
 def disposition(ctx, state: str) -> str:
@@ -322,16 +346,20 @@ def judge(ctx, capabilities, who, when: str, at_door: bool) -> list:
                           f"  -- pinned {row['pin']['version']} {row['pin']['digest']} by "
                           f"{row['pin']['pinned_by']} at {row['pin']['pinned_at']}"
                           for row in refused))
-    # A pin written at arrival (trust-on-first-use) waits at the same door as a first contact: its
+    # A pin written at arrival waits at the same door as a first contact: its
     # bytes already equal it (a drift was refused above), and the approval ATTESTS it here.
     waiting = [row for row in rows if row["disposition"] == DOOR
-               or (row["disposition"] == HOLD and unattested(row["pin"]))]
+               or (row["disposition"] == HOLD and unattested(ctx, row["pin"]))]
     if waiting and not who:
         if at_door:
             doors.refuse(
-                f"{len(waiting)} capability(ies) this kit did not issue have never been pinned "
-                f"by this host: " + ", ".join(f"{r['capability']}@{r['version']} ({r['state']})"
-                                              for r in waiting),
+                f"{len(waiting)} capability(ies) this kit did not issue await a person's word: "
+                + ", ".join(f"{r['capability']}@{r['version']} (pinned at arrival by "
+                            f"{r['pin']['pinned_by']} at {r['pin']['pinned_at']}, "
+                            f"{r['pin']['trust']['basis']}; awaits attestation)"
+                            if r["disposition"] == HOLD else
+                            f"{r['capability']}@{r['version']} ({r['state']}; never pinned by this host)"
+                            for r in waiting),
                 "person who owns this host",
                 "init --root <host> --approve <who>",
                 "Taking bytes from a publisher on nobody's word is the trust hole a pin closes; "
@@ -339,14 +367,14 @@ def judge(ctx, capabilities, who, when: str, at_door: bool) -> list:
         return [row["pin"] for row in rows if row["pin"] and row["disposition"] != DOOR]
     pins = []
     for row in rows:
-        attesting = row["disposition"] == HOLD and unattested(row["pin"])
+        attesting = row["disposition"] == HOLD and unattested(ctx, row["pin"])
         if row["disposition"] != DOOR and not attesting:
             pins.append(row["pin"])
             continue
         found = authenticate(ctx, row["declared"], row["digest"], when)
         if attesting and found["state"] != REFUTED:
             pin = dict(row["pin"], authenticity=found,
-                       trust={"basis": ATTESTED, "attested_by": who, "attested_at": when})
+                       trust={"basis": basis_at(ctx, APPROVAL), "attested_by": who, "attested_at": when})
             pins.append(pin)
             row.update({"pin": pin})
             print(f"  ATTESTED {row['capability']}@{row['version']}  {row['digest']}  pinned at "

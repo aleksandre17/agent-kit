@@ -77,6 +77,18 @@
       "says": "the declared verifier rejected the signature; that is evidence against, and is never recorded as an absence"
     }
   ],
+  "trust": [
+    {
+      "basis": "trust-on-first-use",
+      "written_at": "arrival",
+      "says": "written by the take at arrival; the bytes are held to this pin, and no approval has attested it yet"
+    },
+    {
+      "basis": "attested",
+      "written_at": "approval",
+      "says": "an approval held the bytes to this pin and found them equal"
+    }
+  ],
   "verifiers": [
     {
       "id": "ssh-keygen",

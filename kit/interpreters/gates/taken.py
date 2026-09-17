@@ -65,9 +65,12 @@ def _taken_intact(ctx, params) -> list:
             failures.append(f"{at}/: measures {measured}, and its pin holds {held['digest']} "
                             f"(pinned by {held['pinned_by']} at {held['pinned_at']}; taken by "
                             f"{row['taken_by']} at {row['at']} from {row['source']})")
-        elif provenance.unattested(held):
+        elif held.get("trust") and not provenance.basis_declared(ctx, held):
+            failures.append(f"{at}/: its pin's trust basis {held['trust']['basis']!r} is not a "
+                            f"basis the provenance declaration names, so it has no meaning")
+        elif provenance.unattested(ctx, held):
             print(f"        {at}/: pinned at arrival by {held['pinned_by']} at {held['pinned_at']}, "
-                  f"{provenance.TRUST_ON_FIRST_USE} -- bytes equal the pin; not yet attested")
+                  f"{held['trust']['basis']} -- bytes equal the pin; not yet attested")
     root = ctx.workspace.path(plane["target"])
     declared_ids = {row["id"] for row in rows}
     for found in sorted(p.name for p in root.iterdir() if p.is_dir()) if root.is_dir() else []:
