@@ -25,9 +25,9 @@ from harness import Fixtures, host_digest
 import runtime as runtime_port  # noqa: E402
 from manifest import Manifest  # noqa: E402
 
-from test_adapters import ADAPTERS, adapted_kit, surface_documents  # noqa: E402
+from test_adapters import ADAPTERS, UNACTIVATED, adapted_kit, surface_documents  # noqa: E402
 
-KIT = adapted_kit()
+KIT = adapted_kit(adapters=UNACTIVATED)  # about scoped law, not activation
 MANIFEST = Manifest(KIT)
 CAPABILITIES = [c.raw for c in MANIFEST.capabilities]
 SERVED = next(i for c in CAPABILITIES for i in c["installs"] if i.get("shape") == runtime_port.SHAPE)

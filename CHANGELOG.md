@@ -7,6 +7,37 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — the COMMIT GATE: `core.hooksPath` (ADR-017 link C, slice C1c part 3)**
+- ADR-017 decision 5 says a runtime with no proven pre-write block is held by "verification at
+  return" instead of prevention at write. A commit is the return point every runtime, tool and human
+  shares, so the git hook is where that verification lives -- the SAME judge and the SAME host gates.
+- Adapter `git` 1.0.0 (surface `git-commit`, the only place the product is named): render
+  `.githooks/pre-commit` (LF, `#!/bin/sh`, fails CLOSED if the staged diff or Python cannot be
+  read); `hands.carries: patch` (stdin IS `git diff --cached -U0`) and `hands.nothing: admitted`
+  (a pure deletion introduces no text, declared); refusal exit 1; floor row `.githooks/` (pending C).
+- Schema `runtime-surface`: `hands.carries` (`event`|`patch`), `hands.nothing` (`refused`|`admitted`),
+  `patch.from` no longer required; new `activation` block (setting, points_at, read/set/unset argv,
+  occupied {read, inert}). `judge` + `gates/edits.py` read a carried patch; no product word added.
+- `runtimes` 0.3.0: gate `FF-RUNTIME-ACTIVE` (kind `served-setting-active`, `gates/activated.py`) READS
+  the setting on every `check` and names INACTIVE / ELSEWHERE / UNREADABLE (fail) or ACTIVE (with the
+  moment read), plus a missing execute bit on mode-keeping filesystems.
+- Verb `activate` (door): `--plan`, `--approve`, `--to inactive`. Refuses under **KIT0047** a surface not
+  served, a setting that names elsewhere (never clobbered, never withdrawn), live non-sample entries in
+  `git rev-parse --git-path hooks`, anything unreadable; reads back after the change. `activation.py`
+  (interpreter root) holds the reading; `ports/runtime.py` gains `served_surfaces` (from SERVED.json).
+- Tests: `test_292`-`test_295` (fixture git repos: INACTIVE/ELSEWHERE/ACTIVE; plan/unapproved/clobber/
+  occupied refusals; git refuses a violating commit, records clean + pure deletion; withdrawal).
+  `test_288`/`test_289` read JSON only for `.json` targets and honour `nothing: admitted`.
+  Takes/scoped-law suites take `UNACTIVATED` adapters (no surface declares `activation`, read from each adapter's documents); `test_258` walks `activate` for a surface that declares it.
+- MEASURED (git 2.39.1.windows.1): hooks in a hooksPath dir run from the worktree root with no exec
+  bit; non-zero exit refuses the commit. Host #0: git adapter taken + enabled, descriptor
+  `git-commit` (class `a-batch-invocation`), `core.hooksPath=.githooks` by
+  `owner-aleksandre17:explicit-2026-09-17`; a product word staged into `kit/` REFUSED by git, a clean
+  commit admitted; both probes undone (HEAD e50dfa7).
+- UNVERIFIED / not built: POSIX exec bit after re-render (render rewrites atomically, dropping the
+  mode -- `check` reports it, `activate` restores it); `--no-verify` bypass (CI projection out of
+  scope); GAP-A1 (who activated is journalled, not in the estate).
+
 **Added — scoped law: per-directory entry files (ADR-017 link C, slice C1c part 2)**
 - `governance` 0.2.0: schema `law-scope`; seed `.agents/project/law-scopes.json` (ships `scopes: []`,
   `reads_as: law_scopes`); space `.agents/project/laws/` (where scoped law pages live, accounted).

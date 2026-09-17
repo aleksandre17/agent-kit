@@ -4,40 +4,104 @@
   "description": "The third tier of the runtime grammar, and the only one allowed to carry a product's name (ADR-013). A CLASS says what is true of a runtime as a KIND and can never name a product; a DESCRIPTOR says what one host legitimately says about the tool it runs. Neither can say where a particular product LOOKS for its instructions, because that is true of the product everywhere and of no kind and no host: it is the one sentence that can be written only by naming the vendor. So it is declared here, once, and nowhere else -- the way a Language Server Protocol client declares how it speaks the protocol while the server stays ignorant of which editor is on the other end.\n\nA surface is served to a host only when one of the host's own descriptors names it: the host's ENABLED set is the set of descriptors, and a surface nobody names produces nothing. The interpreter that serves it names no surface and no product; a new runtime is a new row here and costs no edit anywhere else.\n\nWhere a surface says a product reads a path, that is a CLAIM about somebody else's software, and it stays one until a run of that product is observed reading what was served there.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "surfaces"],
+  "required": [
+    "schema_version",
+    "surfaces"
+  ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
     "surfaces": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "says", "renders"],
+        "required": [
+          "id",
+          "says",
+          "renders"
+        ],
         "properties": {
-          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
           "hands": {
             "description": "How this product hands a hook the edit it is making, and how the hook tells it no -- read by the one judge a served setting runs (the `judge` verb), which names no product. Dotted keys into the event the product writes to the hook's stdin (`*` fans over a list); the first key that holds a value wins. A product that speaks in patches declares the two patterns that read one: the line naming a file (group 1 is its path) and a line the patch adds (group 1 is its text). Like `says`, a claim about somebody else's software until a run is observed.",
             "type": "object",
             "additionalProperties": false,
-            "required": ["paths", "texts", "refusal"],
+            "required": [
+              "paths",
+              "texts",
+              "refusal"
+            ],
             "properties": {
-              "paths": { "type": "array", "items": { "type": "string", "minLength": 1 } },
-              "texts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              "paths": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "texts": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
               "patch": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["from", "file", "line"],
+                "required": [
+                  "file",
+                  "line"
+                ],
                 "properties": {
-                  "from": { "type": "array", "items": { "type": "string", "minLength": 1 } },
-                  "file": { "type": "string", "minLength": 1 },
-                  "line": { "type": "string", "minLength": 1 }
+                  "from": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "file": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "line": {
+                    "type": "string",
+                    "minLength": 1
+                  }
                 }
               },
               "refusal": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["exit"],
-                "properties": { "exit": { "type": "integer" } }
+                "required": [
+                  "exit"
+                ],
+                "properties": {
+                  "exit": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "carries": {
+                "description": "What the hook's stdin IS. `event` (the default): a JSON document the product writes, read through the dotted keys. `patch`: the stdin is itself one patch, read by `patch.file` and `patch.line` -- how a hook that produces its own reading of the change (a staged diff) hands it over; `paths`, `texts` and `patch.from` are then unused and declared empty.",
+                "enum": [
+                  "event",
+                  "patch"
+                ]
+              },
+              "nothing": {
+                "description": "What an event that names no edited path means. `refused` (the default): nothing states where the edit sits, so it is unjudged and refused. `admitted`: only where the event's grammar is complete, so that naming no path provably means the change introduces no text (a patch of pure deletions) -- declared, with the reason in `says`, never assumed.",
+                "enum": [
+                  "refused",
+                  "admitted"
+                ]
               }
             }
           },
@@ -53,12 +117,102 @@
             "items": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["view", "target", "template"],
+              "required": [
+                "view",
+                "target",
+                "template"
+              ],
               "properties": {
-                "view": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
-                "target": { "type": "string", "minLength": 1 },
-                "template": { "type": "string", "minLength": 1 },
-                "suffix": { "type": "string" }
+                "view": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]*$"
+                },
+                "target": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "template": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "suffix": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "activation": {
+            "description": "A SETTING outside the tree -- in the product's own configuration, not in any file the host holds -- that must point at what this surface serves before the product runs it at all. Served files at a path the product never reads are a hook that exists and never fires: the most expensive silence there is. Each command is an argv run at the host root (`{points_at}` is replaced by the served directory), never a shell line. Set and unset only through the `activate` door; `check` reads the setting on every run and reports ACTIVE, INACTIVE or ELSEWHERE -- a reading with its moment, never a belief. A claim about somebody else's software, like `says`.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "setting",
+              "points_at",
+              "read",
+              "set",
+              "unset",
+              "occupied"
+            ],
+            "properties": {
+              "setting": {
+                "description": "The setting's name, as its product spells it -- for the reader.",
+                "type": "string",
+                "minLength": 1
+              },
+              "points_at": {
+                "description": "The host-relative directory, ending in '/', the setting must name: the parent of at least one served target of this surface.",
+                "type": "string",
+                "pattern": "^[^/].*/$"
+              },
+              "read": {
+                "description": "argv printing the setting's current value; a non-zero exit with no output reads as UNSET.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "set": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "unset": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "occupied": {
+                "description": "Where the product looks when the setting is unset, and which entries there are inert. Any other entry is prior work the setting would silently switch off, so the act refuses rather than displaces it.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "read",
+                  "inert"
+                ],
+                "properties": {
+                  "read": {
+                    "description": "argv printing that directory (host-relative or absolute).",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "inert": {
+                    "description": "A pattern matching entry names that are not live (shipped samples).",
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
               }
             }
           }

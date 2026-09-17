@@ -93,7 +93,9 @@ def _patched(event, patch: dict) -> list:
     """(raw path, introduced text) per file a patch touches, read by the two declared patterns."""
     header, added = re.compile(patch["file"]), re.compile(patch["line"])
     files: dict = {}
-    for body in _first(event, patch["from"]):
+    # A hand that CARRIES a patch hands the patch itself: the whole event is its one body.
+    bodies = [event] if isinstance(event, str) else _first(event, patch.get("from", []))
+    for body in bodies:
         current = None
         for line in body.splitlines():
             named = header.match(line)
@@ -112,7 +114,9 @@ def _patched(event, patch: dict) -> list:
 def edits_in(event, hand: dict) -> list:
     """(raw path, introduced text) for every file this event says is being edited."""
     found = []
-    texts = "\n".join(t for key in hand.get("texts", []) for t in _at(event, key))
+    if isinstance(event, str):  # a patch handed as itself names its files in its own grammar
+        return _patched(event, hand["patch"]) if hand.get("patch") else []
+    texts ="\n".join(t for key in hand.get("texts", []) for t in _at(event, key))
     for path in _first(event, hand.get("paths", [])):
         found.append((path, texts))
     if hand.get("patch"):

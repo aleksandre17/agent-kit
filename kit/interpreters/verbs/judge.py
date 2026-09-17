@@ -27,6 +27,9 @@ REQUIRES_APPROVED_HOST = True
 
 #: The contract a surface document keeps -- the schema's own name, as every reader of it uses.
 SURFACES = {"validates": "runtime-surface"}
+#: The schema's words: a hand whose stdin is a patch, and one whose empty event is admitted.
+CARRIES_PATCH = "patch"
+NOTHING_ADMITTED = "admitted"
 
 
 class JudgeError(KitError):
@@ -50,11 +53,20 @@ def run(ctx, args) -> int:
     hand = _hand(ctx, getattr(args, "surface", None))
     no = hand["refusal"]["exit"]
     raw = sys.stdin.read()
-    try:
-        event = json.loads(raw) if raw.strip() else None
-    except ValueError:
-        event = None
+    if hand.get("carries") == CARRIES_PATCH:
+        event = raw  # the stdin IS the patch: the hook produced its own reading of the change
+    else:
+        try:
+            event = json.loads(raw) if raw.strip() else None
+        except ValueError:
+            event = None
     handed = edits_module.edits_in(event, hand) if event is not None else []
+    if not handed and hand.get("nothing") == NOTHING_ADMITTED:
+        # DECLARED by the surface, never assumed: its grammar is complete, so an event naming no
+        # path provably introduces no text (a change of pure deletions, or no change).
+        print("judge: the change introduces no text in any path; this surface declares that "
+              "nothing introduced is nothing to refuse")
+        return 0
     if not handed:
         print("judge: REFUSED -- the event names no edited path this surface declares, so nothing "
               "could be judged; an unjudged write is not an allowed one.", file=sys.stderr)

@@ -123,6 +123,7 @@ strings (a second grammar beside markdown).
    file; a host directory is removed only if the served record says the kit created it (protection of
    the host's work, Cardinal V: a silent deletion is a lie of omission).
 
-**Unverified product facts:** Claude Code loads a nested `CLAUDE.md` when working in that subdirectory;
-Codex reads `AGENTS.md` from root to cwd, deeper overriding. Cited in each adapter's `says`; not yet
-observed in a run.
+**Product facts.** OBSERVED 2026-09-17: Claude Code (2.1.274) loaded the served
+`tests/acceptance/fresh-repo/CLAUDE.md` into the orchestrator's context the moment a file in that
+directory was read — the nested file binds as served. UNVERIFIED: Codex reads `AGENTS.md` from root to
+cwd, deeper overriding (cited in its adapter's `says`; not yet observed in a run).

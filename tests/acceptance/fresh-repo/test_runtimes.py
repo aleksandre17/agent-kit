@@ -55,7 +55,8 @@ CLAIMS_FIELD = ACCOUNTS["claimed"]["field"]
 CLAIMS_NAMES = ACCOUNTS["claimed"]["names"]
 
 #: The gate ids, read from the declarations that own them rather than spelled here.
-GATES = {gate["params"]["references"][0]["field"]: gate["id"] for gate in CAPABILITY["gates"]}
+GATES = {gate["params"]["references"][0]["field"]: gate["id"] for gate in CAPABILITY["gates"]
+         if "references" in gate.get("params", {})}
 CLASS_GATE = GATES[BASE_FIELD]
 CLAIM_GATE = GATES[CLAIMS_FIELD]
 

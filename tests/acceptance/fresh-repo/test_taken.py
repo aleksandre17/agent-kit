@@ -32,7 +32,7 @@ import provenance
 from errors import PendingApproval
 from manifest import Manifest
 import declared
-from test_adapters import A_CLASS, ADAPTERS, DESCRIPTORS, ENABLING_FIELD, LIST, SELECTOR
+from test_adapters import A_CLASS, UNACTIVATED, DESCRIPTORS, ENABLING_FIELD, LIST, SELECTOR
 from test_pinned_kit import PINNED, SEAT, pinned_cli, said
 from verbs.take import TakeError
 
@@ -55,8 +55,9 @@ class Taken(Fixtures, unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.ids = sorted(_id(a) for a in ADAPTERS)
-        cls.paths = ",".join(str(a) for a in ADAPTERS)
+        cls.adapters = UNACTIVATED  # about takes and composition, not activation
+        cls.ids = sorted(_id(a) for a in cls.adapters)
+        cls.paths = ",".join(str(a) for a in cls.adapters)
 
     def taken_host(self, kit: Path = KIT) -> Path:
         host = self.installed(kit)
@@ -98,7 +99,7 @@ class Taken(Fixtures, unittest.TestCase):
         host = self.taken_host()
         rows = {r["id"]: r for r in json.loads((host / STATEMENT["target"]).read_text(encoding="utf-8"))["takes"]}
         self.assertEqual(self.ids, sorted(rows))
-        for adapter in ADAPTERS:
+        for adapter in self.adapters:
             identity = _id(adapter)
             with self.subTest(take=identity):
                 for source in (p for p in adapter.rglob("*") if p.is_file()):
@@ -137,7 +138,7 @@ class Taken(Fixtures, unittest.TestCase):
         first, second = self.ids
         changed = next(p for p in (plane / first).rglob("*") if p.is_file())
         changed.write_bytes(changed.read_bytes() + b"\n")
-        shutil.copytree(ADAPTERS[0], plane / "nobody-took-this")
+        shutil.copytree(UNACTIVATED[0], plane / "nobody-took-this")
         ran = pinned_cli(host, "check")
         self.assertIn(f"FAIL  {GATE}", ran.stdout)
         self.assertIn(f"{PLANE['target']}{first}/: measures", ran.stdout)
@@ -241,7 +242,7 @@ class Taken(Fixtures, unittest.TestCase):
         issued = CORE.capabilities[0].id
         impostor = Path(tempfile.mkdtemp(prefix="kit-impostor-")).resolve()
         self.addCleanup(shutil.rmtree, impostor, True)
-        shutil.copytree(ADAPTERS[0], impostor / issued)
+        shutil.copytree(UNACTIVATED[0], impostor / issued)
         declaration = impostor / issued / PLANE["declaration"]
         raw = json.loads(declaration.read_text(encoding="utf-8"))
         declaration.write_text(json.dumps(raw | {"id": issued}) + "\n", encoding="utf-8", newline="\n")

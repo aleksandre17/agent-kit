@@ -137,7 +137,7 @@ Gates declared by this capability:
 
 - **FF-ROLE-BASE** — `reference-declared-across`
 
-### runtimes 0.2.0
+### runtimes 0.3.0
 
 Declares that a RUNTIME -- the tool a host actually executes its agents on -- is a declared subject rather than a thing each surface hand-writes its own version of. The kit ships CLASSES, which say what is true of a runtime as a KIND: how an agent reaches it at all, and which translation sits in the gap. The host authors DESCRIPTORS, which say only what a host legitimately says about its own tool. No vendor's name appears in a class or in the interpreter, because the name of a product is the one thing about a runtime guaranteed not to be true of the kind. Where a product LOOKS for its instructions is true of the product everywhere and of no kind and no host, so it is declared in exactly one place -- a SURFACE, the one declaration allowed to carry a product's name (ADR-013), which this kit ships the GRAMMAR of and never an instance: every surface arrives in an ADAPTER, an ordinary capability a host takes through the provenance door, and is found by the contract its document keeps rather than by a list of publishers (ADR-014) -- and a host SERVES a surface by naming it from its own descriptor: the files that product reads at its fixed paths are then projections of what the host already declared, rebuilt on every render and recorded in the projection plane before a byte is written outside it. The reason this exists as a capability at all is a failure that has already happened here: a runtime's capabilities were WRITTEN DOWN and believed, an invocation shape among them was never measured, and a peer runtime later reported all eight of its claimed capabilities as unproven -- correctly. So the grammar refuses to let a belief become a fact by being written confidently: a descriptor has no field a proof can be written in, the capability vocabulary is declared so that what a runtime does NOT claim has a name instead of being silence, and every surface places every declared capability in exactly one of CLAIMED, PROVEN and ABSENT. It ships no roster of runtimes: a host that runs none says so in those words.
 
@@ -154,6 +154,7 @@ Gates declared by this capability:
 - **FF-RUNTIME-SURFACE** — `reference-declared-across`
 - **FF-RUNTIME-CLASS** — `reference-declared-across`
 - **FF-RUNTIME-CLAIM** — `reference-declared-across`
+- **FF-RUNTIME-ACTIVE** — `served-setting-active`
 
 ### claude-code 1.1.0
 
@@ -186,6 +187,16 @@ Declares the ARROW: a host's layers and the direction a dependency between them 
 Gates declared by this capability:
 
 - **FF-ARROW** — `arrow-held`
+
+### git 1.0.0
+
+A runtime ADAPTER for git's commit hooks: the one published declaration that carries this product's name. Git is not an agent runtime, and that is the point -- it is the RETURN POINT every runtime, every tool and every human shares: whatever wrote a change, the change is recorded through a commit. Served, it projects a pre-commit hook that hands the STAGED change, as a patch, to the same one judge and the same host-declared edit gates a runtime's write hook uses; activated (the `activate` door sets the setting git reads), an edit made where no pre-write hook exists is still refused before it is recorded. An ordinary capability, taken through the provenance door like any adapter; no interpreter in the kit knows that it exists.
+
+| path | class | mode |
+| --- | --- | --- |
+
+Gates declared by this capability:
+
 
 ## Facts this install was adapted to
 

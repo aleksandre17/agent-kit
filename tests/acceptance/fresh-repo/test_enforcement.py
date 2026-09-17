@@ -24,6 +24,10 @@ from pathlib import Path
 from harness import KIT, Fixtures
 from manifest import Manifest
 
+import activated
+import activation
+import judge as judge_verb
+
 from test_adapters import A_CLASS, DESCRIPTORS, ENABLING_FIELD, RECORD, adapted_kit, surface_documents
 
 CORE = Manifest(KIT)
@@ -49,6 +53,8 @@ def _event(hands: dict, path: str, text: str) -> dict:
         for part in parts[:-1]:
             event = event.setdefault(part, {})
         event[parts[-1]] = value
+    if hands.get("carries") == judge_verb.CARRIES_PATCH:  # the event IS a patch, in the hand's own two patterns
+        return f"+++ b/{path}" + chr(10) + f"+{text}" + chr(10) if path else f"+{text}" + chr(10)
     event: dict = {}
     if hands.get("patch"):
         put(event, hands["patch"]["from"][0], f"*** Begin Patch\n*** Add File: {path}\n+{text}\n*** End Patch\n")
@@ -82,7 +88,8 @@ class Enforcement(Fixtures, unittest.TestCase):
         pinned = host / VENDOR / "interpreters" / "cli.py"
         return subprocess.run([sys.executable, str(pinned), "judge", "--root", str(host),
                                "--surface", surface["id"]],
-                              input=json.dumps(event), capture_output=True, text=True)
+                              input=event if isinstance(event, str) else json.dumps(event),
+                              capture_output=True, text=True)
 
     def test_288_every_hand_declaring_surface_is_served_a_setting_that_runs_the_pinned_judge(self):
         self.assertTrue(self.surfaces, "no taken adapter declares a hand -- this would pass on nothing")
@@ -93,13 +100,22 @@ class Enforcement(Fixtures, unittest.TestCase):
                 target = next(r["target"] for r in surface["renders"] if r["view"] == "enforcement")
                 self.assertIn(target, {row["path"] for row in served})
                 text = (host / target).read_text(encoding="utf-8")
-                json.loads(text)
+                if target.endswith(".json"):
+                    json.loads(text)
                 self.assertIn(f"{VENDOR}/interpreters/cli.py", text)
                 self.assertIn(f"judge --root", text)
                 self.assertIn(f"--surface {surface['id']}", text)
                 self.assertTrue((host / VENDOR / "interpreters" / "verbs" / "judge.py").is_file(),
                                 "the served hook names a judge the pinned kit does not carry")
-        self.assertEqual(0, self.run_kit(self.kit, host, "check").returncode)
+        checked = self.run_kit(self.kit, host, "check")
+        activating = [s["id"] for s in self.surfaces if activation.FIELD in s]
+        failed = [line.split()[1] for line in checked.stdout.splitlines() if line.startswith("  FAIL")]
+        # A served surface whose product runs nothing until a setting names it is NOT yet a guard,
+        # and check says so in those words -- never a green that no commit ever passed through.
+        gate = next(g["id"] for c in CORE.capabilities for g in c.gates if g["kind"] == activated.KIND)
+        self.assertEqual([gate] if activating else [], failed, checked.stdout)
+        for surface in activating:
+            self.assertIn(f"{surface}: {activation.INACTIVE}", checked.stdout)
 
     def test_289_a_violating_edit_is_refused_through_the_host_gate_and_a_clean_one_passes(self):
         host = self.served_host([HOST_GATE])
@@ -115,9 +131,14 @@ class Enforcement(Fixtures, unittest.TestCase):
                 elsewhere = self.judge(host, surface, _event(hands, "docs/a.md", "ctx.year"))
                 self.assertEqual(0, elsewhere.returncode, elsewhere.stdout + elsewhere.stderr)
                 nameless = self.judge(host, surface, _event(hands, "", "ctx.year"))
-                self.assertEqual(hands["refusal"]["exit"], nameless.returncode, "an empty path was judged as the host root")
                 unjudged = self.judge(host, surface, {"unrelated": True})
-                self.assertEqual(hands["refusal"]["exit"], unjudged.returncode)
+                if hands.get("nothing") == judge_verb.NOTHING_ADMITTED:
+                    # DECLARED complete grammar: naming no file introduces no text in any path.
+                    self.assertEqual(0, nameless.returncode, nameless.stdout + nameless.stderr)
+                    self.assertNotIn(HOST_GATE["id"], nameless.stderr)
+                else:
+                    self.assertEqual(hands["refusal"]["exit"], nameless.returncode, "an empty path was judged as the host root")
+                    self.assertEqual(hands["refusal"]["exit"], unjudged.returncode)
 
     def test_289b_a_drive_spelled_as_a_posix_mount_is_placed_and_a_driveless_rooted_path_is_refused(self):
         host = self.served_host([HOST_GATE])

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "surfaces": [
+    {
+      "id": "git-commit",
+      "says": "git runs an executable named `pre-commit` in the directory `core.hooksPath` names (else `$GIT_DIR/hooks`) before it records a commit, from the top of the working tree, and refuses the commit when it exits non-zero -- taken from githooks(5) and git-config(1) (core.hooksPath, git 2.9+). MEASURED on this machine (git 2.39.1.windows.1): a hook in a core.hooksPath directory ran from the working-tree root with no execute bit (git for Windows runs a file carrying a `#!` line through its bundled sh), and its non-zero exit refused the commit. On a filesystem that keeps modes the hook needs the execute bit, which `activate` sets and `check` reports; UNVERIFIED on such a machine here. The hook hands `git diff --cached --unified=0` itself as the patch; a pure deletion adds no line, so a patch naming no added file is admitted by declaration (`nothing: admitted`). UNVERIFIED: a path git must quote even with core.quotepath off (control characters), and an added line whose own text begins with `++ b/`. `git commit --no-verify` skips every pre-commit hook by git's design: this is the return point for work done in good faith, not a wall against the repository's owner -- a CI projection is the one that cannot be skipped, and is not built.",
+      "renders": [
+        {
+          "view": "enforcement",
+          "target": ".githooks/pre-commit",
+          "template": "capabilities/git/payload/pre-commit.mustache"
+        }
+      ],
+      "hands": {
+        "carries": "patch",
+        "nothing": "admitted",
+        "paths": [],
+        "texts": [],
+        "patch": {
+          "from": [],
+          "file": "^\\+\\+\\+ b/(.+?)\\t?$",
+          "line": "^\\+(.*)$"
+        },
+        "refusal": {
+          "exit": 1
+        }
+      },
+      "activation": {
+        "setting": "core.hooksPath",
+        "points_at": ".githooks/",
+        "read": ["git", "config", "--local", "--get", "core.hooksPath"],
+        "set": ["git", "config", "--local", "core.hooksPath", "{points_at}"],
+        "unset": ["git", "config", "--local", "--unset", "core.hooksPath"],
+        "occupied": {
+          "read": ["git", "rev-parse", "--git-path", "hooks"],
+          "inert": "\\.sample$"
+        }
+      }
+    }
+  ]
+}

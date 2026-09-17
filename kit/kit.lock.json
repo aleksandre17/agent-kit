@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 173,
+  "count": 176,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -323,7 +323,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d56ac761560eb015c535803c172e1713ea8d3649acddbd1a4f2e11f26b0d97db",
+      "digest": "69e8915e17df4c29437fd11b2f95be8697fb557e93cb2e48af0ad6adfbc2ff91",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -413,8 +413,14 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "984c5518b500ac39e460513df8864a370f8792a1b2a9b19cd30826468357cc79",
+      "digest": "bc9bfb771b8dffab104488a371ea8d5d554cd0f12de127a3c9b64406528cd792",
       "path": "diagnostics.json"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "971201e0c9e919a496fefe3acecc73b1b1fd4e20ce71f829d7e47ddff5df0e6e",
+      "path": "interpreters/activation.py"
     },
     {
       "accounted_by": "interpreter",
@@ -479,6 +485,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "5eefc9b872fec4a61d22f08c2330bbe8f4a5db9953e299d83405d56387dced65",
+      "path": "interpreters/gates/activated.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "f8c93f766eb400c275c56dc95d5d7b148b9a32b94468b3d1b9c614450fd47b94",
       "path": "interpreters/gates/arrow.py"
     },
@@ -497,7 +509,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "305bf2308afbf34c30a721d8e0d31840cb981f0d2929a712dc621b2795043652",
+      "digest": "eef2038d8ece4024cf6413ad92f59d2f71741053b588c6e11a7f92bb55340ecd",
       "path": "interpreters/gates/edits.py"
     },
     {
@@ -605,7 +617,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1b1772d0dab3479532db158651e7099c50b73b08351c96281f0a9937872c5ecf",
+      "digest": "31a4ba26bb92e9fadf9a5ef60f4b9609c620e710f86a8e081f4aee412ada1a65",
       "path": "interpreters/ports/runtime.py"
     },
     {
@@ -683,6 +695,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "3140ff50444ac74b8e9728332304162443ea60cc87f4e6c9c1eac6c67debe4f6",
+      "path": "interpreters/verbs/activate.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "2ff1071603fcdd42b3a377888c7b82abed744dc7f12ecde97bb3a19361a79077",
       "path": "interpreters/verbs/adopt.py"
     },
@@ -719,7 +737,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "9cd9457466a7a5a4490dae65caa083bfc2c4ef46e2d9d28ed8183f4ed63fedae",
+      "digest": "b3c32207cf0bb5f9b8e76feddc70e093a6dd4ebace41863092ee83ddd3c39ec7",
       "path": "interpreters/verbs/judge.py"
     },
     {
@@ -971,7 +989,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "5498eb0167dcf36049f7d02916f53ab6c495d65727f2e65e413519a58c8ca1e0",
+      "digest": "86f610b1e7fae7fee53a2a8341d3abe7e319daedae7c8f8f618fc7714ead4837",
       "path": "schemas/runtime-surface.schema.json"
     },
     {
@@ -1044,5 +1062,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-17T14:04:05+00:00"
+  "taken_at": "2026-09-17T14:58:41+00:00"
 }

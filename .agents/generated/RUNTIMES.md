@@ -19,6 +19,7 @@ are not the same document and are not written by the same hand.
 
 - **claude-code** — class `an-interactive-session` · claimed 0, proven 0, absent 7 of 7
 - **codex** — class `an-interactive-session` · claimed 0, proven 0, absent 7 of 7
+- **git-commit** — class `a-batch-invocation` · claimed 0, proven 0, absent 7 of 7
 
 ## The capability vocabulary — every word that may be claimed
 
@@ -46,6 +47,13 @@ tool.
 
 ## Classes — the ones taken up, and a count of the ones that were not
 
+### a-batch-invocation — declared by `kit_runtime_classes`
+
+Started once per unit of work, with everything it will be given fixed at the moment of launch, and finished when it returns.
+
+Used here by:
+- `git-commit`
+
 ### an-interactive-session — declared by `kit_runtime_classes`
 
 An operator and the agent take turns inside a session that stays open between them, so work arrives as a turn and everything the run knows accumulates in the session rather than in the request.
@@ -54,7 +62,7 @@ Used here by:
 - `claude-code`
 - `codex`
 
-**2 declared runtime class(es) are not used here.** Available, and this host runs none of
+**1 declared runtime class(es) are not used here.** Available, and this host runs none of
 them.
 
 They are not named on this page, deliberately. Which tools a host runs is the host's choice, and

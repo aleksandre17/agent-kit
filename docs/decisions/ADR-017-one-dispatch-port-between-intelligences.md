@@ -90,6 +90,31 @@ judge; every adapter would need a new hook) and a second rule shape inside `edit
 one schema; a text pattern cannot express an edge's direction). A kit-shipped gate stands at the
 declared default stance (ADR-006); a real violation found on a host is cured, not frozen.
 
+## Amendment 2 — the commit is the return point every writer passes (2026-09-17, C1c part 3)
+
+**Decision.** Git is a surface ADAPTER like any runtime (`adapters/git`, surface `git-commit`): it serves
+`.githooks/pre-commit`, which pipes the staged patch into the ONE `judge` over the same host gates. This
+is decision 5 made concrete: whatever wrote the change — a human, a runtime without a pre-write block,
+any tool — the commit is judged. `hands.carries: patch` and `hands.nothing` (an admitted empty patch
+must be DECLARED; the default refuses) extend the event grammar, not the judge.
+
+**A setting outside the tree** (`core.hooksPath`) is declared by the surface's `activation` block,
+changed only through a door (`activate --plan/--approve/--to inactive`), and READ FRESH on every `check`
+(`FF-RUNTIME-ACTIVE`: ACTIVE · INACTIVE · ELSEWHERE · UNREADABLE, with the moment of reading) — never
+stored, so a hand-run `git config` cannot make a copy lie. The kit never overwrites or withdraws a value
+it did not set, nor activates over live host hooks (KIT0047).
+
+**Cardinal IV, stated honestly.** The activation block names argv arrays the kit executes. They are DATA
+— fixed argv with declared placeholders, no shell, run only by a door or a read-only gate — the same class
+as a hook command a product runs. The interpreter holds no product knowledge; the declaration holds no
+branch, loop or condition. A declaration that needed one would be refused.
+
+**Rejected:** a git branch inside `judge` (product name in the interpreter); adopting pre-commit.com /
+husky / lefthook (a second config home for the host's gates); recording the setting in the estate (a
+copy that drifts on the first hand edit). **Known limits:** `--no-verify` skips a hook by git's design
+— CI (C1c part 4) is the projection that cannot be skipped; who activated lives only in the run journal
+(GAP-A1).
+
 ## Measured when (Cardinal VII — assumptions at a boundary)
 
 - **A2A's current state and governance** (Linux Foundation stewardship; the task-state set above) — from

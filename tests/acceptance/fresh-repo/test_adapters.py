@@ -38,6 +38,7 @@ import declared
 import provenance
 from manifest import Manifest
 import runtime as runtime_port
+import activation
 from verbs.eject import EjectRefused
 
 #: Where the adapters are published: beside the kit, never inside it.
@@ -69,6 +70,22 @@ def _declaration(adapter: Path) -> dict:
     return json.loads((adapter / "capability.json").read_text(encoding="utf-8"))
 
 
+def _surfaces(adapter: Path) -> list:
+    """Every surface an adapter declares, found through the documents its own declaration names
+    (a source is kit-relative at `capabilities/<id>/`, so it is read here relative to that seat)."""
+    declaration = _declaration(adapter)
+    seat = Path("capabilities") / declaration["id"]
+    return [row for d in declaration.get("documents", [])
+            for row in json.loads((adapter / Path(d["source"]).relative_to(seat)).read_text(encoding="utf-8"))
+            .get(LIST, [])]
+
+
+# The adapters a test may take when it is ABOUT something other than activation: none of their
+# surfaces declares an activation block, so taking and serving them is the whole of their door.
+# Selected by declaration (the field the activation interpreter reads), never by a product's id.
+UNACTIVATED = [a for a in ADAPTERS if not any(activation.FIELD in s for s in _surfaces(a))]
+
+
 def take(kit: Path, adapter: Path) -> None:
     """What a host does with a published adapter, and nothing else: its directory placed at
     `capabilities/<id>/` and a manifest row naming its declaration (the doctrine-bundle door)."""
@@ -78,14 +95,14 @@ def take(kit: Path, adapter: Path) -> None:
         {"id": identity, "declaration": f"capabilities/{identity}/capability.json"}))
 
 
-def adapted_kit(patch=None, extra=()) -> Path:
+def adapted_kit(patch=None, extra=(), adapters=None) -> Path:
     """A copy of the REAL kit with every published adapter taken -- and any `extra` adapter
     directory besides. Built outside the suite's shared trash list, because a module-level fixture
     must outlive whichever test class tears down first."""
     base = Path(tempfile.mkdtemp(prefix="kit-adapted-")).resolve()
     atexit.register(shutil.rmtree, base, True)
     kit = ship(base / "kit")
-    for adapter in [*ADAPTERS, *extra]:
+    for adapter in [*(ADAPTERS if adapters is None else adapters), *extra]:
         take(kit, adapter)
     if patch:
         patch(kit)

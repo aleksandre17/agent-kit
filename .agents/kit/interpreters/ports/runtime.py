@@ -328,3 +328,10 @@ def departing_planned(ctx, capabilities, targets) -> list:
     """For a plan: every path the record names outside the planes that nothing renders now."""
     return sorted(rel for rel in prior(ctx, capabilities)
                   if rel not in targets and not _in_a_plane(ctx, rel) and ctx.workspace.exists(rel))
+
+
+def served_surfaces(ctx, capabilities) -> set:
+    """Every surface the kit's own record says it served on this host -- the record, because a
+    declared surface this host never rendered serves nothing yet."""
+    return {row["surface"] for item in _records(capabilities) if ctx.workspace.exists(item["target"])
+            for row in ctx.workspace.read_json(item["target"]).get("served", []) if "surface" in row}

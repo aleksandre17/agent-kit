@@ -30,6 +30,7 @@ from pathlib import Path
 
 from harness import KIT, Fixtures, host_digest
 
+import activation  # noqa: E402
 import runtime as runtime_port  # noqa: E402 -- reachable once the harness has placed the kit
 from manifest import Manifest  # noqa: E402
 
@@ -119,7 +120,13 @@ class Serving(Fixtures, unittest.TestCase):
                     self.assertTrue((host / rel).is_file(), rel)
                     self.assertEqual(runtime_port._file_digest(self._ctx(host), rel), record[rel]["sha256"])
                 self.assertEqual(sorted(expected), sorted(record))
-                self.assertEqual(0, self.run_kit(KIT, host, "check").returncode)
+                if activation.FIELD in surface:
+                    # served is not yet run: a surface that declares activation walks its own door
+                    walked = self.run_kit(KIT, host, "activate", "--surface", surface["id"],
+                                          "--approve", "acceptance-suite")
+                    self.assertEqual(0, walked.returncode, walked.stdout + walked.stderr)
+                checked = self.run_kit(KIT, host, "check")
+                self.assertEqual(0, checked.returncode, checked.stdout + checked.stderr)
 
     def _ctx(self, host: Path):
         class _Ctx:

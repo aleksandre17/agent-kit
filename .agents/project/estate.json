@@ -214,7 +214,7 @@
     {
       "capability": "governance",
       "class": "binding",
-      "digest": "a11cd91aefadf1714fc5ea119c42681db4506255f58e9f9f410f416506fdecee",
+      "digest": "ef9854695068bcad93459cdfaab621a2b45dc48da93d14595a8316a0d0d0da46",
       "mode": "declaration",
       "path": ".agents/project/project.json"
     },
@@ -256,7 +256,7 @@
     {
       "capability": "governance",
       "class": "binding",
-      "digest": "bae550608fbd63169f1ca0bc63e8b2b7b9a8881b93de6ae8640432eb4ad92aae",
+      "digest": "a9f81aef663e2ec6eff3ab456b34072e720a2750752d5e48a672db380a537cfb",
       "mode": "taken-declaration",
       "path": ".agents/project/taken.json"
     },
@@ -327,7 +327,23 @@
         "basis": "attested"
       },
       "version": "1.1.0"
+    },
+    {
+      "authenticity": {
+        "state": "unsigned",
+        "taken_at": "2026-09-17T14:58:50+00:00"
+      },
+      "capability": "git",
+      "digest": "h1:OfVgu6DVZA1dcrBjeAJm4f4PH04hPrA41l69oEvxEos=",
+      "pinned_at": "2026-09-17T14:58:43+00:00",
+      "pinned_by": "owner-aleksandre17:explicit-2026-09-17",
+      "trust": {
+        "attested_at": "2026-09-17T14:58:50+00:00",
+        "attested_by": "owner-aleksandre17:explicit-2026-09-17",
+        "basis": "attested"
+      },
+      "version": "1.0.0"
     }
   ],
-  "taken_at": "2026-09-17T14:04:11+00:00"
+  "taken_at": "2026-09-17T14:58:50+00:00"
 }

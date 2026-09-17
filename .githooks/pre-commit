@@ -1,0 +1,18 @@
+#!/bin/sh
+# Generated. Do not edit. Served to the runtime git-commit through the surface git-commit - kit 0.1.6.
+# git runs this before it records a commit, once core.hooksPath names this directory (the
+# `activate` door). It hands the STAGED change, as a patch, to the one judge in this host's pinned
+# kit, which applies the edit gates this host declares. It holds no policy of its own, and it fails
+# CLOSED: a change it cannot read, or a judge it cannot run, refuses the commit.
+staged=$(git -c core.quotepath=off diff --cached --no-color --no-ext-diff --no-renames --unified=0 --src-prefix=a/ --dst-prefix=b/) || {
+  echo "commit gate: REFUSED -- the staged change could not be read, so it was not judged" >&2
+  exit 1
+}
+for candidate in python3 python py; do
+  if "$candidate" -c "import sys" >/dev/null 2>&1; then
+    printf '%s\n' "$staged" | "$candidate" ".agents/kit/interpreters/cli.py" judge --root . --surface git-commit
+    exit $?
+  fi
+done
+echo "commit gate: REFUSED -- no Python interpreter could be run, so the staged change was not judged" >&2
+exit 1

@@ -14,6 +14,12 @@
       "surface": "codex"
     },
     {
+      "path": ".githooks/pre-commit",
+      "runtime": "git-commit",
+      "sha256": "f007fa28088e93b3b547968d74d5bb5dfdeedefd7f69c5cf1997eec9f92e9790",
+      "surface": "git-commit"
+    },
+    {
       "path": "AGENTS.md",
       "runtime": "codex",
       "sha256": "2f9a1911881c245aea8951eae30959e0301ecd0a3179c019ca2854f57693e3b5",

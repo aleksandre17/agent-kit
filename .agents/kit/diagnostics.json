@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 46,
+  "issued": 47,
   "codes": [
     {
       "code": "KIT0001",
@@ -278,6 +278,12 @@
       "status": "active",
       "title": "a law scope names a directory no served file may be placed in",
       "explanation": "A host declares scoped law as a row naming a directory and the law page that binds below it, and every served runtime receives that page at the place it reads nested instructions. The render refuses, before a byte is written, a scope whose directory is not a plain path inside the host, does not exist, is the host root (served by the unscoped briefing), or lies inside a kit plane -- a pinned or taken copy is not the host's to govern, and a file placed there would be governed by nobody who reads it."
+    },
+    {
+      "code": "KIT0047",
+      "status": "active",
+      "title": "a setting outside the tree was asked to change that is not the kit's to change, or cannot be measured",
+      "explanation": "A served surface may declare an activation: a setting in its product's own configuration that must name the served directory before the product runs it. The `activate` door refuses, before anything changes, a surface this host is not served, a setting that already names somewhere else (never overwritten), live entries where the product looks while the setting is unset (they would be silently switched off), a setting or place that cannot be read (unmeasured is not unset), and a withdrawal of a setting the kit did not make. A change whose read-back is not the state asked for is refused as observed."
     }
   ]
 }
