@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import re
 
-import render as render_verb
+import projection
 
 
 def _schema_valid(ctx, params):
@@ -40,7 +40,7 @@ def _path_class_total(ctx, params):
 
 def _projection_reproducible(ctx, params):
     """The plane on disk must be exactly what VENDOR + BINDING imply -- byte for byte."""
-    expected = render_verb.projections(ctx)
+    expected = projection.projections(ctx)
     failures = []
     for rel, body in expected.items():
         if not ctx.workspace.exists(rel):

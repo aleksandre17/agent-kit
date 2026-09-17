@@ -7,6 +7,25 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — `fitness`: the abstract ARROW (ADR-017 link C, slice C1c part 1)**
+- New capability `fitness` (requires `enforcement`), schema `arrow`, seed `.agents/project/fitness/arrow.json`
+  (ships empty), gate `FF-ARROW` (kind `arrow-held`, ships at the declared default stance -- ADR-006: a kit never ships looser; a host loosens only by a signed stance row). A host declares `imports` (per file
+  kind: a reference pattern, `locates` templates with `{ref}`/`{dir}`, optional `separator`), `layers`
+  (`within` + `paths`) and `rules` (`from`, `may`, because/instead). Readings and rules each carry
+  proves/admits calibration. No language, layer or import syntax lives in `kit/` (test_303).
+- ONE edit judge: gate modules now export `EDITS` beside `KINDS`; `check.registry(entry)` discovers
+  both; `judge` applies every enabled gate whose kind has an `EDITS` entry. `edits.rules_of` removed.
+- Field form: ArchUnit layered rules / import-linter `layers` contract / dependency-cruiser `forbidden`
+  / eslint `no-restricted-imports`; the edit-time half judges only introduced text. A FreezingArchRule-style
+  `observe` ship was considered and dropped: with zero violations on host #0 a ratchet is unnecessary, and
+  the edit judge still refuses every new backward import.
+- Host #0: `fitness` enabled; arrow declared over `kit/interpreters/` (verbs, gates, observers, ports,
+  base). The one violation it found (`gates/core.py -> verbs/render.py`, gates-never-reach-verbs) is
+  cured at the root: the projection computation moved to base module `kit/interpreters/projection.py`;
+  `verbs/render.py` keeps `run` (and re-exports its surface), `gates/core.py` imports `projection`.
+- Not built: a reference that resolves through a package/alias map (only templates); cycle detection
+  inside the allowed set (base<->ports is a real cycle, permitted by the rules as declared).
+
 **Fixed — `judge` never admits an edit it could not place (Cardinal VII)**
 - On a drive-lettered filesystem a drive spelled as a POSIX mount (`/c/...`, `/cygdrive/c/...`) is
   normalised by ONE form rule in `gates/edits.py`; any other rooted path without a drive raises

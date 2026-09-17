@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import sys
 
+import check as check_verb
 import declared
 import edits as edits_module
 from errors import KitError
@@ -67,16 +68,22 @@ def run(ctx, args) -> int:
                   f"outside this host.", file=sys.stderr)
             return no
         (within.append((rel, text)) if rel is not None else outside.append(path))
-    refused, unjudged = edits_module.judge(edits_module.rules_of(ctx), within)
+    refused, unjudged = [], []
+    judges = check_verb.registry("EDITS")
+    for capability in ctx.enabled_capabilities():
+        for gate in capability.gates:
+            if gate["kind"] in judges:
+                found, blind = judges[gate["kind"]](ctx, gate.get("params", {}), within)
+                refused += found
+                unjudged += blind
     for path in outside:
         print(f"judge: {path} lies outside this host; its gates do not reach it")
     if unjudged:
         print(f"judge: NOT APPLIED (uncalibrated, and failing `check`): {', '.join(unjudged)}",
               file=sys.stderr)
     if refused:
-        for path, rule in refused:
-            print(f"judge: REFUSED  {path}  {rule['id']} -- {rule['because']} Instead: "
-                  f"{rule['instead']}", file=sys.stderr)
+        for path, rule_id, because, instead in refused:
+            print(f"judge: REFUSED  {path}  {rule_id} -- {because} Instead: {instead}", file=sys.stderr)
         return no
-    print(f"judge: {len(within)} edited path(s) pass this host's declared edit gates")
+    print(f"judge: {len(within)} edited path(s) pass every edit judgement this host declares")
     return 0

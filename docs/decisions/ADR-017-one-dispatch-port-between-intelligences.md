@@ -80,6 +80,16 @@ same capsule, and dispatches through the same port.
 
 **When:** C begins after L3b is verified and committed. C1 → C2 → C3 → C4, then ADR-015's D.
 
+## Amendment 1 — one judge, entries by registry (2026-09-17, found building C1c's ARROW)
+
+An edit is judged by ONE verb (`judge`, served to every runtime's hook). A gate module offers an edit
+entry (`EDITS`) beside its tree entry (`KINDS`); `check.registry(entry)` finds both the same way, and
+`judge` runs every enabled gate's `EDITS`. A new edit-time judgement is a gate module declaring `EDITS`
+— never a second verb, never a new hook row per runtime. Rejected: an "arrow judge" verb (a second
+judge; every adapter would need a new hook) and a second rule shape inside `edit-gate` (two jobs under
+one schema; a text pattern cannot express an edge's direction). A kit-shipped gate stands at the
+declared default stance (ADR-006); a real violation found on a host is cured, not frozen.
+
 ## Measured when (Cardinal VII — assumptions at a boundary)
 
 - **A2A's current state and governance** (Linux Foundation stewardship; the task-state set above) — from

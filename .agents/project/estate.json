@@ -156,6 +156,13 @@
       "path": ".agents/project/evaluation/readings.json"
     },
     {
+      "capability": "fitness",
+      "class": "binding",
+      "digest": "4bbe3c40ba0e4316f72eb7d4eff1318873f783823d39976240b61a185edb0380",
+      "mode": "seed",
+      "path": ".agents/project/fitness/arrow.json"
+    },
+    {
       "capability": "hygiene",
       "class": "binding",
       "digest": "6deb94730b99d898d2856b928a11921f5b7b0156589a3fd030bee4f2411012a6",
@@ -290,5 +297,5 @@
       "version": "1.0.0"
     }
   ],
-  "taken_at": "2026-09-17T11:48:47+00:00"
+  "taken_at": "2026-09-17T13:24:52+00:00"
 }

@@ -1,0 +1,213 @@
+{
+  "$id": "arrow",
+  "title": "The arrow -- which layers a HOST declares, and the direction a dependency between them may run",
+  "description": "A HOST's architecture as data, applied by one generic interpreter: the layers (each a place in the tree), the direction a dependency may run between them, and -- because what a dependency IS differs per language -- how a reference is read out of a file and located in the tree. The kit ships the GRAMMAR and no layer, no language and no import syntax (Cardinal IV). It is judged twice from this one declaration: over the whole tree by `check`, and over the text an edit INTRODUCES by the one edit judge, so a new edge against the arrow is refused at the moment it is written while an old one is reported, never hidden. Every import reading and every rule carries its own calibration, and is believed only once it holds.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "imports",
+    "layers",
+    "rules"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "imports": {
+      "description": "How a dependency is READ: per kind of file, the pattern that yields each referenced name and where in the tree that name may be located. A reference located nowhere in the tree lies outside every layer and is governed by no rule.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "files",
+          "reference",
+          "locates",
+          "proves",
+          "admits"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "files": {
+            "description": "One regular expression over the host-relative POSIX path of a file this reading applies to.",
+            "type": "string",
+            "minLength": 1
+          },
+          "reference": {
+            "description": "One regular expression (multi-line) over a file's text; group 1 of every match is one referenced name.",
+            "type": "string",
+            "minLength": 1
+          },
+          "separator": {
+            "description": "The character that separates a referenced name's segments; each is read as a directory step when the name is located. Absent, the name is located as written.",
+            "type": "string",
+            "minLength": 1
+          },
+          "locates": {
+            "description": "Where a referenced name may be found, tried in order: host-relative templates in which `{ref}` is the name and `{dir}` the referring file's directory. Every template naming an existing file is an edge.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "proves": {
+            "description": "A text whose referenced names MUST be exactly `yields`.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text",
+              "yields"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "yields": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "admits": {
+            "description": "A lookalike text that MUST yield no referenced name.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "within",
+          "paths"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "within": {
+            "description": "The host-relative directory this layer's files are found under -- where `check` walks. Never the whole host by default.",
+            "type": "string",
+            "minLength": 1
+          },
+          "paths": {
+            "description": "One regular expression over the host-relative POSIX path of a file of this layer. A file two layers claim is reported: one file, one home.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "rules": {
+      "description": "The direction. A rule names a layer and every layer it MAY depend on; any other located edge from it is against the arrow. A layer no rule names is unconstrained -- a declared absence, not a permission the kit invented.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "from",
+          "may",
+          "because",
+          "instead",
+          "proves",
+          "admits"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "from": {
+            "type": "string",
+            "minLength": 1
+          },
+          "may": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "because": {
+            "type": "string",
+            "minLength": 1
+          },
+          "instead": {
+            "type": "string",
+            "minLength": 1
+          },
+          "proves": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "to"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "description": "An edge (a file of `from` depending on the file `to`) this rule MUST refuse."
+          },
+          "admits": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "to"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "description": "A lookalike edge this rule MUST admit."
+          }
+        }
+      }
+    }
+  }
+}

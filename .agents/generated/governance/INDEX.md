@@ -173,6 +173,18 @@ A runtime ADAPTER for Codex: the one published declaration that carries this pro
 Gates declared by this capability:
 
 
+### fitness 0.1.0
+
+Declares the ARROW: a host's layers and the direction a dependency between them may run, enforced generically (the ArchUnit layered-rule / import-linter contract form). The host declares the layers, the rules and how a dependency is read in each kind of file; the kit ships only the grammar and one interpreter, applied over the tree by `check` and over the text an edit introduces by the enforcement line's ONE judge -- no second judge. Every reading and every rule is calibrated before it is believed. The gate ships at the declared default stance like every other gate; a host that must loosen it signs a stance row.
+
+| path | class | mode |
+| --- | --- | --- |
+| `.agents/project/fitness/arrow.json` | binding | seed |
+
+Gates declared by this capability:
+
+- **FF-ARROW** — `arrow-held`
+
 ## Facts this install was adapted to
 
 - `vcs.git` = true

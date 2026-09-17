@@ -32,14 +32,16 @@ class GateError(KitError):
     code = "KIT0023"
 
 
-def registry() -> dict:
+def registry(entry: str = "KINDS") -> dict:
+    """Every gate kind's entry of one registry, discovered from the gate modules: `KINDS` judges
+    the tree; another name (an edit judge's) is read by the same discovery, never a second one."""
     kinds: dict = {}
     owners: dict = {}
     for path in sorted(GATES.glob("*.py")):
         if path.stem.startswith("_"):
             continue
         module = importlib.import_module(path.stem)
-        for kind, evaluate in getattr(module, "KINDS", {}).items():
+        for kind, evaluate in getattr(module, entry, {}).items():
             if kind in kinds:
                 raise GateError(
                     f"gate kind {kind!r} is declared by both {owners[kind]!r} and {path.stem!r}"

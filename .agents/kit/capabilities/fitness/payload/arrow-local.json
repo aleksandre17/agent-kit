@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "summary": "The arrow this HOST declares. The kit ships none: which layers exist and which way a dependency may run is this host's architecture. Declared empty, every file and every edit is judged and none is against the arrow -- a declared zero, not a gate switched off.",
+  "imports": [],
+  "layers": [],
+  "rules": []
+}

@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "summary": "This host's arrow over the kit it publishes, measured from the tree at 371a00a before it was declared: the interpreters are imported flat (every interpreter directory is on the path), so a referenced module name is located by trying each interpreter directory in turn. Verbs are the application layer and sit on top; gates judge and observers read; ports are the edge; the top-level modules are the shared core. Where the tree already runs against a rule, `check` names the edge -- it is not hidden by a narrower rule.",
+  "imports": [
+    {
+      "id": "python-module",
+      "files": "\\.py$",
+      "reference": "^[ \\t]*(?:from|import)[ \\t]+([A-Za-z_]\\w*)(?=[ \\t]+import\\b|[ \\t]+as\\b|[ \\t]*(?:,|#|$))",
+      "locates": [
+        "kit/interpreters/{ref}.py",
+        "kit/interpreters/verbs/{ref}.py",
+        "kit/interpreters/gates/{ref}.py",
+        "kit/interpreters/ports/{ref}.py",
+        "kit/interpreters/observers/{ref}.py"
+      ],
+      "proves": {
+        "text": "import render as render_verb\nfrom errors import KitError\n    import hostlock  # local",
+        "yields": [
+          "render",
+          "errors",
+          "hostlock"
+        ]
+      },
+      "admits": {
+        "text": "        from capability declarations. Nothing is inferred\nx = 1  # import render"
+      }
+    }
+  ],
+  "layers": [
+    {
+      "id": "verbs",
+      "within": "kit/interpreters/verbs",
+      "paths": "^kit/interpreters/verbs/"
+    },
+    {
+      "id": "gates",
+      "within": "kit/interpreters/gates",
+      "paths": "^kit/interpreters/gates/"
+    },
+    {
+      "id": "observers",
+      "within": "kit/interpreters/observers",
+      "paths": "^kit/interpreters/observers/"
+    },
+    {
+      "id": "ports",
+      "within": "kit/interpreters/ports",
+      "paths": "^kit/interpreters/ports/"
+    },
+    {
+      "id": "base",
+      "within": "kit/interpreters",
+      "paths": "^kit/interpreters/[^/]+\\.py$"
+    }
+  ],
+  "rules": [
+    {
+      "id": "verbs-sit-on-top",
+      "from": "verbs",
+      "may": [
+        "verbs",
+        "gates",
+        "ports",
+        "base"
+      ],
+      "because": "a verb composes the machinery; it reads receipts through the core, never an observer directly.",
+      "instead": "reach an observer through the core module that owns the reading.",
+      "proves": {
+        "path": "kit/interpreters/verbs/x.py",
+        "to": "kit/interpreters/observers/receipt.py"
+      },
+      "admits": {
+        "path": "kit/interpreters/verbs/x.py",
+        "to": "kit/interpreters/gates/edits.py"
+      }
+    },
+    {
+      "id": "gates-never-reach-verbs",
+      "from": "gates",
+      "may": [
+        "gates",
+        "base"
+      ],
+      "because": "a gate judges what a verb did; a gate that calls a verb makes the judge depend on the thing it judges.",
+      "instead": "move what the gate needs from the verb into a core module both may use.",
+      "proves": {
+        "path": "kit/interpreters/gates/x.py",
+        "to": "kit/interpreters/verbs/render.py"
+      },
+      "admits": {
+        "path": "kit/interpreters/gates/x.py",
+        "to": "kit/interpreters/declared.py"
+      }
+    },
+    {
+      "id": "observers-read-only-the-core",
+      "from": "observers",
+      "may": [
+        "observers",
+        "base"
+      ],
+      "because": "an observer reads a declared record; it depends on the core alone.",
+      "instead": "take what is needed from a core module.",
+      "proves": {
+        "path": "kit/interpreters/observers/x.py",
+        "to": "kit/interpreters/gates/edits.py"
+      },
+      "admits": {
+        "path": "kit/interpreters/observers/x.py",
+        "to": "kit/interpreters/errors.py"
+      }
+    },
+    {
+      "id": "ports-are-the-edge",
+      "from": "ports",
+      "may": [
+        "ports",
+        "base"
+      ],
+      "because": "a port adapts the world to the core; it never reaches the layers that use it.",
+      "instead": "move the shared piece into a core module.",
+      "proves": {
+        "path": "kit/interpreters/ports/x.py",
+        "to": "kit/interpreters/verbs/check.py"
+      },
+      "admits": {
+        "path": "kit/interpreters/ports/x.py",
+        "to": "kit/interpreters/validation.py"
+      }
+    },
+    {
+      "id": "the-core-never-reaches-up",
+      "from": "base",
+      "may": [
+        "base",
+        "ports",
+        "observers"
+      ],
+      "because": "the core is what verbs and gates are built from; a core module that imports one is a cycle wearing a layer's name.",
+      "instead": "inject the behaviour through a port or a declared registry.",
+      "proves": {
+        "path": "kit/interpreters/x.py",
+        "to": "kit/interpreters/verbs/check.py"
+      },
+      "admits": {
+        "path": "kit/interpreters/x.py",
+        "to": "kit/interpreters/ports/clock.py"
+      }
+    }
+  ]
+}

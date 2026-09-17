@@ -27,16 +27,6 @@ KIND = "edit-gates-calibrated"
 
 
 # -- the gates ----------------------------------------------------------------------------------
-def rules_of(ctx) -> list:
-    """Every edit gate this host holds, found through the gate declarations of this kind."""
-    rows = []
-    for capability in ctx.enabled_capabilities():
-        for gate in capability.gates:
-            if gate["kind"] == KIND:
-                rows += declared.rules(ctx, gate["params"]["sources"], RULES)
-    return rows
-
-
 def _pattern(rule, field, flags=0):
     try:
         return re.compile(rule[field], flags), None
@@ -173,4 +163,13 @@ def _edit_gates_calibrated(ctx, params):
             for failure in calibration(rule)]
 
 
+def _judged(ctx, params, edits):
+    """This kind's entry in the one judge's registry: (path, id, because, instead) per refusal."""
+    found, unjudged = judge(declared.rules(ctx, params["sources"], RULES), edits)
+    return [(path, rule["id"], rule["because"], rule["instead"]) for path, rule in found], unjudged
+
+
 KINDS = {KIND: _edit_gates_calibrated}
+#: How a gate kind judges an EDIT, beside how it judges the tree: the judge verb reads every kind's
+#: entry through one registry, so a new kind of edit rule is a module, never a second judge.
+EDITS = {KIND: _judged}
