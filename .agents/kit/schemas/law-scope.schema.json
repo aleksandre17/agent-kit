@@ -1,0 +1,49 @@
+{
+  "$id": "law-scope",
+  "title": "Where a law page BINDS -- a host's scoped law, declared once and served to every runtime at the directory it governs",
+  "description": "A law page is one grammar: host-owned prose, the same form as the root law page. A SCOPE adds exactly one proposition to it -- the directory below which it binds -- and nothing else, so a module's own laws have one home (the page) and one placement (this row). Every runtime the host serves receives the page at the place that runtime reads nested instructions, as a projection; no runtime file is ever hand-written. The root of the host is not a scope: it is the briefing every served runtime already receives, and a scope naming it is refused rather than ordered against it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "scopes"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "dir",
+          "page"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "dir": {
+            "description": "Host-relative directory, forward slashes, no trailing '/'. Must exist, lie inside the host, and lie outside every kit plane -- a pinned or taken copy is not the host's to govern.",
+            "type": "string",
+            "pattern": "^[^/\\:]+(/[^/\\:]+)*$"
+          },
+          "page": {
+            "description": "Host-relative path of the law page this scope serves -- the same grammar as the root law page.",
+            "type": "string",
+            "minLength": 1
+          },
+          "says": {
+            "description": "Why this directory carries laws of its own, in one sentence.",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

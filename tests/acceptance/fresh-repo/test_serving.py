@@ -57,7 +57,8 @@ A_CLASS = json.loads((KIT / "runtimes/classes.json").read_text(encoding="utf-8")
 SURFACE_GATE = next(g["id"] for g in CAPABILITY["gates"]
                     if g["params"]["references"][0]["field"] == ENABLING_FIELD)
 BINDING_ROOT = next(p["root"] for p in MANIFEST.planes if p["class"] == "binding").rstrip("/") + "/"
-LAW_SECTIONS = [s for v in SPEC["views"] for s in v.get("sections", []) if s["from"].startswith(BINDING_ROOT)]
+LAW_SECTIONS = [s for v in SPEC["views"] for s in v.get("sections", [])
+                if s.get("from", "").startswith(BINDING_ROOT)]
 INTERPRETERS = KIT / "interpreters"
 STANCES = next(d for c in MANIFEST.capabilities for d in c.documents.values()
                if isinstance(d, dict) and "unanswered" in d and "stances" in d)
@@ -70,10 +71,14 @@ def durable(host: Path) -> dict:
     return {rel: digest for rel, digest in host_digest(host).items() if not rel.startswith(EPHEMERAL)}
 
 
+#: Views that place one file per declared SCOPE -- a host that declares no scope is served none.
+SCOPED_VIEWS = {v["id"] for v in SPEC["views"] if "scopes" in v}
+
+
 def files_of(surface: dict, role: str) -> list:
-    """Every path a surface declares, for a host with exactly one role."""
+    """Every path a surface declares, for a host with exactly one role and no law scope."""
     return [f"{r['target'].rstrip('/')}/{role}{r.get('suffix', '')}" if r["target"].endswith("/")
-            else r["target"] for r in surface["renders"]]
+            else r["target"] for r in surface["renders"] if r["view"] not in SCOPED_VIEWS]
 
 
 def front_matter(text: str) -> dict:
@@ -147,6 +152,8 @@ class Serving(Fixtures, unittest.TestCase):
                 role_projection = next(p for p in (host / ".agents").rglob(f"{AN_ARCHETYPE['id']}.md")
                                        if "generated" in p.parts).read_text(encoding="utf-8")
                 for rendered in surface["renders"]:
+                    if rendered["view"] in SCOPED_VIEWS:
+                        continue  # placed per declared scope; held by test_scoped_law
                     if not rendered["target"].endswith("/"):
                         # Only a document whose VIEW declares a section reading the host's law page
                         # carries that law; a view of other sections (a settings file) does not.

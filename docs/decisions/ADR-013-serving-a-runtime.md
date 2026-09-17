@@ -98,3 +98,31 @@ settings.
   record, not a walk, is what classes an outside path. Each is a follow-up, not a resting state.
 - Fitness functions: `test_258`…`test_266` (tests/acceptance/fresh-repo/test_serving.py), and the
   data gate `FF-RUNTIME-SURFACE` (a descriptor serving a surface nobody declares).
+
+## Amendment 1 — scoped law is served where it binds (2026-09-17, link C1c part 2)
+
+**Decision.** A host declares law for a directory as a row in the governance registry
+`law-scopes.json` (`{id, dir, page, says?}`, schema `law-scope`); the page is a markdown law page in
+`.agents/project/laws/`, the SAME grammar as the root `laws.md`. The runtimes capability's view
+`scoped-briefing` projects one file per served runtime per scope at `<dir>/<adapter target>`, recorded
+in `SERVED.json`, so collision refusal, removal, `reach` and `succession` cover it with no new code. A
+scope whose dir is outside the host, missing, the root, or inside a kit plane is refused before any
+write (KIT0046). Rejected: scoped law inside `doctrine.json` (bundles and stances are a different
+statement — two homes); a per-runtime `nested` block in each adapter (per-runtime copies); law as JSON
+strings (a second grammar beside markdown).
+
+**Decided with it, not yet built:**
+1. **The root is a scope.** `laws.md` becomes the `dir: "."` row of the same registry and the root
+   briefing reads it through the same view — one grammar, no root/scope asymmetry (Strangler: the
+   registry exists; the root migrates into it).
+2. **A self-hosting host declares what it publishes (GAP-S1).** A scope inside a tree the host
+   publishes as a release (host #0's `kit/`) wrote served files into the release and broke its lock.
+   The host declares its publication trees; `render` refuses a scope inside one with KIT0046 before
+   writing — never discovered by `lock` afterwards.
+3. **Removal never deletes what the kit did not create.** Removing a served file removes only that
+   file; a host directory is removed only if the served record says the kit created it (protection of
+   the host's work, Cardinal V: a silent deletion is a lie of omission).
+
+**Unverified product facts:** Claude Code loads a nested `CLAUDE.md` when working in that subdirectory;
+Codex reads `AGENTS.md` from root to cwd, deeper overriding. Cited in each adapter's `says`; not yet
+observed in a run.

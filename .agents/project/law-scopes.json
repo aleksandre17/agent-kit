@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scopes": [
+    {
+      "id": "fresh-repo-suite",
+      "dir": "tests/acceptance/fresh-repo",
+      "page": ".agents/project/laws/fresh-repo-suite.md",
+      "says": "The kit's acceptance suite: how a test may know the kit, and what it may never name, bind here and nowhere else."
+    }
+  ]
+}

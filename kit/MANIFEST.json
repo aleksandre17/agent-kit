@@ -154,6 +154,7 @@
     "succession-act": "schemas/succession-act.schema.json",
     "edit-gate": "schemas/edit-gate.schema.json",
     "taken": "schemas/taken.schema.json",
+    "law-scope": "schemas/law-scope.schema.json",
     "arrow": "schemas/arrow.schema.json"
   }
 }

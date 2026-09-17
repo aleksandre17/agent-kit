@@ -36,7 +36,7 @@ Gates declared by this capability:
 - **FF-QUALITY-JUDGEMENT** — `record-disposition`
 - **FF-QUALITY-REFERENT** — `reference-declared`
 
-### governance 0.1.0
+### governance 0.2.0
 
 Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the pinned kit a host runs by itself with the lock it was given, and the index projection, plus the gates that hold them.
 
@@ -47,6 +47,8 @@ Declares the four-class seam for a host: the reading, the declaration, the seede
 | `.agents/project/estate.json` | binding | estate |
 | `.agents/project/allowed_signers` | binding | seed |
 | `.agents/project/laws.md` | binding | seed |
+| `.agents/project/law-scopes.json` | binding | seed |
+| `.agents/project/laws/` | binding | space |
 | `.agents/.gitignore` | binding | seed |
 | `.agents/kit/` | vendor | pinned |
 | `.agents/project/kit.lock.json` | binding | pinned-lock |
@@ -135,7 +137,7 @@ Gates declared by this capability:
 
 - **FF-ROLE-BASE** — `reference-declared-across`
 
-### runtimes 0.1.0
+### runtimes 0.2.0
 
 Declares that a RUNTIME -- the tool a host actually executes its agents on -- is a declared subject rather than a thing each surface hand-writes its own version of. The kit ships CLASSES, which say what is true of a runtime as a KIND: how an agent reaches it at all, and which translation sits in the gap. The host authors DESCRIPTORS, which say only what a host legitimately says about its own tool. No vendor's name appears in a class or in the interpreter, because the name of a product is the one thing about a runtime guaranteed not to be true of the kind. Where a product LOOKS for its instructions is true of the product everywhere and of no kind and no host, so it is declared in exactly one place -- a SURFACE, the one declaration allowed to carry a product's name (ADR-013), which this kit ships the GRAMMAR of and never an instance: every surface arrives in an ADAPTER, an ordinary capability a host takes through the provenance door, and is found by the contract its document keeps rather than by a list of publishers (ADR-014) -- and a host SERVES a surface by naming it from its own descriptor: the files that product reads at its fixed paths are then projections of what the host already declared, rebuilt on every render and recorded in the projection plane before a byte is written outside it. The reason this exists as a capability at all is a failure that has already happened here: a runtime's capabilities were WRITTEN DOWN and believed, an invocation shape among them was never measured, and a peer runtime later reported all eight of its claimed capabilities as unproven -- correctly. So the grammar refuses to let a belief become a fact by being written confidently: a descriptor has no field a proof can be written in, the capability vocabulary is declared so that what a runtime does NOT claim has a name instead of being silence, and every surface places every declared capability in exactly one of CLAIMED, PROVEN and ABSENT. It ships no roster of runtimes: a host that runs none says so in those words.
 
@@ -153,7 +155,7 @@ Gates declared by this capability:
 - **FF-RUNTIME-CLASS** — `reference-declared-across`
 - **FF-RUNTIME-CLAIM** — `reference-declared-across`
 
-### claude-code 1.0.0
+### claude-code 1.1.0
 
 A runtime ADAPTER for Claude Code: the one published declaration that carries this product's name, and nothing else. It is an ORDINARY capability (ADR-004, ADR-014) -- a host takes it through the provenance door (ADR-008) exactly as it takes a doctrine bundle, and no interpreter in the kit knows that it exists. Its single document keeps the runtime-surface contract, which is how the kit's served projection finds it: by the contract, never by a list of publishers. Remove it and the host serves this product nothing -- and says so.
 
@@ -163,7 +165,7 @@ A runtime ADAPTER for Claude Code: the one published declaration that carries th
 Gates declared by this capability:
 
 
-### codex 1.0.0
+### codex 1.1.0
 
 A runtime ADAPTER for Codex: the one published declaration that carries this product's name, and nothing else. It is an ORDINARY capability (ADR-004, ADR-014) -- a host takes it through the provenance door (ADR-008) exactly as it takes a doctrine bundle, and no interpreter in the kit knows that it exists. Its single document keeps the runtime-surface contract, which is how the kit's served projection finds it: by the contract, never by a list of publishers. Remove it and the host serves this product nothing -- and says so.
 

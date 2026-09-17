@@ -24,6 +24,18 @@
       "runtime": "claude-code",
       "sha256": "38dfcab20e740a5426a29b3aa72530d3cda834983f09aa553add9326202e4ee0",
       "surface": "claude-code"
+    },
+    {
+      "path": "tests/acceptance/fresh-repo/AGENTS.md",
+      "runtime": "codex",
+      "sha256": "ddc8ec3c60941a6619a3b6585694a6ef0e7083c04c08c7250abd8c0a0acfc169",
+      "surface": "codex"
+    },
+    {
+      "path": "tests/acceptance/fresh-repo/CLAUDE.md",
+      "runtime": "claude-code",
+      "sha256": "aa6d5bd38bc1b34319306fb26ac84c91fea9e81498823b34f4fcd7423d3dfef1",
+      "surface": "claude-code"
     }
   ]
 }

@@ -26,6 +26,8 @@ planes.
 | `.agents/project/roster.json` | staffing | owner | who handles this kind of work; dispatch a task to an agent; add or retire a role;  | living | PENDING — link F |
 | `.agents/project/roles/` | role-definition | owner | define or change a role; why an agent behaves as it does; a role overlay names an unknown archetype;  | living | ONLY WITH roles |
 | `.agents/project/doctrine/` | host-law | owner | which laws bind this project; review a change against the rules; amend a law;  | living | ONLY WITH doctrine |
+| `.agents/project/law-scopes.json` | host-law | owner | which directories carry laws of their own; declare or remove a module's laws; a scoped law is refused;  | living | ONLY WITH governance |
+| `.agents/project/laws/` | host-law | owner | what a module's own laws say; amend a scoped law;  | living | ONLY WITH governance |
 | `.agents/knowledge/private/` | private-memory | owning-role | start a session as a role; the owner corrected this before; record a lesson learned;  | curated | PENDING — link E |
 | `.agents/knowledge/shared/` | shared-knowledge | curator | coordinate with another agent; a fact more than one role relies on; promote a lesson to the team;  | curated | PENDING — link E |
 | `.agents/generated/roles/` | projection | renderer | load a role's full brief; a role file looks out of date;  | regenerable | ONLY WITH roles |

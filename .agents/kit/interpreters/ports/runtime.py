@@ -53,6 +53,12 @@ class ServeConflict(KitError):
     code = "KIT0040"
 
 
+class ScopeRefused(KitError):
+    """A scope names a directory no served file may be placed in."""
+
+    code = "KIT0046"
+
+
 def _digest(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -100,20 +106,21 @@ def _plural_path(capabilities, over: str, record_id: str) -> "str | None":
     return None
 
 
-def _sections(ctx, view_spec: dict, produced: dict) -> list:
+def _sections(ctx, view_spec: dict, produced: dict, record: "dict | None" = None) -> list:
     """A document view: each section is a file the host already owns -- read from this render's
     own projections when it is one of them, from the workspace otherwise. Absent is a declared
-    state that renders in words, never a silent gap."""
+    state that renders in words, never a silent gap. A section of a SCOPED view names the field
+    of its scope that holds the file, so one section grammar serves the root and every scope."""
     rows = []
     for section in view_spec.get("sections", []):
-        source = section["from"]
+        source = record[section["from_field"]] if "from_field" in section else section["from"]
         if source in produced:
             text, present = produced[source], True
         elif ctx.workspace.exists(source):
             text, present = ctx.workspace.read_text(source), True
         else:
             text, present = "", False
-        rows.append({**section, "present": present, "text": text})
+        rows.append({**section, "from": source, "present": present, "text": text})
     return rows
 
 
@@ -131,6 +138,32 @@ def _members(view_spec: dict, view: dict, produced: dict, capabilities) -> list:
         fields = {"id": identity, "description": description, "body": produced[path]}
         members.append({**fields, "quoted": {k: _quoted(v) for k, v in fields.items()}})
     return members
+
+
+def _scopes(ctx, view_spec: dict) -> list:
+    """(directory, scope row) for every scope a SCOPED view places a file in. A directory is
+    measured, never assumed: it must be a plain host-relative path that exists, is not the host
+    root (the root is the unscoped briefing), and lies in no kit plane -- a pinned or taken copy
+    is not the host's to govern, and a file placed there would be rebuilt by nobody who reads it."""
+    spec = view_spec["scopes"]
+    found = []
+    for row in declared.rules(ctx, spec["sources"], spec["list"]):
+        rel = row[spec["at"]]
+        parts = rel.split("/")
+        why = None
+        if not rel or rel.startswith("/") or ":" in rel or "\\" in rel or any(p in ("", ".", "..") for p in parts):
+            why = "is not a plain path inside this host"
+        elif _in_a_plane(ctx, rel):
+            why = "lies inside a kit plane, which is not the host's to govern"
+        elif not ctx.workspace.path(rel).is_dir():
+            why = "is not a directory on this host"
+        if why:
+            raise ScopeRefused(
+                f"scope {row[collection.IDENTITY]!r} places laws at {rel!r}, which {why}. Nothing "
+                f"has been written. Name an existing directory of the host's own tree, or remove "
+                f"the scope -- the root of the host is served by the unscoped briefing.")
+        found.append((rel, row))
+    return found
 
 
 def _targets(ctx, item: dict, view: dict, produced: dict, capabilities) -> list:
@@ -156,6 +189,12 @@ def _targets(ctx, item: dict, view: dict, produced: dict, capabilities) -> list:
                 for member in _members(view_spec, view, produced, capabilities):
                     found.append((f"{root}/{member['id']}{rendered.get('suffix', '')}",
                                   rendered["template"], {**base, **member}))
+            elif "scopes" in view_spec:
+                for rel, scope in _scopes(ctx, view_spec):
+                    found.append((f"{rel}/{rendered['target']}", rendered["template"],
+                                  {**base, "scope": rel, "scope_id": scope[collection.IDENTITY],
+                                   "says": scope.get("says", ""),
+                                   "sections": _sections(ctx, view_spec, produced, scope)}))
             else:
                 found.append((rendered["target"], rendered["template"],
                               {**base, "sections": _sections(ctx, view_spec, produced)}))

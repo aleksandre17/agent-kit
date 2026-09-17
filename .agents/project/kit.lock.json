@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 171,
+  "count": 173,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "9e73a28b4ceb9cd43e50383d994dee869c6547fc2d44e751eec25fb11dfe32ab",
+      "digest": "25d1eeb02ecac9b3886a9508c178a312e5523eb7fcf9e1e2862c2135d2674dcb",
       "path": "MANIFEST.json"
     },
     {
@@ -143,13 +143,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "14fe44ad9fe75d30d1fa89382806902cfd5e58367a4ec8de7427468908204d70",
+      "digest": "909172b3f257f04df9c8c6dc788a5289b6460985c84d471c59da14b5a41c4291",
       "path": "capabilities/governance/capability.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "a20ebbe4910f1d8e77544e9f602d7af5cc58d77c0b1f14c81a34ced32c8b89e1",
+      "digest": "56ccc5fdeda981b5f1d9bc7063afd3f08813b9506e46a82f04a190743a0a7eab",
       "path": "capabilities/governance/host-layout.json"
     },
     {
@@ -323,7 +323,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "4b45c415054ffc1f0499e0530a43620345c0411dc4e61ff5f395f5df28a2439a",
+      "digest": "d56ac761560eb015c535803c172e1713ea8d3649acddbd1a4f2e11f26b0d97db",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -413,7 +413,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "f187e0af19f34ded1252c0e6d109f43fb46b442d40e801b9c0fb1317b657a3c9",
+      "digest": "984c5518b500ac39e460513df8864a370f8792a1b2a9b19cd30826468357cc79",
       "path": "diagnostics.json"
     },
     {
@@ -605,7 +605,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7f5b36cc51d653c3007af7ce27c40d6b66a8ba9fdea692d8999d01e0da16e4d0",
+      "digest": "1b1772d0dab3479532db158651e7099c50b73b08351c96281f0a9937872c5ecf",
       "path": "interpreters/ports/runtime.py"
     },
     {
@@ -875,6 +875,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "5b79c749f2c873a267548e2143720c509f91eb490058095068c5c61bf055064d",
+      "path": "schemas/law-scope.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "58d9b30d617c7d0f8eca0cadac5320592018c919ff6e81defbda672aa8854598",
       "path": "schemas/layout.schema.json"
     },
@@ -1018,6 +1024,12 @@
     },
     {
       "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "39f053b95ae66947e9a5b9b4beb233dda21f5b6655aa0908d6f66636874bf8ed",
+      "path": "seeds/law-scopes.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
       "class": "payload",
       "digest": "d16941c0a2132c9baea6fe36ad1f748093f5e871966503f708a7bcdc573a29fb",
       "path": "seeds/laws.md"
@@ -1032,5 +1044,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-17T13:38:19+00:00"
+  "taken_at": "2026-09-17T14:04:05+00:00"
 }

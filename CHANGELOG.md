@@ -7,6 +7,25 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — scoped law: per-directory entry files (ADR-017 link C, slice C1c part 2)**
+- `governance` 0.2.0: schema `law-scope`; seed `.agents/project/law-scopes.json` (ships `scopes: []`,
+  `reads_as: law_scopes`); space `.agents/project/laws/` (where scoped law pages live, accounted).
+  A scope row = `{id, dir, page, says?}` -- a law PAGE (same grammar as the root law page) plus the
+  one proposition "binds below `dir`". Two `host_layout` rows.
+- `runtimes` 0.2.0: view `scoped-briefing` (`scopes: {sources: {validates: law-scope}, list, at: dir}`,
+  one section with `from_field: page`). `ports/runtime.py` places `<dir>/<surface target>` per scope,
+  recorded in `SERVED.json` like every served file, so departure (render removes), collision refusal,
+  `reach`/`succession` see them with no new code path. Refused before any write under **KIT0046**: a
+  dir that is not a plain in-host path, is missing, is the root, or lies in a kit plane.
+- Adapters `claude-code` / `codex` 1.1.0: a `scoped-briefing` render row (`CLAUDE.md` / `AGENTS.md`) and
+  `payload/scoped.md.mustache`; `says` cites the nested-file behaviour, marked UNVERIFIED. `kit/` names
+  no runtime file (test_312).
+- Host #0: scope `fresh-repo-suite` over `tests/acceptance/fresh-repo` (laws restated from `harness.py`,
+  suite docstrings, `boundary.json`, ADR-001 T1) -> `tests/acceptance/fresh-repo/{CLAUDE,AGENTS}.md`.
+- Found, not cured (GAP-S1): walking `kit/interpreters/` served files INTO the kit source tree, and `lock`
+  then refused the kit (KIT0026) -- the port cannot see a publication tree no declaration names.
+  Also observed: departure prunes an EMPTY host directory that the kit did not create.
+
 **Added — `fitness`: the abstract ARROW (ADR-017 link C, slice C1c part 1)**
 - New capability `fitness` (requires `enforcement`), schema `arrow`, seed `.agents/project/fitness/arrow.json`
   (ships empty), gate `FF-ARROW` (kind `arrow-held`, ships at the declared default stance -- ADR-006: a kit never ships looser; a host loosens only by a signed stance row). A host declares `imports` (per file

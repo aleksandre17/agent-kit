@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "governance",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "summary": "Declares the four-class seam for a host: the reading, the declaration, the seeded law page, the pinned kit a host runs by itself with the lock it was given, and the index projection, plus the gates that hold them.",
   "doctrine": "capabilities/governance/payload/governance.md",
   "requires": [
@@ -33,7 +33,8 @@
       "succession-act",
       "layout",
       "record-keeping",
-      "taken"
+      "taken",
+      "law-scope"
     ]
   },
   "space": {
@@ -101,6 +102,19 @@
       "class": "binding",
       "target": ".agents/project/laws.md",
       "source": "seeds/laws.md"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/law-scopes.json",
+      "source": "seeds/law-scopes.json",
+      "validates": "law-scope",
+      "reads_as": "law_scopes"
+    },
+    {
+      "mode": "space",
+      "class": "binding",
+      "target": ".agents/project/laws/"
     },
     {
       "mode": "seed",

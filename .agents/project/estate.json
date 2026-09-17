@@ -130,7 +130,7 @@
     {
       "capability": "enforcement",
       "class": "binding",
-      "digest": "8e46cda136642cf0a995b63940a24acd48446e7c96b9983fa6eff78176fc74cb",
+      "digest": "97201a6f36e51c1af39b50ab4214b60951bc4172ffeaa227a3edb717e6b9b608",
       "mode": "seed",
       "path": ".agents/project/enforcement/edit-gates.json"
     },
@@ -158,7 +158,7 @@
     {
       "capability": "fitness",
       "class": "binding",
-      "digest": "4bbe3c40ba0e4316f72eb7d4eff1318873f783823d39976240b61a185edb0380",
+      "digest": "5735a970647c19652f59097fcb9358987158607dc6f71d31118644832c82ea63",
       "mode": "seed",
       "path": ".agents/project/fitness/arrow.json"
     },
@@ -179,9 +179,23 @@
     {
       "capability": "governance",
       "class": "binding",
+      "digest": "7fe96f8647016b25d1eb2391277ae50584b04530bd614c3e619783cdc5494e07",
+      "mode": "seed",
+      "path": ".agents/project/law-scopes.json"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
       "digest": "d16941c0a2132c9baea6fe36ad1f748093f5e871966503f708a7bcdc573a29fb",
       "mode": "seed",
       "path": ".agents/project/laws.md"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": null,
+      "mode": "space",
+      "path": ".agents/project/laws/"
     },
     {
       "capability": "observability",
@@ -200,7 +214,7 @@
     {
       "capability": "governance",
       "class": "binding",
-      "digest": "e8cf9a8dd5c8ccac677b1819533a20299b10f82628089fae9dd4e8d745a494bd",
+      "digest": "a11cd91aefadf1714fc5ea119c42681db4506255f58e9f9f410f416506fdecee",
       "mode": "declaration",
       "path": ".agents/project/project.json"
     },
@@ -242,7 +256,7 @@
     {
       "capability": "governance",
       "class": "binding",
-      "digest": "a008c6de9053c5053e60be7f83127457ed6cc6d15bbf270d60960ebea6dedd5f",
+      "digest": "bae550608fbd63169f1ca0bc63e8b2b7b9a8881b93de6ae8640432eb4ad92aae",
       "mode": "taken-declaration",
       "path": ".agents/project/taken.json"
     },
@@ -277,25 +291,43 @@
     {
       "authenticity": {
         "state": "unsigned",
-        "taken_at": "2026-09-17T11:48:47+00:00"
+        "taken_at": "2026-09-17T14:04:11+00:00"
       },
       "capability": "claude-code",
-      "digest": "h1:fljcduPyeC6lKnwgFfPlR4RSKIq50AslR9oB0j6qbN0=",
-      "pinned_at": "2026-09-17T11:48:47+00:00",
+      "digest": "h1:pVSSiIJgVAO7cx8R1fHVT6/Cdp4XA8XPlY60AeKTIuE=",
+      "pinned_at": "2026-09-17T13:58:27+00:00",
       "pinned_by": "owner-aleksandre17:explicit-2026-09-17",
-      "version": "1.0.0"
+      "supersedes": {
+        "digest": "h1:fljcduPyeC6lKnwgFfPlR4RSKIq50AslR9oB0j6qbN0=",
+        "version": "1.0.0"
+      },
+      "trust": {
+        "attested_at": "2026-09-17T14:04:11+00:00",
+        "attested_by": "owner-aleksandre17:explicit-2026-09-17",
+        "basis": "attested"
+      },
+      "version": "1.1.0"
     },
     {
       "authenticity": {
         "state": "unsigned",
-        "taken_at": "2026-09-17T11:48:47+00:00"
+        "taken_at": "2026-09-17T14:04:11+00:00"
       },
       "capability": "codex",
-      "digest": "h1:JPU88bF5EsfuHbLW4pSDeFoFaklnYDhBYt6lawnJwCw=",
-      "pinned_at": "2026-09-17T11:48:47+00:00",
+      "digest": "h1:n3r0smvUd2mBUZP63FXEgRQb0EXk5kgIsio5aS4XREA=",
+      "pinned_at": "2026-09-17T13:58:27+00:00",
       "pinned_by": "owner-aleksandre17:explicit-2026-09-17",
-      "version": "1.0.0"
+      "supersedes": {
+        "digest": "h1:JPU88bF5EsfuHbLW4pSDeFoFaklnYDhBYt6lawnJwCw=",
+        "version": "1.0.0"
+      },
+      "trust": {
+        "attested_at": "2026-09-17T14:04:11+00:00",
+        "attested_by": "owner-aleksandre17:explicit-2026-09-17",
+        "basis": "attested"
+      },
+      "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-09-17T13:24:52+00:00"
+  "taken_at": "2026-09-17T14:04:11+00:00"
 }

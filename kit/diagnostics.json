@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 45,
+  "issued": 46,
   "codes": [
     {
       "code": "KIT0001",
@@ -272,6 +272,12 @@
       "status": "active",
       "title": "a take named no capability that can be taken",
       "explanation": "The take verb copies a published capability directory into the host's take plane and records it in the host's take declaration (ADR-018). It refuses a missing --path, a directory with no capability declaration, a declaration that does not honour the capability schema, and a kit that declares no single take plane -- because a take recorded without a capability behind it would be a row describing nothing."
+    },
+    {
+      "code": "KIT0046",
+      "status": "active",
+      "title": "a law scope names a directory no served file may be placed in",
+      "explanation": "A host declares scoped law as a row naming a directory and the law page that binds below it, and every served runtime receives that page at the place it reads nested instructions. The render refuses, before a byte is written, a scope whose directory is not a plain path inside the host, does not exist, is the host root (served by the unscoped briefing), or lies inside a kit plane -- a pinned or taken copy is not the host's to govern, and a file placed there would be governed by nobody who reads it."
     }
   ]
 }
