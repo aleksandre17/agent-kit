@@ -155,6 +155,11 @@ INSTALL_MODES = {
     "space": ("install", _once, _mode_space),
     "pinned": ("install", _pinned, _mode_pinned),
     "pinned-lock": ("install", _pinned_lock, _mode_pinned_lock),
+    # The take plane is OPENED as a space (every host has one, empty until it takes something) and
+    # the take declaration is seeded once as a declared zero; the `take` verb writes both after
+    # (ADR-018).
+    "taken": ("install", _once, _mode_space),
+    "taken-declaration": ("install", _once, _mode_seed),
     "projection": ("render", None, None),
     "estate": ("record", None, None),
 }

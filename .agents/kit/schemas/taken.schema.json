@@ -1,0 +1,58 @@
+{
+  "$id": "taken",
+  "title": "A host's take declaration -- what this host added beside the pinned release (ADR-018)",
+  "description": "The ONE home of what a host took that its release did not issue. One row per taken capability; its bytes live in the take plane, verbatim, and are judged against `digest` by the taken-intact gate. The release's MANIFEST.json is never edited by a host.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "takes"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "takes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "source",
+          "digest",
+          "taken_by",
+          "at"
+        ],
+        "properties": {
+          "id": {
+            "description": "The capability id the copy declares. Never an id the release issued.",
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "source": {
+            "description": "Where the copy was read from, as the taker named it.",
+            "type": "string",
+            "minLength": 1
+          },
+          "digest": {
+            "description": "h1 over every file of the copied tree, spelled in the kit namespace (ADR-008).",
+            "type": "string",
+            "pattern": "^h1:[A-Za-z0-9+/=]+$"
+          },
+          "taken_by": {
+            "description": "Who walked the take door.",
+            "type": "string",
+            "minLength": 1
+          },
+          "at": {
+            "description": "The moment the take was made.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

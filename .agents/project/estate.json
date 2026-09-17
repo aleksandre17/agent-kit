@@ -233,6 +233,13 @@
       "path": ".agents/project/succession/migration-map.json"
     },
     {
+      "capability": "governance",
+      "class": "binding",
+      "digest": "47a660052477ec895387ab7e5f4687a690aa059df8e8d29ea3fa28c24fdaf4aa",
+      "mode": "taken-declaration",
+      "path": ".agents/project/taken.json"
+    },
+    {
       "capability": "evaluation",
       "class": "ephemeral",
       "digest": null,
@@ -245,6 +252,13 @@
       "digest": null,
       "mode": "space",
       "path": ".agents/runtime/receipts/"
+    },
+    {
+      "capability": "governance",
+      "class": "vendor",
+      "digest": null,
+      "mode": "taken",
+      "path": ".agents/taken/"
     }
   ],
   "kit_version": "0.1.6",
@@ -253,5 +267,5 @@
   "signed_by": "agent-linkB(owner-delegated:ADR-015)",
   "succession_acts": [],
   "taken": [],
-  "taken_at": "2026-09-17T10:53:23+00:00"
+  "taken_at": "2026-09-17T11:32:50+00:00"
 }

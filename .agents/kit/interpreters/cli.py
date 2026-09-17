@@ -125,7 +125,8 @@ def _run(args, host: Path, kit_root: Path) -> int:
     # WHICH kit is speaking is stated on the first line of every run. A host that carries its own
     # pinned kit and a host driven from a working tree read identically otherwise -- and the one
     # question a reader of any output must be able to answer is what actually ran (ADR-016).
-    print(f"kit {ctx.manifest.version} · {args.verb} · {host.as_posix()} · "
+    taken = f" + taken: {', '.join(ctx.manifest.taken)}" if ctx.manifest.taken else ""
+    print(f"kit {ctx.manifest.version}{taken} · {args.verb} · {host.as_posix()} · "
           f"kit at {ctx.manifest.root.as_posix()}")
 
     # Whatever the enabled capabilities declared should watch a run like this one is opened HERE

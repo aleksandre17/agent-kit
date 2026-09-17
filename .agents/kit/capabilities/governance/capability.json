@@ -32,7 +32,8 @@
       "migration-map",
       "succession-act",
       "layout",
-      "record-keeping"
+      "record-keeping",
+      "taken"
     ]
   },
   "space": {
@@ -119,6 +120,20 @@
       "validates": "lock"
     },
     {
+      "mode": "taken",
+      "class": "vendor",
+      "target": ".agents/taken/",
+      "declaration": "capability.json",
+      "namespace": "capabilities/"
+    },
+    {
+      "mode": "taken-declaration",
+      "class": "binding",
+      "target": ".agents/project/taken.json",
+      "source": "seeds/taken.json",
+      "validates": "taken"
+    },
+    {
       "mode": "projection",
       "class": "projection",
       "target": ".agents/generated/governance/INDEX.md",
@@ -200,6 +215,17 @@
       "params": {
         "mode": "pinned",
         "lock_mode": "pinned-lock"
+      },
+      "stance": {
+        "floor": "enforce"
+      }
+    },
+    {
+      "id": "FF-TAKEN-INTACT",
+      "kind": "taken-intact",
+      "params": {
+        "plane_mode": "taken",
+        "declaration_mode": "taken-declaration"
       },
       "stance": {
         "floor": "enforce"

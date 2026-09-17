@@ -216,6 +216,25 @@ Mechanism:
   recorded and signed, never automatic, so the map learns and rules do not pile up.
 Built with L3 (the map) and C (receipts that record what was loaded, and what was then searched).
 
+**10. The work chain has one root, and every record knows where it came from.** *Owner, 2026-09-17:
+"every action has its canonical place and a path from idea to realisation; when a task is spread over
+several places there must be a root that binds it; the system must respect doctrine and never mix up
+canon."* Met live: links C1a/C1b ran with no card, no checklist and no parent — the plan lived in an ADR
+table and the capsule. Link F already makes the card the one home of work; this amendment adds what F
+lacked, and F is not done without it:
+- **A parent card — the bet — owns its decomposition.** Slices are child cards; the parent is the one
+  root when work spreads across places (the owner's "mediator"). Its state is COMPUTED from its children
+  and their proofs, never set by hand. Field form: the work-item hierarchy (initiative → epic → story).
+- **Typed traceability between record kinds.** idea → proposal → decision → card → evidence → archive,
+  each link a declared field, so any record answers *where did I come from* and *what did I produce*, and
+  an orphan (a decision no card realises, a card no decision justifies) is a gate failure, not a
+  discovery. Field form: requirements traceability (ISO/IEC/IEEE 29148).
+- **One lifecycle grammar for every kind.** Each record kind (amendment 8's `kinds`) declares its states
+  and passages in the same grammar `move` already interprets for cards; a proposal is accepted or
+  rejected, never left open. Doctrine (what binds) and work (what is being done) stay separate kinds.
+Built in F, after the rewrite (owner's ruling), measured against Stage-Gate and Shape Up at that time.
+Recorded as GAP-F1 in `docs/reference/CANON-LEDGER.md`.
+
 ## Why this order, and not the audit's
 
 The audit ordered by RISK TO THE MIGRATION. The line orders by DEPENDENCY: the enforcement line (C) cannot

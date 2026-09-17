@@ -18,6 +18,8 @@ planes.
 | place | holds | writer | read when | lifecycle | state |
 | --- | --- | --- | --- | --- | --- |
 | `.agents/kit/` | pinned-release | kit-publisher | how does the kit work; a gate fails and its rule must be read; which schema governs this document; run the kit offline;  | replaced-by-release | always |
+| `.agents/taken/` | pinned-release | kit-verb | which capabilities this host added to its release; a runtime adapter was taken; a take fails its integrity gate;  | replaced-by-release | always |
+| `.agents/project/taken.json` | take-declaration | owner | what did this host take beside the release; who took a capability and when; take or drop an adapter;  | living | always |
 | `.agents/project/project.json` | host-declaration | owner | which capabilities are enabled; what this project is; enable or disable a capability;  | living | always |
 | `.agents/project/profile.json` | environment-reading | kit-verb | what tooling this repository uses; a check reports the reading stale; why was the install adapted this way;  | current-only | always |
 | `.agents/project/kit.lock.json` | integrity-pin | kit-verb | which kit version is installed; verify the pinned copy; upgrade the kit;  | replaced-by-release | always |
@@ -53,6 +55,7 @@ planes.
 | --- | --- |
 | pinned-release | A verbatim copy of one published kit release. The host runs it and never edits it; a change here is a change of release, not of content. |
 | integrity-pin | Which release a host was given and the digests that prove the copy is that release. Read to verify, never to learn. |
+| take-declaration | What a host added beside its pinned release: one row per taken capability, with where it came from, the digest of its copy, who took it and when. Stated by the owner, never by the publisher. |
 | environment-reading | A measurement of the host as it was found, stamped with the moment it was taken. True of that moment only. |
 | host-declaration | The host's own answers: what this project is and which capabilities it enables. Stated, not measured. |
 | staffing | Who is on the team: which roles are filled, by what, for which work. |

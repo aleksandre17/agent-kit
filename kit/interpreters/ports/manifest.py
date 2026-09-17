@@ -40,6 +40,50 @@ class OlderDocument(KitError):
     code = "KIT0034"
 
 
+class TakeShadows(ManifestError):
+    """A capability a host TOOK carries the id of one the release ISSUED. A take never shadows the
+    release (ADR-018 decision 4): refused by name, never resolved by an order of precedence."""
+
+    code = "KIT0044"
+
+
+#: The install modes through which governance DECLARES where a host's takes live: the plane that
+#: holds each verbatim copy, and the one document that states what was taken (ADR-018). Named here
+#: as `pin` names its own modes -- the targets, file names and namespace are the declaration's.
+TAKEN_MODE = "taken"
+TAKEN_DECLARATION_MODE = "taken-declaration"
+
+
+def composed(kit_root: Path, host_root: Path) -> "Manifest":
+    """The manifest a host SPEAKS WITH: the issued release, plus every row of the host's take
+    declaration resolved to its plane (ADR-018 decision 4). Where the release declares no take
+    plane, or the host declares no takes, the release alone is the answer -- a declared zero."""
+    issued = Manifest(kit_root)
+    found = {mode: [i for c in issued.capabilities for i in c.installs if i["mode"] == mode]
+             for mode in (TAKEN_MODE, TAKEN_DECLARATION_MODE)}
+    if any(len(items) != 1 for items in found.values()):
+        return issued
+    plane, statement = found[TAKEN_MODE][0], found[TAKEN_DECLARATION_MODE][0]
+    target = Path(host_root) / statement["target"]
+    if not target.is_file():
+        return issued
+    try:
+        document = json.loads(target.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ManifestError(f"{statement['target']}: not readable as JSON -- {exc}") from exc
+    issued._require_valid(document, statement["validates"], statement["target"])
+    if not document["takes"]:
+        return issued
+    takes = []
+    for row in document["takes"]:
+        prefix = f"{plane['namespace']}{row['id']}/"
+        takes.append({"id": row["id"], "prefix": prefix,
+                      "declaration": prefix + plane["declaration"],
+                      "home": Path(host_root) / plane["target"] / row["id"],
+                      "row": row})
+    return Manifest(kit_root, takes)
+
+
 def _versioned(schema: dict):
     """The object schema that carries the version: the document itself, or -- for a document
     that is a list of records -- each record. Read from the schema's SHAPE, never from its name."""
@@ -134,8 +178,13 @@ class Capability:
 class Manifest:
     """Reads `kit/` and hands back declarations. Holds no policy about what they mean."""
 
-    def __init__(self, kit_root: Path) -> None:
+    def __init__(self, kit_root: Path, takes=()) -> None:
         self._root = Path(kit_root).resolve()
+        #: kit-namespace prefix -> the plane directory that answers for it (ADR-018). Empty for a
+        #: release read alone; every read below resolves through `path`, so no reader learns
+        #: which home a declaration came from.
+        self._homes: dict[str, Path] = {}
+        self._taken: dict[str, dict] = {}
         if not (self._root / "MANIFEST.json").is_file():
             raise ManifestError(f"no MANIFEST.json under {self._root}")
         self._schemas: dict[str, dict] = {}
@@ -161,6 +210,28 @@ class Manifest:
                 documents[declared["id"]] = document
             self._capabilities.append(Capability(raw, documents))
 
+        issued_ids = {c.id for c in self._capabilities}
+        for take in takes:
+            if take["id"] in issued_ids:
+                raise TakeShadows(
+                    f"this host took a capability named {take['id']!r}, and the release it runs "
+                    f"issued one by that name; a take never shadows the release. Remove the take "
+                    f"or take it under a different id")
+            self._homes[take["prefix"]] = Path(take["home"])
+            self._taken[take["id"]] = take
+        for take in takes:
+            raw = self._read(take["declaration"])
+            self._require_valid(raw, "capability", take["declaration"])
+            if raw["id"] != take["id"]:
+                raise ManifestError(f"{take['declaration']}: declares id {raw['id']!r}, the take "
+                                    f"declaration says {take['id']!r}")
+            documents = {}
+            for declared in raw.get("documents", []):
+                document = self._read(declared["source"])
+                self._require_valid(document, declared["validates"], declared["source"])
+                documents[declared["id"]] = document
+            self._capabilities.append(Capability(raw, documents))
+
         self._detectors = []
         for rel in self._raw["detectors"]:
             raw = self._read(rel)
@@ -168,8 +239,16 @@ class Manifest:
             self._detectors.append(raw)
 
     # -- reading ----------------------------------------------------------------------------
+    def path(self, rel: str) -> Path:
+        """Where a kit-relative name RESOLVES: inside the plane of the take whose namespace it is
+        spelled in, or inside the release. The one resolver; nothing downstream joins a root."""
+        for prefix, home in self._homes.items():
+            if rel.startswith(prefix):
+                return home / rel[len(prefix):]
+        return self._root / rel
+
     def _read(self, rel: str):
-        target = self._root / rel
+        target = self.path(rel)
         if not target.is_file():
             raise ManifestError(f"declared file does not exist: {rel}")
         try:
@@ -227,10 +306,24 @@ class Manifest:
         """What the KIT declares ABOUT each capability, as opposed to what a capability declares
         about itself: id -> the manifest entry minus the pointer to the declaration. Handed on as
         data so that whoever reads a policy field reads a declaration, never a hard-coded name."""
-        return {
+        issued = {
             entry["id"]: {k: v for k, v in entry.items() if k not in ("id", "declaration")}
             for entry in self._raw["capabilities"]
         }
+        # A take carries no policy: the kit declares nothing about what it never issued.
+        return issued | {identity: {} for identity in self._taken}
+
+    @property
+    def taken(self) -> list:
+        """The ids this manifest composes from the host's takes, sorted -- for the surfaces that
+        must state the composition (`release <v> + taken: <ids>`). Empty for a release alone."""
+        return sorted(self._taken)
+
+    def take_of(self, capability_id: str):
+        """(plane directory, kit-namespace prefix, declared row) of a TAKEN capability, or None.
+        Asked only by the module that accounts for takes (provenance), never by a projection."""
+        take = self._taken.get(capability_id)
+        return None if take is None else (take["home"], take["prefix"], take["row"])
 
     def declaration_of(self, capability_id: str) -> str:
         """The kit-relative path of the file that declares a capability, as the manifest states
@@ -239,6 +332,8 @@ class Manifest:
         for entry in self._raw["capabilities"]:
             if entry["id"] == capability_id:
                 return entry["declaration"]
+        if capability_id in self._taken:
+            return self._taken[capability_id]["declaration"]
         raise ManifestError(f"no capability named {capability_id!r} is declared by this kit")
 
     @property
@@ -276,7 +371,7 @@ class Manifest:
         return validation.validate(instance, self.schema(schema_name))
 
     def payload_text(self, rel: str) -> str:
-        target = self._root / rel
+        target = self.path(rel)
         if not target.is_file():
             raise ManifestError(f"declared payload source does not exist: {rel}")
         return target.read_text(encoding="utf-8")

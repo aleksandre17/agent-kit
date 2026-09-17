@@ -173,24 +173,30 @@ class PinnedComposition(Fixtures, unittest.TestCase):
     def test_280_a_capability_the_host_took_is_still_taken_when_the_pinned_copy_speaks(self):
         """Found on the live walk of host #2, not foreseen: the first pinned lock was a fresh
         reading of EVERYTHING, so provenance run from the pinned copy saw the taken adapters as
-        issued by the kit and reported every pin WITHDRAWN -- while they were in force."""
-        from test_adapters import adapted_kit  # noqa: E402 -- the one way a host takes adapters
-        import lockfile  # noqa: E402
-        import provenance  # noqa: E402
+        issued by the kit and reported every pin WITHDRAWN -- while they were in force.
 
-        kit = adapted_kit()
-        host = self.installed(kit)
+        Since ADR-018 the take lives BESIDE the pinned kit: the pinned copy is the release and its
+        lock accounts nothing as not issued; the takes are accounted in their own plane, by
+        `taken-intact`, and provenance still sees each as taken and PINNED with the source gone."""
+        import provenance  # noqa: E402
+        import lockfile  # noqa: E402
+        from test_taken import Taken  # noqa: E402 -- the one way a host takes a capability
+
+        source = ship(Path(tempfile.mkdtemp(prefix="kit-source-")).resolve() / "kit")
+        case = Taken("test_302_a_host_that_took_both_adapters_serves_them_and_checks_green_as_release_plus_taken")
+        Taken.setUpClass()
+        host = case.composed_host(source)
         held = json.loads((host / SEAT).read_text(encoding="utf-8"))
-        not_issued = {e["path"] for e in held["files"] if e["accounted_by"] == lockfile.NOT_ISSUED}
-        self.assertTrue(not_issued, "the taken adapters were absorbed into what the kit issued")
-        self.assertEqual(set(), not_issued & lockfile.issued(json.loads(
-            (KIT / LOCK).read_text(encoding="utf-8"))), "a path the kit issued was marked not issued")
-        shutil.rmtree(kit.parent)
+        self.assertEqual([], [e["path"] for e in held["files"] if e["accounted_by"] == lockfile.NOT_ISSUED],
+                         "the pinned lock accounts a take as part of the release")
+        self.assertEqual((source / LOCK).read_bytes(), (host / SEAT).read_bytes())
+        shutil.rmtree(source.parent)
         ran = pinned_cli(host, "check")
         self.assertIn(f"integrity {provenance.PINNED.upper()}", ran.stdout)
         self.assertNotIn(provenance.WITHDRAWN.upper(), ran.stdout)
         self.assertIn("PASS  FF-PROVENANCE-PINNED", ran.stdout)
         self.assertIn("PASS  FF-KIT-PINNED", ran.stdout)
+        self.assertIn("PASS  FF-TAKEN-INTACT", ran.stdout)
 
 
 def pinned_lockfile_state(word: str) -> str:

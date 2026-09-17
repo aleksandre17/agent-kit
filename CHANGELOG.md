@@ -7,6 +7,43 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — link C, slice C1b: TAKEN CAPABILITIES LIVE BESIDE THE PINNED KIT (ADR-018; cures GAP-T1)**
+- **Two homes, one composition.** Governance declares the take PLANE (install mode `taken`,
+  `.agents/taken/`, opened as a space; `declaration` + `namespace` are new optional install fields) and
+  the take DECLARATION (mode `taken-declaration`, `.agents/project/taken.json`, schema `taken`, seeded as
+  a declared zero). `.agents/kit/` is never written by a take and stays byte-equal to its lock.
+- **The loader composes.** `manifest.composed(kit, host)` = issued `MANIFEST.json` + every take row,
+  each resolved to its plane by `Manifest.path` (the one resolver; `_read`, `payload_text` and
+  provenance's signature read go through it). Context speaks with the composed manifest; no projection
+  learns where a capability came from. An issued id taken again is refused at the take and at every
+  load: `TakeShadows`, **KIT0044**. A row whose plane is gone is refused at load (KIT0015).
+- **`take` verb** (new file, a DOOR): `take --root . --path <dir>[,<dir>] [--approve <who>]` copies
+  each published capability verbatim into its plane and writes its row (`id`, `source`, `digest` =
+  h1 over the whole copied tree in the kit namespace, `taken_by`, `at`). Unapproved it names the takes
+  and refuses (KIT0007); a bad take is **KIT0045**. Enabling the take (`project.json`) and pinning its
+  provenance (`init --approve`) remain the acts they were.
+- **`FF-TAKEN-INTACT`** (kind `taken-intact`, `gates/taken.py`) judges each take against its row's
+  digest and fails a directory in the plane no row declares. `FF-KIT-PINNED` unchanged. Provenance's
+  digest of a take is the same h1 over the same tree (one algorithm, `provenance.h1`).
+- **Surfaces state the composition:** the CLI's first line and `pin.identity` print
+  `release <v> + taken: <ids>`.
+- Records map: host_layout rows `.agents/taken/` (pinned-release / kit-verb / replaced-by-release) and
+  `.agents/project/taken.json` (new kind `take-declaration` / owner / living); stewardship modes rows.
+- Tests: `test_taken.py` 300-304 (fresh fixture host takes both adapters, serves `.claude/settings.json`
+  + `.codex/hooks.json`, `check: 0 gate(s) failed`); `test_280` now proves the take accounted in its
+  own plane (the pinned lock carries no `not-issued` path).
+
+**Not built (C1b)**
+- **Migration of a host whose takes sit inside its pinned tree** (ADR-018 consequence: `upgrade` moves
+  each `not-issued` path into `.agents/taken/<id>/` and writes its row). Not small: `upgrade` delegates
+  every write to `init`, which has no mode that relocates a vendor-tree path into another plane; needs
+  its own slice. Such a host keeps working on the old `+unreleased` route.
+- `adapters/README.md` still describes the ADR-014 take (copy into `kit/capabilities/` + manifest
+  row); outside this slice's write set.
+- The `take` verb does not take the host hold as a writer (it `arrive`s only) and is not journalled.
+- The take row's `digest` and the estate's provenance pin carry the same measured value in two
+  documents (ADR-018 decision 3 vs ADR-008 pin) -- a Cardinal III tension, recorded, not resolved here.
+
 **Added — link C, slice C1a: THE ENFORCEMENT LINE (ADR-017 row C1, first part; UNFINISHED on host #0 — see Blocked)**
 - **`enforcement` capability** (kit core, names no product): the host declares EDIT GATES in
   `.agents/project/enforcement/edit-gates.json` (schema `edit-gate`: a path pattern, a pattern over the

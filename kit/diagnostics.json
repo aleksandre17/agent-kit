@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 43,
+  "issued": 45,
   "codes": [
     {
       "code": "KIT0001",
@@ -260,6 +260,18 @@
       "status": "active",
       "title": "a runtime hook asked to be judged through a surface that declares no hand",
       "explanation": "The judge verb (the hook a served runtime setting runs) reads where a product puts the edit it is making -- the edited paths, the introduced text, the exit code that means no -- from that product's surface `hands` declaration. A surface no taken adapter declares, or one without a `hands` block, states none of that, so no edit can be judged and the verb refuses rather than guess. Take the adapter that declares the surface, or declare its `hands`."
+    },
+    {
+      "code": "KIT0044",
+      "status": "active",
+      "title": "a capability a host took carries an id the release issued",
+      "explanation": "A take lives beside the pinned kit and is composed with it by the manifest loader (ADR-018). A take whose id equals one the release issued would shadow the release -- the host would run something no release describes under a name the release owns -- so it is refused by name, at the take and at every load, never resolved by precedence. Remove the take, or take the capability under its own id."
+    },
+    {
+      "code": "KIT0045",
+      "status": "active",
+      "title": "a take named no capability that can be taken",
+      "explanation": "The take verb copies a published capability directory into the host's take plane and records it in the host's take declaration (ADR-018). It refuses a missing --path, a directory with no capability declaration, a declaration that does not honour the capability schema, and a kit that declares no single take plane -- because a take recorded without a capability behind it would be a row describing nothing."
     }
   ]
 }

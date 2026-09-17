@@ -4,6 +4,7 @@
   "kinds": [
     { "id": "pinned-release", "summary": "A verbatim copy of one published kit release. The host runs it and never edits it; a change here is a change of release, not of content." },
     { "id": "integrity-pin", "summary": "Which release a host was given and the digests that prove the copy is that release. Read to verify, never to learn." },
+    { "id": "take-declaration", "summary": "What a host added beside its pinned release: one row per taken capability, with where it came from, the digest of its copy, who took it and when. Stated by the owner, never by the publisher." },
     { "id": "environment-reading", "summary": "A measurement of the host as it was found, stamped with the moment it was taken. True of that moment only." },
     { "id": "host-declaration", "summary": "The host's own answers: what this project is and which capabilities it enables. Stated, not measured." },
     { "id": "staffing", "summary": "Who is on the team: which roles are filled, by what, for which work." },

@@ -10,7 +10,7 @@ from pathlib import Path
 import resolver
 from errors import KitError, PendingApproval
 from clock import Clock
-from manifest import Manifest
+import manifest as manifest_port
 from probe import Probe
 from workspace import Workspace
 
@@ -24,7 +24,7 @@ class BindingError(KitError):
 
 class Context:
     def __init__(self, kit_root: Path, host_root: Path, clock=None) -> None:
-        self.manifest = Manifest(kit_root)
+        self.manifest = manifest_port.composed(kit_root, host_root)
         self.workspace = Workspace(host_root)
         self.clock = clock or Clock()
         self.probe = Probe(self.workspace)

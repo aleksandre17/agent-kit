@@ -151,14 +151,16 @@ def reading(manifest: Manifest) -> dict:
 def identity(manifest: Manifest) -> str:
     """One line that says what this kit IS as a release, for every surface that must say it."""
     seen = reading(manifest)
+    # What the host TOOK is stated beside the release, never folded into it (ADR-018 decision 5).
+    taken = f" + taken: {', '.join(manifest.taken)}" if manifest.taken else ""
     if seen["released"]:
-        return (f"release {manifest.version} · lock sha256:{digest_of(seen['lock_text'])} · "
+        return (f"release {manifest.version}{taken} · lock sha256:{digest_of(seen['lock_text'])} · "
                 f"{UNSIGNED}")
     if seen["intact"]:
         text = seen["lock_text"]
-        return (f"kit {seen['recorded']['kit_version']} · lock sha256:{digest_of(text)} -- "
+        return (f"kit {seen['recorded']['kit_version']}{taken} · lock sha256:{digest_of(text)} -- "
                 f"pinned from a working tree and intact against that reading, so it is no release")
-    return (f"kit {manifest.version}+{UNRELEASED} -- a working tree: "
+    return (f"kit {manifest.version}+{UNRELEASED}{taken} -- a working tree: "
             f"{len(seen['drift']) + len(seen['unresolved'])} path(s) differ from its own lock, "
             f"so it is no release")
 

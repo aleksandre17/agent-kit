@@ -124,11 +124,29 @@ def taken(ctx, capabilities) -> list:
     return [c for c in capabilities if ctx.manifest.declaration_of(c.id) not in issued]
 
 
+def h1(lines: list) -> str:
+    """Go's `h1:` dirhash over already-measured `(path, bytes)` pairs: sha256 over the sorted lines
+    `<sha256 of a file>  <path>`, base64. The one spelling of the algorithm (ADR-008)."""
+    text = "".join(f"{hashlib.sha256(data).hexdigest()}  {rel}\n" for rel, data in sorted(lines))
+    return "h1:" + base64.b64encode(hashlib.sha256(text.encode("utf-8")).digest()).decode("ascii")
+
+
+def tree_digest(home, prefix: str, signature=None) -> str:
+    """The digest of a TAKEN capability: every file of its plane, spelled in the kit namespace its
+    declaration uses (ADR-018 decision 3). The whole copied tree, never the closure of its
+    declaration -- a file planted beside a take is part of what the host is running."""
+    files = [(prefix + p.relative_to(home).as_posix(), p) for p in home.rglob("*") if p.is_file()]
+    return h1([(rel, p.read_bytes()) for rel, p in files if rel != signature])
+
+
 def digest(ctx, capability, issued=None) -> str:
     """The content digest of one capability: Go's `h1:` dirhash, adopted whole -- sha256 over the
     sorted lines `<sha256 of a file>  <path>`, base64. Its files are the closure of its
     declaration by the kit's one walker, less what the kit issued (the kit pins those) and less
     the signature its publisher claims (a digest cannot contain the signature over itself)."""
+    take = ctx.manifest.take_of(capability.id)
+    if take is not None:
+        return tree_digest(take[0], take[1], (capability.raw.get(CLAIM) or {}).get("signature"))
     kit = Workspace(ctx.manifest.root)
     issued = _issued(ctx) if issued is None else issued
     skip = set(issued) | {ctx.manifest.raw_ships()["lock"]}
@@ -136,9 +154,7 @@ def digest(ctx, capability, issued=None) -> str:
     if signature:
         skip.add(signature)
     files = lockfile.closure(kit, ctx.manifest.declaration_of(capability.id), skip)
-    lines = "".join(f"{hashlib.sha256(kit.read_bytes(rel)).hexdigest()}  {rel}\n"
-                    for rel in sorted(files))
-    return "h1:" + base64.b64encode(hashlib.sha256(lines.encode("utf-8")).digest()).decode("ascii")
+    return h1([(rel, kit.read_bytes(rel)) for rel in files])
 
 
 def survey(ctx, capabilities, pins) -> list:
@@ -229,7 +245,7 @@ def authenticate(ctx, capability, measured: str, moment: str) -> dict:
     found.update({"verifier": claim["verifier"], "signer": claim["signer"]})
     document = declaration(ctx)
     verifier = next((v for v in document["verifiers"] if v["id"] == claim["verifier"]), None)
-    signature = ctx.manifest.root / claim["signature"]
+    signature = ctx.manifest.path(claim["signature"])
     if verifier is None:
         return found | {"state": UNKNOWN_VERIFIER}
     if not signature.is_file():

@@ -51,6 +51,16 @@ lifecycles — what the publisher ISSUED (`replaced-by-release`) and what the ho
    holds `pinned-release`, writer `kit-verb`, lifecycle `replaced-by-release` (per take).
    `.agents/project/taken.json` holds a new kind `take-declaration`, writer `owner`, lifecycle `living`.
 
+## Amendment 1 — the digest has one home (2026-09-17, found by building C1b)
+
+Decision 3 put `digest` on the `taken.json` row, while ADR-008's provenance pin already records the
+same h1 for every take: one reading, two homes (Cardinal III). **The row is a DECLARATION** — what the
+host chose: `id`, `source`, `taken_by`, `at`. **The digest is a READING** of what arrived, and its one
+home is the ADR-008 provenance pin. `taken-intact` reads the digest from the pin; `taken.json` drops the
+field (expand-contract: optional now, removed at the schema's next version). Rejected: keep it on the row
+and drop it from the pin — that would split ADR-008's one registry of what a host received into two
+mechanisms by capability kind.
+
 ## Rejected alternatives
 
 **A. Keep composing inside the pinned tree, labelled `+unreleased` (status quo).** Rejected: the

@@ -547,6 +547,14 @@
     {
       "mode": "pinned-lock",
       "steward": "release"
+    },
+    {
+      "mode": "taken",
+      "steward": "host-space"
+    },
+    {
+      "mode": "taken-declaration",
+      "steward": "host"
     }
   ]
 }

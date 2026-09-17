@@ -520,6 +520,16 @@
                 "type": "string"
               }
             }
+          },
+          "declaration": {
+            "description": "On a take plane (ADR-018): the file name, inside each taken capability's directory, of the capability declaration it carries.",
+            "type": "string",
+            "minLength": 1
+          },
+          "namespace": {
+            "description": "On a take plane (ADR-018): the kit-relative prefix a taken capability's own declared paths are spelled under; `<namespace><id>/` resolves into that take's directory.",
+            "type": "string",
+            "minLength": 1
           }
         }
       }
