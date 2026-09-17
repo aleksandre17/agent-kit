@@ -52,6 +52,7 @@ Declares the four-class seam for a host: the reading, the declaration, the seede
 | `.agents/project/kit.lock.json` | binding | pinned-lock |
 | `.agents/generated/governance/INDEX.md` | projection | projection |
 | `.agents/project/succession/migration-map.json` | binding | seed |
+| `.agents/generated/INDEX.md` | projection | projection |
 
 Gates declared by this capability:
 
@@ -63,6 +64,7 @@ Gates declared by this capability:
 - **FF-PROVENANCE-PINNED** — `provenance-pinned`
 - **FF-KIT-PINNED** — `pinned-kit-intact`
 - **FF-HOST-FLOOR** — `layout-floor-present`
+- **FF-RECORDS-DECLARED** — `reference-declared-across`
 
 ### observability 0.1.0
 

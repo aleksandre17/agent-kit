@@ -76,6 +76,50 @@ class HostFloor(Fixtures, unittest.TestCase):
                 self.assertEqual([space.marker(Manifest(KIT))],
                                  [p.name for p in (host / entry["path"]).iterdir()], entry["path"])
 
+    def test_285_every_drawn_place_declares_its_record_keeping_and_it_resolves(self):
+        """Link L3b (ADR-015 amendment 8): the layout is the RECORDS MAP. Every host place --
+        pending ones included -- declares what it holds, who writes it, when it is read and how it
+        ages, and a fresh host's `check` resolves those words against the vocabulary. The schema
+        holds the SHAPE of the four fields; that all four are present on every host place is held
+        here, over the one shipped declaration (see the CHANGELOG: an expand, not a version move)."""
+        four = ("holds", "writer", "read_when", "lifecycle")
+        self.assertEqual([], [(e["path"], [f for f in four if f not in e]) for e in LAYOUT["entries"]
+                              if any(f not in e for f in four)],
+                         "a drawn host place does not declare its record keeping")
+        self.assertEqual([], [e["path"] for e in LAYOUT["entries"] if e.get("pending") == "L3b"])
+        host = self.installed()
+        ran = pinned_cli(host, "check")
+        self.assertEqual(0, ran.returncode, said(ran))
+        self.assertIn("PASS  FF-RECORDS-DECLARED", ran.stdout)
+
+    def test_286_the_map_is_projected_and_shows_a_pending_place_as_pending(self):
+        host = self.installed()
+        index = (host / ".agents/generated/INDEX.md").read_text(encoding="utf-8")
+        for entry in LAYOUT["entries"]:
+            self.assertIn(f"`{entry['path']}`", index, "a declared place is missing from the map")
+            if "pending" in entry:
+                row = next(line for line in index.splitlines() if f"`{entry['path']}`" in line)
+                self.assertIn(f"PENDING — link {entry['pending']}", row)
+                self.assertIn(entry["holds"], row)
+        self.assertIn("| decision-authority |", index)
+        # The governance install index is a different document with a different job, untouched.
+        self.assertTrue((host / ".agents/generated/governance/INDEX.md").is_file())
+
+    def test_287_a_place_naming_a_writer_nobody_declares_is_refused_by_the_gate(self):
+        def undeclared_writer(kit):
+            self.edit_json(kit, "capabilities/governance/host-layout.json", lambda doc: doc[
+                "entries"][0].__setitem__("writer", "whoever-is-around"))
+
+        kit = self.fixture_kit("undeclared-writer", patch=undeclared_writer)
+        host = self.host()
+        self.assertEqual(3, self.run_kit(kit, host, "init").returncode)
+        # The gate stands at the enforce floor, so the approved install itself is refused.
+        ran = self.run_kit(kit, host, "init", "--approve", "acceptance-suite")
+        self.assertNotEqual(0, ran.returncode)
+        self.assertIn("FAIL  FF-RECORDS-DECLARED", said(ran))
+        self.assertIn("a-place-written-by-an-undeclared-writer", said(ran))
+        self.assertIn("'whoever-is-around'", said(ran))
+
     def test_282_a_writer_inside_the_pinned_tree_is_refused_in_the_plan(self):
         page = GOVERNANCE.raw["doctrine"]
 

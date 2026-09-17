@@ -1,0 +1,33 @@
+{
+  "$id": "record-keeping",
+  "title": "Record-keeping vocabulary -- what a place may hold, who may write it, how it ages (ADR-015 amendment 8)",
+  "description": "The one home of the words a RECORDS MAP is written in. The layout declaration (`layout` schema) names every place a host has; each of its entries says what KIND of truth lives there (`holds`), WHO may write it (`writer`) and how it AGES (`lifecycle`), and every one of those words is a row of this document -- never an `enum` in a schema and never a list inside an interpreter. The field anchor is records management (ISO 15489: a record has a declared home, an accountable writer and a disposition) read through information architecture. OPEN BY CONSTRUCTION (Cardinal II): this schema constrains the SHAPE of a row, never the set of rows; a new kind, writer or lifecycle is a new row, and the gate that resolves the map against this document (`FF-RECORDS-DECLARED`) is not touched.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kinds", "writers", "lifecycles"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "summary": { "type": "string" },
+    "kinds": {
+      "description": "What a place HOLDS: the kind of truth living there, stated so that a document of another kind found in that place is recognisably misfiled.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+    },
+    "writers": {
+      "description": "WHO may write a place: an accountable authority, named by what it is accountable FOR, never by a runtime product or a host's role name.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+    },
+    "lifecycles": {
+      "description": "How a place's content AGES and where it goes when it is no longer current -- its disposition, in ISO 15489's sense.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+    }
+  }
+}

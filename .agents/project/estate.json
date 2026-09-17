@@ -16,6 +16,13 @@
       "path": ".agents/generated/DOCTRINE.md"
     },
     {
+      "capability": "governance",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/INDEX.md"
+    },
+    {
       "capability": "roles",
       "class": "projection",
       "digest": null,
@@ -239,5 +246,5 @@
   "signed_by": "agent-linkB(owner-delegated:ADR-015)",
   "succession_acts": [],
   "taken": [],
-  "taken_at": "2026-09-14T06:27:16+00:00"
+  "taken_at": "2026-09-17T10:33:08+00:00"
 }

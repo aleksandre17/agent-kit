@@ -1,0 +1,46 @@
+# The records map — where everything lives
+
+> PROJECTION. Do not edit: delete this whole plane and run `render`, and it comes back byte-identical.
+> Kit version {{ kit_version }}. Projected from governance's `host_layout` declaration and its
+> `record_keeping` vocabulary (ADR-015 amendment 8).
+
+Consult this map INSTEAD of searching the tree. Find the row whose **read when** matches the task in
+front of you, and read that place; to write, find the row that **holds** what you are about to
+write, and write only there, only if you are its **writer**. A place marked PENDING is declared and
+has no real content yet: it names the link that will give it content. It is not missing, and
+nothing belongs in it until then. A place marked ONLY WITH a capability exists on a host that has
+enabled that capability.
+
+Rows are in the declaration's order, which walks the planes: the pinned kit, the host's own
+declarations, knowledge, projections, runtime state, automation, then the documentation and work
+planes.
+
+| place | holds | writer | read when | lifecycle | state |
+| --- | --- | --- | --- | --- | --- |
+{{#documents.host_layout.entries}}
+| `{{ path }}` | {{ holds }} | {{ writer }} | {{#read_when}}{{ . }}; {{/read_when}} | {{ lifecycle }} | {{#pending}}PENDING — link {{ pending }}{{/pending}}{{^pending}}{{#capability}}ONLY WITH {{ capability }}{{/capability}}{{^capability}}always{{/capability}}{{/pending}} |
+{{/documents.host_layout.entries}}
+
+## What a place may hold
+
+| kind | meaning |
+| --- | --- |
+{{#documents.record_keeping.kinds}}
+| {{ id }} | {{ summary }} |
+{{/documents.record_keeping.kinds}}
+
+## Who may write
+
+| writer | meaning |
+| --- | --- |
+{{#documents.record_keeping.writers}}
+| {{ id }} | {{ summary }} |
+{{/documents.record_keeping.writers}}
+
+## How a place ages
+
+| lifecycle | meaning |
+| --- | --- |
+{{#documents.record_keeping.lifecycles}}
+| {{ id }} | {{ summary }} |
+{{/documents.record_keeping.lifecycles}}

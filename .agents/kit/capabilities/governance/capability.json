@@ -31,7 +31,8 @@
       "succession",
       "migration-map",
       "succession-act",
-      "layout"
+      "layout",
+      "record-keeping"
     ]
   },
   "space": {
@@ -62,6 +63,11 @@
       "id": "host_layout",
       "source": "capabilities/governance/host-layout.json",
       "validates": "layout"
+    },
+    {
+      "id": "record_keeping",
+      "source": "capabilities/governance/record-keeping.json",
+      "validates": "record-keeping"
     }
   ],
   "installs": [
@@ -124,6 +130,12 @@
       "target": ".agents/project/succession/migration-map.json",
       "source": "capabilities/governance/payload/migration-map.json",
       "validates": "migration-map"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/INDEX.md",
+      "source": "capabilities/governance/payload/RECORDS-MAP.md.mustache"
     }
   ],
   "gates": [
@@ -199,6 +211,99 @@
       "params": {
         "document": "host_layout",
         "side": "host"
+      },
+      "stance": {
+        "floor": "enforce"
+      }
+    },
+    {
+      "id": "FF-RECORDS-DECLARED",
+      "kind": "reference-declared-across",
+      "params": {
+        "over": "host_layout",
+        "references": [
+          {
+            "id": "a-place-holding-an-undeclared-kind",
+            "field": "entries",
+            "each": "holds",
+            "among": {
+              "sources": [
+                "record_keeping"
+              ],
+              "list": "kinds"
+            },
+            "because": "this place declares that it holds a kind of truth the record-keeping vocabulary does not name, so nothing can tell a document that belongs there from one that was misfiled -- the map reads as complete while this place has no declared contents.",
+            "instead": "declared as a `kinds` row of governance's record-keeping vocabulary first, or the place names a kind already declared there.",
+            "proves": {
+              "entries": [
+                {
+                  "holds": "a-kind-nobody-declares"
+                }
+              ]
+            },
+            "admits": {
+              "entries": [
+                {
+                  "holds": "decision"
+                }
+              ]
+            }
+          },
+          {
+            "id": "a-place-written-by-an-undeclared-writer",
+            "field": "entries",
+            "each": "writer",
+            "among": {
+              "sources": [
+                "record_keeping"
+              ],
+              "list": "writers"
+            },
+            "because": "this place names a writer the record-keeping vocabulary does not declare, so no one is accountable for what lands there and no later gate can refuse a write by anyone else.",
+            "instead": "declared as a `writers` row of the vocabulary first, or the place names an accountable writer already declared there.",
+            "proves": {
+              "entries": [
+                {
+                  "writer": "a-writer-nobody-declares"
+                }
+              ]
+            },
+            "admits": {
+              "entries": [
+                {
+                  "writer": "renderer"
+                }
+              ]
+            }
+          },
+          {
+            "id": "a-place-with-an-undeclared-lifecycle",
+            "field": "entries",
+            "each": "lifecycle",
+            "among": {
+              "sources": [
+                "record_keeping"
+              ],
+              "list": "lifecycles"
+            },
+            "because": "this place names a lifecycle the record-keeping vocabulary does not declare, so how its content ages and where it goes when it stops being current is unstated -- which is how a place silently becomes a graveyard.",
+            "instead": "declared as a `lifecycles` row of the vocabulary first, or the place names a disposition already declared there.",
+            "proves": {
+              "entries": [
+                {
+                  "lifecycle": "a-lifecycle-nobody-declares"
+                }
+              ]
+            },
+            "admits": {
+              "entries": [
+                {
+                  "lifecycle": "permanent"
+                }
+              ]
+            }
+          }
+        ]
       },
       "stance": {
         "floor": "enforce"

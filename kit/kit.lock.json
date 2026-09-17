@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 155,
+  "count": 158,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "e811352c4e80241e1f87d40fcde6403cdb28efe140bc80cc0b6fd7ce8df6a47e",
+      "digest": "2e46a0a1d5ae90becad16fde81a80655a3a5c655f76bcd5f1d130887bea7baf4",
       "path": "MANIFEST.json"
     },
     {
@@ -119,13 +119,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "a5729717b02dbd90eeee38e1676f70683fd703d028e1bfdb62a81a03713939b5",
+      "digest": "d268cef4fb4c3ca4dd781f437c22d16c82c273a7dc6e06472dbb61f78cba7dd6",
       "path": "capabilities/governance/capability.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "8c8073d75f2e8dfd8579c0e63bd85926779bf620db5e718d3a1a78c94c0c919e",
+      "digest": "0a3903c47679eddea5581d26aeb36021ce60bac54109af59ae2934a3b93a9bdf",
       "path": "capabilities/governance/host-layout.json"
     },
     {
@@ -133,6 +133,12 @@
       "class": "payload",
       "digest": "cecbf8e7ba0b2d44b949d4541eb32b59de19d84bf0bc3fc40a463d5098128f45",
       "path": "capabilities/governance/payload/INDEX.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "5cd727caff097e27e862d86f4e9a09ea89d044f24b9a41e94cb9f3edba38f508",
+      "path": "capabilities/governance/payload/RECORDS-MAP.md.mustache"
     },
     {
       "accounted_by": "declaration-closure",
@@ -151,6 +157,12 @@
       "class": "declaration",
       "digest": "8f8f6374f6219480e75e4f94dacae64a392d000af06dd5433e2411c8a8764e99",
       "path": "capabilities/governance/provenance.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "d0149640ae1972d37b9e96c2ee26275e7ebc09d4aef34caa36fbfebd08aee7a0",
+      "path": "capabilities/governance/record-keeping.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -797,7 +809,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "b72110f8cdc13ee16db3a8c092c18097076bf7322b4ae2123f5e712f316a4645",
+      "digest": "58d9b30d617c7d0f8eca0cadac5320592018c919ff6e81defbda672aa8854598",
       "path": "schemas/layout.schema.json"
     },
     {
@@ -869,6 +881,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "745c2816d28987d4f14d8eec7d2761529790d30c7a3854ac148698760025bae9",
+      "path": "schemas/record-keeping.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "320dc3f21ac693f275f468d133d0df94bd355926b0826e5477a904ea732d2381",
       "path": "schemas/residence.schema.json"
     },
@@ -936,5 +954,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-17T06:32:57+00:00"
+  "taken_at": "2026-09-17T10:42:15+00:00"
 }

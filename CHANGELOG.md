@@ -24,6 +24,29 @@ from meeting it: a declared empty directory could not survive a clone.
 - `.agents/project/roles/`, `.agents/generated/roles/` and `.agents/generated/runtimes/` — three
   drawn paths — are present on host #0, which now checks with **0 gates failed**.
 
+**Added — link L3b: the layout is the RECORDS MAP (ADR-015 amendment 8)**
+- **Every drawn host place declares its record keeping.** Each of the 29 `host_layout` entries now
+  carries `holds` (the kind of truth living there), `writer` (who may write it), `read_when` (the task
+  triggers that pull it into context) and `lifecycle` (how it ages, ISO 15489's disposition) --
+  pending places included, because a place with no content yet still has a declared home.
+- **`record_keeping`, an OPEN vocabulary** (`capabilities/governance/record-keeping.json`, schema
+  `record-keeping`): three registries -- 26 `kinds`, 11 `writers`, 10 `lifecycles` -- each a list of
+  `{id, summary}`. The schema bounds the shape of a row, never the set of rows.
+- **`FF-RECORDS-DECLARED`** (`reference-declared-across`, floor `enforce`): every `holds`, `writer`
+  and `lifecycle` resolves to a vocabulary row; calibrated per reference; no new gate kind.
+- **`.agents/generated/INDEX.md`, the map projected** (`payload/RECORDS-MAP.md.mustache`): one row
+  per place with its four words and its state -- `PENDING -- link X`, `ONLY WITH <capability>` or
+  `always` -- then the three registries as legends. `.agents/generated/governance/INDEX.md` is
+  unchanged. The floor row loses `pending: L3b`.
+
+**Changed -- an EXPAND, not a version move (ADR-009 rule 5)**
+- The four fields are OPTIONAL in `layout` v1. Required would be breaking (rule 5), would refuse
+  `docs/reference/UPSTREAM-LAYOUT.json` (the upstream box, not yet mapped) and adapter `floor` rows,
+  and rule 6 would demand a migration whose only step cannot exist: `holds`/`writer`/`lifecycle`
+  are judgements no pure step can derive. Presence on every host place is held by
+  `test_285` over the one shipped declaration. CONTRACT (const 2, required) is owed once the upstream
+  box and adapter floor rows are mapped.
+
 **Added**
 - **`space.marker` — a capability declares how a directory is carried.** The marker's FILENAME
   (`.gitkeep`, the field's own convention, so it explains itself to a reader who has never met this
