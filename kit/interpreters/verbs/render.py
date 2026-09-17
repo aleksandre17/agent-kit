@@ -16,6 +16,7 @@ import hostlock
 import lifecycle as lifecycle_module
 import plan as plan_module
 import runtime as runtime_port
+import space
 import template
 from errors import KitError
 
@@ -118,6 +119,15 @@ def _project_each(ctx, item, view) -> dict:
                 f"record would silently win -- refused rather than ordered."
             )
         produced[target] = template.render(body, {**view, **record})
+    # A collection HAS a home whether or not the host has filled it, and that home must survive a
+    # clone -- a repository carries files, so a directory holding no record simply is not there
+    # after the next checkout. The home is therefore projected as one declared marker (`space`),
+    # UNCONDITIONALLY: written for a full collection exactly as for an empty one. Making it
+    # conditional was tried and the two-host boundary test refused it within the hour -- a file
+    # that appears in one host and not another is a VARIATION, and its cause was readable only by
+    # knowing what each host happened to have authored. It is a projection like any other, planned
+    # before it is written, because a path the plan did not promise is a path nothing renders.
+    produced[space.marker_in(ctx.manifest, item["target"])] = space.TEXT
     return produced
 
 
@@ -208,13 +218,20 @@ def _foreseen(ctx, item, capabilities) -> list:
     try:
         view = view_model(ctx, capabilities)
         if shape == "collection":
-            return sorted(target for target, _record in _each_targets(ctx, item, view))
+            return sorted([space.marker_in(ctx.manifest, item["target"])]
+                          + [target for target, _record in _each_targets(ctx, item, view)])
         return runtime_port.foresee(ctx, item, view, capabilities)
     except KitError:
         # A shape whose own target names ONE file writes that file whatever the bindings say --
         # a served projection always writes its record, and the record of nothing is still
         # written -- so the plan names it; a target naming a collection has nothing to promise.
-        return [] if item["target"].endswith("/") else [item["target"]]
+        # A target naming a COLLECTION promises the one path it writes in exactly the case that
+        # reaches here -- a host whose records cannot be read has none, and a collection with no
+        # records is projected as its declared emptiness (`space`). The promise the apply keeps,
+        # rather than the silence that let the apply write a path the plan never showed.
+        if item["target"].endswith("/"):
+            return [space.marker_in(ctx.manifest, item["target"])]
+        return [item["target"]]
 
 
 def plan_entries(ctx, capabilities=None) -> list:

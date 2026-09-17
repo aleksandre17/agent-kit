@@ -5,6 +5,38 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade`, which is not built yet.
 
+## 0.1.6 — unreleased
+
+The host tree meets the drawn floor (link L3a of ADR-015's line), and the last thing that kept it
+from meeting it: a declared empty directory could not survive a clone.
+
+**Fixed**
+- **A declared space now survives the repository.** `mode: space` and a collection projection over
+  a set the host has not filled each own a directory whose honest state is EMPTY. The kit made it;
+  git carries files, not directories; the path was gone on the next checkout, and `FF-HOST-FLOOR`
+  then reported a DRAWN path as MISSING on a host where nothing was wrong (Cardinal VII — the kit
+  and git agreed on the name and disagreed on whether it existed, each locally right). The emptiness
+  is now carried in a form both read the same way: one marker, written UNCONDITIONALLY into every
+  declared space and every collection projection, and PLANNED rather than applied as a side effect
+  (a path the plan did not promise is a path nothing renders). Its sentence states the space and
+  never its contents, because a marker that appeared only in EMPTY collections was a variation
+  between hosts with no declared cause.
+- `.agents/project/roles/`, `.agents/generated/roles/` and `.agents/generated/runtimes/` — three
+  drawn paths — are present on host #0, which now checks with **0 gates failed**.
+
+**Added**
+- **`space.marker` — a capability declares how a directory is carried.** The marker's FILENAME
+  (`.gitkeep`, the field's own convention, so it explains itself to a reader who has never met this
+  kit) is a DECLARATION in the capability that can never be disabled, not a constant in an
+  interpreter: a filename written into a host is policy, and a path segment no declaration carries
+  is a name no host was ever told. Schema-bound; `KIT0042` refuses a kit where no capability
+  declares one, or more than one does. `kit/interpreters/space.py` is its one home.
+
+**Changed**
+- `test_90`/`test_100` asserted *the plane holds nothing, the same fact told by the filesystem*.
+  That was true of a filesystem and false of a clone; they now assert the stronger claim — no page
+  is projected, and the space still exists.
+
 ## 0.1.5 — unreleased
 
 The host carries its kit (ADR-016, link B of ADR-015's line). Until now a host held doctrine pages

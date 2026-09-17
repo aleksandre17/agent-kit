@@ -23,6 +23,7 @@ import sys
 import unittest
 
 from harness import KIT, LOCK, Fixtures, planned  # noqa: I001 -- sets the interpreter's path
+import space  # noqa: E402 -- the one home for a declared empty space
 
 import pin  # noqa: E402
 import resolver  # noqa: E402
@@ -62,12 +63,18 @@ class HostFloor(Fixtures, unittest.TestCase):
         ran = pinned_cli(host, "check")
         self.assertEqual(0, ran.returncode, said(ran))
         self.assertIn("PASS  FF-HOST-FLOOR", ran.stdout)
-        # Declared collections this host has put nothing into: present, and empty -- never absent
-        # and never filled with a placeholder.
+        # Declared collections this host has put nothing into: present, and empty -- never absent,
+        # never filled with a placeholder, and never a directory whose presence the next clone
+        # would lose. The last is what the earlier form of this assertion could not tell apart:
+        # "empty" was true of the filesystem while the path itself was about to vanish, because a
+        # repository carries files and not directories, and the floor would then call a DRAWN path
+        # MISSING on a host where nothing was wrong. So the marker declaring the emptiness is
+        # asserted BY NAME (`space`) -- it is the only thing that may be in there, and it must be.
         for entry in LAYOUT["entries"]:
             if entry.get("capability") in ("roles", "runtimes") and entry["path"].startswith(".agents/generated/"):
                 self.assertTrue((host / entry["path"]).is_dir(), entry["path"])
-                self.assertEqual([], list((host / entry["path"]).iterdir()), entry["path"])
+                self.assertEqual([space.marker(Manifest(KIT))],
+                                 [p.name for p in (host / entry["path"]).iterdir()], entry["path"])
 
     def test_282_a_writer_inside_the_pinned_tree_is_refused_in_the_plan(self):
         page = GOVERNANCE.raw["doctrine"]

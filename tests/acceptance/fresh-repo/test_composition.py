@@ -7,6 +7,7 @@ import unittest
 from pathlib import Path
 
 from harness import FIXTURES, KIT, Fixtures, install_order
+import space as space_module  # noqa: E402 -- the one home for a declared empty space
 from manifest import Manifest  # noqa: E402  -- the path is prepared by importing harness first
 
 
@@ -66,22 +67,22 @@ def expected_install_order(kit_root) -> list:
         that described nothing, so its position is not a preference and is asserted as a rule.
 
     A PLURAL projection -- one whose declared target names a collection, because it writes one
-    file per record rather than one file about a set -- is deliberately not derived here. Its
-    paths are a function of the host's own content, so a derivation from declarations alone
-    cannot state them and must not pretend to. What it contributes is asserted separately, at
-    the one place that can know: against a host that has been measured.
+    file per record rather than one file about a set -- contributes exactly ONE derivable path:
+    the marker declaring the collection empty, which is what it writes for a host that has
+    authored no records, and which is the host every case here installs. How many RECORD pages
+    there would be is still a function of the host's own content and is still not derived; that
+    is asserted separately, at the one place that can know.
     """
     capabilities = Manifest(kit_root).capabilities
     by_id = {c.id: c for c in capabilities}
     ordered = [by_id[cid] for level in dependency_levels(capabilities) for cid in level]
-    singular = [item for item in
-                (i for c in ordered for i in c.installs if i["class"] == "projection")
-                if not item["target"].endswith("/")]
+    projections = [i for c in ordered for i in c.installs if i["class"] == "projection"]
     estate = [item for c in ordered for item in c.installs if item["mode"] == "estate"]
     return (
         [item["target"] for c in ordered for item in c.installs
          if item["class"] != "projection" and item["mode"] != "estate"]
-        + [item["target"] for item in singular]
+        + [item["target"] if not item["target"].endswith("/")
+           else space_module.marker_in(Manifest(kit_root), item["target"]) for item in projections]
         + [item["target"] for item in estate]
     )
 
@@ -193,7 +194,10 @@ class Composition(Fixtures, unittest.TestCase):
         for item in plural_projections(KIT):
             self.assertNotIn(item["target"], walked,
                              "a collection-shaped projection wrote its own target as a file")
-            self.assertEqual([], sorted(
+            # ... NOTHING being the one marker that declares the emptiness, and never a record:
+            # the zero is still asserted exactly, so a projection that quietly wrote a real file
+            # here cannot slip past the set comparison below as an unexplained extra.
+            self.assertEqual([space_module.marker_in(Manifest(KIT), item["target"])], sorted(
                 path for path in walked if path.startswith(item["target"])),
                 f"{item['target']} projected files for a host that declared no records")
             self.assertTrue((host / item["target"]).is_dir()

@@ -36,6 +36,8 @@ import unittest
 from pathlib import Path
 
 from harness import KIT, Fixtures
+from manifest import Manifest  # noqa: E402
+import space  # noqa: E402 -- the kit's one home for a declared empty space; harness sets the path
 
 CAPABILITY = json.loads((KIT / "capabilities/roles/capability.json").read_text(encoding="utf-8"))
 ARCHETYPES = json.loads((KIT / "roles/archetypes.json").read_text(encoding="utf-8"))
@@ -101,15 +103,22 @@ class Roles(Fixtures, unittest.TestCase):
         return result
 
     # -- 1. the zero ------------------------------------------------------------------------
-    def test_90_a_host_that_has_hired_nobody_says_so_and_projects_nothing(self):
-        """The declared zero. A page that simply ended would read exactly like a page whose roles
-        failed to render, so the roll states the absence in words -- and the plane holds nothing,
-        which is the same fact told by the filesystem."""
+    def test_90_a_host_that_has_hired_nobody_says_so_and_the_empty_plane_still_survives_a_clone(self):
+        """The declared zero, told twice and never fabricated: the roll states the absence in
+        words -- a page that simply ended would read exactly like a page whose roles failed to
+        render -- and the plane holds no ROLE PAGE.
+
+        It does hold the one marker that makes its emptiness survive a repository. This test used
+        to assert the plane held NOTHING, "the same fact told by the filesystem", and that was
+        true of a filesystem and never of a clone: git carries files, so the directory itself
+        disappeared on the next checkout and the floor then reported a DRAWN path as MISSING. The
+        stronger claim is asserted here -- no page, and the space still exists (`space`)."""
         host = self.installed()
         roll = (host / ROLL).read_text(encoding="utf-8")
         self.assertIn("declared no role", roll)
-        self.assertEqual([], sorted(p.name for p in (host / PLANE.rstrip("/")).glob("*"))
-                         if (host / PLANE.rstrip("/")).exists() else [])
+        plane = host / PLANE.rstrip("/")
+        self.assertTrue(plane.is_dir(), f"{PLANE} is drawn, so it exists even holding nobody")
+        self.assertEqual([space.marker(Manifest(KIT))], sorted(p.name for p in plane.glob("*")))
 
         # ... and the zero is not bought with a red gate: an honest absence is a PASSING state.
         checked = self.run_kit(KIT, host, "check")

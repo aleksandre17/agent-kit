@@ -38,6 +38,8 @@ from pathlib import Path
 import composition
 
 from harness import KIT, Fixtures
+from manifest import Manifest  # noqa: E402
+import space  # noqa: E402 -- the kit's one home for a declared empty space; harness sets the path
 
 CAPABILITY = json.loads((KIT / "capabilities/runtimes/capability.json").read_text(encoding="utf-8"))
 CLASSES = json.loads((KIT / "runtimes/classes.json").read_text(encoding="utf-8"))
@@ -111,15 +113,18 @@ class Runtimes(Fixtures, unittest.TestCase):
         return result
 
     # -- 1. the zero ------------------------------------------------------------------------
-    def test_100_a_host_that_runs_nothing_says_so_and_projects_nothing(self):
+    def test_100_a_host_that_runs_nothing_says_so_and_the_empty_plane_still_survives_a_clone(self):
         """A page that simply ended would read exactly like a page whose runtimes failed to
-        render, so the roll states the absence in words -- and the plane holds nothing, which is
-        the same fact told by the filesystem. The honest absence is a PASSING state."""
+        render, so the roll states the absence in words -- and the plane holds no RUNTIME page,
+        only the marker that carries its emptiness through a clone (`space`; see test_90 for why
+        "the plane holds nothing" was the weaker and, in a repository, the false claim). The
+        honest absence is a PASSING state."""
         host = self.installed()
         roll = (host / ROLL).read_text(encoding="utf-8")
         self.assertIn("declared no runtime", roll)
         plane = host / PLANE.rstrip("/")
-        self.assertEqual([], sorted(p.name for p in plane.glob("*")) if plane.exists() else [])
+        self.assertTrue(plane.is_dir(), f"{PLANE} is drawn, so it exists even running nothing")
+        self.assertEqual([space.marker(Manifest(KIT))], sorted(p.name for p in plane.glob("*")))
 
         checked = self.run_kit(KIT, host, "check")
         self.assertEqual(0, checked.returncode, checked.stdout)

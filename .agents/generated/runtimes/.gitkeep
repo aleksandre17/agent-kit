@@ -1,0 +1,4 @@
+# This directory is DECLARED by the kit and is yours to author into.
+# The file exists only because a repository cannot carry a directory of its own; without it
+# the path would vanish from the next clone whenever the directory happened to be empty,
+# and be reported as missing. Delete it on purpose or not at all.

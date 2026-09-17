@@ -40,6 +40,7 @@ import predicate
 import provenance
 import reconcile
 import render as render_verb
+import space
 from errors import KitError, PendingApproval
 
 SUMMARY = "measure, choose, draft the answer, seed, vendor, render, check"
@@ -137,10 +138,11 @@ def _mode_pinned_lock(ctx, ws, item, state):
 
 
 def _mode_space(ctx, ws, item, state):
-    """A place the HOST authors into, owned by the capability that declared it. The kit creates
-    it and puts nothing in it: seeding an example would be the kit authoring the host's content,
-    and an empty space is an honest declared state, not a missing one."""
-    ws.make_dir(item["target"])
+    """A place the HOST authors into, owned by the capability that declared it. The kit opens it
+    and puts no content in it: seeding an example would be the kit authoring the host's content,
+    and an empty space is an honest declared state, not a missing one -- carried, by `space`, in
+    the one form that survives a clone."""
+    space.declare(ctx.manifest, ws, item["target"])
 
 
 #: mode -> (phase, foresee, apply). The `answer` phase is the ONLY thing an unapproved host may

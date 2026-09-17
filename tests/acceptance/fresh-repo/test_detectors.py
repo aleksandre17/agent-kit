@@ -82,6 +82,16 @@ def materialise(root: Path, detector: dict) -> None:
         kind = spec["kind"]
         if kind == "dir_exists":
             (root / spec["path"]).mkdir(parents=True, exist_ok=True)
+        elif kind == "path_exists":
+            # Presence, not shape -- so the tree is built with the shape the kind exists to
+            # admit and a `dir_exists` check would reject: a FILE. `.git` is the standing case
+            # (a submodule, a linked worktree and --separate-git-dir all hold a file), and
+            # materialising a directory here would let the kind silently narrow back to
+            # `dir_exists` without a single test noticing.
+            target = root / spec["path"]
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if not target.exists():
+                target.write_text("", encoding="utf-8")
         elif kind == "file_exists":
             target = root / spec["path"]
             target.parent.mkdir(parents=True, exist_ok=True)

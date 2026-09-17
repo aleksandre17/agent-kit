@@ -25,6 +25,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from harness import KIT, Fixtures, sha
+from manifest import Manifest  # noqa: E402
+import space as space_module  # noqa: E402 -- the one home for a declared empty space
 
 #: The one place this suite learns what delivery declares. Read, never restated: a test carrying
 #: its own copy of a lifecycle is a second home for it, and goes on passing after the real one has
@@ -73,14 +75,21 @@ class Delivery(Fixtures, unittest.TestCase):
 
     # == 1. the collection =====================================================================
     def test_50_the_card_space_is_installed_empty_and_projected_as_a_collection(self):
-        """The space is created and left EMPTY -- a kit that seeded an example card would be
-        authoring the host's content -- and the board projects it as a collection of records read
-        from a DIRECTORY. The empty case is asserted first because it is the one a file read
-        cannot survive: there is nothing there to mistake for a document."""
+        """The space is created and left EMPTY of CARDS -- a kit that seeded an example card would
+        be authoring the host's content -- and the board projects it as a collection of records
+        read from a DIRECTORY. The empty case is asserted first because it is the one a file read
+        cannot survive: there is nothing there to mistake for a document.
+
+        Empty of cards is not empty of files. The space holds one marker declaring its own
+        emptiness, because a repository cannot carry an empty directory and the space would
+        otherwise be gone from the next clone. It says nothing about delivery, about this host, or
+        about any domain -- which is the test the blueprint's blank rule (T2) actually applies --
+        so it is a declared state and not authored content."""
         host = self.installed()
-        space = host / CARDS
-        self.assertTrue(space.is_dir(), "the declared space was not created")
-        self.assertEqual([], sorted(space.iterdir()), "the kit authored content into a host space")
+        cards = host / CARDS
+        self.assertTrue(cards.is_dir(), "the declared space was not created")
+        self.assertEqual([space_module.marker(Manifest(KIT))], sorted(p.name for p in cards.iterdir()),
+                         "the kit authored content into a host space")
 
         empty = self.board(host)
         for state in LIFECYCLE["states"]:
