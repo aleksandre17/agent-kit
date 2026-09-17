@@ -1,4 +1,29 @@
 {
   "schema_version": 1,
-  "served": []
+  "served": [
+    {
+      "path": ".claude/settings.json",
+      "runtime": "claude-code",
+      "sha256": "78af18d4ff21d8084b7dd981ea81f75ab11fc587f98e899df84c462106fb98c1",
+      "surface": "claude-code"
+    },
+    {
+      "path": ".codex/hooks.json",
+      "runtime": "codex",
+      "sha256": "597a19cd287eb3ced1eef9cd9885a480357fd1eb5bfeef7452b9dedb25767350",
+      "surface": "codex"
+    },
+    {
+      "path": "AGENTS.md",
+      "runtime": "codex",
+      "sha256": "2f9a1911881c245aea8951eae30959e0301ecd0a3179c019ca2854f57693e3b5",
+      "surface": "codex"
+    },
+    {
+      "path": "CLAUDE.md",
+      "runtime": "claude-code",
+      "sha256": "38dfcab20e740a5426a29b3aa72530d3cda834983f09aa553add9326202e4ee0",
+      "surface": "claude-code"
+    }
+  ]
 }

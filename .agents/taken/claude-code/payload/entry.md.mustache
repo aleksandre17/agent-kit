@@ -1,0 +1,20 @@
+# Instructions for this repository
+
+> **Generated. Do not edit.** Served to the runtime `{{runtime}}` at the path its surface
+> `{{surface}}` reads, and rebuilt from scratch on every render · kit {{kit_version}}.
+> Every section below is a projection of a declaration this host already owns; the declaration is
+> where a change is made. An edit here is refused by the next render and reported by `check`
+> under `FF-KIT-PROJECTION`.
+
+{{#sections}}
+## {{heading}}
+
+{{#present}}
+{{text}}
+{{/present}}
+{{^present}}
+**Not served.** `{{from}}` is not present on this host, so this section has nothing to project.
+{{absent}}
+
+{{/present}}
+{{/sections}}

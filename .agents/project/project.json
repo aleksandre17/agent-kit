@@ -1,5 +1,7 @@
 {
   "capabilities": [
+    "claude-code",
+    "codex",
     "delivery",
     "doctrine",
     "enforcement",

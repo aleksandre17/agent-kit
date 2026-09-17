@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "surfaces": [
+    {
+      "id": "codex",
+      "says": "Codex reads AGENTS.md at the repository root as project instructions, and one agent definition per TOML file under .codex/agents/ -- name, description and developer_instructions as strings. Taken from the product's documentation; a claim until a run of the product is observed reading what was served. It reads hooks at .codex/hooks.json (events pre_tool_use / post_tool_use, matcher apply_patch); the event names are measured by inspection of codex-cli 0.153.2 and post_write_block is proven by receipt on a prior hand-built system, but every tool_input.* key and the patch grammar in `hands` are UNVERIFIED -- ordered so a wrong guess misses (and the judge then refuses as unjudged) rather than mis-binds. Codex has NOT proven pre_exec_block, so the judge is wired AFTER the write: a refusal there flags the change to the model, it does not prevent it (ADR-017 decision 5).",
+      "renders": [
+        {
+          "view": "briefing",
+          "target": "AGENTS.md",
+          "template": "capabilities/codex/payload/entry.md.mustache"
+        },
+        {
+          "view": "role-definitions",
+          "target": ".codex/agents/",
+          "suffix": ".toml",
+          "template": "capabilities/codex/payload/role.toml.mustache"
+        },
+        {
+          "view": "enforcement",
+          "target": ".codex/hooks.json",
+          "template": "capabilities/codex/payload/hooks.json.mustache"
+        }
+      ],
+      "hands": {
+        "paths": [
+          "tool_input.file_path",
+          "tool_input.path"
+        ],
+        "texts": [
+          "tool_input.content"
+        ],
+        "patch": {
+          "from": [
+            "tool_input.input",
+            "tool_input.patch",
+            "tool_input.command"
+          ],
+          "file": "^\\*\\*\\*\\s+(?:Add|Update)\\s+File:\\s*(\\S.*?)\\s*$",
+          "line": "^\\+(.*)$"
+        },
+        "refusal": {
+          "exit": 2
+        }
+      }
+    }
+  ]
+}

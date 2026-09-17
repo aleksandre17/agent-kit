@@ -193,7 +193,7 @@
     {
       "capability": "governance",
       "class": "binding",
-      "digest": "19355226dbd616055740e35a5512e4b96ac72dabe4a732fc37e75fc7769df6f1",
+      "digest": "e8cf9a8dd5c8ccac677b1819533a20299b10f82628089fae9dd4e8d745a494bd",
       "mode": "declaration",
       "path": ".agents/project/project.json"
     },
@@ -235,7 +235,7 @@
     {
       "capability": "governance",
       "class": "binding",
-      "digest": "47a660052477ec895387ab7e5f4687a690aa059df8e8d29ea3fa28c24fdaf4aa",
+      "digest": "a008c6de9053c5053e60be7f83127457ed6cc6d15bbf270d60960ebea6dedd5f",
       "mode": "taken-declaration",
       "path": ".agents/project/taken.json"
     },
@@ -266,6 +266,29 @@
   "schema_version": 1,
   "signed_by": "agent-linkB(owner-delegated:ADR-015)",
   "succession_acts": [],
-  "taken": [],
-  "taken_at": "2026-09-17T11:32:50+00:00"
+  "taken": [
+    {
+      "authenticity": {
+        "state": "unsigned",
+        "taken_at": "2026-09-17T11:48:47+00:00"
+      },
+      "capability": "claude-code",
+      "digest": "h1:fljcduPyeC6lKnwgFfPlR4RSKIq50AslR9oB0j6qbN0=",
+      "pinned_at": "2026-09-17T11:48:47+00:00",
+      "pinned_by": "owner-aleksandre17:explicit-2026-09-17",
+      "version": "1.0.0"
+    },
+    {
+      "authenticity": {
+        "state": "unsigned",
+        "taken_at": "2026-09-17T11:48:47+00:00"
+      },
+      "capability": "codex",
+      "digest": "h1:JPU88bF5EsfuHbLW4pSDeFoFaklnYDhBYt6lawnJwCw=",
+      "pinned_at": "2026-09-17T11:48:47+00:00",
+      "pinned_by": "owner-aleksandre17:explicit-2026-09-17",
+      "version": "1.0.0"
+    }
+  ],
+  "taken_at": "2026-09-17T11:48:47+00:00"
 }

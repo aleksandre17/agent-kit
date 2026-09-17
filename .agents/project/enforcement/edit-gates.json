@@ -1,5 +1,21 @@
 {
   "schema_version": 1,
   "summary": "Edit gates this HOST declares. The kit ships none: what an edit here may not introduce is this host's policy. Declared empty, every edit is judged and none is refused -- a declared zero, and not a gate that is switched off.",
-  "gates": []
+  "gates": [
+    {
+      "id": "no-product-in-the-shipped-kit",
+      "paths": "^kit/",
+      "forbids": "(?i:claude|codex|anthropic|openai|chatgpt|copilot|gemini)|\bCursor\b",
+      "because": "the shipped kit serves any runtime through adapters (ADR-014 decision 1); a product name inside kit/ privileges one runtime and every host inherits it.",
+      "instead": "put product-specific wording in adapters/<id>/ and keep kit/ agnostic.",
+      "proves": {
+        "path": "kit/interpreters/x.py",
+        "text": "# works best with Claude"
+      },
+      "admits": {
+        "path": "kit/interpreters/x.py",
+        "text": "# works with any declared runtime surface"
+      }
+    }
+  ]
 }

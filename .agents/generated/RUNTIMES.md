@@ -17,10 +17,8 @@ are not the same document and are not written by the same hand.
 
 ## This host's runtimes
 
-**This host has declared no runtime.** Not "none found" and not an empty page: the roster is the
-set of descriptors in the binding plane, and this host has authored none, so nothing is projected
-into `.agents/generated/runtimes/`. That is a complete and honest answer, and it is written here
-because a page that simply ended would read exactly like a page whose runtimes failed to render.
+- **claude-code** — class `an-interactive-session` · claimed 0, proven 0, absent 7 of 7
+- **codex** — class `an-interactive-session` · claimed 0, proven 0, absent 7 of 7
 
 ## The capability vocabulary — every word that may be claimed
 
@@ -48,9 +46,15 @@ tool.
 
 ## Classes — the ones taken up, and a count of the ones that were not
 
-**No class has been taken up by this host.**
+### an-interactive-session — declared by `kit_runtime_classes`
 
-**3 declared runtime class(es) are not used here.** Available, and this host runs none of
+An operator and the agent take turns inside a session that stays open between them, so work arrives as a turn and everything the run knows accumulates in the session rather than in the request.
+
+Used here by:
+- `claude-code`
+- `codex`
+
+**2 declared runtime class(es) are not used here.** Available, and this host runs none of
 them.
 
 They are not named on this page, deliberately. Which tools a host runs is the host's choice, and
