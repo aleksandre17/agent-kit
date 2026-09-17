@@ -1,7 +1,7 @@
 {
   "$id": "taken",
   "title": "A host's take declaration -- what this host added beside the pinned release (ADR-018)",
-  "description": "The ONE home of what a host took that its release did not issue. One row per taken capability; its bytes live in the take plane, verbatim, and are judged against `digest` by the taken-intact gate. The release's MANIFEST.json is never edited by a host.",
+  "description": "The ONE home of what a host took that its release did not issue. One row per taken capability; its bytes live in the take plane, verbatim, and are judged by the taken-intact gate against the digest their ADR-008 provenance pin holds. The release's MANIFEST.json is never edited by a host.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -21,7 +21,6 @@
         "required": [
           "id",
           "source",
-          "digest",
           "taken_by",
           "at"
         ],
@@ -37,7 +36,7 @@
             "minLength": 1
           },
           "digest": {
-            "description": "h1 over every file of the copied tree, spelled in the kit namespace (ADR-008).",
+            "description": "DEPRECATED (ADR-018 amendment 1; removed at the next schema version). Never read: the digest of a take is a reading whose one home is its ADR-008 provenance pin. Never written by take.",
             "type": "string",
             "pattern": "^h1:[A-Za-z0-9+/=]+$"
           },

@@ -7,6 +7,16 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Fixed — `judge` never admits an edit it could not place (Cardinal VII)**
+- On a drive-lettered filesystem a drive spelled as a POSIX mount (`/c/...`, `/cygdrive/c/...`) is
+  normalised by ONE form rule in `gates/edits.py`; any other rooted path without a drive raises
+  `Unplaceable` and `judge` REFUSES. Previously both read as "outside this host" and passed (fail-open).
+
+**Changed — the take digest has one home (ADR-018 amendment 1)**
+- `taken-intact` judges each take against its ADR-008 provenance pin, never its row; a take not yet
+  pinned is printed `NOT YET PINNED` (not failed). `take` no longer writes `digest` and sheds it from
+  carried rows; `taken.schema.json` makes `digest` optional and deprecated (removed next version).
+
 **Added — link C, slice C1b: TAKEN CAPABILITIES LIVE BESIDE THE PINNED KIT (ADR-018; cures GAP-T1)**
 - **Two homes, one composition.** Governance declares the take PLANE (install mode `taken`,
   `.agents/taken/`, opened as a space; `declaration` + `namespace` are new optional install fields) and

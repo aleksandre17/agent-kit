@@ -61,6 +61,17 @@ field (expand-contract: optional now, removed at the schema's next version). Rej
 and drop it from the pin — that would split ADR-008's one registry of what a host received into two
 mechanisms by capability kind.
 
+## Amendment 2 — the pin is written when the bytes arrive (2026-09-17, found by building amendment 1)
+
+With the digest only in the provenance pin, a take not yet pinned by `init` has nothing to be judged
+against: bytes changed between `take` and `init` would be pinned as if received. **`take` writes the
+provenance pin itself, at arrival, marked `trust-on-first-use`** (the field's form: SSH `known_hosts`,
+Go's `go.sum` on first fetch); `init --approve` later ATTESTS that same pin rather than creating it, and
+refuses if the bytes no longer equal it. `taken-intact` then fails on any take with no pin — there is no
+honest "not yet pinned" state. Rejected: (a) fail the gate between `take` and `init` — makes a normal,
+approved step read red; (b) keep `NOT YET PINNED` as a pass — a window in which tampering is admitted
+silently (Cardinal V). Not built at acceptance; the current code prints `NOT YET PINNED`.
+
 ## Rejected alternatives
 
 **A. Keep composing inside the pinned tree, labelled `+unreleased` (status quo).** Rejected: the

@@ -28,7 +28,9 @@ def _pinned(ctx, params) -> list:
 
 
 def _taken_intact(ctx, params) -> list:
-    """Each take in its plane, judged against the digest its row declares (ADR-018 decision 5).
+    """Each take in its plane, judged against the digest its provenance pin holds (ADR-018
+    decision 5, amendment 1: the row is what the host CHOSE; the digest is a READING of what
+    arrived, and its one home is the ADR-008 pin).
 
     The pinned kit is judged elsewhere, against its lock, and never here: two homes, two gates. This
     gate states the composition first -- `release <v> + taken: <ids>` -- and then fails on a take
@@ -41,6 +43,7 @@ def _taken_intact(ctx, params) -> list:
     rows = ctx.binding(statement["target"], statement["validates"])["takes"]
     print(f"        {pin.identity(ctx.manifest)}")
     declared = {c.id: c.raw for c in ctx.manifest.capabilities if c.id in ctx.manifest.taken}
+    pins = {p["capability"]: p for p in (estate_module.read(ctx) or {}).get("taken", [])}
     failures = []
     for row in rows:
         at = plane["target"] + row["id"]
@@ -51,13 +54,20 @@ def _taken_intact(ctx, params) -> list:
             continue
         signature = ((declared.get(row["id"]) or {}).get(provenance.CLAIM) or {}).get("signature")
         measured = provenance.tree_digest(home, f"{plane['namespace']}{row['id']}/", signature)
-        if measured != row["digest"]:
-            failures.append(f"{at}/: measures {measured}, and the take declared {row['digest']} "
-                            f"(taken by {row['taken_by']} at {row['at']} from {row['source']})")
+        held = pins.get(row["id"])
+        if held is None:
+            # A declared state, never a silent pass: until a pin is taken there is no reading of
+            # what arrived to hold these bytes to, and none is invented here.
+            print(f"        {at}/: taken by {row['taken_by']} at {row['at']}, NOT YET PINNED -- "
+                  f"measures {measured}; its integrity is judged from the pin `init --approve` takes")
+        elif measured != held["digest"]:
+            failures.append(f"{at}/: measures {measured}, and its pin holds {held['digest']} "
+                            f"(pinned by {held['pinned_by']} at {held['pinned_at']}; taken by "
+                            f"{row['taken_by']} at {row['at']} from {row['source']})")
     root = ctx.workspace.path(plane["target"])
-    held = {row["id"] for row in rows}
+    declared_ids = {row["id"] for row in rows}
     for found in sorted(p.name for p in root.iterdir() if p.is_dir()) if root.is_dir() else []:
-        if found not in held:
+        if found not in declared_ids:
             failures.append(f"{plane['target']}{found}/: present in the take plane, and no row of "
                             f"{statement['target']} declares it taken")
     return failures

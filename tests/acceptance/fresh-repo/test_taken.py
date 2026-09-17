@@ -101,7 +101,7 @@ class Taken(Fixtures, unittest.TestCase):
                     self.assertEqual(source.read_bytes(), copy.read_bytes())
                 self.assertFalse((host / PINNED / "capabilities" / identity).exists())
                 self.assertEqual("acceptance-suite", rows[identity]["taken_by"])
-                self.assertTrue(rows[identity]["digest"].startswith("h1:"))
+                self.assertNotIn("digest", rows[identity], "a reading written on a declaration has two homes")
         self.assertEqual((KIT / LOCK).read_bytes(), (host / SEAT).read_bytes())
         ran = pinned_cli(host, "check")
         self.assertIn(f"PASS  {PIN_GATE}", ran.stdout)
@@ -127,7 +127,7 @@ class Taken(Fixtures, unittest.TestCase):
 
     # == 4. each take judged against its row ====================================================
     def test_303_a_changed_take_and_an_undeclared_directory_fail_the_gate_and_a_vanished_plane_fails_every_load(self):
-        host = self.taken_host()
+        host = self.composed_host()
         plane = host / PLANE["target"]
         first, second = self.ids
         changed = next(p for p in (plane / first).rglob("*") if p.is_file())
@@ -136,6 +136,7 @@ class Taken(Fixtures, unittest.TestCase):
         ran = pinned_cli(host, "check")
         self.assertIn(f"FAIL  {GATE}", ran.stdout)
         self.assertIn(f"{PLANE['target']}{first}/: measures", ran.stdout)
+        self.assertIn("its pin holds h1:", ran.stdout)
         self.assertIn(f"{PLANE['target']}nobody-took-this/: present in the take plane", ran.stdout)
         self.assertNotEqual(0, ran.returncode)
         # A row whose plane is gone cannot even be COMPOSED: every load refuses it by name, before
@@ -144,6 +145,23 @@ class Taken(Fixtures, unittest.TestCase):
         gone = pinned_cli(host, "check")
         self.assertIn(f"[{manifest_port.ManifestError.code}]", gone.stderr)
         self.assertIn(f"{second}/{PLANE['declaration']}", gone.stderr)
+
+    def test_303b_the_digest_is_read_from_the_pin_and_never_from_a_row(self):
+        host = self.composed_host()
+        statement = json.loads((host / STATEMENT["target"]).read_text(encoding="utf-8"))
+        # A pre-amendment row carrying a WRONG digest is not read: the pin is the one home.
+        statement["takes"][0]["digest"] = "h1:AAAA"
+        (host / STATEMENT["target"]).write_text(json.dumps(statement) + "\n", encoding="utf-8", newline="\n")
+        ran = pinned_cli(host, "check")
+        self.assertIn(f"PASS  {GATE}", ran.stdout, said(ran))
+        # Retaking sheds a carried digest from every row.
+        took = pinned_cli(host, "take", "--path", self.paths, "--approve", "acceptance-suite")
+        self.assertEqual(0, took.returncode, said(took))
+        rows = json.loads((host / STATEMENT["target"]).read_text(encoding="utf-8"))["takes"]
+        self.assertFalse([r for r in rows if "digest" in r])
+        # An unpinned take is NAMED as unpinned, never passed in silence.
+        unpinned = pinned_cli(self.taken_host(), "check")
+        self.assertIn("NOT YET PINNED", unpinned.stdout, said(unpinned))
 
     # == 5. a take never shadows the release ====================================================
     def test_304_an_id_the_release_issued_is_refused_at_the_take_and_at_every_load(self):

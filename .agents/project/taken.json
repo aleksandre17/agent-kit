@@ -3,14 +3,12 @@
   "takes": [
     {
       "at": "2026-09-17T11:48:39+00:00",
-      "digest": "h1:fljcduPyeC6lKnwgFfPlR4RSKIq50AslR9oB0j6qbN0=",
       "id": "claude-code",
       "source": "C:/Users/Test-User/WebstormProjects/national-accounts/kits/agent-kit/adapters/claude-code",
       "taken_by": "owner-aleksandre17:explicit-2026-09-17"
     },
     {
       "at": "2026-09-17T11:48:39+00:00",
-      "digest": "h1:JPU88bF5EsfuHbLW4pSDeFoFaklnYDhBYt6lawnJwCw=",
       "id": "codex",
       "source": "C:/Users/Test-User/WebstormProjects/national-accounts/kits/agent-kit/adapters/codex",
       "taken_by": "owner-aleksandre17:explicit-2026-09-17"

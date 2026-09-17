@@ -60,7 +60,12 @@ def run(ctx, args) -> int:
         return no
     within, outside = [], []
     for path, text in handed:
-        rel = edits_module.host_relative(ctx.workspace.path("."), path)
+        try:
+            rel = edits_module.host_relative(ctx.workspace.path("."), path)
+        except edits_module.Unplaceable as exc:
+            print(f"judge: REFUSED -- {exc}; an edit that cannot be placed is not one that lies "
+                  f"outside this host.", file=sys.stderr)
+            return no
         (within.append((rel, text)) if rel is not None else outside.append(path))
     refused, unjudged = edits_module.judge(edits_module.rules_of(ctx), within)
     for path in outside:

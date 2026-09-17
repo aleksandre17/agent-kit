@@ -7,7 +7,8 @@ declarations, never spelled:
   * the PLANE (install mode `taken`) -- a verbatim copy of the capability as its source published
     it, one directory per id;
   * the DECLARATION (install mode `taken-declaration`) -- one row per take: `id`, `source`,
-    `digest` (h1 over the copied tree, ADR-008), `taken_by`, `at`.
+    `taken_by`, `at`. The h1 printed at the take is a reading, not a declaration: its one home is
+    the ADR-008 provenance pin (ADR-018 amendment 1).
 
 The take is a DOOR: without `--approve <who>` it prints what it would take and refuses by name, and
 nothing is written. A take whose id the release issued is refused -- a take never shadows the
@@ -112,10 +113,11 @@ def run(ctx, args) -> int:
     current = (ctx.binding(statement["target"], statement["validates"])
                if ctx.workspace.exists(statement["target"])
                else {"schema_version": ctx.manifest.version_of(statement["validates"]), "takes": []})
-    rows = {row["id"]: row for row in current["takes"]}
+    # A row carried from before amendment 1 sheds its digest here: the reading has one home, the pin.
+    rows = {row["id"]: {k: v for k, v in row.items() if k != "digest"} for row in current["takes"]}
     for identity, source, files, measured in takes:
         ws.write_tree(plane["target"] + identity, files)
-        rows[identity] = {"id": identity, "source": source.as_posix(), "digest": measured,
+        rows[identity] = {"id": identity, "source": source.as_posix(),
                           "taken_by": args.approve, "at": moment}
     document = {"schema_version": current["schema_version"],
                 "takes": [rows[k] for k in sorted(rows)]}

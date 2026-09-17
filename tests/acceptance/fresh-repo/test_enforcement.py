@@ -119,6 +119,24 @@ class Enforcement(Fixtures, unittest.TestCase):
                 unjudged = self.judge(host, surface, {"unrelated": True})
                 self.assertEqual(hands["refusal"]["exit"], unjudged.returncode)
 
+    def test_289b_a_drive_spelled_as_a_posix_mount_is_placed_and_a_driveless_rooted_path_is_refused(self):
+        host = self.served_host([HOST_GATE])
+        target = (host / "src" / "a.ts").resolve()
+        drive = target.drive
+        if not drive:
+            self.skipTest("this filesystem has no drives: a rooted path is exactly what it names")
+        mounted = f"/{drive[0].lower()}{target.as_posix()[len(drive):]}"
+        for surface in self.surfaces:
+            hands = surface["hands"]
+            with self.subTest(surface=surface["id"]):
+                for spelled in (mounted, "/cygdrive" + mounted):
+                    refused = self.judge(host, surface, _event(hands, spelled, "let y = ctx.year;"))
+                    self.assertEqual(hands["refusal"]["exit"], refused.returncode, refused.stdout + refused.stderr)
+                    self.assertIn(HOST_GATE["id"], refused.stderr)
+                driveless = self.judge(host, surface, _event(hands, "/nowhere/src/a.ts", "let y = ctx.year;"))
+                self.assertEqual(hands["refusal"]["exit"], driveless.returncode, driveless.stdout + driveless.stderr)
+                self.assertNotIn("lies outside this host", driveless.stdout)
+
     def test_290_check_fails_an_uncalibrated_host_gate(self):
         host = self.served_host([{**HOST_GATE, "admits": HOST_GATE["proves"]}])
         checked = self.run_kit(self.kit, host, "check")

@@ -479,7 +479,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ef61dcc21763c71472de944723d76e8220a1494a33448492dc38ef6134e208d7",
+      "digest": "90ab85dc4a65b89055e8dad8acfbecf5c274c0e3fd24a51a9495e3c44d1e95f7",
       "path": "interpreters/gates/edits.py"
     },
     {
@@ -515,7 +515,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "748ba3487e6cf73edb6a85ec0fd04182710a70b17d490a364693b020b483e0b1",
+      "digest": "b8d110168c654463fc233e278a9574747a55c9ab3b34f39d713f1b8f2b4615da",
       "path": "interpreters/gates/taken.py"
     },
     {
@@ -695,7 +695,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "10c5f9c728e64fc8c064a31abbaeba9172d77eb892566866bc2d09e6d1a99abd",
+      "digest": "fd30d6fb9e55d6e0fde340b46729c73d7420f98913dd46b7ddcbba1c80a0f7e5",
       "path": "interpreters/verbs/judge.py"
     },
     {
@@ -725,7 +725,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a6bd78ea814685612e4053f349b28a88c4ad8dcb7dbf313db8e8c5e65100f136",
+      "digest": "684f34ca0a4c3e9de92d8609fe29af608a973a138f585e742be1a97f9dcbe690",
       "path": "interpreters/verbs/take.py"
     },
     {
@@ -971,7 +971,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "b2be26b95f527de9f11abd0133ce3261b02622ce67c2e0c43a3217403325e5cc",
+      "digest": "2a4ffe53efc24f3f769ef8fd99bfb187d2646db4d4c98a60679109649aac2ab1",
       "path": "schemas/taken.schema.json"
     },
     {
@@ -1002,5 +1002,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-17T11:32:50+00:00"
+  "taken_at": "2026-09-17T11:55:54+00:00"
 }
