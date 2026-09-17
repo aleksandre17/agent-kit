@@ -20,6 +20,7 @@ are not the same document and are not written by the same hand.
 - **claude-code** — class `an-interactive-session` · claimed 0, proven 0, absent 7 of 7
 - **codex** — class `an-interactive-session` · claimed 0, proven 0, absent 7 of 7
 - **git-commit** — class `a-batch-invocation` · claimed 0, proven 0, absent 7 of 7
+- **github-actions** — class `a-batch-invocation` · claimed 0, proven 0, absent 7 of 7
 
 ## The capability vocabulary — every word that may be claimed
 
@@ -53,6 +54,7 @@ Started once per unit of work, with everything it will be given fixed at the mom
 
 Used here by:
 - `git-commit`
+- `github-actions`
 
 ### an-interactive-session — declared by `kit_runtime_classes`
 

@@ -214,7 +214,7 @@
     {
       "capability": "governance",
       "class": "binding",
-      "digest": "ef9854695068bcad93459cdfaab621a2b45dc48da93d14595a8316a0d0d0da46",
+      "digest": "a56efc3a817ffc71bea7d76e82c0cbc4a2939c6c1069d05916187c5eccb02156",
       "mode": "declaration",
       "path": ".agents/project/project.json"
     },
@@ -256,7 +256,7 @@
     {
       "capability": "governance",
       "class": "binding",
-      "digest": "a9f81aef663e2ec6eff3ab456b34072e720a2750752d5e48a672db380a537cfb",
+      "digest": "efb3f56a3d9ff6a0c275b40349fa644a4a2fdbd5f95d1a032e8e8cd11bcc1cd4",
       "mode": "taken-declaration",
       "path": ".agents/project/taken.json"
     },
@@ -343,7 +343,23 @@
         "basis": "attested"
       },
       "version": "1.0.0"
+    },
+    {
+      "authenticity": {
+        "state": "unsigned",
+        "taken_at": "2026-09-17T15:48:55+00:00"
+      },
+      "capability": "github-actions",
+      "digest": "h1:LC4yRq2TjtUXi32Ac82VNgL8hAiBJ8b08X3R9+p/XRg=",
+      "pinned_at": "2026-09-17T15:48:31+00:00",
+      "pinned_by": "owner-aleksandre17:explicit-2026-09-17",
+      "trust": {
+        "attested_at": "2026-09-17T15:48:55+00:00",
+        "attested_by": "owner-aleksandre17:explicit-2026-09-17",
+        "basis": "attested"
+      },
+      "version": "1.0.0"
     }
   ],
-  "taken_at": "2026-09-17T14:58:50+00:00"
+  "taken_at": "2026-09-17T15:48:55+00:00"
 }

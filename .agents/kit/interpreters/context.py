@@ -27,7 +27,7 @@ class Context:
         self.manifest = manifest_port.composed(kit_root, host_root)
         self.workspace = Workspace(host_root)
         self.clock = clock or Clock()
-        self.probe = Probe(self.workspace)
+        self.probe = Probe(self.workspace, ours=self._served_paths)
         #: The records THIS process opened and has not yet closed. A run cannot judge its own
         #: liveness: a record still open because the run holding it is the one asking is not a
         #: run that died, and a sensor unable to tell the two apart would report every healthy
@@ -44,6 +44,12 @@ class Context:
         #: has read a record -- and then every install mode's own foresight answers, which is
         #: exactly what it is for: the rule a foresight can state when there is no record to read.
         self.decided = {}
+
+    def _served_paths(self) -> set:
+        """Every path the kit's own record says it served -- the record, read from every
+        capability the kit composes (never the enabled set, which is itself resolved from facts)."""
+        import runtime as runtime_port  # the port reads the record; imported where it is needed
+        return set(runtime_port.prior(self, self.manifest.capabilities))
 
     # -- boundary ---------------------------------------------------------------------------
     def boundary(self) -> dict:

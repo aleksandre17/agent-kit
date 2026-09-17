@@ -40,7 +40,6 @@ planes.
 | `.agents/runtime/guards/` | guard-state | runtime-observer | a hook blocked an edit; why was this write refused;  | current-only | PENDING — link C |
 | `.agents/runtime/init.journal` | operation-journal | kit-verb | init was interrupted; resume or recover an install; what did the last install do;  | per-operation | always |
 | `.agents/runtime/init.lock` | exclusive-hold | kit-verb | a kit command says the host is held; clear a stale hold;  | per-operation | always |
-| `.github/workflows/` | automation-definition | owner | CI failed; which gates run on a pull request; add a check to the pipeline;  | living | PENDING — link C |
 | `docs/intent/` | intent | owner | why are we building this; what does the owner want; judge whether work serves the goal;  | living | PENDING — link F |
 | `docs/decisions/` | decision | decision-authority | why is it built this way; a change crosses a boundary; propose an architecture change; is this already decided;  | permanent | ONLY WITH knowledge |
 | `docs/reference/` | reference | curator | look up a register or ledger; which standards are adopted; what is the current drawing;  | living | ONLY WITH knowledge |

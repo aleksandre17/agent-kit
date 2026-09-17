@@ -14,10 +14,22 @@ import activation
 KIND = "served-setting-active"
 
 
+#: The schema's words: the field a surface declares its clone in, and the clone no door reaches.
+CLONE, EPHEMERAL = "clone", "ephemeral"
+
+
 def _active(ctx, params):
     failures = []
     moment = ctx.clock.now()
+    through = getattr(ctx, "through", None) or {}
     for surface, declared in sorted(activation.served(ctx).items()):
+        if through.get(CLONE) == EPHEMERAL:
+            # DECLARED by the surface this check runs through, never assumed: its clone was made for
+            # one run, so no door was walked in it and the setting is no property of the repository.
+            print(f"  {surface}: NOT MEASURED, at {moment} -- this check runs through "
+                  f"{through['id']}, whose clone is declared {EPHEMERAL}; {declared['setting']} is a "
+                  f"setting of a working clone, read by a check run there.")
+            continue
         state, value, detail = activation.reading(ctx, declared)
         where, setting = declared["points_at"], declared["setting"]
         if state == activation.INACTIVE:

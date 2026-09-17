@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "surfaces": [
+    {
+      "id": "github-actions",
+      "says": "GitHub Actions runs every workflow file under `.github/workflows/` (`.yml` or `.yaml`) of the pushed commit whose `on:` names the event, taken from the GitHub Actions documentation (workflow syntax; events that trigger workflows; variables). Documented, and NOT OBSERVED here (nothing was pushed): a `run` step with `shell: sh` runs as `sh -e {0}` from the checked-out workspace, and fails the job on a non-zero exit; `GITHUB_EVENT_PATH` names the webhook payload as JSON; for `pull_request` its `pull_request.base.sha` is the base the change is proposed against and HEAD is the test merge commit; for `push` its `before` is the commit the ref held, all zeros for a new ref; `actions/checkout` with `fetch-depth: 0` fetches all history, so both commits are present. MEASURED locally only: the served step commands, run by `sh -e` against a fixture event and a fixture diff, refuse a violating change and admit a clean one. UNVERIFIED: a force-push whose `before` is no longer reachable (the diff cannot be read, so the run refuses -- fail closed, not judged), a pull request from a fork, and the runner image's Python. The runner's clone is EPHEMERAL: no door was ever walked in it, so a setting outside the tree that a working clone must hold (a hook path) is named NOT MEASURED there, never failed and never passed. Every other file in `.github/workflows/` is the owner's; the kit writes exactly the path its record names and refuses to write over bytes it did not write.",
+      "clone": "ephemeral",
+      "renders": [
+        {
+          "view": "enforcement",
+          "target": ".github/workflows/kit-gates.yml",
+          "template": "capabilities/github-actions/payload/workflow.mustache"
+        }
+      ],
+      "hands": {
+        "carries": "patch",
+        "nothing": "admitted",
+        "paths": [],
+        "texts": [],
+        "patch": {
+          "from": [],
+          "file": "^\\+\\+\\+ b/(.+?)\\t?$",
+          "line": "^\\+(.*)$"
+        },
+        "refusal": {
+          "exit": 1
+        }
+      }
+    }
+  ]
+}

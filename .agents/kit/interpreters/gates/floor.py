@@ -33,6 +33,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import activated
+import ephemeral
 import validation
 
 _SCHEMA_PATH = Path(__file__).resolve().parents[2] / "schemas" / "layout.schema.json"
@@ -112,6 +114,17 @@ def _layout_floor_present(ctx, params):
     rows, errors = host_rows(ctx.manifest.capabilities, params["document"], params.get("side"))
     if not rows and not errors:
         return [f"no enabled capability ships a layout document named {params['document']!r}"]
+    through = getattr(ctx, "through", None) or {}
+    if through.get(activated.CLONE) == activated.EPHEMERAL:
+        # DECLARED by the surface this check runs through: its clone was made for one run, and a
+        # place inside the OBSERVED plane holds what a run in a working clone left behind -- state
+        # no version control carries, so its absence there says nothing about the repository.
+        observed = [p["root"] for p in ctx.manifest.planes if p["class"] == ephemeral.OBSERVED]
+        unmeasured = [r for r in rows if any(r["path"].startswith(root) for root in observed)]
+        for entry in unmeasured:
+            print(f"        NOT MEASURED  {entry['path']}  (observed state; this check runs through "
+                  f"{through['id']}, whose clone is declared {activated.EPHEMERAL})")
+        rows = [r for r in rows if r not in unmeasured]
     failures, pending, not_enabled = evaluate_rows(
         ctx.workspace, rows, enabled={c.id for c in capabilities})
     for entry in pending:

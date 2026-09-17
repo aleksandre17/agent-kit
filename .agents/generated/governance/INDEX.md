@@ -198,6 +198,16 @@ A runtime ADAPTER for git's commit hooks: the one published declaration that car
 Gates declared by this capability:
 
 
+### github-actions 1.0.0
+
+A runtime ADAPTER for GitHub Actions: the one published declaration that carries this product's name. A CI runner is not an agent runtime, and that is the point -- it is the one RETURN POINT nobody at the keyboard can skip: `git commit --no-verify` bypasses every local hook by git's design, but a push or pull request is checked out and judged where no local flag reaches. Served, it projects one workflow file that runs the kit this host CARRIES -- never a fetched one -- as `check` over the tree and as the same one judge, over the pushed or proposed diff, that a runtime's write hook and the commit hook use. An ordinary capability, taken through the provenance door like any adapter; no interpreter in the kit knows that it exists.
+
+| path | class | mode |
+| --- | --- | --- |
+
+Gates declared by this capability:
+
+
 ## Facts this install was adapted to
 
 - `vcs.git` = true

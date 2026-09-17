@@ -7,6 +7,54 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — the CI PROJECTION: the return point nobody skips (ADR-017 link C, slice C1c part 4, last of C1)**
+- Adapter `github-actions` 1.0.0 (surface `github-actions`, the only place the product is named): renders
+  `.github/workflows/kit-gates.yml` (view `enforcement`) -- on `push` + `pull_request`, `actions/checkout`
+  (fetch-depth 0), then two `shell: sh` steps running the PINNED kit (`{vendor}/interpreters/cli.py`, never
+  `--kit`, never fetched): `check --surface github-actions`, and `judge --surface github-actions` over
+  `git diff -U0 <base> HEAD`. Base read from `$GITHUB_EVENT_PATH` (`pull_request.base.sha`, else `before`;
+  empty/all-zero -> the empty tree: everything introduced). Fails CLOSED on no Python, unreadable event,
+  unreadable diff. `hands` identical to `git-commit`'s (patch, `nothing: admitted`, exit 1). No `${{ }}`
+  expressions (they collide with the template grammar, and the event file is the documented one home).
+- Selection is DECLARED, never measured: a host serves it by a runtime descriptor naming the surface
+  (host #0: `.agents/project/runtimes/github-actions.json`, class `a-batch-invocation`). `ci.workflows`
+  cannot choose a provider (zero workflows on a host that has none yet; `.github/workflows/` is read by more
+  than one product) -- so no `ci.*` fact drives the projection, and none is required.
+- Schema `runtime-surface`: optional `clone` (`working`|`ephemeral`). Verb `check --surface <id>` runs the
+  gates as seen from that surface's clone; an undeclared surface is refused under **KIT0048** (issued 48).
+  Through an `ephemeral` clone, `FF-RUNTIME-ACTIVE` names each working-clone setting NOT MEASURED (moment
+  stated) and `FF-HOST-FLOOR` names rows inside the OBSERVED plane NOT MEASURED -- MEASURED need: a copy of
+  host #0 with only versioned files failed `FF-HOST-FLOOR` on `.agents/runtime/{receipts/,init.journal,
+  init.lock}` and `FF-RUNTIME-ACTIVE` would read INACTIVE: CI would have been red on every push.
+- Probe: a path the kit's own record says it SERVED is never evidence about the host (all evidence kinds;
+  `Context._served_paths` reads `SERVED.json`). MEASURED need: rendering the workflow flipped
+  `ci.workflows` and failed `FF-READING-FRESH` -- a measurement observing the kit's own output.
+- Records map: the `.github/workflows/` row LEAVES kit core `governance/host-layout.json` (a product path in
+  the kit) for the adapter's `floor` (holds automation-definition, writer OWNER, lifecycle living). Ownership
+  rule: the directory is the owner's; the kit is a tenant of exactly the path its record names; a host
+  file at that path is refused (KIT0039, no new code), one beside it is never touched. Still `pending: C`:
+  the floor grammar binds a row to ENABLED, not SERVED -- see GAP-L2.
+- Tests: new `test_ci_projection.py` `test_296`-`test_298` (served text names pinned check+judge through
+  the surface, no `--kit`; check through ephemeral: no FAIL, NOT MEASURED; plain check still INACTIVE;
+  KIT0048; KIT0039 on a host file at the target, sibling untouched; the served `run: |` blocks executed by
+  `sh -e` against a fixture repo: PR / push / zero-sha events REFUSE a violation, a clean push admitted, an
+  unreachable base refused). `test_302` reads JSON only for `.json` targets; `test_303` no longer assumes
+  exactly two unactivated adapters. Suites run: ci_projection, commit_gate, adapters, serving, taken,
+  host_floor, boundary, diagnostics, enforcement (60 passed, 1 skipped); detectors, observability,
+  scoped_law green earlier in the slice.
+- Host #0: lock -> upgrade -> take `github-actions` -> enabled in `project.json` (KIT0025 says the answers
+  file is the door) -> descriptor -> init --approve `owner-aleksandre17:explicit-2026-09-17` -> render
+  (`created .github/workflows/kit-gates.yml`) -> `check: 0 gate(s) failed`; through the surface also 0.
+  Local step run on a versioned-files copy of host #0: violation in `kit/` (committed `--no-verify`) ->
+  check 0, judge REFUSED `no-product-in-the-shipped-kit`, exit 1; clean push -> judge admits, exit 0.
+- UNVERIFIED (only a real push proves): the runner reads the file and runs `sh -e`; `GITHUB_EVENT_PATH`
+  field shapes; merge-commit HEAD on `pull_request`; `actions/checkout@v4` (a fetched ACTION, not a kit;
+  not SHA-pinned); force-push with an unreachable `before` (refuses -- fail closed, red); fork PRs;
+  runner Python. No `actionlint`/`act` on this machine; not installed.
+- Not decided here (ADR-worthy): the duplicated `hands` patch grammar in `git` and `github-actions`
+  (one truth, two homes -- a shared unified-diff grammar is the cure); whether `check --surface` on a
+  working machine should be refused for ephemeral surfaces (today it is declared and printed, not policed).
+
 **Added — the COMMIT GATE: `core.hooksPath` (ADR-017 link C, slice C1c part 3)**
 - ADR-017 decision 5 says a runtime with no proven pre-write block is held by "verification at
   return" instead of prevention at write. A commit is the return point every runtime, tool and human

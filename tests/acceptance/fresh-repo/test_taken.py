@@ -121,7 +121,8 @@ class Taken(Fixtures, unittest.TestCase):
         self.assertEqual(len(self.ids), len(served), "each taken adapter serves its enforcement setting")
         for target in served:
             self.assertTrue((host / target).is_file(), target)
-            json.loads((host / target).read_text(encoding="utf-8"))
+            if target.endswith(".json"):
+                json.loads((host / target).read_text(encoding="utf-8"))
         ran = pinned_cli(host, "check")
         self.assertEqual(0, ran.returncode, said(ran))
         self.assertIn("check: 0 gate(s) failed", ran.stdout)
@@ -135,7 +136,7 @@ class Taken(Fixtures, unittest.TestCase):
     def test_303_a_changed_take_and_an_undeclared_directory_fail_the_gate_and_a_vanished_plane_fails_every_load(self):
         host = self.composed_host()
         plane = host / PLANE["target"]
-        first, second = self.ids
+        first, second, *_rest = self.ids
         changed = next(p for p in (plane / first).rglob("*") if p.is_file())
         changed.write_bytes(changed.read_bytes() + b"\n")
         shutil.copytree(UNACTIVATED[0], plane / "nobody-took-this")

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 47,
+  "issued": 48,
   "codes": [
     {
       "code": "KIT0001",
@@ -284,6 +284,12 @@
       "status": "active",
       "title": "a setting outside the tree was asked to change that is not the kit's to change, or cannot be measured",
       "explanation": "A served surface may declare an activation: a setting in its product's own configuration that must name the served directory before the product runs it. The `activate` door refuses, before anything changes, a surface this host is not served, a setting that already names somewhere else (never overwritten), live entries where the product looks while the setting is unset (they would be silently switched off), a setting or place that cannot be read (unmeasured is not unset), and a withdrawal of a setting the kit did not make. A change whose read-back is not the state asked for is refused as observed."
+    },
+    {
+      "code": "KIT0048",
+      "status": "active",
+      "title": "a check was asked to run through a surface no taken adapter declares",
+      "explanation": "`check --surface <id>` runs every gate as seen from the clone that surface's product runs in, and the surface's own declaration says what that clone is: an ephemeral one names a setting outside the tree NOT MEASURED instead of failing it. A name no taken adapter declares cannot say that, so the check is refused before any gate runs, rather than silently answering the question of a check run through no surface."
     }
   ]
 }

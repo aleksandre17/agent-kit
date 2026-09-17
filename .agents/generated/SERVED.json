@@ -20,6 +20,12 @@
       "surface": "git-commit"
     },
     {
+      "path": ".github/workflows/kit-gates.yml",
+      "runtime": "github-actions",
+      "sha256": "e1897e98d7d753054a574ba5d21b438c7130eeaccbf42918fd3ebf920394dffd",
+      "surface": "github-actions"
+    },
+    {
       "path": "AGENTS.md",
       "runtime": "codex",
       "sha256": "2f9a1911881c245aea8951eae30959e0301ecd0a3179c019ca2854f57693e3b5",

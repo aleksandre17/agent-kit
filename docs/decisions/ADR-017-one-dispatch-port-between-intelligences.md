@@ -115,6 +115,37 @@ copy that drifts on the first hand edit). **Known limits:** `--no-verify` skips 
 — CI (C1c part 4) is the projection that cannot be skipped; who activated lives only in the run journal
 (GAP-A1).
 
+## Amendment 3 — CI is the projection nobody skips (2026-09-17, C1c part 4)
+
+**Decision.** A CI provider is a surface adapter (`adapters/github-actions`) serving a workflow that runs
+the host's PINNED kit — `check` and the one `judge` over the pushed/PR diff — never a fetched kit. It
+closes what `--no-verify` leaves open.
+1. **The provider is DECLARED, not measured.** A runtime descriptor names the surface. A `ci.*` fact
+   cannot choose: a host with no workflows would never be served, and the projection would create the
+   evidence that enables it (a circle).
+2. **Clone-local state is not repository state.** A surface declares `clone: working|ephemeral`;
+   `check --surface <id>` reads through that clone, and what an ephemeral clone cannot carry
+   (clone-local settings, the observed runtime plane) prints NOT MEASURED with its moment — never a
+   fabricated pass, never a structural red on every push.
+3. **A served path is never evidence about the host.** The probe ignores every path the served record
+   names; the kit does not measure its own output.
+4. **Ownership in an owner-written directory:** the directory is the owner's; the kit owns exactly the
+   paths its record names; a host file at such a path is refused (KIT0039), a file beside it is untouched.
+
+**Decided, not built:** `check --surface <ephemeral>` on a working clone would hide an inactive hook
+(Cardinal V). The adapter declares the environment marker its runner sets; the interpreter refuses an
+ephemeral reading when the declared marker is absent — generic presence test, no product name. And the
+patch grammar now repeated in `git` and `github-actions` gets one home (a shared unified-diff grammar
+both reference).
+
+**Rejected:** provider chosen from `ci.workflows` (the circle above); the workflow running `activate` or
+`git config` before `check` (fakes an approval or a reading); letting CI fail honestly on clone-local
+state (a signal red on every push is read by nobody); a helper script under `.github/` (a second file in
+the owner's directory).
+
+**Unverified until a real push:** runner reads the file; event field shapes; `actions/checkout@v4`
+(fetched, not SHA-pinned); fork PRs; force-push with unreachable base (fails closed).
+
 ## Measured when (Cardinal VII — assumptions at a boundary)
 
 - **A2A's current state and governance** (Linux Foundation stewardship; the task-state set above) — from

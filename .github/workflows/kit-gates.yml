@@ -1,0 +1,59 @@
+# Generated. Do not edit. Served to the runtime github-actions through the surface github-actions - kit 0.1.6.
+# The one projection of this host's gates nobody skips with `--no-verify`: on every push and pull
+# request the runner checks out the change and runs the kit THIS HOST CARRIES at .agents/kit -- it
+# never fetches one -- twice: `check` over the whole tree, and the one `judge` over the pushed or
+# proposed diff against the edit gates this host declares. Neither step holds policy of its own, and
+# both fail CLOSED: a base that cannot be read, a diff that cannot be made or a Python that cannot be
+# run refuses the run. Every other file in this directory is the owner's, and the kit never writes it.
+name: kit gates
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: check -- every gate this host declares, over the tree
+        shell: sh
+        run: |
+          for candidate in python3 python py; do
+            if "$candidate" -c "import sys" >/dev/null 2>&1; then
+              exec "$candidate" ".agents/kit/interpreters/cli.py" check --root . --surface github-actions
+            fi
+          done
+          echo "kit gates: REFUSED -- no Python interpreter could be run, so nothing was checked" >&2
+          exit 1
+      - name: judge -- the pushed or proposed change, against this host's edit gates
+        shell: sh
+        run: |
+          python=""
+          for candidate in python3 python py; do
+            if "$candidate" -c "import sys" >/dev/null 2>&1; then python="$candidate"; break; fi
+          done
+          if [ -z "$python" ]; then
+            echo "kit gates: REFUSED -- no Python interpreter could be run, so the change was not judged" >&2
+            exit 1
+          fi
+          base=$("$python" -c 'import json, os; e = json.load(open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8")); print(((e.get("pull_request") or {}).get("base") or {}).get("sha") or e.get("before") or "")') || {
+            echo "kit gates: REFUSED -- the event could not be read, so no base is known and nothing was judged" >&2
+            exit 1
+          }
+          case "$base" in
+            ""|*[!0]*) ;;
+            *) base="" ;;
+          esac
+          if [ -z "$base" ]; then
+            # No earlier commit (a new branch, a first push): everything the pushed tree holds is introduced.
+            base=$(git hash-object -t tree /dev/null)
+            echo "kit gates: the event names no earlier commit; the whole tree is judged as introduced"
+          fi
+          change=$(git -c core.quotepath=off diff --no-color --no-ext-diff --no-renames --unified=0 --src-prefix=a/ --dst-prefix=b/ "$base" HEAD) || {
+            echo "kit gates: REFUSED -- the change from $base could not be read, so it was not judged" >&2
+            exit 1
+          }
+          printf '%s\n' "$change" | "$python" ".agents/kit/interpreters/cli.py" judge --root . --surface github-actions

@@ -8,6 +8,12 @@ the day there is one, every new ecosystem needs the framework's permission to ex
 Capture semantics: an emitted value of the form "$N" is the value captured by the Nth evidence
 item (1-based). A capture that is absent emits NOTHING for that key -- an unmeasured fact is a
 declared absence, never a fabricated default.
+
+A path the kit SERVED is never evidence about the host. A detector reads what the host brings; a
+file the kit itself projected there is the kit's own output, and a measurement that observes its
+own output is a loop: the reading would change because a render ran, and a profile taken before
+the render would read stale after it with nothing about the host having moved. Which paths are the
+kit's is one reading, handed in by the context from the kit's own record -- never guessed here.
 """
 
 from __future__ import annotations
@@ -17,15 +23,15 @@ import json
 from errors import KitError
 
 
-def _dir_exists(ws, spec):
+def _dir_exists(ws, spec, ours):
     return ws.path(spec["path"]).is_dir(), True
 
 
-def _file_exists(ws, spec):
-    return ws.path(spec["path"]).is_file(), True
+def _file_exists(ws, spec, ours):
+    return spec["path"] not in ours and ws.path(spec["path"]).is_file(), True
 
 
-def _path_exists(ws, spec):
+def _path_exists(ws, spec, ours):
     """A path is THERE -- whether it is a file, a directory, or a link to either.
 
     Some truths are about presence, not shape, and asserting the shape is how a detector
@@ -34,18 +40,19 @@ def _path_exists(ws, spec):
     `--separate-git-dir` all hold a FILE pointing elsewhere. Git reads all four as a working
     tree; a `dir_exists` check reads three of them as "not a repository".
     """
-    return ws.path(spec["path"]).exists(), True
+    return spec["path"] not in ours and ws.path(spec["path"]).exists(), True
 
 
-def _glob_any(ws, spec):
-    matches = sorted(p.name for p in ws.root.glob(spec["pattern"]))
+def _glob_any(ws, spec, ours):
+    matches = sorted(p.name for p in ws.root.glob(spec["pattern"])
+                     if p.relative_to(ws.root).as_posix() not in ours)
     return bool(matches), matches or None
 
 
-def _json_path(ws, spec):
+def _json_path(ws, spec, ours):
     """Read one key path out of a JSON file. Pointer is dot-separated; no expression language."""
     target = ws.path(spec["path"])
-    if not target.is_file():
+    if spec["path"] in ours or not target.is_file():
         return False, None
     try:
         value = json.loads(target.read_text(encoding="utf-8"))
@@ -76,12 +83,15 @@ class ProbeError(KitError):
 class Probe:
     """Evaluates detector declarations against a workspace. Reads only."""
 
-    def __init__(self, workspace) -> None:
+    def __init__(self, workspace, ours=None) -> None:
         self._ws = workspace
+        #: A callable answering which host-relative paths the kit served -- read once per run.
+        self._ours = ours or (lambda: set())
 
     def run(self, detectors: list) -> tuple[dict, list]:
         facts: dict = {}
         results: list = []
+        self._served = set(self._ours())
         for detector in sorted(detectors, key=lambda d: d["id"]):
             matched, captures = self._evaluate(detector)
             results.append({"id": detector["id"], "matched": matched})
@@ -99,7 +109,7 @@ class Probe:
                     f"detector {detector['id']!r}: unknown evidence kind {kind!r}; "
                     f"declared kinds are {sorted(EVIDENCE_KINDS)}"
                 )
-            ok, captured = EVIDENCE_KINDS[kind](self._ws, spec)
+            ok, captured = EVIDENCE_KINDS[kind](self._ws, spec, self._served)
             captures.append(captured if ok else None)
             if not ok and not spec.get("optional", False):
                 matched = False

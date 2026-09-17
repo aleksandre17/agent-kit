@@ -149,7 +149,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "56ccc5fdeda981b5f1d9bc7063afd3f08813b9506e46a82f04a190743a0a7eab",
+      "digest": "d1deed2c324d88add47fff55eaa799ee29cba7ce579ba6fdc8006f6e699349e6",
       "path": "capabilities/governance/host-layout.json"
     },
     {
@@ -413,7 +413,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "bc9bfb771b8dffab104488a371ea8d5d554cd0f12de127a3c9b64406528cd792",
+      "digest": "0d2c0609a361c6dd66cd2a8d385ac5c67ab4ee334cc272b980b64b1c5158b2a4",
       "path": "diagnostics.json"
     },
     {
@@ -449,7 +449,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "010cf81737cd3b8cf4223d16633c0bbeb8c2645bd601d46f7195b8a7761140b2",
+      "digest": "a2c2b4c2f181ef4fe40aac11215fe5dd59f4dc7bb4b8ff7fd3da71984cdab5a2",
       "path": "interpreters/context.py"
     },
     {
@@ -485,7 +485,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "5eefc9b872fec4a61d22f08c2330bbe8f4a5db9953e299d83405d56387dced65",
+      "digest": "7c3a0d605e7b9a4fa2d295d9c4d30648b9b6d363edfe7e092c8b8bf48286a506",
       "path": "interpreters/gates/activated.py"
     },
     {
@@ -515,7 +515,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "44788df9d88c02bb9cc04e724aacec3020e1dda8b6a72288fd1e9e14190653b5",
+      "digest": "20d3eebeed89f7e623a914772702a3107288aa04da9ff080b7e50dd2c7f307cf",
       "path": "interpreters/gates/floor.py"
     },
     {
@@ -611,7 +611,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3f2aaeb39b7440b134fdeab94e083e2b435c696ade480c0b49d17c9309acf435",
+      "digest": "343b237619aa024413cb7b3aeb4ca0f776e3ea29d55d9b54800b7ad3aa4edf10",
       "path": "interpreters/ports/probe.py"
     },
     {
@@ -707,7 +707,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "c730820ec4e6853bd4068e2a5885aa6e767adb66e606676e29ebec60f98f45c4",
+      "digest": "11b85a7c5a529fba81d04a874d83e73b351ee423ae1032dce97dd85fcd310c7d",
       "path": "interpreters/verbs/check.py"
     },
     {
@@ -989,7 +989,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "86f610b1e7fae7fee53a2a8341d3abe7e319daedae7c8f8f618fc7714ead4837",
+      "digest": "40c91adf1a0c2ec6498a63076c59e6660985c9d64ef959cdc5b1414ba23cde52",
       "path": "schemas/runtime-surface.schema.json"
     },
     {
@@ -1062,5 +1062,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-17T14:58:41+00:00"
+  "taken_at": "2026-09-17T15:50:05+00:00"
 }

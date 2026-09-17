@@ -15,6 +15,7 @@ from __future__ import annotations
 import importlib
 from pathlib import Path
 
+import declared
 import stance as stance_of
 from errors import KitError
 
@@ -30,6 +31,30 @@ class GateError(KitError):
     one kind -- which is a name resolving to two meanings, refused rather than ordered."""
 
     code = "KIT0023"
+
+
+class ThroughUnknown(KitError):
+    """`check --surface` named a surface no taken adapter declares."""
+
+    code = "KIT0048"
+
+
+#: The contract a surface document keeps -- the schema's own name, as every reader of it uses.
+SURFACES = {"validates": "runtime-surface"}
+
+
+def _through(ctx, surface_id: "str | None") -> "dict | None":
+    """The surface this check is run THROUGH, or None. Its declaration -- never the caller's word --
+    says what kind of clone the check runs in; a name no taken adapter declares is refused, because
+    a check that silently fell back to reading every setting would be answering another question."""
+    if surface_id is None:
+        return None
+    surfaces = {row["id"]: row for row in declared.rules(ctx, SURFACES, "surfaces")}
+    if surface_id not in surfaces:
+        raise ThroughUnknown(
+            f"check is asked to run through the surface {surface_id!r}, and no taken adapter declares "
+            f"it (declared: {sorted(surfaces)}). Nothing was checked.")
+    return surfaces[surface_id]
 
 
 def registry(entry: str = "KINDS") -> dict:
@@ -56,6 +81,7 @@ def run(ctx, args) -> int:
     thing only -- whether that failure fails this verb -- and it is printed beside the verdict with
     its author, so an observed failure is shown, counted and named, never a silent green."""
     kinds = registry()
+    ctx.through = _through(ctx, getattr(args, "surface", None))
     enabled = ctx.enabled_capabilities()
     stances, unbound = stance_of.resolve(ctx.manifest, ctx.host_answers(), enabled)
     failed = 0

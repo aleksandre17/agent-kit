@@ -105,6 +105,13 @@
               }
             }
           },
+          "clone": {
+            "description": "What the clone this surface's product runs in IS. `working` (the default): a clone somebody keeps, where a door may have been walked, so every setting outside the tree is read and held to its state. `ephemeral`: a clone made for one run and discarded -- no door was ever walked in it, so a setting outside the tree is not a property of the repository there. `check --surface <id>` through an ephemeral surface names every such setting NOT MEASURED, with the moment, and fails nothing on it; a check through no surface, or a working one, reads every setting as always.",
+            "enum": [
+              "working",
+              "ephemeral"
+            ]
+          },
           "says": {
             "description": "Which product reads these paths, and where that claim comes from. Testimony, labelled as testimony.",
             "type": "string",
