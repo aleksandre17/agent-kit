@@ -1,0 +1,125 @@
+{
+  "$id": "task",
+  "title": "One dispatched TASK -- opened before a worker starts, rewritten at every transition, closed exactly once",
+  "description": "The dispatch port's receipt, and the ONE home of the task vocabulary this kit speaks. The states are A2A's, adopted whole and not translated: submitted, working, input-required, completed, failed, canceled (ADR-017 decision 3; a private vocabulary for a solved concept is a second home, Cardinal I/III). Results come back as ARTIFACTS, never as a status message pretending to be an answer.\n\nThe ORDER is the mechanism, exactly as it is for a run receipt: the record is written the moment the dispatch begins, holding `submitted` -- which means nothing has been concluded -- and rewritten as the work moves. A process that is killed leaves its record holding the state it was in forever, which is the record working: everything such a run leaves on disk otherwise reads exactly like the output of a run that finished.\n\n`input-required` is DECLARED here and is not yet produced by any adapter: the round-trip that returns a worker's question to its orchestrator is ADR-017 slice C4. A state named in the vocabulary and never written is an honest declared absence; a vocabulary narrowed to what is built today would have to be widened by editing this schema the first time a worker asked a question.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "state",
+    "packet",
+    "adapter",
+    "workspace",
+    "branch",
+    "lease",
+    "opened_at",
+    "kit_version",
+    "boundary"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "description": "The DISPATCH-ID this record belongs to -- the packet's own, never a second name issued here.",
+      "type": "string",
+      "minLength": 1
+    },
+    "state": {
+      "description": "A2A's task states, adopted whole. `submitted`: accepted, nothing started. `working`: a worker was started and has declared no end. `input-required`: the worker cannot proceed and has asked a question instead of guessing (C4). `completed` / `failed`: the worker ended and said which. `canceled`: ended by a decision, not by the work.",
+      "enum": [
+        "submitted",
+        "working",
+        "input-required",
+        "completed",
+        "failed",
+        "canceled"
+      ]
+    },
+    "packet": {
+      "description": "The packet exactly as it was accepted. Carried, never re-declared: its shape is the `dispatch-packet` schema's to state, and a copy of that shape here would be the second home that drifts.",
+      "type": "object"
+    },
+    "adapter": {
+      "description": "The id of the adapter the packet's route resolved to, recorded at the moment it resolved.",
+      "type": "string",
+      "minLength": 1
+    },
+    "workspace": {
+      "description": "The host-relative directory the worker was given, and the only place it was asked to write.",
+      "type": "string",
+      "minLength": 1
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lease": {
+      "description": "The host-relative path of the lease standing on that workspace while this task runs -- so a reader of the task can reach the hold, and a reader of the hold can reach the task.",
+      "type": "string",
+      "minLength": 1
+    },
+    "opened_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "started_at": {
+      "description": "When the worker itself was started. Absent while the state is `submitted`: a moment that has not happened is not written as an empty string.",
+      "type": "string",
+      "minLength": 1
+    },
+    "ended_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "exit_code": {
+      "description": "What the worker's process returned, recorded BESIDE the state and never in place of it: an exit code is not a result.",
+      "type": "integer"
+    },
+    "status_message": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifacts": {
+      "description": "What the task produced, in A2A's own form: named parts, each stating where it was read from. An absent list and an empty list are different readings and both are honest -- absent means the worker never ended, empty means it ended and produced nothing.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "from",
+          "text"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "from": {
+            "description": "Where this part was read: the adapter's declared return channel, in the adapter's own words.",
+            "type": "string",
+            "minLength": 1
+          },
+          "media_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "kit_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "boundary": {
+      "description": "The translation layer this dispatch crossed, measured once and carried with the record (Cardinal VII): two intelligences can agree on a path's NAME and disagree completely on what it points to.",
+      "type": "object"
+    }
+  }
+}

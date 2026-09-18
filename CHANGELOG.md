@@ -7,6 +7,34 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — the DISPATCH PORT: one place a worker is started (ADR-017 link C, slice C2)**
+- Port `interpreters/ports/dispatch_port.py` + verb `dispatch` (reads one packet on stdin; `--plan` writes
+  nothing). The verb is a mouth, not a gate: refusing, leasing, isolating, starting and recording are all
+  the port's, so a task handed over by a runtime hook, another verb, a shell or a second intelligence meets
+  the same judgement. Order: refuse on pure reads → lease the path → open the task record at `submitted` →
+  isolate → start at `working` → close once with the state the ADAPTER's declaration says the ending meant,
+  the artifacts read from the channels it named, and the exit code recorded BESIDE the state.
+- **KIT0049** (a task the port will not start: unreadable, incomplete, unrouted, already dispatched, or a
+  placeholder this packet states no value for — never filled with a blank), **KIT0050** (no adapter taken;
+  zero or two isolation providers; a placeholder or channel the port does not provide; a declared program
+  absent on this machine), **KIT0051** (the task vocabulary's two homes have parted) — issued 51.
+- Schemas: `dispatch-packet` (a complete task: routed `id`, `route`, `instruction`, `branch`; optional
+  `role` and `routed_by` testimony — and deliberately NO path), `task` (A2A's six states, one home; packet
+  carried opaquely; artifacts), `dispatch-adapter` (how an intelligence is started, what it returns and
+  from which channel, what exit means completed), `workspace-provider` (how an isolated tree is made and
+  withdrawn). Adapters found by the CONTRACT their document keeps: the port names no runtime and no id.
+- Adapters: `claude-subagent` 1.0.0 (dispatch, published apart from the runtime adapter of the same
+  product — being served and being startable as a worker are two reasons to change); `git` 1.0.0 gains
+  `workspaces.json` (`git-worktree`). Both are CLAIMS: neither has been observed running by the port.
+- `hostlock.take(..., registers=False)`: the host's own hold mechanism, on one path — same document, same
+  break-by-name door, and a per-path hold that does not register as the hold on the host. No second lease.
+- Tests: `tests/unit/test_dispatch_port.py` (the reading is the port's; an argv is filled only with provided
+  placeholders; the task vocabulary's one home, measured and shown to bite; completeness read from the
+  schema) and `test_313`/`test_314` (refused through the CLI verb AND a direct in-process call, with
+  nothing leased or made either way; then leased, isolated, started, recorded — through a FIXTURE adapter
+  nobody shipped). NOT built here, deliberately: `codex-exec`, the visibility wrapper, `input-required`,
+  OTel `gen_ai` receipts, and admission of a returned change (C3/C4).
+
 **Added — the CI PROJECTION: the return point nobody skips (ADR-017 link C, slice C1c part 4, last of C1)**
 - Adapter `github-actions` 1.0.0 (surface `github-actions`, the only place the product is named): renders
   `.github/workflows/kit-gates.yml` (view `enforcement`) -- on `push` + `pull_request`, `actions/checkout`

@@ -155,6 +155,10 @@
     "edit-gate": "schemas/edit-gate.schema.json",
     "taken": "schemas/taken.schema.json",
     "law-scope": "schemas/law-scope.schema.json",
-    "arrow": "schemas/arrow.schema.json"
+    "arrow": "schemas/arrow.schema.json",
+    "dispatch-packet": "schemas/dispatch-packet.schema.json",
+    "dispatch-adapter": "schemas/dispatch-adapter.schema.json",
+    "workspace-provider": "schemas/workspace-provider.schema.json",
+    "task": "schemas/task.schema.json"
   }
 }

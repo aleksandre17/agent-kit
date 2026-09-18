@@ -1,0 +1,108 @@
+{
+  "$id": "dispatch-adapter",
+  "title": "A registry of DISPATCH ADAPTERS -- how one intelligence is started as a worker, and how what it produced comes back",
+  "description": "The hexagonal half of ADR-017 decision 2: the dispatch port knows no runtime, and a runtime is an ADAPTER. Like a runtime surface, this is the only kind of document allowed to carry a product's name, it is published in an adapter beside the kit, and the port finds it by the CONTRACT it keeps rather than by any list of publishers -- so a new intelligence is a new row in a new adapter and the port is never edited (Cardinal II, VIII).\n\nA row is a DECLARATION and executes nothing (Cardinal IV). `starts.argv` is DATA -- a fixed argv with declared placeholders, no shell, no branch, no condition -- of exactly the class an activation block already names: the interpreter runs it and holds no knowledge of the product, the declaration holds no behaviour. The placeholders and return channels a row may name are the ones the PORT provides; a row naming any other is refused rather than substituted with an empty string, because a worker started with a silently blank instruction is the most expensive silence there is.\n\nEverything a row says about somebody else's software is a CLAIM and stays one until a run of that product has been observed doing it -- which is what `says` is for, and why an adapter shipped before it has been measured is honest rather than green.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "adapters"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "adapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says",
+          "starts",
+          "returns",
+          "completed_on"
+        ],
+        "properties": {
+          "id": {
+            "description": "The id a packet's `route` names. One id, one declaration: a route that resolved to two adapters would be a name that is not a name.",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "says": {
+            "description": "Which product this starts, what is claimed about how it behaves, and where that claim comes from. Testimony, labelled as testimony -- including, explicitly, whether it has ever been observed on this machine.",
+            "type": "string",
+            "minLength": 1
+          },
+          "starts": {
+            "description": "How the worker is started. The argv is run with its working directory set to the isolated workspace the port made for this task, never at the host root: the workspace IS the isolation (ADR-017 decision 5).",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "argv"
+            ],
+            "properties": {
+              "argv": {
+                "description": "A fixed argv. A part may carry placeholders in braces; the port substitutes only those it provides and refuses any other by name.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "stdin": {
+                "description": "What is written to the worker's standard input, with the same placeholders. Absent means nothing is written and the stream is closed -- never an empty line that a prompt-reading process would take as an answer.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "returns": {
+            "description": "The ARTIFACTS this worker produces, and the channel each is read from. Results come back as artifacts (A2A, adopted whole), never as a status message doing an answer's job.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "from"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "from": {
+                  "description": "The channel, by the name the port provides for it. An unprovided channel is refused, so widening the set is the port providing another one -- never an enum edited here.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "media_type": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "completed_on": {
+            "description": "What this product's worker does when it finished the work, so the port need never DECIDE what an exit code meant. Anything else ends the task `failed`, with the code recorded beside the state.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "exit"
+            ],
+            "properties": {
+              "exit": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

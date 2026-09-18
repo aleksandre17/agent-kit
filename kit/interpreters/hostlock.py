@@ -152,7 +152,10 @@ class Hold:
             self.workspace.write_json(
                 self.rel, _honoured(self.ctx, self.rel, self.value, "as this run closes it"))
         finally:
-            _STANDING.pop(self.ctx, None)
+            #: Only its OWN registration, never whatever is registered: a per-path hold closing
+            #: itself must not quietly retire the hold this run has on the host.
+            if _STANDING.get(self.ctx) is self:
+                _STANDING.pop(self.ctx, None)
 
 
 class Borrowed:
@@ -198,8 +201,16 @@ def guard(ctx, rel: str, *, verb: str, now: str, break_by: str = None) -> None:
         _refuse(existing, rel, verb, now)
 
 
-def take(ctx, rel: str, *, run_id: str, verb: str, now: str, break_by: str = None) -> Hold:
+def take(ctx, rel: str, *, run_id: str, verb: str, now: str, break_by: str = None,
+         registers: bool = True) -> Hold:
     """Take the hold, or refuse at the door.
+
+    The document, the refusal, the break-by-name and the closing-rather-than-deleting are the same
+    mechanism wherever a hold is taken, so a hold on ONE PATH -- a worker's isolated workspace, say
+    -- is this function with another `rel`, never a second lease implementation. What such a hold
+    must NOT do is register itself as the hold on the HOST: `registers` is that distinction, and a
+    per-path hold passes it false so that a later write of the host neither borrows it nor mistakes
+    a leased path for a held tree.
 
     `break_by` is the whole stale-lock mechanism: a NAME, typed by a person who has looked at the
     hold this run just described to them and decided it is dead. There is no other way past a
@@ -230,7 +241,8 @@ def take(ctx, rel: str, *, run_id: str, verb: str, now: str, break_by: str = Non
     workspace = scope(ctx)
     workspace.write_json(rel, _honoured(ctx, rel, value, "as this run takes it"))
     hold = Hold(ctx, workspace, rel, value)
-    _STANDING[ctx] = hold
+    if registers:
+        _STANDING[ctx] = hold
     return hold
 
 

@@ -32,7 +32,7 @@ import provenance
 from errors import PendingApproval
 from manifest import Manifest
 import declared
-from test_adapters import A_CLASS, UNACTIVATED, DESCRIPTORS, ENABLING_FIELD, LIST, SELECTOR
+from test_adapters import A_CLASS, UNACTIVATED, DESCRIPTORS, ENABLING_FIELD, LIST, SELECTOR, surfaces_of
 from test_pinned_kit import PINNED, SEAT, pinned_cli, said
 from verbs.take import TakeError
 
@@ -118,7 +118,14 @@ class Taken(Fixtures, unittest.TestCase):
         host = self.composed_host()
         _rel, surfaces = surface_documents_of(host)
         served = [r["target"] for s in surfaces for r in s["renders"] if r["view"] == "enforcement"]
-        self.assertEqual(len(self.ids), len(served), "each taken adapter serves its enforcement setting")
+        # Every adapter that DECLARES an enforcement setting serves it. Not every taken adapter
+        # declares one: an adapter may publish only how its product is started as a worker, and
+        # counting all of them would read a different KIND of adapter as a missing projection.
+        declaring = [a for a in self.adapters
+                     if any(r["view"] == "enforcement" for s in surfaces_of(a) for r in s["renders"])]
+        self.assertTrue(declaring, "no taken adapter declares an enforcement setting")
+        self.assertEqual(len(declaring), len(served),
+                         "each taken adapter that declares an enforcement setting serves it")
         for target in served:
             self.assertTrue((host / target).is_file(), target)
             if target.endswith(".json"):

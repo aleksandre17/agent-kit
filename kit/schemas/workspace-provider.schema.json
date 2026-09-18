@@ -1,0 +1,77 @@
+{
+  "$id": "workspace-provider",
+  "title": "A registry of WORKSPACE PROVIDERS -- how an isolated working tree is made for a worker, and how it is withdrawn",
+  "description": "Isolation is architecture; the tool that provides it is not. A worker writes only inside its own tree (ADR-017 decision 5), and WHICH program makes such a tree -- a version control system's worktree, a copy, a container mount -- is a product fact, so it is declared in an adapter beside the kit exactly as a runtime surface is, and the dispatch port names none of them (Cardinal II, VIII; ADR-017 amendment 2 already holds that the version control system is a surface adapter like any runtime).\n\nA row executes nothing. Both commands are fixed argv with declared placeholders, run at the host root, no shell -- the same class of data an activation block names.\n\nExactly one provider may be enabled on a host. Zero is refused rather than defaulted: a dispatch that could not isolate its worker would have to write into the host's own tree, which is the one thing isolation exists to prevent. Two is refused because 'the isolated workspace' would then be a name resolving to two places.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "providers"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says",
+          "isolate",
+          "withdraw"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "says": {
+            "description": "Which product makes the tree, what is claimed about it, and where the claim comes from -- testimony, labelled as testimony.",
+            "type": "string",
+            "minLength": 1
+          },
+          "isolate": {
+            "description": "argv that MAKES the tree at the path the port gives it, standing on the branch the packet named. It is expected to refuse rather than reuse an existing path: a worker handed somebody else's tree is two writers in one place.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "argv"
+            ],
+            "properties": {
+              "argv": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "withdraw": {
+            "description": "argv that removes a tree this provider made. Declared here so that a tree is never withdrawn by a rule an interpreter invented; the port calls it only where its own act did not complete, and never on a tree holding a worker's finished work.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "argv"
+            ],
+            "properties": {
+              "argv": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

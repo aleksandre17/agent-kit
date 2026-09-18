@@ -25,7 +25,7 @@ from harness import Fixtures, host_digest
 import runtime as runtime_port  # noqa: E402
 from manifest import Manifest  # noqa: E402
 
-from test_adapters import ADAPTERS, UNACTIVATED, adapted_kit, surface_documents  # noqa: E402
+from test_adapters import ADAPTERS, UNACTIVATED, adapted_kit, surface_documents, surfaces_of  # noqa: E402
 
 KIT = adapted_kit(adapters=UNACTIVATED)  # about scoped law, not activation
 MANIFEST = Manifest(KIT)
@@ -114,9 +114,12 @@ class ScopedLaw(Fixtures, unittest.TestCase):
                 self.assertEqual(before, after)
 
     def test_312_the_kit_core_names_no_runtime_file(self):
+        # Read through each adapter's own DECLARATION, never from a file name spelled here: an
+        # adapter need not publish a runtime surface at all (a dispatch adapter publishes none),
+        # and a suite holding its own copy of where a surface lives would call that a broken
+        # adapter rather than a different kind of one.
         names = {r["target"].rstrip("/") for adapter in ADAPTERS
-                 for s in json.loads((Path(adapter) / "surfaces.json").read_text(encoding="utf-8"))["surfaces"]
-                 for r in s["renders"]}
+                 for s in surfaces_of(adapter) for r in s["renders"]}
         self.assertTrue(names)
         core = Path(__file__).resolve().parents[3] / "kit"
         for path in core.rglob("*"):

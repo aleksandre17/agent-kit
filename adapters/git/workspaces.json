@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "providers": [
+    {
+      "id": "git-worktree",
+      "says": "git checks a second working tree out of the same repository at a path given to `git worktree add`, on a branch created there by `-b`, and REFUSES rather than reusing a path that already exists or a branch already checked out somewhere -- taken from git-worktree(1) (git 2.5+). The refusal is what makes it usable as isolation: a worker is given a tree that was MADE for it, never one that was found. `git worktree remove --force` withdraws such a tree and its administrative record. The commits a worker makes there are in the same object store, so what it did returns to the host by ordinary git means -- and is judged on return, never admitted because a worker said it was fine (ADR-017 decision 5). UNVERIFIED on this machine through this declaration: taken from the documentation and from git's behaviour as generally established, and not yet observed being run by the dispatch port on host #0. UNVERIFIED in particular: a repository with no commit yet (there is no HEAD to branch from), a path inside an ignored directory, and a worktree made inside the repository's own tree while a hook is active.",
+      "isolate": {
+        "argv": ["git", "worktree", "add", "-b", "{branch}", "{workspace}", "HEAD"]
+      },
+      "withdraw": {
+        "argv": ["git", "worktree", "remove", "--force", "{workspace}"]
+      }
+    }
+  ]
+}

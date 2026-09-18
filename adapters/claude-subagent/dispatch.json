@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "adapters": [
+    {
+      "id": "claude-subagent",
+      "says": "Claude Code's command-line runtime starts one non-interactive agent turn per invocation: `claude -p <prompt>` runs the prompt to completion in the working directory it was started in, `--output-format json` makes its standard output one JSON document carrying the result and the run's own accounting, and `--permission-mode acceptEdits` lets that turn write files without a human answering a prompt it has no way to show. The turn ends when the agent stops; a non-zero exit means the turn did not complete. Taken from the product's command-line documentation as the orchestrator knew it at its 2026-05 knowledge cutoff, and NOT measured on this machine by this declaration: no run of this adapter has been observed by the dispatch port, so every sentence above is a CLAIM and the adapter is honest rather than green. What C3 measures: that the binary is present and authenticated, that the flags are spelled as written here, that the JSON document's shape is what an orchestrator can read an artifact out of, and that a worker started this way is visible in the orchestrating runtime's own agent panel (ADR-017 decision 8) -- which is an adapter concern and never the architecture. What this adapter deliberately does NOT declare: any way for the worker to ask a question back. A worker that cannot proceed returns `input-required` with its question instead of guessing, and that round-trip is ADR-017 slice C4; declaring a channel for it before it is built would be a surface claiming a capability this kit does not have.",
+      "starts": {
+        "argv": [
+          "claude",
+          "-p",
+          "{instruction}",
+          "--output-format",
+          "json",
+          "--permission-mode",
+          "acceptEdits"
+        ]
+      },
+      "returns": [
+        {
+          "name": "result",
+          "from": "stdout",
+          "media_type": "application/json"
+        },
+        {
+          "name": "diagnostics",
+          "from": "stderr",
+          "media_type": "text/plain"
+        }
+      ],
+      "completed_on": {
+        "exit": 0
+      }
+    }
+  ]
+}

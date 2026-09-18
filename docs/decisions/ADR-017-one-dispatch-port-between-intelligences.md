@@ -146,11 +146,55 @@ the owner's directory).
 **Unverified until a real push:** runner reads the file; event field shapes; `actions/checkout@v4`
 (fetched, not SHA-pinned); fork PRs; force-push with unreachable base (fails closed).
 
+## Amendment 4 — what C2 decided where this ADR had not (2026-09-18, building C2)
+
+**The A2A re-read decision 3 asked for, as a DECLARED READING and not as a measurement.** Taken
+2026-09-18 by the orchestrating agent; basis: that agent's own knowledge at model cutoff 2026-05; NOT a
+fresh reading of the specification, and no network access was attempted. On that basis the task states
+`submitted · working · input-required · completed · failed · canceled` and results-as-artifacts are
+unchanged, so decision 3 stands unamended. This is testimony about a standard, dated and attributed,
+and it is written here rather than left in a transcript — a reading whose moment is unstated goes on
+certifying forever (Cardinal V). The reading is superseded, not repeated, when the specification is
+actually measured; that measurement is still owed and is declared as such in the canon ledger.
+
+**A packet does not name a path; the port places the tree.** Where a worker's isolated tree lives is a
+property of the HOST's layout, not of the task, so the packet declares only its branch and the port
+places every task's lease, record and tree together under its DISPATCH-ID inside the plane that already
+holds what a run leaves behind. *Rejected:* the packet naming its own workspace path — it would make the
+one door every worker passes through the one way to write anywhere in the host, and it puts a second
+home for the host's layout into every orchestrator that writes a packet.
+
+**How a tree is MADE is a product fact, so it is an adapter too** (`workspace-provider`, published by
+the `git` adapter as `git worktree`). The dispatch port names no program. Exactly one provider may be
+enabled: zero is refused rather than defaulted, because a worker with nowhere of its own would write
+into the host, which is what the isolation exists to prevent. *Rejected:* `git worktree` called directly
+from the port (amendment 2 already holds that git is a surface adapter like any runtime — the port would
+have become the one interpreter carrying a product name); *rejected:* declaring it as another field on
+`runtime-surface` (two jobs under one schema, and a host that wants isolation without being served).
+
+**Routed means the route RESOLVES here.** The port holds an id routed when some capability this host has
+enabled declares an adapter under exactly that id, and refuses it otherwise as a name with no referent.
+Routing on capabilities PROVEN in receipts (decision 4) is the ROUTER's half and travels with the packet
+as `routed_by` testimony the port records and does not judge. *Rejected:* the port consulting the
+attestation table itself — the gate would then hold a routing policy, and the interpreter that decides
+is the one that cannot be handed a subject it has never seen (Cardinal IV).
+
+**The lease is the host hold's own mechanism with another path** (`hostlock.take(..., registers=False)`):
+one document shape, one refusal, one break-by-name door, and a per-path hold that deliberately does not
+register as the hold on the host. *Rejected:* a lease of its own for dispatch — two answers to *is
+anyone already in there*, agreeing until one of them is fixed.
+
+**`input-required` is declared and unwritten.** The `task` schema carries A2A's six states whole; the
+port names the four it can produce and refuses at the first write if the two have parted. The round-trip
+that produces the fifth is C4, and a vocabulary narrowed to what is built today would have to be widened
+by a schema edit the first time a worker asked a question.
+
 ## Measured when (Cardinal VII — assumptions at a boundary)
 
 - **A2A's current state and governance** (Linux Foundation stewardship; the task-state set above) — from
-  the orchestrator's knowledge, NOT re-measured on 2026-09-17. Re-read at the start of C2; a divergence
-  amends decision 3 on record.
+  the orchestrator's knowledge, NOT re-measured on 2026-09-17. Re-read at the start of C2 — and that
+  re-read was itself a DECLARED READING from the same kind of basis, not a measurement (amendment 4).
+  A real reading of the specification is still owed.
 - **Codex CLI as an MCP server, and Codex session resume** — UNVERIFIED. Measured at the start of C3; the
   `codex-mcp` adapter and C4's resume path depend on it.
 - **Codex CLI installed and authenticated on this machine** — receipts say it ran within 14 days; measured

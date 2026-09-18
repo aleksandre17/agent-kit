@@ -70,8 +70,8 @@ def _declaration(adapter: Path) -> dict:
     return json.loads((adapter / "capability.json").read_text(encoding="utf-8"))
 
 
-def _surfaces(adapter: Path) -> list:
-    """Every surface an adapter declares, found through the documents its own declaration names
+def surfaces_of(adapter: Path) -> list:
+    """Every surface an adapter declares -- none, where it publishes no runtime surface at all, found through the documents its own declaration names
     (a source is kit-relative at `capabilities/<id>/`, so it is read here relative to that seat)."""
     declaration = _declaration(adapter)
     seat = Path("capabilities") / declaration["id"]
@@ -83,7 +83,7 @@ def _surfaces(adapter: Path) -> list:
 # The adapters a test may take when it is ABOUT something other than activation: none of their
 # surfaces declares an activation block, so taking and serving them is the whole of their door.
 # Selected by declaration (the field the activation interpreter reads), never by a product's id.
-UNACTIVATED = [a for a in ADAPTERS if not any(activation.FIELD in s for s in _surfaces(a))]
+UNACTIVATED = [a for a in ADAPTERS if not any(activation.FIELD in s for s in surfaces_of(a))]
 
 
 def take(kit: Path, adapter: Path) -> None:

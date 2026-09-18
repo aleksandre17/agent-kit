@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 48,
+  "issued": 51,
   "codes": [
     {
       "code": "KIT0001",
@@ -290,6 +290,24 @@
       "status": "active",
       "title": "a check was asked to run through a surface no taken adapter declares",
       "explanation": "`check --surface <id>` runs every gate as seen from the clone that surface's product runs in, and the surface's own declaration says what that clone is: an ephemeral one names a setting outside the tree NOT MEASURED instead of failing it. A name no taken adapter declares cannot say that, so the check is refused before any gate runs, rather than silently answering the question of a check run through no surface."
+    },
+    {
+      "code": "KIT0049",
+      "status": "active",
+      "title": "a task handed to the dispatch port is not one it will start",
+      "explanation": "The dispatch port is the one place a worker is started, so every refusal a dispatch can earn is taken there and not in any runtime's hook -- a gate that fires only where a runtime happens to have a pre-spawn hook is a property of the orchestrator, not a gate (ADR-017 decision 1). Refused, on pure reads, before anything is leased, made or started: what was handed over is not readable as a packet; the packet is INCOMPLETE against its declared shape; its DISPATCH-ID is routed to an adapter no enabled capability declares (a name with no referent); the id has already been dispatched on this host, or its workspace was found rather than made; or the adapter is started with a placeholder this packet states no value for, which is never filled with an empty string."
+    },
+    {
+      "code": "KIT0050",
+      "status": "active",
+      "title": "this host declares no way to carry a dispatch out",
+      "explanation": "A dispatch needs two declarations the kit core never ships: an ADAPTER that says how one intelligence is started as a worker, and a PROVIDER that says how an isolated workspace is made for it. Refused rather than defaulted, in each of its forms: no dispatch adapter has been taken at all; the enabled declarations of isolation are zero or more than one (a worker with nowhere of its own would write into the host, and 'the isolated workspace' must name one place); an adapter names a placeholder or reads an artifact from a channel the port does not provide; or a declared program is not present on this machine -- what a declaration claims about somebody else's software is a claim until it is measured, and an absent program is that measurement, never a worker that quietly did nothing."
+    },
+    {
+      "code": "KIT0051",
+      "status": "active",
+      "title": "the task vocabulary has two homes and they have parted",
+      "explanation": "The states a dispatched task can be in are A2A's, adopted whole, and their one home is the `task` schema. The dispatch port names the ones it writes; before the first write it holds those names against the schema's own declaration and refuses if either side has a state the other does not, rather than writing a record whose state no reader recognises. The same refusal covers a task record that does not honour its schema at any transition: a record that is not a task record is not written over the only account of what a worker did."
     }
   ]
 }
