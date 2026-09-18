@@ -25,6 +25,7 @@ from __future__ import annotations
 import atexit
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -34,24 +35,50 @@ from pathlib import Path
 
 from harness import Fixtures
 
+import admission
 import dispatch_port
 import ephemeral
 import hostlock
 from context import Context
 
 from test_adapters import ADAPTERS, adapted_kit
+from test_enforcement import GATES_FILE
 
 #: The fixture worker: it writes inside the tree it was given and prints one JSON document. Held
 #: free of braces on purpose -- a declaration's placeholders are written in braces, and a program
 #: carrying its own would be a fixture arguing with the grammar it is being run through.
+WROTE = "worker-was-here.txt"
 WORKER = (
     "import json, pathlib, sys" "\n"
-    "pathlib.Path('worker-was-here.txt').write_text(sys.argv[1], encoding='utf-8')" "\n"
+    f"pathlib.Path({WROTE!r}).write_text(sys.argv[1], encoding='utf-8')" "\n"
     "print(json.dumps(dict(said=sys.argv[1], role=sys.argv[2])))" "\n"
     "sys.stderr.write('the worker spoke here')" "\n"
 )
 
 ARTIFACT, DIAGNOSTIC = "result", "diagnostics"
+
+#: The one text this host refuses, and the gate that refuses it -- calibrated on the very file the
+#: fixture worker writes, so that the two dispatches below differ in the TEXT and in nothing else.
+REFUSED = "a word this host has declared it refuses"
+GATE = {
+    "id": "a-word-this-host-refuses",
+    "paths": f"^{re.escape(WROTE)}$",
+    "forbids": re.escape(REFUSED),
+    "because": "this host declares that word unwelcome.",
+    "instead": "any other word.",
+    "proves": {"path": WROTE, "text": REFUSED},
+    "admits": {"path": WROTE, "text": "a word this host has declared nothing about"},
+}
+
+
+def _declares_provider(path: Path) -> bool:
+    """Whether this file is the document declaring that workspace provider -- read by the CONTRACT
+    it keeps, exactly as the port finds it, and never by a path spelled here."""
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, UnicodeDecodeError):
+        return False
+    return isinstance(document, dict) and bool(document.get(dispatch_port.PROVIDER_LIST))
 
 
 def fixture_adapter() -> Path:
@@ -104,10 +131,10 @@ class Dispatch(Fixtures, unittest.TestCase):
         cls.verb = next(p.stem for p in cls.verb.glob("*.py")
                         if p.stem != "__init__" and "dispatch" in p.stem)
 
-    def repository(self) -> Path:
+    def repository(self, kit: Path = None) -> Path:
         """An installed host that is a real repository with a commit: a worker's isolated tree is
         checked out of one, and a repository with no commit has no state to branch from."""
-        host = self.installed(self.kit)
+        host = self.installed(kit or self.kit)
         env = dict(os.environ, GIT_AUTHOR_NAME="fixture", GIT_AUTHOR_EMAIL="f@example.invalid",
                    GIT_COMMITTER_NAME="fixture", GIT_COMMITTER_EMAIL="f@example.invalid")
         for argv in (["add", "-A"], ["commit", "-q", "--no-verify", "-m", "the installed host"]):
@@ -115,10 +142,10 @@ class Dispatch(Fixtures, unittest.TestCase):
             self.assertEqual(0, ran.returncode, ran.stderr)
         return host
 
-    def through_the_verb(self, host: Path, handed: str):
+    def through_the_verb(self, host: Path, handed: str, kit: Path = None):
         result = subprocess.run(
             [sys.executable, str(Path(dispatch_port.__file__).parent.parent / "cli.py"),
-             self.verb, "--root", str(host), "--kit", str(self.kit)],
+             self.verb, "--root", str(host), "--kit", str(kit or self.kit)],
             input=handed, capture_output=True, text=True)
         print(f"\n$ {self.verb} --root <host>  <<< {handed[:80]}\n"
               f"[exit {result.returncode}]\n{result.stdout}{result.stderr}")
@@ -204,6 +231,80 @@ class Dispatch(Fixtures, unittest.TestCase):
         lease = json.loads((host / task["lease"]).read_text(encoding="utf-8"))
         self.assertFalse(hostlock.standing(lease), "the lease outlived the task it held")
         self.assertEqual(0, lease["exit_code"])
+
+
+    # == 3. admission on return =================================================================
+    def test_315_what_a_worker_left_in_its_tree_is_refused_by_this_hosts_own_gates_on_return(self):
+        """The other half of the isolation (ADR-017 decision 5), walked.
+
+        A worker is not prevented from writing -- it cannot be, which is the whole reason it was
+        given a tree of its own. So the question is what happens when it writes something this host
+        refuses: the change must not enter, the refusal must be this host's OWN declared gate
+        speaking in its own words, and the account of it must survive the process that found it.
+
+        Two dispatches, one gate, one difference: the text the worker was told to write. Nothing
+        else changes -- not the adapter, not the provider, not the host -- so what the assertion
+        measures is the judgement on return and nothing beside it.
+        """
+        host = self.repository()
+        (host / GATES_FILE).write_text(json.dumps({"schema_version": 1, "gates": [GATE]}) + "\n",
+                                       encoding="utf-8")
+
+        admitted = "text this host has nothing to say about"
+        walked = self.through_the_verb(host, json.dumps(packet("c3-admitted", instruction=admitted)))
+        self.assertEqual(0, walked.returncode, walked.stdout + walked.stderr)
+        self.assertEqual(admission.ADMITTED, self.record(host, "c3-admitted")["admission"]["verdict"])
+
+        refused = self.through_the_verb(host, json.dumps(packet("c3-refused", instruction=REFUSED)))
+        self.assertEqual(1, refused.returncode, refused.stdout + refused.stderr)
+        self.assertIn(f"[{admission.NotAdmitted.code}]", refused.stderr)
+        self.assertIn(GATE["id"], refused.stdout)
+
+        # The worker FINISHED and what it wrote is NOT ADMITTED -- two propositions, two fields.
+        # A single word doing both jobs would have had to hide one of them.
+        task = self.record(host, "c3-refused")
+        self.assertEqual(dispatch_port.COMPLETED, task["state"])
+        self.assertEqual(0, task["exit_code"])
+        verdict = task["admission"]
+        self.assertEqual(admission.REFUSED, verdict["verdict"])
+        self.assertEqual([WROTE], verdict["judged"])
+        self.assertEqual([{"path": WROTE, "gate": GATE["id"], "because": GATE["because"],
+                           "instead": GATE["instead"]}], verdict["refusals"])
+        self.assertTrue(verdict["at"])
+
+        # The evidence for the refusal outlives it: the tree still holds what was refused, and the
+        # host never received it. A refusal that destroyed what it refused could not be checked.
+        self.assertTrue((host / task["workspace"] / WROTE).is_file())
+        self.assertFalse((host / WROTE).exists())
+
+    def test_316_a_host_whose_provider_cannot_report_a_return_starts_no_worker_at_all(self):
+        """Refused at the DOOR, before anything is leased: a worker whose change could never be
+        judged is not a worker this port starts and reports on afterwards."""
+        self.assertTrue(admission.declares(dispatch_port.provider(self.context(self.repository()))),
+                        "the taken provider cannot report a return, so the refusal below would "
+                        "pass on nothing")
+        blinded = []
+
+        def blind(kit: Path) -> None:
+            """The provider's own document -- found by the CONTRACT it keeps, exactly as the port
+            finds it -- with its way of reporting a return taken out. A host that declares
+            isolation and no way to judge what came back out of it."""
+            for document in [p for p in kit.rglob("*.json") if _declares_provider(p)]:
+                declaration = json.loads(document.read_text(encoding="utf-8"))
+                for row in declaration[dispatch_port.PROVIDER_LIST]:
+                    blinded.append(row.pop(admission.RETURNED, None) and row["id"])
+                document.write_text(json.dumps(declaration, indent=2) + "\n", encoding="utf-8",
+                                    newline="\n")
+
+        kit = adapted_kit(patch=blind, adapters=[*ADAPTERS, ADAPTER])
+        self.assertTrue([row for row in blinded if row], "no provider was blinded")
+        host = self.repository(kit)
+        said = self.through_the_verb(host, json.dumps(packet("c3-unjudgeable")), kit=kit)
+        self.assertEqual(1, said.returncode, said.stdout + said.stderr)
+        self.assertIn(f"[{dispatch_port.DispatchUnserved.code}]", said.stderr)
+        # Nothing was leased, made or started: the refusal is at the door, before the writing.
+        home = Path(ephemeral.root(self.context(host))) / dispatch_port.HOME
+        self.assertFalse((host / home / "c3-unjudgeable").exists())
 
 
 if __name__ == "__main__":

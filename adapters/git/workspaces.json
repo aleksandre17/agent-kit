@@ -7,6 +7,11 @@
       "isolate": {
         "argv": ["git", "worktree", "add", "-b", "{branch}", "{workspace}", "HEAD"]
       },
+      "returned": {
+        "says": "`git status --porcelain=v1 --untracked-files=all` prints one line per path that differs from the tree's HEAD -- two status characters, a space, then the path, relative to the root of THAT working tree (which for a linked worktree is the worktree itself, not the repository the worktree was cut from). `--porcelain=v1` is documented as a stable, script-readable format that does not change between git versions, which is why it and not the human output is what a declaration may be written against; `core.quotepath=off` stops git re-encoding non-ASCII path bytes into C-style escapes, so a path comes back as the path. Taken from git-status(1). UNVERIFIED on this machine through this declaration: renames (`R  old -> new`, whose grammar below keeps the NEW name and discards the old), paths containing a space or a quote (git quotes such a path, and the quotes are not stripped here), and a tree whose HEAD is unborn.",
+        "argv": ["git", "-c", "core.quotepath=off", "status", "--porcelain=v1", "--untracked-files=all"],
+        "names": "^..[ ](?:.+ -> )?(.+)$"
+      },
       "withdraw": {
         "argv": ["git", "worktree", "remove", "--force", "{workspace}"]
       }

@@ -42,6 +42,7 @@ import subprocess
 import uuid
 from pathlib import Path
 
+import admission
 import declared
 import ephemeral
 import hostlock
@@ -77,8 +78,17 @@ TREE = "tree"
 #: What this port PROVIDES to a declaration. A placeholder or a channel outside these sets is
 #: refused by name; widening either is this interpreter providing one more, never an enum edited
 #: in a schema (Cardinal II).
-PROVIDED = ("id", "instruction", "branch", "role", "workspace", "task")
-CHANNELS = ("stdout", "stderr")
+PROVIDED = ("id", "instruction", "branch", "role", "workspace", "task", "artifact")
+CHANNELS = ("stdout", "stderr", "file")
+
+#: The name of the file this port PROVIDES for a worker that answers in a file rather than on a
+#: stream. It sits in the task's own directory and NOT in the worker's tree, deliberately: an
+#: answer is not a change to the repository, so it must not be judged as one on return, and it must
+#: outlive a tree that is withdrawn. The port never writes it and never invents its content -- a
+#: declared file channel that the worker left unwritten is recorded as a DECLARED ABSENCE and never
+#: as an empty artifact, because an empty answer and an answer never given read identically.
+ARTIFACT = "artifact"
+FILE = "file"
 
 _PLACEHOLDER = re.compile(r"\{([a-z_]+)\}")
 
@@ -208,7 +218,14 @@ def accepted(ctx, raw) -> tuple:
                 f"adapter {adapter['id']!r} returns its artifact {part['name']!r} from "
                 f"{part['from']!r}, a channel this port does not provide (it provides "
                 f"{list(CHANNELS)}); an artifact read from nowhere would be a fabricated one")
-    return packet, adapter, provider(ctx)
+    isolation = provider(ctx)
+    if not admission.declares(isolation):
+        raise DispatchUnserved(
+            f"the workspace provider {isolation['id']!r} states how a worker's tree is MADE and not "
+            f"how it says what changed in it, so nothing could judge what this worker returned. "
+            f"A runtime that cannot be stopped mid-write is admitted on RETURN or not at all "
+            f"(ADR-017 decision 5); no worker is started where that reading is impossible")
+    return packet, adapter, isolation
 
 
 # -- the places ---------------------------------------------------------------------------------
@@ -275,6 +292,12 @@ def dispatch(ctx, args, raw, *, run=None) -> int:
         code, message = _carried_out(ctx, packet, adapter, workspaces, record,
                                      tree_rel, run or _ran)
         return code
+    except admission.NotAdmitted as refused:
+        # The record is already CLOSED, carrying the worker's own ending and the verdict on what it
+        # wrote. Re-closing it here would overwrite both with this refusal, and the account of what
+        # the worker actually did would be replaced by the account of what the host did about it.
+        code, message = refused.exit_code, str(refused)
+        raise
     except KitError as refusal:
         code, message = refusal.exit_code, str(refusal)
         record.close(FAILED, code, message)
@@ -289,10 +312,11 @@ def dispatch(ctx, args, raw, *, run=None) -> int:
 def _carried_out(ctx, packet, adapter, workspaces, record, tree_rel, run) -> tuple:
     root = ctx.workspace.path(".")
     tree = ctx.workspace.path(tree_rel)
+    provider_where = f"workspace provider {workspaces['id']!r}"
     made = _argv(workspaces["isolate"]["argv"],
                  {"id": packet["id"], "branch": packet["branch"], "workspace": tree_rel,
-                  "instruction": None, "role": None, "task": None},
-                 where=f"workspace provider {workspaces['id']!r}")
+                  "instruction": None, "role": None, "task": None, ARTIFACT: None},
+                 where=provider_where)
     isolated = run(made, cwd=root, stdin=None)
     if isolated.returncode != 0:
         why = (isolated.stderr or isolated.stdout or "").strip() or f"exit {isolated.returncode}"
@@ -301,9 +325,10 @@ def _carried_out(ctx, packet, adapter, workspaces, record, tree_rel, run) -> tup
         print(f"dispatch: {packet['id']} FAILED before it started -- {why}")
         return 1, why
 
+    answer = ctx.workspace.path(home(ctx, packet["id"], ARTIFACT))
     values = {"id": packet["id"], "branch": packet["branch"], "instruction": packet["instruction"],
               "role": packet.get("role"), "workspace": tree.as_posix(),
-              "task": ctx.workspace.path(record.rel).as_posix()}
+              "task": ctx.workspace.path(record.rel).as_posix(), ARTIFACT: answer.as_posix()}
     where = f"adapter {adapter['id']!r}"
     argv = _argv(adapter["starts"]["argv"], values, where=where)
     stdin = _argv([adapter["starts"]["stdin"]], values, where=where)[0] \
@@ -311,15 +336,47 @@ def _carried_out(ctx, packet, adapter, workspaces, record, tree_rel, run) -> tup
     record.move(WORKING, started_at=ctx.clock.now())
     worker = run(argv, cwd=tree, stdin=stdin)
 
-    produced = {"stdout": worker.stdout or "", "stderr": worker.stderr or ""}
-    artifacts = [{"name": part["name"], "from": part["from"], "text": produced[part["from"]],
-                  **({"media_type": part["media_type"]} if "media_type" in part else {})}
-                 for part in adapter["returns"]]
+    artifacts = [_artifact(part, worker, answer) for part in adapter["returns"]]
     ended = COMPLETED if worker.returncode == adapter["completed_on"]["exit"] else FAILED
-    record.close(ended, worker.returncode, artifacts=artifacts)
+
+    # The other half of the isolation (ADR-017 decision 5). It is read whatever the worker's own
+    # ending was: a worker that failed still wrote, and a tree nobody judged because its process
+    # returned non-zero is exactly the unverified change the isolation exists to catch.
+    verdict = admission.of(ctx, workspaces, tree,
+                           _argv(workspaces[admission.RETURNED][admission.ARGV],
+                                 {"id": packet["id"], "branch": packet["branch"],
+                                  "workspace": tree.as_posix(), "instruction": None, "role": None,
+                                  "task": None, ARTIFACT: None},
+                                 where=provider_where),
+                           run)
+    record.close(ended, worker.returncode, artifacts=artifacts, admission=verdict)
     print(f"dispatch: {packet['id']} {ended} through {adapter['id']} in {tree_rel} "
           f"(exit {worker.returncode}); {len(artifacts)} artifact(s) recorded at {record.rel}")
+    print(admission.said(verdict))
+    if verdict["verdict"] != admission.ADMITTED:
+        raise admission.NotAdmitted(
+            f"dispatch {packet['id']!r} ended {ended}, and what its worker left in {tree_rel} is "
+            f"NOT ADMITTED to this host. The verdict, every path it judged and every refusal stand "
+            f"at {record.rel}")
     return (0 if ended == COMPLETED else 1), (None if ended == COMPLETED else f"worker exit {worker.returncode}")
+
+
+def _artifact(part: dict, worker, answer) -> dict:
+    """One declared artifact, read from the channel the adapter named -- or a DECLARED ABSENCE in
+    the place its text would have been. A worker that promised a file and wrote none has produced
+    nothing, and nothing is what is recorded."""
+    found = {"name": part["name"], "from": part["from"],
+             **({"media_type": part["media_type"]} if "media_type" in part else {})}
+    if part["from"] == FILE:
+        if not answer.is_file():
+            return dict(found, absent=f"this adapter returns {part['name']!r} in the file this port "
+                                      f"provided at {answer.as_posix()}, and the worker wrote none")
+        try:
+            return dict(found, text=answer.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError) as exc:
+            return dict(found, absent=f"the file this port provided for {part['name']!r} could not "
+                                      f"be read back -- {exc}")
+    return dict(found, text=(worker.stdout if part["from"] == "stdout" else worker.stderr) or "")
 
 
 def _ran(argv, cwd, stdin):
@@ -377,12 +434,15 @@ class _Record:
         self.value.update(state=state, **fields)
         self._flush(f"as it moves to {state}")
 
-    def close(self, state: str, code: int, message: str = None, artifacts=None) -> None:
+    def close(self, state: str, code: int, message: str = None, artifacts=None,
+              admission=None) -> None:
         """The end, stated in the same act as its moment. A state without a moment goes on
         certifying for as long as it sits there and cannot be contradicted."""
         self.value.update(state=state, ended_at=self.ctx.clock.now(), exit_code=code)
         if artifacts is not None:
             self.value["artifacts"] = artifacts
+        if admission is not None:
+            self.value["admission"] = admission
         if message:
             self.value["status_message"] = message
         self._flush("as this dispatch closes it")

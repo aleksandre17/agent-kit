@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 182,
+  "count": 186,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -413,7 +413,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "4b7355ef1186de0071fe666b83ca5965c106bd062a0aed582f9e68e84c4333d6",
+      "digest": "af6e4c8b5cacf990b4e2218038344016a0fe902316ee0fc1f40e098d59bf8e14",
       "path": "diagnostics.json"
     },
     {
@@ -485,6 +485,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "fc0d780ad0c73b0b59957ac0258430429c1ff0303e678fea48ab11d98e8ce23c",
+      "path": "interpreters/gatekinds.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "7c3a0d605e7b9a4fa2d295d9c4d30648b9b6d363edfe7e092c8b8bf48286a506",
       "path": "interpreters/gates/activated.py"
     },
@@ -509,7 +515,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "eef2038d8ece4024cf6413ad92f59d2f71741053b588c6e11a7f92bb55340ecd",
+      "digest": "caab8be0857b455f31deb5a1a15b3dcbc8d367f468fdebd4f69f53a1a2c8f0e7",
       "path": "interpreters/gates/edits.py"
     },
     {
@@ -563,6 +569,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "b55e3252497fb3079c44db6d3ce9d6b7147b9503a17277b727286b8280ac0c7c",
+      "path": "interpreters/judgement.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "bdd6c4d4d3db5f030846ff2648337d0c41bcff8e6b9e2e04ef4464eec0ce242b",
       "path": "interpreters/lifecycle.py"
     },
@@ -593,8 +605,20 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "6942f9de450cbd7d29f0be53af102201cee646a71002c4797ebfc4be4494c505",
+      "path": "interpreters/placement.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "bd2e971a712302bbfe99a5dac68ed26efe5538b18e6a2648c8c77d78dc8e5346",
       "path": "interpreters/plan.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "853b6751a00c18f0000dd11a22ce1d8471c85bbdb16e040390fbcc13f5e1b552",
+      "path": "interpreters/ports/admission.py"
     },
     {
       "accounted_by": "interpreter",
@@ -605,7 +629,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "5b77faec59c0a4289661d6c431a7510dfc769810ba9c58f3fb532a27130fef6a",
+      "digest": "61613f7f46f8bd18775a8c0ae29ed4a29abaa61f09cdac6830130647fc12f863",
       "path": "interpreters/ports/dispatch_port.py"
     },
     {
@@ -713,7 +737,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "11b85a7c5a529fba81d04a874d83e73b351ee423ae1032dce97dd85fcd310c7d",
+      "digest": "0e32b32c6e2463c4443593c36d6c0ee2f1bc98718d6e4ca078322de8485e5f45",
       "path": "interpreters/verbs/check.py"
     },
     {
@@ -749,7 +773,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b3c32207cf0bb5f9b8e76feddc70e093a6dd4ebace41863092ee83ddd3c39ec7",
+      "digest": "614535d6833e16a4211f4fe96d528b18d11762758cf58487b18f9daf9b8e7b80",
       "path": "interpreters/verbs/judge.py"
     },
     {
@@ -803,7 +827,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "ad57495f77d76138fe2fb6072d68934203205be5b862632bb95a3c4cfe88662f",
+      "digest": "6c775e075d49dd8754004f27fbfe8716f022f99bf4f93986c933ef0b4c183539",
       "path": "roles/archetypes.json"
     },
     {
@@ -1055,13 +1079,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "8b5a0261e2ca390614a9e88c3a5b7f07d4cb0de26681d5d6fb6b544b44902b0f",
+      "digest": "0ed6f812733a9e9e12677096be2addf76d40a066f4c0d05b83b24e2a6f298a12",
       "path": "schemas/task.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "4649ceaa84276118fa08059bd1e65e772ee2f9fb982b3c3db9949de3ba2eb66e",
+      "digest": "90b915105e41ec3a6ecdec3e7d3b402a9331592ba7837c797764dcd3eae5aa62",
       "path": "schemas/workspace-provider.schema.json"
     },
     {
@@ -1098,5 +1122,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-18T05:45:48+00:00"
+  "taken_at": "2026-09-18T11:06:20+00:00"
 }

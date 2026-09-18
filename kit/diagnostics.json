@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 51,
+  "issued": 52,
   "codes": [
     {
       "code": "KIT0001",
@@ -308,6 +308,12 @@
       "status": "active",
       "title": "the task vocabulary has two homes and they have parted",
       "explanation": "The states a dispatched task can be in are A2A's, adopted whole, and their one home is the `task` schema. The dispatch port names the ones it writes; before the first write it holds those names against the schema's own declaration and refuses if either side has a state the other does not, rather than writing a record whose state no reader recognises. The same refusal covers a task record that does not honour its schema at any transition: a record that is not a task record is not written over the only account of what a worker did."
+    },
+    {
+      "code": "KIT0052",
+      "status": "active",
+      "title": "what a worker's tree came back with is NOT ADMITTED",
+      "explanation": "A runtime the kit cannot stop mid-command is not prevented from writing; it is ISOLATED, and what it wrote is judged on RETURN (ADR-017 decision 5). Verification at return replaces prevention at write, and it only replaces it if it actually runs -- so this refusal is raised whenever the change a worker left in its leased tree either violates one of this host's declared edit gates, or cannot be read at all. Both endings are one refusal on purpose: an unjudged write is not an allowed one, and a change that could not be read admitted 'because nothing was found' would be exactly the silence that makes isolation decorative. The worker's tree, its task record and its lease are left standing: they are the only account of what was refused, and the refusal is not the moment to destroy the evidence for it. The task's OWN state is untouched by this -- whether the worker finished is one proposition and whether what it wrote may enter the host is another, and a single word doing both jobs would hide one of them."
     }
   ]
 }

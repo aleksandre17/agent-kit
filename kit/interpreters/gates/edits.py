@@ -15,9 +15,7 @@ declaration and cannot disagree about which rules exist.
 
 from __future__ import annotations
 
-import os
 import re
-from pathlib import Path
 
 import declared
 
@@ -122,43 +120,6 @@ def edits_in(event, hand: dict) -> list:
     if hand.get("patch"):
         found += _patched(event, hand["patch"])
     return found
-
-
-#: A drive spelled as a POSIX mount (`/c/...`, `/cygdrive/c/...`): how a POSIX shell running on a
-#: drive-lettered filesystem names that drive. A rule of the path's FORM, never of a shell's name.
-_MOUNTED_DRIVE = re.compile(r"^/(?:cygdrive/)?([A-Za-z])(?=/|$)")
-
-
-class Unplaceable(ValueError):
-    """A handed path this machine cannot place: neither inside the host nor provably outside it."""
-
-
-def _placed(raw: str) -> str:
-    """The raw path in the form THIS machine's path rules read, or Unplaceable. Where paths carry a
-    drive, a rooted path without one is read against whichever drive is current -- a guess, and
-    a guess about where an edit lands must never resolve to 'elsewhere, so admitted'."""
-    if not os.path.splitdrive(os.path.abspath(os.sep))[0]:
-        return raw  # this filesystem has no drives: a rooted path is exactly what it names
-    mounted = _MOUNTED_DRIVE.match(raw)
-    if mounted:
-        return f"{mounted.group(1)}:/{raw[mounted.end():].lstrip('/')}"
-    drive, _rest = os.path.splitdrive(raw)
-    if not drive and raw[:1] in ("/", "\\"):
-        raise Unplaceable(f"{raw} is rooted but names no drive, so where it lands is not measurable")
-    return raw
-
-
-def host_relative(root: Path, raw: str) -> "str | None":
-    """A path a product handed across the boundary, as the host-relative POSIX path a gate reads --
-    or None when it lies outside this host, whose gates do not reach it; Unplaceable when neither
-    can be measured. Measured, never assumed: a product may hand an absolute drive path, a drive
-    spelled as a POSIX mount, a relative one, or either case of a drive."""
-    raw = _placed(raw)
-    candidate = Path(raw) if os.path.isabs(raw) else root / raw
-    full, base = os.path.normcase(os.path.abspath(candidate)), os.path.normcase(os.path.abspath(root))
-    if full != base and not full.startswith(base.rstrip(os.sep) + os.sep):
-        return None
-    return Path(os.path.relpath(os.path.abspath(candidate), os.path.abspath(root))).as_posix()
 
 
 # -- the gate kind -----------------------------------------------------------------------------

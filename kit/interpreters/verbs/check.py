@@ -12,25 +12,18 @@ must be modified to admit a new capability is not open, however generic its eval
 
 from __future__ import annotations
 
-import importlib
-from pathlib import Path
-
 import declared
+import gatekinds
 import stance as stance_of
 from errors import KitError
+from gatekinds import GateError, registry  # noqa: F401  (this verb's long-published names)
 
 SUMMARY = "run the declared fitness functions and report"
 MUTATES = False
 REQUIRES_APPROVED_HOST = True
 
-GATES = Path(__file__).resolve().parents[1] / "gates"
-
-
-class GateError(KitError):
-    """A declaration named a gate kind no discovered module can evaluate, or two modules claim
-    one kind -- which is a name resolving to two meanings, refused rather than ordered."""
-
-    code = "KIT0023"
+#: Where gate kinds are discovered, and the error a clash raises: the core's, not this verb's.
+GATES = gatekinds.GATES
 
 
 class ThroughUnknown(KitError):
@@ -55,25 +48,6 @@ def _through(ctx, surface_id: "str | None") -> "dict | None":
             f"check is asked to run through the surface {surface_id!r}, and no taken adapter declares "
             f"it (declared: {sorted(surfaces)}). Nothing was checked.")
     return surfaces[surface_id]
-
-
-def registry(entry: str = "KINDS") -> dict:
-    """Every gate kind's entry of one registry, discovered from the gate modules: `KINDS` judges
-    the tree; another name (an edit judge's) is read by the same discovery, never a second one."""
-    kinds: dict = {}
-    owners: dict = {}
-    for path in sorted(GATES.glob("*.py")):
-        if path.stem.startswith("_"):
-            continue
-        module = importlib.import_module(path.stem)
-        for kind, evaluate in getattr(module, entry, {}).items():
-            if kind in kinds:
-                raise GateError(
-                    f"gate kind {kind!r} is declared by both {owners[kind]!r} and {path.stem!r}"
-                )
-            owners[kind] = path.stem
-            kinds[kind] = evaluate
-    return kinds
 
 
 def run(ctx, args) -> int:

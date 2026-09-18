@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "adapters": [
+    {
+      "id": "codex-exec",
+      "says": "Codex's command-line runtime runs one non-interactive turn per invocation: `codex exec <PROMPT>` carries the prompt to completion and exits. What this row names is MEASURED PRESENCE and not measured behaviour -- on 2026-09-18, on this machine, `codex --version` reported `codex-cli 0.154.0`, `codex doctor` reported auth mode `chatgpt` with 22 checks ok and 0 failed, and every flag below was read in `codex exec --help` (ADR-017 amendment 5). No run of this adapter has been observed by the dispatch port, in this repository or anywhere else, so every sentence about what these flags DO remains a claim, and the row is honest rather than green. `-C/--cd <DIR>` runs the turn in a directory named on the command line -- named here as the tree the PORT placed, and never `--worktree`, which would have this product place a tree of its own and give isolation a second home (Cardinal III). `-s/--sandbox workspace-write` is the declared form of ADR-017 decision 5's isolation: this product's own confinement of its writes to the directory it is working in, stated as a claim by its publisher, layered UNDER the kit's own isolation and never instead of it -- the kit's guarantee is the leased tree plus the judgement on return, and a vendor's sandbox flag is a second belt whose behaviour this kit has not measured. `-o/--output-last-message <FILE>` writes the turn's final message to a file, which is how the worker's ARTIFACT comes back as a file with a declared shape rather than as a transcript somebody parsed; the port provides that file, outside the worker's tree, so the answer is not mistaken for a change to the repository. What this adapter deliberately does NOT declare: `--json` (the event stream ADR-017 slice C4's OpenTelemetry receipts read), `--output-schema` (which would need the port to provide a path to a declared shape, and does not yet), `exec resume` and `fork` (the round-trip that lets a worker ask a question, also C4), and `--skip-git-repo-check` (the tree the port places is a linked working tree of a real repository, so the check should pass -- UNVERIFIED, and this is the first thing a real run will either confirm or refute). A worker that cannot proceed should return `input-required` with its question instead of guessing; no channel for that exists yet, and declaring one before it is built would be a surface claiming a capability this kit does not have.",
+      "starts": {
+        "argv": [
+          "codex",
+          "exec",
+          "--cd",
+          "{workspace}",
+          "--sandbox",
+          "workspace-write",
+          "--output-last-message",
+          "{artifact}",
+          "{instruction}"
+        ]
+      },
+      "returns": [
+        {
+          "name": "result",
+          "from": "file",
+          "media_type": "text/markdown"
+        },
+        {
+          "name": "diagnostics",
+          "from": "stderr",
+          "media_type": "text/plain"
+        }
+      ],
+      "completed_on": {
+        "exit": 0
+      }
+    }
+  ]
+}

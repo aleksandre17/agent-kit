@@ -216,6 +216,91 @@ port names the four it can produce and refuses at the first write if the two hav
 that produces the fifth is C4, and a vocabulary narrowed to what is built today would have to be widened
 by a schema edit the first time a worker asked a question.
 
+## Amendment 6 — what C3 decided where this ADR had not (2026-09-18, building C3)
+
+**Admission on return is a READING, and it is the port's, not a verb's.** Decision 5 said a
+worker's change "is admitted to the host only after `check` passes on return" and C2 left that half
+unbuilt — which in practice meant a worker was *neither* prevented *nor* verified, only placed
+somewhere else. It is now taken inside the port, in the same act that closes the record: the tree is
+asked what changed, the text of each returned path is read out of the tree, and the ONE judgement
+every other writer passes is applied to it. *Rejected:* a separate `admit` verb run afterwards — a
+verification that a human has to remember to run is not a mechanism, and the window between the
+worker stopping and somebody running it is exactly the window the isolation exists to close.
+*Rejected:* piping a diff into the existing `judge` verb — that verb reads a patch through the
+`hands` grammar a runtime SURFACE declares, and a dispatched tree is served by no surface, so it
+would have needed an invented surface to be judged through. What both share is not the verb but the
+GATES, so the gate application moved to one home (`interpreters/judgement.py`) and both call it; a
+host cannot come to hold two answers to *may this text enter*.
+
+**Whole file, not the introduced lines.** A returned tree is judged on what it now CONTAINS. That
+is stricter than a patch reading and deliberately so: text a worker moved into a file by rewriting
+it is text that entered, and the port has no dated base to diff against that the worker could not
+also have moved. *Known consequence:* a worker that touches a file already failing a gate inherits
+that refusal. That is the honest reading — the host said it refuses that text.
+
+**There are two verdicts and no third.** `admitted` or `refused`. A change that could not be READ —
+the tree could not report, a path came back that lies outside the tree the worker was given, a file
+could not be decoded — is REFUSED, never "not measured". *Rejected:* a `not-measured` verdict
+alongside them: elsewhere in this kit an unmeasured state is declared rather than fabricated, and
+that is right for a REPORT; here the reading stands between a change and a host, and a change that
+sits in a third state gets in on whichever side reads it charitably.
+
+**How a tree reports its own change is a product fact** (`workspace-provider.returned`: an argv and
+a `names` grammar with one capture group, published by the `git` adapter as
+`git status --porcelain=v1`). A provider that declares none cannot be dispatched through, and the
+refusal is at the DOOR, before the lease: a worker whose return could never be judged is not one
+this port starts and then reports on. *Rejected:* the port running a version control command itself
+(the one interpreter carrying a product name); *rejected:* the port diffing the tree against the
+host (a second home for what "changed" means, and wrong the moment the host moves).
+
+**The task's STATE and the admission are two propositions.** Whether the worker finished is the
+adapter's exit code; whether what it wrote may enter is this host's gates. The record carries both,
+separately, and a refused admission does not rewrite a `completed` task into a failed one. The
+dispatch exits non-zero and refuses with KIT0052 — the *act* failed, the *account* did not change.
+
+**GAP-D1 (who withdraws a worktree and a branch) — DECIDED: a person's, through a door; never an
+act of admission.** Admission is a reading and moves nothing. The tree, the branch, the lease and
+the record stay standing on both verdicts, because on a refusal the tree is the only evidence for
+the refusal and on an admission it is work nobody has merged yet. *Rejected:* withdrawal on
+admission — it would destroy a worker's output at the exact moment the output was declared good,
+and make a reading into a mutation; *rejected:* withdrawal on refusal — a refusal that deletes what
+it refused cannot be checked by the person it was reported to, and the loudest failure would leave
+the least evidence. **Still unbuilt, and now a narrower gap:** the door itself. `withdraw` is
+declared by the provider and called by no path; the gap moves from *nobody has decided* to *the act
+is decided and its door is not built*.
+
+**The port PROVIDES a file channel; an adapter never names its own path.** An artifact returns as a
+file (`{artifact}` placeholder, `from: "file"`) because a worker's answer read out of a transcript
+is a parse, not an answer. The file sits in the TASK's directory and never in the worker's tree —
+an answer is not a change to the repository, so it must not be judged as one on return, and it must
+outlive a tree that is withdrawn. A declared file the worker never wrote is recorded as a DECLARED
+ABSENCE, never as an empty artifact. *This widened the port's `PROVIDED` and `CHANNELS` tuples*,
+which is the one growth the port's own contract sanctions — the port providing one more thing, with
+no runtime named, as against an enum edited in a schema. Everything else about C3 was a
+declaration: a second intelligence joined as `adapters/codex-exec/`, and no port, interpreter or
+schema enum was edited to admit it.
+
+**The visibility wrapper of decision 8 is an ARCHETYPE, not a named agent.** The kit ships
+`dispatch-worker` — a role whose seam is the visibility of work done by an intelligence the
+operator is not watching, which relays and never summarises — and a host instances it as
+`codex-worker` by an overlay naming the model and tool set its runtime understands. *Rejected:* a
+`codex-worker` archetype in the kit (a product name in the agnostic core, which is the one thing
+ADR-014 moved out); *rejected:* a hand-written agent file (a role with a second body, and one no
+render can reproduce).
+
+**Recorded because it happened: C1 refused C3.** The pre-commit `judge` built in the previous
+slice rejected this slice's own commit, naming two arrow violations no reader had seen — the new
+core module importing the `check` VERB, and the new port reaching into `gates/`. Both were real
+cycles. The cure was structural and is the shape this ADR would have asked for anyway: what two
+layers both need belongs to the layer beneath both, so gate-kind discovery moved to
+`interpreters/gatekinds.py` and path placement to `interpreters/placement.py`, each with exactly
+one home and both callers reaching down. The bypass was available and is the only failure that was
+ever on the table here.
+
+**Not built in C3, deliberately:** `--output-schema` (it needs the port to provide a path to a
+declared shape, and no consumer asks yet); `--json` event streaming and the OTel receipts that read
+it (C4); `input-required` (C4); `codex-mcp` (measured not viable, amendment 5).
+
 ## Measured when (Cardinal VII — assumptions at a boundary)
 
 - **A2A's current state and governance** (Linux Foundation stewardship; the task-state set above) — from

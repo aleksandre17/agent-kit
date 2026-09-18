@@ -52,6 +52,34 @@
               }
             }
           },
+          "returned": {
+            "description": "argv that REPORTS what the worker changed in the tree it was given, and the grammar by which one line of that program's output names one path. This is the other half of ADR-017 decision 5: a runtime that cannot be stopped mid-write is isolated, and what it wrote is admitted to the host only after this host's own gates have judged it -- which is possible only if something can say WHICH paths came back. It is declared here, beside `isolate`, because how a tree reports its own change is the same product fact as how it is made; the port reads the paths, reads their text out of the tree, and judges them with the one judge every other writer passes. `names` is a pattern with exactly one capture group, applied to each line: a line it does not match names no path. A provider that declares none cannot be dispatched through -- refused, never admitted blind.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "argv",
+              "names"
+            ],
+            "properties": {
+              "says": {
+                "description": "What is claimed about the report this program prints, and where the claim comes from. Its own testimony, beside the row's, because the format a change comes back in is a different claim about the product from the one that says how a tree is made.",
+                "type": "string",
+                "minLength": 1
+              },
+              "argv": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "names": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
           "withdraw": {
             "description": "argv that removes a tree this provider made. Declared here so that a tree is never withdrawn by a rule an interpreter invented; the port calls it only where its own act did not complete, and never on a tree holding a worker's finished work.",
             "type": "object",

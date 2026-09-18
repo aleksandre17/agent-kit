@@ -90,8 +90,7 @@
         "additionalProperties": false,
         "required": [
           "name",
-          "from",
-          "text"
+          "from"
         ],
         "properties": {
           "name": {
@@ -108,8 +107,106 @@
             "minLength": 1
           },
           "text": {
+            "description": "What was actually read from that channel. Absent exactly when `absent` says why nothing was read -- an artifact whose channel produced nothing is never recorded as an empty string, because an empty answer and an answer that was never given read identically and only one of them is a result.",
             "type": "string"
+          },
+          "absent": {
+            "description": "Why nothing was read from this channel -- a worker that declared a file artifact and wrote no file, most of all. A declared absence, in the place the answer would have been.",
+            "type": "string",
+            "minLength": 1
           }
+        }
+      }
+    },
+    "admission": {
+      "description": "Whether what the worker left in its isolated tree may enter this host -- ADR-017 decision 5's other half, made a record. A SEPARATE proposition from `state`: whether the worker finished is one question and whether what it wrote passes this host's gates is another, and one word doing both jobs would hide whichever it was not doing. Absent means the worker never returned far enough to be judged; it never means admitted.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verdict",
+        "at",
+        "judged"
+      ],
+      "properties": {
+        "verdict": {
+          "description": "`admitted`: every path the worker's tree came back with was judged by this host's declared edit gates and none was refused. `refused`: at least one was refused, or the change could not be read at all -- one word for both, because an unjudged write is not an allowed one.",
+          "enum": [
+            "admitted",
+            "refused"
+          ]
+        },
+        "at": {
+          "description": "When the return was read. A verdict without its moment goes on certifying forever.",
+          "type": "string",
+          "minLength": 1
+        },
+        "judged": {
+          "description": "Every host-relative path the worker's tree reported as changed, as the gates saw it.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "refusals": {
+          "description": "One row per refusal: the path, the gate that refused it, and that gate's own words.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "gate",
+              "because"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "gate": {
+                "type": "string",
+                "minLength": 1
+              },
+              "because": {
+                "type": "string",
+                "minLength": 1
+              },
+              "instead": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "unjudged": {
+          "description": "Gates that could not be applied because they are uncalibrated -- NAMED, never silently skipped and never trusted.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "unreadable": {
+          "description": "Paths the tree reported as changed whose text could not be read, so no gate could judge them. Their presence is why the verdict is `refused`.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "deleted": {
+          "description": "Paths the tree reported as changed which no longer exist in it. A deletion introduces no text, so there is nothing for a text gate to refuse; it is recorded rather than passed over in silence.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "because": {
+          "description": "Why the change could not be read at all, when that is what happened.",
+          "type": "string",
+          "minLength": 1
         }
       }
     },
