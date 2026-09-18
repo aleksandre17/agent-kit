@@ -146,6 +146,33 @@ the owner's directory).
 **Unverified until a real push:** runner reads the file; event field shapes; `actions/checkout@v4`
 (fetched, not SHA-pinned); fork PRs; force-push with unreachable base (fails closed).
 
+## Amendment 5 — the Codex boundary, MEASURED (2026-09-18, first act of C3)
+
+Cardinal VII: an environment is an assumption until measured, and it is measured once, cheaply, at the
+boundary. Taken on this machine on 2026-09-18 by the orchestrator, with `codex --version`,
+`codex exec --help`, `codex mcp --help` and `codex doctor` — read-only probes, nothing written.
+
+- **Installed and authenticated: YES.** `codex-cli 0.154.0`; `doctor` reports auth mode `chatgpt`,
+  provider endpoints reachable, `22 ok · 1 warn · 0 fail`. The receipt-based belief is now a reading.
+- **Codex CLI as an MCP SERVER: NO, in this version.** `codex mcp` manages *external* MCP servers that
+  Codex consumes (`list/get/add/remove/login/logout`); there is no server subcommand. The nearest thing
+  is `codex app-server` (marked experimental), currently `not running (ephemeral mode)`. **Therefore the
+  `codex-mcp` adapter of decision 2 is NOT built in C3** — it stays a declared, unbuilt row, and
+  `app-server` is the path it would take if it is ever needed. Decision 2 is unharmed: this is exactly an
+  adapter failing to be viable while the port is untouched.
+- **Session resume: YES.** `codex exec resume <id> | --last` and `codex fork` exist, so **C4's
+  `input-required` round-trip has a real resume path** rather than a re-prompt from the top.
+- **What `codex-exec` can be declared with** (all flags verified in `--help`, none yet exercised):
+  `-C/--cd <DIR>` to run inside the tree the PORT placed (never `--worktree`, which would make Codex
+  place its own tree and give isolation a second home — Cardinal III) · `-s/--sandbox
+  read-only|workspace-write|danger-full-access`, the declared form of decision 5's isolation ·
+  `--json` JSONL events, the stream C4's OTel receipts read · `-o/--output-last-message <FILE>` and
+  `--output-schema <FILE>`, which carry the worker's ARTIFACT back as a file with a declared shape
+  instead of a parsed transcript.
+
+**Still unverified:** every one of those flags' actual behaviour under this port; a real Codex run has
+not been made through it. Measured presence is not measured behaviour, and C3 is where it becomes one.
+
 ## Amendment 4 — what C2 decided where this ADR had not (2026-09-18, building C2)
 
 **The A2A re-read decision 3 asked for, as a DECLARED READING and not as a measurement.** Taken
@@ -195,10 +222,8 @@ by a schema edit the first time a worker asked a question.
   the orchestrator's knowledge, NOT re-measured on 2026-09-17. Re-read at the start of C2 — and that
   re-read was itself a DECLARED READING from the same kind of basis, not a measurement (amendment 4).
   A real reading of the specification is still owed.
-- **Codex CLI as an MCP server, and Codex session resume** — UNVERIFIED. Measured at the start of C3; the
-  `codex-mcp` adapter and C4's resume path depend on it.
-- **Codex CLI installed and authenticated on this machine** — receipts say it ran within 14 days; measured
-  once, cheaply, at the start of C3.
+- **Codex CLI as an MCP server, Codex session resume, and Codex installed/authenticated here** — all three
+  MEASURED on 2026-09-18; the readings, and what they change, live in **amendment 5** (one home).
 
 ## Rejected alternatives
 
