@@ -10,7 +10,14 @@ malformed task through. So:
      code and the same refusal. Nothing is leased, nothing is made, nothing is started;
   2. a well-formed one is leased, isolated, started and RECORDED: the task record exists before the
      worker does, moves through A2A's states, and closes once carrying the artifact the adapter
-     declared -- read from the channel it named, never from a guess.
+     declared -- read from the channel it named, never from a guess;
+  3. a worker that cannot proceed ASKS instead of guessing, and the SAME worker is re-entered with
+     an operator's answer through the argv its adapter declared (C4). The record never closes while
+     it stands, the question and the way back in are read from declared channels, and what the
+     resumed worker left in its tree is admitted or refused exactly as C3 judges any return;
+  4. a worker whose adapter declares no way back in parks a task that SAYS SO, and the resume act
+     refuses by that adapter's name -- the difference between a question nobody can answer and one
+     nobody has answered yet is the whole of Cardinal V here.
 
 No product is named here. The adapter the walked path runs through is a FIXTURE published the way
 any adapter is published -- a directory, a capability declaration and a document keeping the
@@ -55,7 +62,33 @@ WORKER = (
     "sys.stderr.write('the worker spoke here')" "\n"
 )
 
-ARTIFACT, DIAGNOSTIC = "result", "diagnostics"
+ARTIFACT, DIAGNOSTIC, SESSION = "result", "diagnostics", "session"
+
+#: The round-trip's fixture worker (C4). It writes in the tree it was given exactly as the first
+#: one does, puts its QUESTION in the file the port provided for its artifact, says on its own
+#: stdout what would re-enter it, and ends with the code its adapter declares for 'I need input'.
+#: Held free of braces for the same reason as the worker above.
+ASKS_ON = 7
+QUESTION = "which of the two shapes did you mean"
+REENTRY = "a-session-no-other-task-has"
+ASKER = (
+    "import pathlib, sys" "\n"
+    f"pathlib.Path({WROTE!r}).write_text(sys.argv[1], encoding='utf-8')" "\n"
+    f"pathlib.Path(sys.argv[2]).write_text({QUESTION!r}, encoding='utf-8')" "\n"
+    f"sys.stdout.write({REENTRY!r} + chr(10))" "\n"
+    "sys.stderr.write('the worker asked here')" "\n"
+    f"sys.exit({ASKS_ON})" "\n"
+)
+#: The same worker, re-entered. It is handed the operator's answer and the way back in, and it
+#: writes BOTH into its artifact -- so what the record holds at the end proves which answer reached
+#: which worker, rather than merely that something ran a second time.
+RESUMER = (
+    "import pathlib, sys" "\n"
+    f"pathlib.Path({WROTE!r}).write_text(sys.argv[1], encoding='utf-8')" "\n"
+    "pathlib.Path(sys.argv[3]).write_text('answered ' + sys.argv[1] + ' in ' + sys.argv[2], "
+    "encoding='utf-8')" "\n"
+    "sys.stderr.write('the worker resumed here')" "\n"
+)
 
 #: The one text this host refuses, and the gate that refuses it -- calibrated on the very file the
 #: fixture worker writes, so that the two dispatches below differ in the TEXT and in nothing else.
@@ -81,9 +114,14 @@ def _declares_provider(path: Path) -> bool:
     return isinstance(document, dict) and bool(document.get(dispatch_port.PROVIDER_LIST))
 
 
-def fixture_adapter() -> Path:
-    """An adapter for an intelligence nobody shipped, published exactly as a real one is."""
-    home = Path(tempfile.mkdtemp(prefix="dispatch-adapter-")).resolve() / "an-intelligence"
+def fixture_adapter(name: str = "an-intelligence", **declared) -> Path:
+    """An adapter for an intelligence nobody shipped, published exactly as a real one is.
+
+    `declared` is whatever this one says beyond the two blocks every adapter has -- an `asks`, a
+    `resumes`, or neither. One publisher, several intelligences: which blocks a row carries is a
+    DECLARATION, and the suite reaches the port's new behaviour without the port learning a name.
+    """
+    home = Path(tempfile.mkdtemp(prefix="dispatch-adapter-")).resolve() / name
     atexit.register(shutil.rmtree, home.parent, True)
     home.mkdir(parents=True)
     seat = f"capabilities/{home.name}"
@@ -93,13 +131,16 @@ def fixture_adapter() -> Path:
                    "host exactly as any adapter is, so that the port is measured on a declaration "
                    "it has no knowledge of.",
         "requires": [], "provides": [], "conflicts": [], "declares": {},
-        "documents": [{"id": "fixture_dispatch", "source": f"{seat}/dispatch.json",
+        # One readable, one name: two fixture adapters installed side by side are two capabilities,
+        # and a document id they shared would resolve to two things.
+        "documents": [{"id": f"{home.name.replace('-', '_')}_dispatch",
+                       "source": f"{seat}/dispatch.json",
                        "validates": dispatch_port.ADAPTERS["validates"]}],
         "floor": [], "installs": [], "gates": [],
     }, indent=2) + "\n", encoding="utf-8", newline="\n")
     (home / "dispatch.json").write_text(json.dumps({
         "schema_version": 1,
-        dispatch_port.ADAPTER_LIST: [{
+        dispatch_port.ADAPTER_LIST: [dict({
             "id": home.name,
             "says": "A fixture. It is this repository's own interpreter, run on a program written "
                     "here, so nothing in this row is a claim about anybody else's software.",
@@ -107,12 +148,38 @@ def fixture_adapter() -> Path:
             "returns": [{"name": ARTIFACT, "from": "stdout", "media_type": "application/json"},
                         {"name": DIAGNOSTIC, "from": "stderr"}],
             "completed_on": {"exit": 0},
-        }],
+        }, **declared)],
     }, indent=2) + "\n", encoding="utf-8", newline="\n")
     return home
 
 
 ADAPTER = fixture_adapter()
+#: An intelligence that can ask AND be re-entered, and one that can only ask. The second is not a
+#: broken adapter: a product with no way back in is a real one, and what the port must never do is
+#: let its task read like a question somebody merely has not answered yet.
+ASKING = fixture_adapter(
+    "an-intelligence-that-asks",
+    starts={"argv": [sys.executable, "-c", ASKER, "{instruction}", "{artifact}"]},
+    returns=[{"name": ARTIFACT, "from": "file", "media_type": "text/plain"},
+             {"name": SESSION, "from": "stdout"},
+             {"name": DIAGNOSTIC, "from": "stderr"}],
+    asks={"exit": ASKS_ON, "question": ARTIFACT, "reentry": SESSION},
+    resumes={"argv": [sys.executable, "-c", RESUMER, "{answer}", "{reentry}", "{artifact}"]},
+)
+UNANSWERABLE = fixture_adapter(
+    "an-intelligence-that-cannot-be-re-entered",
+    starts={"argv": [sys.executable, "-c", ASKER, "{instruction}", "{artifact}"]},
+    returns=[{"name": ARTIFACT, "from": "file", "media_type": "text/plain"},
+             {"name": DIAGNOSTIC, "from": "stderr"}],
+    asks={"exit": ASKS_ON, "question": ARTIFACT},
+)
+
+
+def answer(identity: str, said: str, **fields) -> str:
+    """The other act this port serves, as an operator hands it over: the task it answers, and the
+    answer. No flag says which act this is -- the document does."""
+    return json.dumps(dict({"schema_version": 1, dispatch_port.RESUME: identity,
+                            dispatch_port.ANSWER: said}, **fields))
 
 
 def packet(identity: str, **fields) -> dict:
@@ -125,7 +192,7 @@ class Dispatch(Fixtures, unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.kit = adapted_kit(adapters=[*ADAPTERS, ADAPTER])
+        cls.kit = adapted_kit(adapters=[*ADAPTERS, ADAPTER, ASKING, UNANSWERABLE])
         #: The verb, read from the file that declares it -- never a word spelled here.
         cls.verb = Path(dispatch_port.__file__).parent.parent.joinpath("verbs")
         cls.verb = next(p.stem for p in cls.verb.glob("*.py")
@@ -305,6 +372,114 @@ class Dispatch(Fixtures, unittest.TestCase):
         # Nothing was leased, made or started: the refusal is at the door, before the writing.
         home = Path(ephemeral.root(self.context(host))) / dispatch_port.HOME
         self.assertFalse((host / home / "c3-unjudgeable").exists())
+
+
+    # == 4. the round-trip ======================================================================
+    def test_317_a_worker_that_cannot_proceed_asks_and_the_same_one_is_re_entered(self):
+        """ADR-017 slice C4, walked end to end.
+
+        The claim is not that a second process ran. It is that the SAME worker was re-entered with
+        an operator's answer: the record never closed, it held the question and the way back in,
+        the answer went into the adapter's own declared resume argv, and what came back names both.
+        A resume that quietly started a fresh worker on a longer instruction would satisfy every
+        weaker assertion, which is why the artifact must carry the session the FIRST turn issued.
+        """
+        host = self.repository()
+        identity = "c4-round-trip"
+
+        asked = self.through_the_verb(host, json.dumps(packet(identity, route=ASKING.name)))
+        self.assertEqual(dispatch_port.WAITING, asked.returncode, asked.stdout + asked.stderr)
+        self.assertIn(QUESTION, asked.stdout)
+
+        standing = self.record(host, identity)
+        self.assertEqual(dispatch_port.INPUT_REQUIRED, standing["state"])
+        self.assertNotIn("ended_at", standing, "a worker that is standing was recorded as ended")
+        self.assertEqual(ASKS_ON, standing["exit_code"])
+        turn = standing[dispatch_port.HISTORY][-1]
+        self.assertEqual(dispatch_port.AGENT, turn["role"])
+        self.assertEqual(QUESTION, turn["text"])
+        self.assertEqual(REENTRY, turn[dispatch_port.REENTRY])
+        self.assertTrue(turn["at"])
+        self.assertNotIn("unresumable", turn)
+        # It asked, and it also WROTE: the return is judged whatever the ending was.
+        self.assertEqual(admission.ADMITTED, standing["admission"]["verdict"])
+        self.assertIn(WROTE, standing["admission"]["judged"])
+
+        said = "the second shape, and only that one"
+        walked = self.through_the_verb(host, answer(identity, said, by="an-operator"))
+        self.assertEqual(0, walked.returncode, walked.stdout + walked.stderr)
+
+        closed = self.record(host, identity)
+        self.assertEqual(dispatch_port.COMPLETED, closed["state"])
+        self.assertEqual([dispatch_port.AGENT, dispatch_port.OPERATOR],
+                         [t["role"] for t in closed[dispatch_port.HISTORY]])
+        answered = closed[dispatch_port.HISTORY][-1]
+        self.assertEqual(said, answered["text"])
+        self.assertEqual("an-operator", answered["by"])
+        self.assertTrue(closed["resumed_at"] and closed["ended_at"])
+        self.assertEqual(standing["workspace"], closed["workspace"], "a second tree was made")
+
+        # The SAME worker: what came back names the operator's answer AND the session the first
+        # turn issued -- so the answer reached the declared resume argv and nothing else did.
+        produced = {part["name"]: part for part in closed["artifacts"]}[ARTIFACT]["text"]
+        self.assertIn(said, produced)
+        self.assertIn(REENTRY, produced)
+        # The resumed worker wrote too, and what it left was judged exactly as C3 judges a return.
+        self.assertEqual(admission.ADMITTED, closed["admission"]["verdict"])
+        self.assertEqual(said, (host / closed["workspace"] / WROTE).read_text(encoding="utf-8"))
+
+        # A task that is no longer waiting is not resumed again: the refusal names the state it
+        # stands in and the moment that reading was taken.
+        over = self.through_the_verb(host, answer(identity, said))
+        self.assertEqual(1, over.returncode, over.stdout + over.stderr)
+        self.assertIn(f"[{dispatch_port.DispatchRefused.code}]", over.stderr)
+        self.assertIn(dispatch_port.COMPLETED, over.stderr)
+
+    def test_318_a_question_no_adapter_can_answer_says_so_and_the_resume_refuses_by_name(self):
+        """An adapter that declares how its worker asks and not how one is re-entered.
+
+        The task is REAL and the question is real; what is absent is the way back in. So the record
+        must say that at the moment the question was read -- not leave a task that reads exactly
+        like one nobody has got around to answering -- and the resume act must refuse BY NAME,
+        saying which adapter lacks the declaration, because 'this cannot be resumed' with no name
+        in it is a sentence an operator can do nothing with.
+        """
+        host = self.repository()
+        identity = "c4-unanswerable"
+
+        asked = self.through_the_verb(host, json.dumps(packet(identity, route=UNANSWERABLE.name)))
+        self.assertEqual(dispatch_port.WAITING, asked.returncode, asked.stdout + asked.stderr)
+        turn = self.record(host, identity)[dispatch_port.HISTORY][-1]
+        self.assertEqual(QUESTION, turn["text"])
+        self.assertIn(UNANSWERABLE.name, turn["unresumable"])
+        self.assertIn(UNANSWERABLE.name, asked.stdout)
+
+        refused = self.through_the_verb(host, answer(identity, "an answer nobody can deliver"))
+        self.assertEqual(1, refused.returncode, refused.stdout + refused.stderr)
+        self.assertIn(f"[{dispatch_port.DispatchUnserved.code}]", refused.stderr)
+        self.assertIn(UNANSWERABLE.name, refused.stderr)
+
+        # Nothing was re-entered and nothing was rewritten: the task stands where it was, with the
+        # one account of what its worker asked.
+        stands = self.record(host, identity)
+        self.assertEqual(dispatch_port.INPUT_REQUIRED, stands["state"])
+        self.assertEqual(1, len(stands[dispatch_port.HISTORY]))
+
+    def test_319_an_answer_to_a_task_this_host_never_dispatched_is_refused_before_any_write(self):
+        """The resume act's own refusals, which are the port's like every other: an act naming no
+        task, an act carrying no answer, and an answer to an id this host has never seen."""
+        host = self.repository()
+        for why, handed in {
+            "no task named": json.dumps({"schema_version": 1, dispatch_port.RESUME: "",
+                                         dispatch_port.ANSWER: "an answer"}),
+            "no answer carried": json.dumps({"schema_version": 1,
+                                             dispatch_port.RESUME: "c4-round-trip"}),
+            "a task nobody dispatched": answer("c4-a-task-nobody-dispatched", "an answer"),
+        }.items():
+            with self.subTest(refusal=why):
+                said = self.through_the_verb(host, handed)
+                self.assertEqual(1, said.returncode, said.stdout + said.stderr)
+                self.assertIn(f"[{dispatch_port.DispatchRefused.code}]", said.stderr)
 
 
 if __name__ == "__main__":

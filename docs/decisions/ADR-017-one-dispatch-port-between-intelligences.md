@@ -76,7 +76,7 @@ same capsule, and dispatches through the same port.
 | **C1** | the enforcement line: served settings → vendored hook → HOST-DECLARED gates; the abstract ARROW capability; per-directory entry files; `core.hooksPath`; CI projection from `ci.*` | an edit in host #0 is judged by the host's declared gates through the pinned kit, from both runtimes' hooks |
 | **C2** | the dispatch port + `claude-subagent` adapter; packet gate, lease, worktree and receipt INSIDE the port | a malformed dispatch is refused by the port itself, whatever runtime calls it; a good one runs and receipts |
 | **C3** | `codex-exec` adapter + the `codex-worker` visibility wrapper; both directions | a Claude orchestrator runs a Codex worker visible as an agent row, AND a Codex orchestrator runs a Claude worker; both receipts in one stream; `check` admits or refuses the returned change |
-| **C4** | `input-required` round-trip + OTel `gen_ai` receipts | a worker's question returns to the orchestrator and the task resumes; a Claude run and a Codex run compare in one report |
+| **C4** | the `input-required` round-trip: a worker's question, and an operator's answer carried back into the SAME worker | a worker that cannot proceed returns its question instead of guessing, the record holds it with whatever re-enters that worker, an answer re-enters it through the adapter's declared resume argv, and what the resumed worker left is admitted or refused exactly as C3 does it |
 
 **When:** C begins after L3b is verified and committed. C1 → C2 → C3 → C4, then ADR-015's D.
 
@@ -300,6 +300,97 @@ ever on the table here.
 **Not built in C3, deliberately:** `--output-schema` (it needs the port to provide a path to a
 declared shape, and no consumer asks yet); `--json` event streaming and the OTel receipts that read
 it (C4); `input-required` (C4); `codex-mcp` (measured not viable, amendment 5).
+
+## Amendment 7 — what C4 decided where this ADR had not (2026-09-21, building C4)
+
+C4 is the `input-required` ROUND-TRIP and nothing else. **The OTel `gen_ai` receipts this ADR's own
+C4 row used to carry are post-1.0**, which is what ADR-015's closing paragraph says; its C4 table
+row says otherwise and is superseded by its own closing paragraph — one truth, one home, and the
+correction to ADR-015 itself is owed there (ledger row). The row above is corrected here.
+
+**A worker's question is READ FROM A DECLARED CHANNEL, never recognised.** An adapter may declare
+`asks`: the exit code its product uses for *I need input*, and which of its own declared `returns`
+carries the question. *Rejected:* the port detecting a question in a worker's output — a port that
+knew what a question looks like would hold a grammar for somebody else's prose and would find
+questions inside answers. *Rejected:* a reserved artifact name the port looks for — a privileged
+name is the closed rung Cardinal II forbids. *Rejected:* a new return CHANNEL for questions —
+`returns` is already the one home of *where things come back from*, so `asks` NAMES a row there and
+adds no second answer.
+
+**One ending may not mean two states.** `asks.exit` may not equal `completed_on.exit`, refused at
+the door. *Rejected:* a precedence rule (finished wins) — a record that is right half the time and
+unfalsifiable the rest.
+
+**`input-required` is not an ending.** No `ended_at` is written, the worker's exit code is recorded
+BESIDE the state, and the record is not closed: the task is STANDING. *Rejected:* closing the task
+and opening a second one for the answer — two accounts of one task, each internally correct.
+
+**The exchange is A2A's `history`, appended and never rewritten** — `agent` for the question,
+`user` for the answer, each turn carrying its own moment. *Rejected:* a single `question`/`answer`
+pair (a second round would overwrite the first); *rejected:* two parallel arrays (a correlation no
+reader can check).
+
+**Admission is judged on EVERY return, including the one that only asked.** A worker that asked a
+question also WROTE. *Rejected:* judging once at the end — the tree would sit unjudged for as long
+as an operator took to answer, which may be forever, and that is precisely the unverified change
+the isolation exists to catch (decision 5).
+
+**The resume is the same ACT through the same mouth, and the DOCUMENT says which act it is.**
+`{"resume": "<DISPATCH-ID>", "answer": "…"}` on the same stdin the packet arrives on. *Rejected:* a
+second verb — the door would double and the gate with it; *rejected:* a `--resume` flag — the
+distinction would become a property of whoever was driving, and a hook calling the port directly
+would hand over an act nobody had classified; *rejected:* re-dispatching the original packet with
+the answer appended to the instruction — that is a NEW worker agreeing with the old one's name,
+Cardinal VII in a single act.
+
+**`{answer}` and `{reentry}` are PROVIDED by the port**, which is the one growth its contract
+sanctions. The re-entry token is whatever the adapter's declared channel handed back; the record
+keeps the artifact verbatim, and the value that crosses into an argv is carried without the newline
+the stream added. *Rejected:* the port keeping session state of its own — a second home for what
+the record already holds; *rejected:* passing the token through untouched — two sides agreeing on
+the name of a session and disagreeing on its bytes.
+
+**An adapter may declare `asks` and no `resumes`, and the task SAYS SO at the moment the question
+was read.** The record carries `unresumable` naming the adapter, and a resume act against it is
+refused BY NAME. *Rejected:* refusing such an adapter at the door — an intelligence that can ask
+and cannot be re-entered is real, and the kit's vocabulary must not be narrower than the world's;
+*rejected:* binding `resumes` to `asks` in the schema — the same narrowing, written where no
+operator would ever read it; *rejected:* letting it surface when an operator finally answers — the
+worst moment in the round-trip to discover it.
+
+**A dispatch that ends at `input-required` exits 3** — the code this kit already gives a declared
+state that is not a failure. *Rejected:* 0 (a waiting worker reads as done); *rejected:* 1 (a
+question is not a failure, and an orchestrator would raise an incident about one).
+
+**No new diagnostic code was issued.** KIT0049 is *an act handed to the port that it will not
+carry out* and KIT0050 is *this host declares no way to carry it out* — which is literally the
+adapter-without-`resumes` refusal. *Rejected:* issuing KIT0053/0054 — `kit/diagnostics.json` is a
+code's one home, it is not this slice's to write, and a class naming a code no registry means is
+the drift ADR-005 exists against. If the owner judges these DISTINCT situations, the rows are his
+to append; recorded as a ledger gap rather than decided here.
+
+**The published product adapters declare NEITHER block, and say why.** Codex: `exec resume
+<SESSION_ID>` exists (measured presence, amendment 5), but the session id lives in the `--json`
+event stream, and an `asks.reentry` pointing there would make the port parse JSONL it has no
+grammar for; `resume --last` names a session by RECENCY on this machine rather than the session of
+THIS task, so two dispatches in flight would each resume into whichever ran last. Claude: no
+documented ending separates *needs input* from *failed*. *Rejected:* declaring the blocks anyway
+and labelling them unobserved in `says` — a `says` is testimony and a declaration is EXECUTED; an
+exit code this kit invented for somebody else's product would be read back as a fact. The
+round-trip is therefore proved on a fixture adapter the port has no knowledge of, and the product
+rows stay honest — which is the same shape C2 and C3 took.
+
+**Between the question and the answer, nothing holds a lease.** The lease is released when the turn
+ends, and the resume takes it again. *Rejected:* holding it across the wait — a hold standing for
+as long as an operator is away blocks every later act on that path and can then be got past only by
+breaking it by name, which would make the normal case indistinguishable from a dead run.
+
+**Not built in C4, deliberately:** `canceled` — still declared and still written by nobody, because
+no act cancels a standing worker; the `withdraw` door (C3's narrower gap, unmoved); a reaper for a
+task that stands at `input-required` forever (it stands by design, and the record is the account);
+OTel `gen_ai` (post-1.0, above); `--output-schema`; and a SECOND round — the mechanism supports one
+by construction (turns append, and the way back in is read from the LAST question) and the suite
+walks exactly one.
 
 ## Measured when (Cardinal VII — assumptions at a boundary)
 

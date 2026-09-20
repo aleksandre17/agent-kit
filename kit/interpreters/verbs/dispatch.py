@@ -8,6 +8,15 @@ second home for the gate, and the runtime whose hook called the port directly wo
 
     ... cli.py dispatch --root <host>  < packet.json
     ... cli.py dispatch --root <host> --plan  < packet.json   # read, report, write nothing
+    ... cli.py dispatch --root <host>  < answer.json          # resume a worker that asked
+
+The second act is the same mouth, deliberately. WHICH act a document is, the DOCUMENT says -- a
+packet states a route and an instruction, an answer names the task it resumes -- and that reading
+is the port's like every other. A flag here would make the distinction a property of the caller,
+and a hook that called the port directly would be handing over an act nobody had classified.
+
+    {"resume": "<DISPATCH-ID>", "answer": "...", "by": "<who answered>"}   (+ the schema
+    version the task schema declares -- stated THERE, never restated in this module)
 
 What it mutates is its OWN subject -- the leased workspace of one task and that task's record --
 never the host tree `--root` names, so it takes the host's hold from nobody (ADR-007). The hold it
@@ -20,7 +29,8 @@ import sys
 
 import dispatch_port
 
-SUMMARY = "hand one task to the dispatch port: refuse it, or lease, isolate, start and record it"
+SUMMARY = ("hand one act to the dispatch port: start a worker for a task, or carry an operator's "
+           "answer back into one that asked")
 MUTATES = True
 #: What this verb writes is one leased workspace and one task record, never the host as a whole.
 SUBJECT = "dispatch"

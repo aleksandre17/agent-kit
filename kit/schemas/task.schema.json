@@ -1,7 +1,7 @@
 {
   "$id": "task",
   "title": "One dispatched TASK -- opened before a worker starts, rewritten at every transition, closed exactly once",
-  "description": "The dispatch port's receipt, and the ONE home of the task vocabulary this kit speaks. The states are A2A's, adopted whole and not translated: submitted, working, input-required, completed, failed, canceled (ADR-017 decision 3; a private vocabulary for a solved concept is a second home, Cardinal I/III). Results come back as ARTIFACTS, never as a status message pretending to be an answer.\n\nThe ORDER is the mechanism, exactly as it is for a run receipt: the record is written the moment the dispatch begins, holding `submitted` -- which means nothing has been concluded -- and rewritten as the work moves. A process that is killed leaves its record holding the state it was in forever, which is the record working: everything such a run leaves on disk otherwise reads exactly like the output of a run that finished.\n\n`input-required` is DECLARED here and is not yet produced by any adapter: the round-trip that returns a worker's question to its orchestrator is ADR-017 slice C4. A state named in the vocabulary and never written is an honest declared absence; a vocabulary narrowed to what is built today would have to be widened by editing this schema the first time a worker asked a question.",
+  "description": "The dispatch port's receipt, and the ONE home of the task vocabulary this kit speaks. The states are A2A's, adopted whole and not translated: submitted, working, input-required, completed, failed, canceled (ADR-017 decision 3; a private vocabulary for a solved concept is a second home, Cardinal I/III). Results come back as ARTIFACTS, never as a status message pretending to be an answer.\n\nThe ORDER is the mechanism, exactly as it is for a run receipt: the record is written the moment the dispatch begins, holding `submitted` -- which means nothing has been concluded -- and rewritten as the work moves. A process that is killed leaves its record holding the state it was in forever, which is the record working: everything such a run leaves on disk otherwise reads exactly like the output of a run that finished.\n\n`input-required` is the one state that is not an ending. A worker that cannot proceed RETURNS ITS QUESTION instead of guessing, and this record then holds the question, whatever is needed to re-enter that same worker, and the exchange so far -- so an operator answers from the record and nowhere else. Which ending means 'I need input', and which declared artifact the question comes back in, are the ADAPTER's to state; this document is where what it said is kept.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -28,7 +28,7 @@
       "minLength": 1
     },
     "state": {
-      "description": "A2A's task states, adopted whole. `submitted`: accepted, nothing started. `working`: a worker was started and has declared no end. `input-required`: the worker cannot proceed and has asked a question instead of guessing (C4). `completed` / `failed`: the worker ended and said which. `canceled`: ended by a decision, not by the work.",
+      "description": "A2A's task states, adopted whole. `submitted`: accepted, nothing started. `working`: a worker was started and has declared no end. `input-required`: the worker cannot proceed and has asked a question instead of guessing -- it is STANDING, not ended, and `history` holds what it asked. `completed` / `failed`: the worker ended and said which. `canceled`: ended by a decision, not by the work.",
       "enum": [
         "submitted",
         "working",
@@ -70,9 +70,70 @@
       "type": "string",
       "minLength": 1
     },
+    "resumed_at": {
+      "description": "When this worker was last re-entered with an operator's answer. Absent on a task nobody has resumed -- and present on one that was resumed and has not ended, which is the only pair of readings that can tell a worker standing on its FIRST question from one standing on a later one.",
+      "type": "string",
+      "minLength": 1
+    },
     "ended_at": {
       "type": "string",
       "minLength": 1
+    },
+    "history": {
+      "description": "The exchange between the worker and this host, in A2A's own vocabulary and in the order it happened: `agent` is a question the worker asked instead of guessing, `user` the answer an operator carried back into it. A task that never asked has no history at all -- an absent exchange and an empty one would otherwise read alike, and only one of them means 'nothing was ever asked'. Nothing here is rewritten: a turn is appended, so a second question after an answer leaves both standing and the account of what this worker was told stays legible in one place.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "role",
+          "at"
+        ],
+        "properties": {
+          "role": {
+            "description": "Who spoke. A2A's two words, adopted whole rather than renamed.",
+            "enum": [
+              "agent",
+              "user"
+            ]
+          },
+          "at": {
+            "description": "When this turn was taken. Every turn carries its own moment: an exchange whose order is inferred from position cannot be contradicted by a clock.",
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "description": "What was said -- the worker's question, or the operator's answer. Absent exactly when `absent` says why nothing was read: an empty question and a question never asked read identically, and neither one can be answered.",
+            "type": "string",
+            "minLength": 1
+          },
+          "absent": {
+            "description": "Why the worker's question could not be read, when the adapter's declared channel produced nothing. A declared absence in the place the question would have been -- never an empty question.",
+            "type": "string",
+            "minLength": 1
+          },
+          "reentry": {
+            "description": "What the adapter's declared channel handed back as the way into THIS worker again -- a session name, a handle, whatever that product resumes by. Carried into the adapter's declared resume argv as `{reentry}` and never interpreted here: the port holds no grammar for anybody's session.",
+            "type": "string",
+            "minLength": 1
+          },
+          "reentry_absent": {
+            "description": "Why no way back in was read, when the adapter declared a channel for one and nothing came back on it. A resume that needs `{reentry}` is refused by name rather than run with a blank.",
+            "type": "string",
+            "minLength": 1
+          },
+          "unresumable": {
+            "description": "Why this question cannot be answered on this host at all -- an adapter that declares how its worker asks and not how one is re-entered, most of all. Written at the moment the question was READ, so a task nobody can answer never reads as one nobody has answered yet.",
+            "type": "string",
+            "minLength": 1
+          },
+          "by": {
+            "description": "Who answered, when the act said so. Recorded, never invented: an unattributed answer is honest and an attributed one is evidence.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     },
     "exit_code": {
       "description": "What the worker's process returned, recorded BESIDE the state and never in place of it: an exit code is not a result.",

@@ -100,6 +100,55 @@
                 "type": "integer"
               }
             }
+          },
+          "asks": {
+            "description": "How this product's worker says it CANNOT PROCEED and is asking a question rather than guessing -- and which of its declared `returns` carries that question. Optional: an intelligence with no such ending declares nothing here and can never put a task in `input-required`, which is an honest absence rather than a capability quietly assumed.\n\nThe question is read from a DECLARED CHANNEL and never recognised in a worker's prose: a port that knew what a question looks like would hold a grammar for somebody else's output and would find questions in answers. `exit` may not be the same code as `completed_on.exit` -- one ending cannot mean two states -- and the artifacts named here must be ones this row declares in `returns`, so nothing is read from a channel nobody declared.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "exit",
+              "question"
+            ],
+            "properties": {
+              "exit": {
+                "description": "The exit code this product's worker uses for 'I need input'. A CLAIM about somebody else's software like every other, and `says` is where it is labelled as one.",
+                "type": "integer"
+              },
+              "question": {
+                "description": "The name of the artifact, declared in `returns`, that the worker's question comes back in.",
+                "type": "string",
+                "minLength": 1
+              },
+              "reentry": {
+                "description": "The name of the artifact, declared in `returns`, carrying whatever re-enters THIS worker -- a session name, a handle, a resume token. Optional: a product resumed by where its work stands rather than by a name for its turn declares none, and its `resumes.argv` then names no `{reentry}`. It may not be the same artifact as `question`: one text doing both jobs could only be separated by this port parsing it.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "resumes": {
+            "description": "How an operator's answer is carried back into the worker that asked -- the SAME worker, in the tree it was left standing in. Optional and independent of `asks`, deliberately: an adapter that declares a way to ask and none to be re-entered is a real situation, and the task it parks says so at the moment the question was read rather than looking like one nobody has answered yet. A resume act against such an adapter is refused BY NAME.\n\nThe shape is `starts`' shape because a resume IS a start of the same worker; what differs is the argv the product declares and the two values the port provides only here -- `{answer}`, the operator's own words, and `{reentry}`, whatever came back on the channel `asks.reentry` named.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "argv"
+            ],
+            "properties": {
+              "argv": {
+                "description": "A fixed argv, run in the same isolated workspace the worker was started in. Same placeholder rule as `starts.argv`, and no shell, no branch, no condition (Cardinal IV).",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "stdin": {
+                "description": "What is written to the resumed worker's standard input, with the same placeholders. Absent means nothing is written and the stream is closed.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
         }
       }

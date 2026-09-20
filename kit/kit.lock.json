@@ -629,7 +629,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "61613f7f46f8bd18775a8c0ae29ed4a29abaa61f09cdac6830130647fc12f863",
+      "digest": "04895b0ee65b86168f80a7c14205b9b575f56000115e0d8813be3cae0f863c39",
       "path": "interpreters/ports/dispatch_port.py"
     },
     {
@@ -743,7 +743,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0f4f2bf1973141363d90de1c6608ae1bb11f708b260de79e38b970bba9a1c9b1",
+      "digest": "f79889d2236422caae9f5ed5f5233c05a3441c89a6e5a8cd91bafb86b71ed31c",
       "path": "interpreters/verbs/dispatch.py"
     },
     {
@@ -893,7 +893,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "bea09d3c2527838f169f945e5c16f8f286ce849cd710855a90308e4688263d5a",
+      "digest": "d06dca495deabab2a99da69142bb31fcbdd77e5d6e01f38602afd232d88ce01f",
       "path": "schemas/dispatch-adapter.schema.json"
     },
     {
@@ -1079,7 +1079,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "0ed6f812733a9e9e12677096be2addf76d40a066f4c0d05b83b24e2a6f298a12",
+      "digest": "3bf4a4b8974f6d66de2d98b9d79de743992b9acf0e70e0ac6209475e6099620c",
       "path": "schemas/task.schema.json"
     },
     {
@@ -1122,5 +1122,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-18T11:06:20+00:00"
+  "taken_at": "2026-09-20T23:29:40+00:00"
 }

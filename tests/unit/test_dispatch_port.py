@@ -96,7 +96,7 @@ class DispatchPortRefusals(unittest.TestCase):
     def test_every_state_the_port_names_is_declared_by_the_task_schema(self):
         declared = TASK_SCHEMA["properties"]["state"]["enum"]
         self.assertEqual(declared, dispatch_port.vocabulary(ctx()))
-        for state in (dispatch_port.SUBMITTED, dispatch_port.WORKING,
+        for state in (dispatch_port.SUBMITTED, dispatch_port.WORKING, dispatch_port.INPUT_REQUIRED,
                       dispatch_port.COMPLETED, dispatch_port.FAILED):
             self.assertIn(state, declared)
 
@@ -163,11 +163,13 @@ class PublishedDispatchAdapters(unittest.TestCase):
 
     def test_every_published_adapter_names_only_what_the_port_provides(self):
         """A placeholder or a channel the port does not provide is refused BY NAME, and is refused
-        here rather than at the moment a worker would otherwise have been started blank."""
+        here rather than at the moment a worker would otherwise have been started blank. Held to
+        the PORT's own door check, whole -- a suite that re-stated which blocks to inspect would
+        go on passing over the next block an adapter may declare."""
         for where, row in self.published():
             with self.subTest(adapter=row["id"]):
+                dispatch_port.coherent(row)
                 blanks = {name: "a-value" for name in dispatch_port.PROVIDED}
-                dispatch_port._argv(row["starts"]["argv"], blanks, where=where)
                 if "stdin" in row["starts"]:
                     dispatch_port._argv([row["starts"]["stdin"]], blanks, where=where)
                 for part in row["returns"]:
@@ -187,6 +189,109 @@ class PublishedDispatchAdapters(unittest.TestCase):
                     self.assertIn("{" + dispatch_port.ARTIFACT + "}", " ".join(row["starts"]["argv"]),
                                   "this adapter returns an artifact from a file and is never told "
                                   "which file, so nothing it wrote could be read back")
+
+
+class AnAdapterThatAsks(unittest.TestCase):
+    """The round-trip's DECLARATION, held at the door (ADR-017 C4).
+
+    A worker that cannot proceed returns its question, and how it says so is the adapter's to
+    state. Everything below is therefore a property of reading a DECLARATION -- no host, no
+    runtime, no worker -- and each one is refused BEFORE anything is leased, because the worst
+    moment to discover that a resume argv names a placeholder nobody provides is the moment an
+    operator has finally answered.
+
+    No product is named. The rows are built here, which is the point: the port serves an
+    intelligence nobody shipped, and an adapter that asks is still just an adapter.
+    """
+
+    @staticmethod
+    def row(**declared) -> dict:
+        return dict({
+            "id": "an-intelligence", "says": "a fixture",
+            "starts": {"argv": ["a-program", "{instruction}"]},
+            "returns": [{"name": "result", "from": "file"}, {"name": "session", "from": "stdout"}],
+            "completed_on": {"exit": 0},
+        }, **declared)
+
+    ASKS = {"exit": 7, "question": "result", "reentry": "session"}
+    RESUMES = {"argv": ["a-program", "resume", "{reentry}", "{answer}"]}
+
+    def test_the_two_values_a_resume_needs_are_values_the_port_provides(self):
+        """`{answer}` and `{reentry}` are the port's to provide, like every other placeholder: an
+        adapter widens nothing by naming them, and one that names something else is refused."""
+        self.assertIn(dispatch_port.ANSWER, dispatch_port.PROVIDED)
+        self.assertIn(dispatch_port.REENTRY, dispatch_port.PROVIDED)
+        asking = self.row(**{dispatch_port.ASKS: self.ASKS, dispatch_port.RESUMES: self.RESUMES})
+        self.assertEqual([], MANIFEST.validate({"schema_version": 1, "adapters": [asking]},
+                                               dispatch_port.ADAPTERS["validates"]))
+        self.assertIs(asking, dispatch_port.coherent(asking))
+
+    def test_an_adapter_may_declare_neither_block_and_nothing_about_it_changes(self):
+        """The round-trip is a capability an adapter DECLARES, never one the port assumes: the
+        rows that existed before C4 are still whole adapters and still pass the same door."""
+        self.assertEqual([], MANIFEST.validate({"schema_version": 1, "adapters": [self.row()]},
+                                               dispatch_port.ADAPTERS["validates"]))
+        dispatch_port.coherent(self.row())
+
+    def test_one_ending_may_not_mean_both_finished_and_needs_input(self):
+        with self.assertRaises(dispatch_port.DispatchUnserved) as refused:
+            dispatch_port.coherent(self.row(**{dispatch_port.ASKS: dict(self.ASKS, exit=0),
+                                               dispatch_port.RESUMES: self.RESUMES}))
+        self.assertIn("two states", str(refused.exception))
+
+    def test_a_question_is_read_from_a_channel_the_adapter_declared_and_never_from_nowhere(self):
+        for role in (dispatch_port.QUESTION, dispatch_port.REENTRY):
+            with self.subTest(carries=role):
+                with self.assertRaises(dispatch_port.DispatchUnserved) as refused:
+                    dispatch_port.coherent(self.row(
+                        **{dispatch_port.ASKS: dict(self.ASKS, **{role: "an-artifact-nobody-declares"}),
+                           dispatch_port.RESUMES: self.RESUMES}))
+                self.assertIn("an-artifact-nobody-declares", str(refused.exception))
+
+    def test_a_question_and_the_way_back_in_may_not_be_the_one_text(self):
+        with self.assertRaises(dispatch_port.DispatchUnserved) as refused:
+            dispatch_port.coherent(self.row(
+                **{dispatch_port.ASKS: dict(self.ASKS, reentry=self.ASKS["question"]),
+                   dispatch_port.RESUMES: self.RESUMES}))
+        self.assertIn(self.ASKS["question"], str(refused.exception))
+
+    def test_a_resume_argv_is_held_to_what_the_port_provides_before_anything_is_leased(self):
+        with self.assertRaises(dispatch_port.DispatchUnserved) as refused:
+            dispatch_port.coherent(self.row(**{
+                dispatch_port.ASKS: self.ASKS,
+                dispatch_port.RESUMES: {"argv": ["a-program", "{nobody_provides_this}"]}}))
+        self.assertIn("nobody_provides_this", str(refused.exception))
+        self.assertIn(dispatch_port.RESUMES, str(refused.exception))
+
+    def test_the_exchange_a_record_keeps_is_a_shape_the_task_schema_declares(self):
+        """Both turns, held to the record's own contract -- the question the port builds from a
+        declaration, and the answer an operator hands over. A turn the schema does not admit would
+        be discovered at the first flush, on a record that already had a worker standing behind it."""
+        artifacts = [{"name": "result", "from": "file", "text": "which of the two did you mean?"},
+                     {"name": "session", "from": "stdout", "text": "a-session\n"}]
+        asked = dispatch_port._question(self.row(**{dispatch_port.RESUMES: self.RESUMES}),
+                                        self.ASKS, artifacts, "a-moment")
+        self.assertEqual("a-session", asked[dispatch_port.REENTRY])
+        self.assertNotIn("unresumable", asked)
+        unresumable = dispatch_port._question(self.row(), self.ASKS, artifacts, "a-moment")
+        self.assertIn(self.row()["id"], unresumable["unresumable"])
+
+        empty = dispatch_port._question(
+            self.row(), self.ASKS,
+            [{"name": "result", "from": "file", "text": "   "},
+             {"name": "session", "from": "stdout", "text": ""}], "a-moment")
+        self.assertNotIn("text", empty, "an empty question was recorded as a question")
+        self.assertTrue(empty["absent"] and empty["reentry_absent"])
+
+        declared = TASK_SCHEMA["properties"][dispatch_port.HISTORY]["items"]
+        for turn in (asked, unresumable, empty,
+                     {"role": dispatch_port.OPERATOR, "at": "a-moment", "text": "an answer",
+                      "by": "an-operator"}):
+            for field in turn:
+                self.assertIn(field, declared["properties"])
+            for field in declared["required"]:
+                self.assertIn(field, turn)
+            self.assertIn(turn["role"], declared["properties"]["role"]["enum"])
 
 
 class AdmissionOnReturn(unittest.TestCase):
