@@ -29,6 +29,40 @@
       "target": ".agents/project/corpus/",
       "validates": "corpus-map",
       "reads_as": "corpus_maps"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/corpus/CATALOG.md",
+      "source": "capabilities/knowledge/payload/CATALOG.md.mustache"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/corpus/ROUTES.md",
+      "source": "capabilities/knowledge/payload/ROUTES.md.mustache"
+    }
+  ],
+  "resolves": [
+    {
+      "id": "corpus",
+      "kind": "corpus-reading",
+      "params": {
+        "map": "corpus_maps",
+        "classes": {
+          "sources": { "validates": "record-keeping" },
+          "list": "kinds"
+        },
+        "authorities": {
+          "sources": { "validates": "record-keeping" },
+          "list": "authorities"
+        },
+        "planes": {
+          "sources": { "validates": "record-keeping" },
+          "list": "planes"
+        },
+        "roots": { "field": "entry", "equals": true }
+      }
     }
   ],
   "gates": [

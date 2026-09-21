@@ -1,0 +1,139 @@
+# Catalog — what this corpus is made of
+
+> **Generated. Do not edit.** Rebuilt from scratch on every render, from this host's corpus map and
+> from what the documents resident in it declare about themselves. Kit {{kit_version}}. An edit here
+> is erased by the next render and reported by `check` under `FF-KIT-PROJECTION`.
+>
+> Every row below is a PLACE somebody declared, and every number is a count of documents found in
+> one. Nothing here is a verdict: a catalog states what the declarations say and computes nothing a
+> reader could not recompute from them. There is no clock in this page — it is a projection of two
+> declarations and nothing else, so it is byte-reproducible, and *when* it was read is a question
+> for the reading itself.
+
+{{#corpus.nothing_read}}
+## The reading
+
+{{.}}
+
+The sections below are the planes this host's vocabulary declares. They are printed because they
+are DECLARED, and every one of them is empty for the same single reason stated above — not because
+this corpus was read and found to hold nothing.
+{{/corpus.nothing_read}}
+{{^corpus.nothing_read}}
+## The reading
+
+READ {{corpus.subject}}.
+
+Of those documents, **{{corpus.declared}}** declared their own class or authority and
+**{{corpus.undeclared}}** declared nothing and are UNCLASSIFIED — of the unclassified,
+{{corpus.conferred}} are classed by the place they reside in and the rest by nothing at all.
+{{corpus.unreadable}} carry a declaration that cannot be read. UNCLASSIFIED is a state and not a
+failure; whether there are too many of them is a budget's question and a budget is the host's
+declaration, so no number on this page is compared with anything.
+
+Where a place declares no ceiling, the cap printed for it is `{{corpus.default_ceiling}}` — the
+default the authority vocabulary declares. A place may LOWER what its residents claim and may never
+RAISE it.
+{{/corpus.nothing_read}}
+
+## The places, by plane
+
+{{#corpus.planes}}
+### {{id}} — {{place_count}} declared place(s), {{documents}} document(s)
+
+{{summary}}
+
+{{#places}}
+{{^entry}}
+#### `{{path}}`
+{{/entry}}
+{{#entry}}
+#### `{{path}}` — an ENTRY of the route graph
+{{/entry}}
+
+- **holds** — `{{holds}}`{{#class_summary}}: {{.}}{{/class_summary}}
+- **ceiling** — `{{ceiling}}`{{^ceiling_declared}} (the vocabulary's default; this place declares none){{/ceiling_declared}}
+- **writer** — {{#writer}}`{{.}}`{{/writer}}{{^writer}}not declared by this row{{/writer}}
+- **lifecycle** — {{#lifecycle}}`{{.}}`{{/lifecycle}}{{^lifecycle}}not declared by this row{{/lifecycle}}
+- **index** — {{#index}}`{{.}}`{{/index}}{{^index}}none declared, and none is expected of it{{/index}}{{#index_missing}} — **declared and not there**{{/index_missing}}
+- **found here** — {{documents}} document(s): {{declared}} declared their own class or authority, {{undeclared}} declared nothing, {{unreadable}} could not be read
+
+{{/places}}
+{{^places}}
+No declared place holds a record of this plane. The plane is declared and this host has mapped
+nothing into it.
+
+{{/places}}
+{{/corpus.planes}}
+{{#corpus.outside_a_declared_plane}}
+### Outside every declared plane
+
+This place confers a class whose row names a plane the vocabulary does not declare, so there is no
+section it belongs in. It is printed here rather than dropped: a row that vanishes from a catalog
+is the one defect a catalog may never have.
+
+- `{{path}}` — holds `{{holds}}`, {{documents}} document(s)
+{{/corpus.outside_a_declared_plane}}
+
+## The named exceptions
+
+Few by construction, and therefore named. Everything else on this page is counted: a row per
+document is a listing nobody reads, and it would hide the handful of rows that matter.
+
+### Artifacts claiming `{{corpus.top_authority}}` — the most binding state the vocabulary declares
+
+{{#corpus.top_claims}}
+- `{{path}}` — claims `{{authority}}`{{#owns}}, owning `{{.}}`{{/owns}}{{^owns}}, and names nothing it owns{{/owns}}
+{{/corpus.top_claims}}
+{{^corpus.top_claims}}
+No artifact of this corpus claims it. A claim at this rank is reachable only where the place
+permits it and the artifact makes it, so its absence is an ordinary state and not a gap.
+{{/corpus.top_claims}}
+
+### Indexes — a place, and the document answerable for it
+
+{{#corpus.indexes}}
+- `{{index}}` answers for `{{place}}` and its {{documents}} other resident(s){{^present}} — **and no document occupies that path**{{/present}}
+{{/corpus.indexes}}
+{{^corpus.indexes}}
+No declared place names an index. Nothing is answerable for the completeness of any place here,
+which is a legal state: an index is expected only where a row declares one.
+{{/corpus.indexes}}
+
+### Successions — what replaced what, as the documents state it
+
+{{#corpus.successions}}
+- `{{path}}` states `{{states}}`: `{{names}}`
+{{/corpus.successions}}
+{{^corpus.successions}}
+No document of this corpus states a succession.
+{{/corpus.successions}}
+
+### Declarations that cannot be read
+
+{{#corpus.unreadable_documents}}
+- `{{path}}` — {{why}}
+{{/corpus.unreadable_documents}}
+{{^corpus.unreadable_documents}}
+Every declaration found was readable.
+{{/corpus.unreadable_documents}}
+
+### Places declared and not there
+
+{{#corpus.missing_places}}
+- `{{path}}` — a row of the map names this place and nothing resides at that path, so nothing was
+  read for it
+{{/corpus.missing_places}}
+{{^corpus.missing_places}}
+Every declared place exists in this tree.
+{{/corpus.missing_places}}
+
+## What this page deliberately does not state
+
+- **One row per document.** A file-by-file index changes on every commit, is reviewed by nobody and
+  becomes the most authoritative-looking unread document in a repository. The per-file reading is
+  computed at gate time, in memory, and never committed (ADR-019 decision 4).
+- **Any verdict.** Nothing here is too high, too old or missing. A count becomes a finding only
+  against a budget, and a budget is the host's declaration, not this page's.
+- **Anything nobody declared.** A field a map row leaves out is printed as *not declared*, never as
+  a plausible default, and never as a blank a reader would read as a zero.

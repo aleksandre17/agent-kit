@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 53,
+  "issued": 54,
   "codes": [
     {
       "code": "KIT0001",
@@ -320,6 +320,12 @@
       "status": "active",
       "title": "the corpus vocabulary cannot be read as declared",
       "explanation": "Every reading of a corpus rests on a vocabulary that can be COMPARED: an order over the authority states, and exactly one of them marked as the ceiling a place gets when it declares none. This refusal is raised when that footing is missing -- two states tying at the most binding rank, or no single default ceiling -- and it is raised BEFORE any document is read, because every resolution downstream would otherwise inherit the guess and none of them would say so. A ceiling chosen by this interpreter to get past the moment would be the interpreter deciding policy (Cardinal IV), and a corpus read against an ambiguous order answers the same question differently depending on which row a reader reached first (Cardinal III). The cure is a declaration, not a fallback: the vocabulary says which state is the default and what the order is, or nothing is read at all."
+    },
+    {
+      "code": "KIT0054",
+      "status": "active",
+      "title": "a declaration names a resolver kind nothing answers for",
+      "explanation": "A capability may declare that a READING reaches its pages -- a `resolves` row naming a kind and the parameters that kind needs -- and the kind is answered by whichever module owns that reading, exactly as a gate kind is answered by the module that judges it. This refusal is raised when a declaration names a kind no module publishes: almost always a spelling, occasionally a capability shipped against a kit that does not carry its resolver yet. It is refused rather than skipped because the alternative is a page that renders with a section quietly missing, which reads exactly like a corpus that had nothing to put there (Cardinal V). The set of kinds stays OPEN: a new reading is a new module publishing a row, never an edit to the interpreter that dispatches them."
     }
   ]
 }

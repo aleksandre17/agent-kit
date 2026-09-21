@@ -14,6 +14,7 @@ import composition as composition_module
 import consumption as consumption_module
 import lifecycle as lifecycle_module
 import plan as plan_module
+import resolution
 import runtime as runtime_port
 import space
 import template
@@ -74,6 +75,14 @@ def view_model(ctx, capabilities=None) -> dict:
         consumed = consumption_module.consumed_of(ctx, capability, profile)
         if consumed:
             _claim(view, consumed.spec["id"], consumed.rows, capability.id)
+        # A READING of the host's own tree reaches the view by the same generic route: the
+        # declaration names the id it will be known by, the KIND of resolver that can produce it,
+        # and the params that configure it -- and this line neither knows nor asks what is being
+        # read. A second kind of reading is another `resolves` row, and this function is not
+        # touched. What arrives is data; nothing here judges it, and the gates that do stand on
+        # the same resolution rather than on this one (Cardinal III).
+        for resolved in resolution.resolved_of(ctx, capability):
+            _claim(view, resolved.spec[resolution.ID], resolved.value, capability.id)
     return view
 
 

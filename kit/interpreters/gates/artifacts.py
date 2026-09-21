@@ -57,18 +57,16 @@ def _census(ctx, params) -> list:
         print(f"        {absent}")
         return []
 
-    undeclared = [r for r in reading.residents if r.declares_nothing and not r.unreadable]
-    conferred = [r for r in reading.residents
-                 if r.declares_nothing and not r.unreadable and r.place.get(corpus.HOLDS)]
-    spoke = [r for r in reading.residents if not r.declares_nothing and not r.unreadable]
-
+    # The counts are the READING's, not this gate's. They were computed here once and are now
+    # computed in one place, because the catalog projection states the same four numbers and two
+    # comprehensions that must agree forever is the drift this whole ADR exists to prevent.
     print(
-        f"        READ {reading.subject()}. {len(spoke)} declared their own class or authority; "
-        f"{len(undeclared)} declared nothing and are UNCLASSIFIED -- of those, {len(conferred)} "
-        f"are classed by the place they reside in and the rest by nothing at all. UNCLASSIFIED is "
-        f"a state, not a failure: nothing here is moved, deleted or guessed at. The unclassified "
-        f"are counted and not named one by one -- naming them is the catalog projection's work, "
-        f"and it is not built."
+        f"        READ {reading.subject()}. {len(reading.spoke)} declared their own class or "
+        f"authority; {len(reading.undeclared)} declared nothing and are UNCLASSIFIED -- of those, "
+        f"{len(reading.conferred)} are classed by the place they reside in and the rest by nothing "
+        f"at all. UNCLASSIFIED is a state, not a failure: nothing here is moved, deleted or "
+        f"guessed at. The unclassified are counted and not named one by one -- naming them is the "
+        f"catalog projection's work, and it states them by place on every render."
     )
     findings = []
     for resident in reading.residents:

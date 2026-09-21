@@ -1,0 +1,100 @@
+# Routes — how a reader reaches what they need
+
+> **Generated. Do not edit.** Rebuilt from scratch on every render, from the corpus map's own rows
+> and from the route graph those rows imply. Kit {{kit_version}}. An edit here is erased by the next
+> render and reported by `check` under `FF-KIT-PROJECTION`.
+>
+> The triggers below are quoted from the `read_when` field the map rows already carry. No question
+> is invented here and no place is recommended: this kit ships no stance about where a host's work
+> is steered from, and a route nobody declared is a route that does not exist. There is no clock in
+> this page.
+
+{{#corpus.nothing_read}}
+## The walk
+
+{{.}}
+
+No entry is declared because no place is declared, so there is nothing here to enter and nothing to
+reach. That is a legal state and it is green.
+{{/corpus.nothing_read}}
+{{^corpus.nothing_read}}
+## The walk
+
+{{corpus.graph_subject}}.
+
+An entry is a place a row of the map MARKS as one. A graph whose roots are everything has no
+unreachable node and measures nothing, so the roots are the host's declaration and never this
+page's guess.
+
+## Where a reader enters
+
+{{#corpus.entries}}
+### `{{path}}` — {{documents}} document(s), holding `{{holds}}`
+
+{{#read_when}}
+- read when: {{.}}
+{{/read_when}}
+{{^read_when}}
+This entry declares no `read_when`, so it answers no stated question. It is a door, and nothing
+says when to walk through it.
+{{/read_when}}
+
+{{#index}}
+Answered for by `{{.}}`.
+{{/index}}
+{{^index}}
+No index answers for this place.
+{{/index}}
+
+{{/corpus.entries}}
+{{^corpus.entries}}
+**No place of this corpus is declared an entry.** Not an empty list: the map was read, it has rows,
+and not one of them marks a place as somewhere the work is steered from. Nothing is therefore
+reachable from anywhere, and every distance below is a distance from nothing.
+
+{{/corpus.entries}}
+## What the other declared places answer
+
+{{#corpus.questions}}
+### `{{path}}` — {{documents}} document(s), holding `{{holds}}`
+
+{{#read_when}}
+- read when: {{.}}
+{{/read_when}}
+
+{{/corpus.questions}}
+{{^corpus.questions}}
+No place outside the entries states when it should be read. A row without `read_when` is legal and
+simply answers no question.
+
+{{/corpus.questions}}
+## How far the walk reached
+
+{{#corpus.depths}}
+- **{{hops}} hop(s) from an entry** — {{documents}} document(s)
+{{/corpus.depths}}
+{{^corpus.depths}}
+- Nothing was reached, from {{corpus.roots}} root document(s).
+{{/corpus.depths}}
+
+{{corpus.reached}} of {{corpus.documents}} document(s) are reachable from a declared entry;
+{{corpus.unreachable}} are reached by nothing. {{corpus.unresolved}} link(s) named nothing this
+reading reaches.
+
+A depth is a distance and never a verdict. The number that would turn a distance into a verdict
+does not exist (ADR-019 decision 5): a hop limit would fail a well-routed document for being deep
+and pass a badly-routed one for being shallow. The unreachable are counted here and not named —
+what makes an unreachable document a defect is what it OWES, and that reading belongs to the gate
+that holds obligations, which states it by name on every run.
+{{/corpus.nothing_read}}
+
+## What this page deliberately does not state
+
+- **A recommended route.** Every trigger here was written by this host in its own map. The kit
+  ships no default entry and invents no `read_when`; a page that supplied one would be publishing a
+  stance into a host that never declared it.
+- **A question no row asked.** There is no `answers` vocabulary of this page's own. Where a place
+  says nothing about when to read it, this page says exactly that.
+- **Anything about documents the map does not place.** The walk is over the residents of declared
+  places. A corpus-wide walk would need an exclusion list living in an interpreter — policy in the
+  machinery — and would report on a tree this host never mapped.
