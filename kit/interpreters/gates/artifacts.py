@@ -14,9 +14,11 @@ that is silent over nothing reads exactly like a gate that looked (Cardinal V).
 
 **Neither refuses the undeclared.** A corpus reaches two thousand documents before anything asks
 one of them what it is; a gate that failed on the first run would be switched off within a day and
-the mechanism would die at birth. Both ship at the observing stance (ADR-019 decision 2, ADR-006):
-reported, counted, named, and not fatal. The number that turns a count into a verdict is the
-host's budget, and it arrives with the ratchet -- not here.
+the mechanism would die at birth. So the undeclared is REPORTED, counted and named, and neither
+gate returns it as a finding -- and neither ships a stance to make that safe, because a stance is
+the host's declaration and a gate that needed one would be a gate that fails on a legal state
+(ADR-019 amendment 1, ADR-006, ADR-001 point 4). The number that turns a count into a verdict is
+the host's budget, and it arrives with the ratchet -- not here.
 """
 
 from __future__ import annotations
@@ -35,25 +37,6 @@ OWNS, SUPERSEDES, SUPERSEDED_BY = corpus.OWNS, corpus.SUPERSEDES, corpus.SUPERSE
 COUNTERPART = {SUPERSEDES: SUPERSEDED_BY, SUPERSEDED_BY: SUPERSEDES}
 
 
-def _nothing_was_read(reading) -> "str | None":
-    """The honest absence, in the gate's own voice. A host may legitimately have mapped nothing;
-    what it may not do is have that read as a clean corpus."""
-    if reading.unmapped:
-        return (
-            "NOTHING WAS READ: this host declares no corpus map, so no place confers a class, no "
-            "document was opened, and no count below is a count of this repository. That is a "
-            "legal state and it is green. What was NOT read: every document in the tree. A place "
-            "is a row a human writes; until one exists there is nothing to read it against."
-        )
-    if not reading.residents:
-        return (
-            f"NOTHING WAS READ: {len(reading.places)} place(s) are declared and not one document "
-            f"ending {corpus.DOCUMENT!r} resides in them. The map is a statement about places that "
-            f"hold nothing yet -- green, and not a corpus that was found clean."
-        )
-    return None
-
-
 def _census(ctx, params) -> list:
     """How much of this corpus has ever said what it is.
 
@@ -69,7 +52,7 @@ def _census(ctx, params) -> list:
     that verdict lives when it is built; this gate produces the number it will compare.
     """
     reading = corpus.read(ctx, params)
-    absent = _nothing_was_read(reading)
+    absent = reading.nothing_read()
     if absent:
         print(f"        {absent}")
         return []
@@ -122,8 +105,9 @@ def _claims(ctx, params) -> list:
     gets switched off, which costs more than the gate was ever worth (ADR-019 amendment 1).
     """
     reading = corpus.read(ctx, params)
-    if reading.unmapped or not reading.residents:
-        print(f"        {_nothing_was_read(reading)}")
+    absent = reading.nothing_read()
+    if absent:
+        print(f"        {absent}")
         return []
 
     findings: list = []

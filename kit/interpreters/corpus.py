@@ -24,9 +24,31 @@ Three properties of the reading are deliberate and each is a cardinal:
   * **The subject is what the HOST declared.** The reading is over the residents of declared
     places and says so in its own words. A corpus-wide walk would need an exclusion list held in
     an interpreter -- policy in the machinery -- and would read a tree the host never mapped.
+
+**The ROUTE GRAPH lives here too, and for the same reason.** *Can this document be reached from
+where the work is steered* is one question with two askers -- the obligation reading and the index
+reading -- and a graph built twice is two answers that agree until one of them is fixed. It is the
+same reading seen as edges rather than as rows, computed from the text already in hand:
+
+  * an EDGE is a link one resident writes that RESOLVES to another resident, and an `indexed_by`
+    row -- the index reaches every resident of the place it answers for. Nothing else is an edge.
+    A mention in prose is not a link, a link into a fenced block is an example of a link, and a
+    link this reading cannot resolve is COUNTED as unresolved rather than dropped, because a graph
+    that quietly forgets what it could not read reports a corpus better connected than it is.
+  * a ROOT is a place the host's map marks as an entry, and which flag marks one arrives as a
+    DECLARED filter. A graph whose roots are everything has no unreachable node and measures
+    nothing; a graph whose roots are chosen in here would be this interpreter deciding where the
+    work is steered from.
+  * DEPTH is recorded and never judged. The number that would turn a distance into a verdict does
+    not exist (ADR-019 decision 5), so what is produced is the distance and the honest statement
+    of what it was measured from.
 """
 
 from __future__ import annotations
+
+import re
+from pathlib import PurePosixPath
+from urllib.parse import unquote
 
 import collection
 import declared
@@ -51,8 +73,11 @@ CONTRACT = "front-matter"
 KIND, AUTHORITY, OWNS = "kind", "authority", "owns"
 SUPERSEDES, SUPERSEDED_BY = "supersedes", "superseded_by"
 
-#: The corpus map's own field names (schema `corpus-map`).
-PATH, HOLDS, CEILING = "path", "holds", "authority_ceiling"
+#: The corpus map's own field names (schema `corpus-map`). `INDEX` is the document answerable for
+#: a place: one declaration, two consequences -- an edge into every resident, and an index that can
+#: be held to what it leaves out. Which field marks an ENTRY is NOT here: it arrives as a declared
+#: filter, because a root is the host's statement about where work is steered from.
+PATH, HOLDS, CEILING, INDEX = "path", "holds", "authority_ceiling", "indexed_by"
 
 #: The authority vocabulary's own field names (schema `record-keeping`). Not the states -- the
 #: FIELDS by which the states declare their own order and their own reach.
@@ -62,6 +87,12 @@ RANK, IS_DEFAULT = "binding_rank", "place_default"
 #: declaration that configures a gate and this module.
 MAP, AUTHORITIES, CLASSES = "map", "authorities", "classes"
 SOURCES, LIST, WHERE = "sources", "list", "where"
+
+#: What a gate's params call the ROOT set: a filter over the map's own rows, one field and one
+#: value (`declared.matching`). It is a param and not a constant here because *which declaration
+#: makes a place an entry* is the corpus map's word; an interpreter that knew it would be deciding
+#: policy, and a graph rooted by a guess measures the guess (Cardinal IV).
+ROOTS = "roots"
 
 #: Where a resolved value CAME FROM. The reading's own words about provenance -- a value without
 #: its source is a reading nobody can check, which is the difference between conferred and claimed.
@@ -138,15 +169,47 @@ def listed(value) -> list:
     return value if isinstance(value, list) else [value]
 
 
+#: The two forms in which a document NAMES another one: the target of a link, and the target of a
+#: reference definition. Nothing else is read as an edge. A bare path written in prose is a
+#: mention, and a graph built from mentions measures the prose instead of the routing.
+_LINK = re.compile(r"\[[^\]\n]*\]\(\s*<?([^)>\s]+)>?[^)\n]*\)")
+_DEFINITION = re.compile(r"^\[[^\]\n]+\]:\s*<?([^>\s]+)>?")
+
+#: The line that opens or closes a fenced block. What is inside one is an EXAMPLE, and an example
+#: link that routed a document would make the graph read better connected than the corpus is.
+_FENCED = re.compile(r"^\s*(?:```|~~~)")
+
+
+def links_in(text: str) -> list:
+    """Every document this text NAMES: `(the target as written, the line number, the whole line)`.
+
+    The line travels with the target because a reader downstream has to judge what the document
+    SAID about what it linked, and a target torn out of its sentence cannot be held to anything.
+    Fenced blocks are skipped -- see `_FENCED`.
+    """
+    found: list = []
+    fenced = False
+    for number, line in enumerate(text.split("\n"), start=1):
+        if _FENCED.match(line):
+            fenced = not fenced
+            continue
+        if fenced:
+            continue
+        for match in (*_LINK.findall(line), *_DEFINITION.findall(line)):
+            found.append((match, number, line.strip()))
+    return found
+
+
 class Resident:
     """One document of the corpus, as this reading found it: where it lives, which place declared
-    that spot, and what it says about itself. What it IS is not stored here -- it is RESOLVED by
-    the reading, so there is no second copy of the answer to keep in step."""
+    that spot, what it says about itself, and what it names. What it IS is not stored here -- it is
+    RESOLVED by the reading, so there is no second copy of the answer to keep in step."""
 
-    __slots__ = ("path", "place", "front", "unreadable")
+    __slots__ = ("path", "place", "front", "unreadable", "links")
 
-    def __init__(self, path: str, place: dict, front, unreadable=None) -> None:
+    def __init__(self, path: str, place: dict, front, unreadable=None, links=()) -> None:
         self.path, self.place, self.front, self.unreadable = path, place, front or {}, unreadable
+        self.links = list(links)
 
     def declares(self, field: str):
         return self.front.get(field)
@@ -228,6 +291,28 @@ class Reading:
     def unmapped(self) -> bool:
         return not self.places
 
+    def nothing_read(self) -> "str | None":
+        """The honest absence, in the reading's own words, or None when there is a corpus to
+        report on. A host may legitimately have mapped nothing; what it may not do is have that
+        read as a clean corpus (Cardinal V). Every gate over this reading opens with the same
+        sentence because there is one state being described, and a gate that worded it for itself
+        would be a second account of what was not read."""
+        if self.unmapped:
+            return (
+                "NOTHING WAS READ: this host declares no corpus map, so no place confers a class, "
+                "no document was opened, and no count below is a count of this repository. That "
+                "is a legal state and it is green. What was NOT read: every document in the tree. "
+                "A place is a row a human writes; until one exists there is nothing to read it "
+                "against."
+            )
+        if not self.residents:
+            return (
+                f"NOTHING WAS READ: {len(self.places)} place(s) are declared and not one document "
+                f"ending {DOCUMENT!r} resides in them. The map is a statement about places that "
+                f"hold nothing yet -- green, and not a corpus that was found clean."
+            )
+        return None
+
 
 def _places(rows: list) -> list:
     """The places, most specific first. Two rows may legitimately nest -- a host says one thing
@@ -282,13 +367,14 @@ def read(ctx, params: dict) -> Reading:
     read_back = []
     for rel in sorted(residents):
         try:
-            front = _front_matter(ctx.workspace.read_text(rel))
+            text = ctx.workspace.read_text(rel)
+            front = _front_matter(text)
             errors = ctx.manifest.validate(front, CONTRACT) if front is not None else []
             if errors:
                 raise Unreadable(f"its declaration does not honour {CONTRACT!r} -- " + "; ".join(errors))
-            read_back.append(Resident(rel, residents[rel], front))
+            read_back.append(Resident(rel, residents[rel], front, None, links_in(text)))
         except Unreadable as exc:
-            read_back.append(Resident(rel, residents[rel], None, str(exc)))
+            read_back.append(Resident(rel, residents[rel], None, str(exc), links_in(text)))
         except (OSError, ValueError, UnicodeDecodeError) as exc:
             read_back.append(Resident(rel, residents[rel], None, f"it cannot be read -- {exc}"))
 
@@ -310,3 +396,152 @@ def resolved(ctx, rel: str) -> "str | None":
         return placement.host_relative(ctx.workspace.root, rel)
     except placement.Unplaceable:
         return None
+
+
+def reference(ctx, source: str, raw: str) -> "str | None":
+    """One link, as the host-relative path it points at -- or None when it points somewhere this
+    reading does not reach: another machine (a scheme), a position inside a document (a fragment
+    alone), or outside this host.
+
+    A link is written relative to the DOCUMENT that writes it, and that is the one thing a graph
+    over documents has to get right (Cardinal VII): resolved against the root instead, every
+    relative link in a nested place would name a file that is not there and the corpus would read
+    as unlinked while every link in it worked perfectly in a browser.
+    """
+    raw = unquote(raw.split("#", 1)[0].split("?", 1)[0].strip())
+    if not raw:
+        return None
+    if ":" in raw.split("/", 1)[0]:
+        return None
+    if raw.startswith("/"):
+        return resolved(ctx, raw.lstrip("/"))
+    return resolved(ctx, str(PurePosixPath(source).parent / raw))
+
+
+class Indexed:
+    """A place, the document answerable for it, and the residents it answers for. One declaration
+    (`indexed_by`) with two consequences, held together so that the graph and the completeness
+    reading cannot disagree about which document indexes what."""
+
+    __slots__ = ("place", "index", "residents", "present")
+
+    def __init__(self, place: dict, index, residents: list, present: bool) -> None:
+        self.place, self.index, self.residents, self.present = place, index, residents, present
+
+
+def indexed(ctx, reading: Reading) -> list:
+    """Every place that declares an index, with the residents that index answers for.
+
+    A resident belongs to the MOST SPECIFIC place that names it (`_places`), so a nested place's
+    residents answer to the nested place's index and never to the coarser one. That follows from
+    the reading and is not a second rule: the alternative -- an index answerable for every document
+    beneath it -- would make a host that maps a subtree more precisely liable for it twice.
+    """
+    found = []
+    for place in reading.places:
+        named = place.get(INDEX)
+        if not named:
+            continue
+        index = resolved(ctx, named)
+        held = sorted(r.path for r in reading.residents if r.place is place)
+        present = index is not None and ctx.workspace.exists(index)
+        found.append(Indexed(place, index, [p for p in held if p != index], present))
+    return found
+
+
+class Routes:
+    """The corpus as a GRAPH, and what a walk from the declared roots actually reached.
+
+    It holds a distance and never a verdict. `depth` is *how far from an entry*, recorded for every
+    node the walk reached; a node absent from it was reached by nothing, which is a reading and not
+    yet a defect -- what makes an unreachable document a defect is what it OWES, and that belongs
+    to the gate that reads obligations (ADR-019 decision 5).
+    """
+
+    __slots__ = ("reading", "roots", "rooted_places", "depth", "edges", "unresolved", "indexes",
+                 "written")
+
+    def __init__(self, reading, roots, rooted_places, depth, edges, unresolved, indexes,
+                 written) -> None:
+        self.reading, self.roots, self.rooted_places = reading, roots, rooted_places
+        self.depth, self.edges, self.unresolved, self.indexes = depth, edges, unresolved, indexes
+        self.written = written
+
+    @property
+    def unreachable(self) -> list:
+        return [r for r in self.reading.residents if r.path not in self.depth]
+
+    @property
+    def spans(self) -> int:
+        return sum(len(targets) for targets in self.edges.values())
+
+    def by_depth(self) -> dict:
+        found: dict = {}
+        for distance in self.depth.values():
+            found[distance] = found.get(distance, 0) + 1
+        return found
+
+    def subject(self) -> str:
+        """What the walk was over, stated with the count (Cardinal V). A reachability number whose
+        root set is unstated is not a measurement of anything: the same corpus is fully routed from
+        every place and routed from none."""
+        return (
+            f"{len(self.reading.residents)} node(s) joined by {self.spans} edge(s) -- "
+            f"{self.written} written as a link one document resolves to another, the rest "
+            f"conferred by an index on the place it answers for -- walked from "
+            f"{len(self.roots)} document(s) resident in {len(self.rooted_places)} declared "
+            f"entry place(s); {self.unresolved} link(s) named nothing this reading reaches"
+        )
+
+
+def routes(ctx, reading: Reading, where) -> Routes:
+    """The route graph, walked from the roots the host declared.
+
+    The root filter is REQUIRED and never defaulted. `matching` with no filter selects every row,
+    so a missing declaration would silently make every place an entry and the walk would reach
+    everything -- a green reading of a corpus nobody can navigate, which is the exact lie this
+    invariant exists to catch (Cardinal V).
+    """
+    if where is None:
+        raise declared.DeclarationError(
+            f"this gate was declared with no {ROOTS!r} filter, so no row of the corpus map marks "
+            f"an entry; a walk with no roots would either reach nothing or, if the filter were "
+            f"defaulted to every row, reach everything -- and both are readings of a corpus that "
+            f"was never asked where the work is steered from"
+        )
+    rooted = declared.matching(reading.places, where)
+    marked = {id(row) for row in rooted}
+    residents = {resident.path: resident for resident in reading.residents}
+
+    edges: dict = {}
+    unresolved = 0
+    for resident in reading.residents:
+        reached = edges.setdefault(resident.path, set())
+        for raw, _number, _line in resident.links:
+            target = reference(ctx, resident.path, raw)
+            if target is None or target not in residents:
+                unresolved += 1
+                continue
+            if target != resident.path:
+                reached.add(target)
+
+    written = sum(len(targets) for targets in edges.values())
+    found = indexed(ctx, reading)
+    for entry in found:
+        if entry.index is not None:
+            edges.setdefault(entry.index, set()).update(entry.residents)
+
+    roots = sorted(path for path, resident in residents.items() if id(resident.place) in marked)
+    depth = {path: 0 for path in roots}
+    frontier, distance = list(roots), 0
+    while frontier:
+        distance += 1
+        onward = []
+        for path in frontier:
+            for target in sorted(edges.get(path, ())):
+                if target not in depth:
+                    depth[target] = distance
+                    onward.append(target)
+        frontier = onward
+
+    return Routes(reading, roots, rooted, depth, edges, unresolved, found, written)

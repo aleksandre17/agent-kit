@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 197,
+  "count": 198,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -257,7 +257,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "26fb33d2004416a9ac812d46614dcf45d67f508486a94ac9e8a1d9a1d2760b9a",
+      "digest": "eea44d09fbbc8f60e09cf53d08cc977ca4ce8e0d395e15b3c6bbb575c9cc97e5",
       "path": "capabilities/knowledge/capability.json"
     },
     {
@@ -479,7 +479,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f5573d82616c0e413eeba8c17ec0a1a5144171149b837208b4a42b53cee24ddd",
+      "digest": "2cb7a02749fd85b8e33138b39a138771be71fb813374a8754bbe0c705ddea90b",
       "path": "interpreters/corpus.py"
     },
     {
@@ -533,7 +533,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a6b1a6b15b752b51e4d8afa399916ec953c11e68a916d34909c28400f77dbeba",
+      "digest": "0927f1984f99455c103a0edab864c4f9302c3fd64bc684fc9be205ae9729c49c",
       "path": "interpreters/gates/artifacts.py"
     },
     {
@@ -589,6 +589,12 @@
       "class": "interpreter",
       "digest": "2b68286518d840b0bf61ad49239f041ed4f7339c26071fb20933eaf155d72328",
       "path": "interpreters/gates/records.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "f5dc85272447ee8612055590e8ff2ac139331f02e6aac310b2f70dc20c98dbfb",
+      "path": "interpreters/gates/routes.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1188,5 +1194,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-21T02:18:09+00:00"
+  "taken_at": "2026-09-21T02:54:47+00:00"
 }
