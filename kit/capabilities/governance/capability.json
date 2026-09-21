@@ -70,6 +70,11 @@
       "id": "record_keeping",
       "source": "capabilities/governance/record-keeping.json",
       "validates": "record-keeping"
+    },
+    {
+      "id": "obligation_markers",
+      "source": "capabilities/governance/obligation-markers.json",
+      "validates": "obligation-markers"
     }
   ],
   "installs": [

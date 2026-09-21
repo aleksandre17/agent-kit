@@ -1,19 +1,39 @@
 {
   "$id": "record-keeping",
-  "title": "Record-keeping vocabulary -- what a place may hold, who may write it, how it ages (ADR-015 amendment 8)",
-  "description": "The one home of the words a RECORDS MAP is written in. The layout declaration (`layout` schema) names every place a host has; each of its entries says what KIND of truth lives there (`holds`), WHO may write it (`writer`) and how it AGES (`lifecycle`), and every one of those words is a row of this document -- never an `enum` in a schema and never a list inside an interpreter. The field anchor is records management (ISO 15489: a record has a declared home, an accountable writer and a disposition) read through information architecture. OPEN BY CONSTRUCTION (Cardinal II): this schema constrains the SHAPE of a row, never the set of rows; a new kind, writer or lifecycle is a new row, and the gate that resolves the map against this document (`FF-RECORDS-DECLARED`) is not touched.",
+  "title": "Record-keeping vocabulary -- what a place may hold, who may write it, how it ages, how much it binds (ADR-015 amendment 8; ADR-019 decision 3)",
+  "description": "The one home of the words a RECORDS MAP and a CORPUS MAP are written in. The layout declaration (`layout` schema) names every place a host has and the corpus map (`corpus-map` schema) names every place its documents live in; each of their rows says what KIND of truth lives there (`holds`), WHO may write it (`writer`), how it AGES (`lifecycle`) and at most how much a resident may BIND (`authority_ceiling`), and every one of those words is a row of this document -- never an `enum` in a schema and never a list inside an interpreter. A kind also names its PLANE, so a document declares one thing (its kind) and its plane is derived; a plane is never a field on a document and never a directory. The field anchor is records management (ISO 15489: a record has a declared home, an accountable writer and a disposition) read through information architecture. OPEN BY CONSTRUCTION (Cardinal II): this schema constrains the SHAPE of a row, never the set of rows; a new kind, plane, authority, writer or lifecycle is a new row, and no gate that resolves a map against this document is touched.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "kinds", "writers", "lifecycles"],
+  "required": ["schema_version", "planes", "authorities", "kinds", "writers", "lifecycles"],
   "properties": {
     "schema_version": { "type": "integer", "const": 1 },
     "summary": { "type": "string" },
-    "kinds": {
-      "description": "What a place HOLDS: the kind of truth living there, stated so that a document of another kind found in that place is recognisably misfiled.",
+    "planes": {
+      "description": "The reading GROUPS a corpus divides into: why one would come to a document at all. A plane is an attribute of a KIND and of nothing else -- it groups kinds, it is projected per plane in the catalog, and it is never written on a document, because a document that named both its kind and its plane could contradict itself.",
       "type": "array",
       "minItems": 1,
       "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
         "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+    },
+    "authorities": {
+      "description": "How much an artifact BINDS -- the single vocabulary for that question, so that no document needs a second `status` field whose values would overlap these (ADR-019 decision 3). Every row carries two machine facts beside its prose, because an interpreter must be able to compare two authorities and to refuse a place that reaches too high WITHOUT holding any of these words in its code (Cardinal IV).",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary", "binding_rank", "place_default", "place_may_declare"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" },
+          "summary": { "type": "string", "minLength": 1 },
+          "place_default": { "description": "Whether this is the ceiling a place row that declares none is read at. Exactly one row says true, and it is DATA for the same reason the flag beside it is: an interpreter that knew which state was the default would be an interpreter holding the most consequential policy in the vocabulary.", "type": "boolean" },
+          "binding_rank": { "description": "How much this state binds, as a comparable number: a declared authority is admitted under a ceiling when its rank is not greater than the ceiling's. Equal ranks bind equally; the number orders the vocabulary and means nothing on its own. This exists so that `above the ceiling` is decidable from data -- an interpreter that knew the order would be an interpreter holding policy.", "type": "integer" },
+          "place_may_declare": { "description": "Whether a PLACE may name this state as its `authority_ceiling`. False is the whole of ADR-019 decision 1 made structural: a place declaration may confer a class and may NEVER raise authority, so the top state is reachable only by an artifact's own front matter. A ceiling naming a row that says false is refused -- and the refusal names no word, it reads this flag.", "type": "boolean" }
+        } }
+    },
+    "kinds": {
+      "description": "What a place HOLDS: the kind of truth living there, stated so that a document of another kind found in that place is recognisably misfiled. Every kind names the one plane it belongs to.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "plane", "summary"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "plane": { "description": "The id of one `planes` row. Required: a kind with no plane is a document that appears in no section of the catalog, which is how a corpus acquires a part nobody reads.", "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
     },
     "writers": {
       "description": "WHO may write a place: an accountable authority, named by what it is accountable FOR, never by a runtime product or a host's role name.",

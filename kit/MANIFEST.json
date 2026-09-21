@@ -129,6 +129,8 @@
     "lifecycle": "schemas/lifecycle.schema.json",
     "layout": "schemas/layout.schema.json",
     "record-keeping": "schemas/record-keeping.schema.json",
+    "corpus-map": "schemas/corpus-map.schema.json",
+    "obligation-markers": "schemas/obligation-markers.schema.json",
     "card": "schemas/card.schema.json",
     "delivery-policy": "schemas/delivery-policy.schema.json",
     "residence": "schemas/residence.schema.json",

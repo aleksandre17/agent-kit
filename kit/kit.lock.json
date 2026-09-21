@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 191,
+  "count": 194,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "062b3c3a738da320d5c51b28737c046591bd4de60cc166e2a9c6f1d291e7bd59",
+      "digest": "51e953032d4b6b47d74f6f240b4d3cc77990f17203b1d5dedbde7a495073752b",
       "path": "MANIFEST.json"
     },
     {
@@ -155,7 +155,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "909172b3f257f04df9c8c6dc788a5289b6460985c84d471c59da14b5a41c4291",
+      "digest": "1c52f8b7e4267477319a83b70f4e00f034a12ef46fec46c74a99c9998864835a",
       "path": "capabilities/governance/capability.json"
     },
     {
@@ -163,6 +163,12 @@
       "class": "declaration",
       "digest": "d1deed2c324d88add47fff55eaa799ee29cba7ce579ba6fdc8006f6e699349e6",
       "path": "capabilities/governance/host-layout.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "a7f0a01e082324246c4b4c49c2aa37445ddd0856f62215238029ee6ac710ea30",
+      "path": "capabilities/governance/obligation-markers.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -197,7 +203,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "257d373b11153ac58fac414486d53a211e0a8d55495eaa7098e511cfdde88777",
+      "digest": "cf9044dc7df09f38e519dc43598a16e990c2194b82317b17e937146e9ad83f89",
       "path": "capabilities/governance/record-keeping.json"
     },
     {
@@ -905,6 +911,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "ee064f4bd3d5076879d18759380dd3e61fbb4db03299d7e7bd129bc7e0195b72",
+      "path": "schemas/corpus-map.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "1f4f6ed7d2a30a889533a9703877e1fd09f0a1ab39bdfca55828e868bd279861",
       "path": "schemas/delivery-policy.schema.json"
     },
@@ -995,7 +1007,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "2484bd0ab18d5b78efada51b6b71d614e535fe6d77d63bda3abf9480e8f265bb",
+      "digest": "9a3b7afa37a9885e822ef6e0edbcddea20c5e1b0485a47b383f312c04c65c44e",
       "path": "schemas/manifest.schema.json"
     },
     {
@@ -1003,6 +1015,12 @@
       "class": "declaration",
       "digest": "7e67d51da212ff8ba7624a38f25bd932629acb09b05fc38952fd34ff9198d3ce",
       "path": "schemas/migration-map.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "6f7abb18be8e1013b911853ec8c5c1ab1c46a50544752e1d4ce2fe6160142d60",
+      "path": "schemas/obligation-markers.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1049,7 +1067,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "745c2816d28987d4f14d8eec7d2761529790d30c7a3854ac148698760025bae9",
+      "digest": "f9391c47dff541437909ca3bbc4ffec48f688a49838f0fd60f9adca41ad5f5d8",
       "path": "schemas/record-keeping.schema.json"
     },
     {
@@ -1152,5 +1170,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-21T00:14:55+00:00"
+  "taken_at": "2026-09-21T00:34:52+00:00"
 }
