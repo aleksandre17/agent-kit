@@ -79,7 +79,13 @@ def local_readings_path() -> str:
     """Where a host declares readings of its own: the sources of the disposition gate, minus what
     the capability SHIPS, is the one the host owns. Derived, never written down twice."""
     shipped = {d["id"] for d in CAPABILITY["documents"]}
-    [name] = [s for s in gate_with("sources")["params"]["sources"] if s not in shipped]
+    # Every source any of this capability's gates reads, minus everything the capability itself
+    # ships: what remains is host-authored. Read across the gates rather than from one of them,
+    # because WHICH gate happens to carry a source is this capability's business and changes the
+    # day it declares another -- as it did the day it began consuming a reading.
+    [name] = {source for gate in CAPABILITY["gates"]
+              for source in gate.get("params", {}).get("sources", [])
+              if source not in shipped}
     return install_named(name)["target"]
 
 

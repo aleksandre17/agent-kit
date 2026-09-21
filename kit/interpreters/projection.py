@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import collection
 import composition as composition_module
+import consumption as consumption_module
 import lifecycle as lifecycle_module
 import plan as plan_module
 import runtime as runtime_port
@@ -65,6 +66,14 @@ def view_model(ctx, capabilities=None) -> dict:
         if composed:
             _claim(view, composed.spec["id"], composed.rows, capability.id)
             _claim(view, composed.spec["census"], composed.census, capability.id)
+        # A CONSUMED fact reaches the view by the same generic route: the declaration names the
+        # documents holding the rows and the field of a row that names the fact, and this line
+        # neither knows nor asks WHICH fact or what it will be used to say. The reading joined
+        # against is the recorded one this function already read -- never a second probe, which
+        # would be a second reading of one reality taken at a moment nobody stated.
+        consumed = consumption_module.consumed_of(ctx, capability, profile)
+        if consumed:
+            _claim(view, consumed.spec["id"], consumed.rows, capability.id)
     return view
 
 
@@ -107,8 +116,9 @@ def _project_each(ctx, item, view) -> dict:
         shadowed = sorted(set(record) & set(view))
         if shadowed:
             raise RenderError(
-                f"a record of {each['over']!r} carries {shadowed}, which the view already means "
-                f"something else by. A name that resolves to two things is not a name, and the "
+                f"a record of {item['each']['over']!r} carries {shadowed}, which the view "
+                f"already means something else by. A name that resolves to two things is not a "
+                f"name, and the "
                 f"record would silently win -- refused rather than ordered."
             )
         produced[target] = template.render(body, {**view, **record})

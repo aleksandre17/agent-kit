@@ -8,15 +8,26 @@
   "provides": ["evaluation"],
   "conflicts": [],
   "declares": {
-    "schemas": ["quality", "judgement"]
+    "schemas": ["quality", "judgement", "consumption"]
   },
   "documents": [
     {
       "id": "judgement_dispositions",
       "source": "capabilities/evaluation/dispositions.json",
       "validates": "observation"
+    },
+    {
+      "id": "verification_readings",
+      "source": "capabilities/evaluation/verification.json",
+      "validates": "consumption"
     }
   ],
+  "consumes": {
+    "id": "verification",
+    "sources": ["verification_readings"],
+    "list": "readings",
+    "names": "reads"
+  },
   "evaluates": {
     "declaration": "evaluation_local",
     "rubrics": "rubrics",
@@ -53,9 +64,26 @@
       "class": "projection",
       "target": ".agents/generated/evaluation/QUALITY.md",
       "source": "capabilities/evaluation/payload/QUALITY.md.mustache"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/evaluation/VERIFICATION.md",
+      "source": "capabilities/evaluation/payload/VERIFICATION.md.mustache"
     }
   ],
   "gates": [
+    {
+      "id": "FF-VERIFICATION-MEASURABLE",
+      "kind": "consumed-fact-declared",
+      "params": {
+        "sources": ["verification_readings"],
+        "list": "readings",
+        "names": "reads",
+        "because": "no reading of any host can ever bind this row, so its declared gap is printed on every tree in the world and reads exactly like an honest measurement of a host that declares nothing. A renamed fact, a withdrawn detector and a typo are indistinguishable from here.",
+        "instead": "name a fact some declared detector emits, or withdraw the row -- a consumption nobody can satisfy is not a gap, it is a sensor that was never connected."
+      }
+    },
     {
       "id": "FF-QUALITY-JUDGEMENT",
       "kind": "record-disposition",

@@ -385,6 +385,43 @@
         }
       }
     },
+    "consumes": {
+      "description": "This capability READS a fact of the host's measured profile and projects from it. Every name here points at something declared elsewhere -- the documents carrying the rows, the field they live under, and the field of a row that names the fact -- never at a fact, because the instant an interpreter or a base declaration knows the name of one fact, a host that emits a different one needs the framework's permission to be understood. What the block makes unreachable is the quiet half of a measurement: a kit that emits facts nobody consumes produces a reading whose every row is correct and whose every row is unread, and nothing about that state looks wrong from any surface.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sources",
+        "list",
+        "names"
+      ],
+      "properties": {
+        "id": {
+          "description": "The view-model name the resolved rows are claimed under -- one name, one meaning, refused if another capability already means something else by it.",
+          "type": "string",
+          "minLength": 1
+        },
+        "sources": {
+          "description": "The named documents holding the consumption rows -- shipped by this capability, or authored by the host in a path it declared readable. The same source grammar every other declared rule set uses, and never a second one.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "list": {
+          "description": "The field those documents carry their rows under, as their own schema names it.",
+          "type": "string",
+          "minLength": 1
+        },
+        "names": {
+          "description": "The field of a row that NAMES the fact it consumes. The one word the resolver needs, and it is handed to it rather than known by it.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "observes": {
       "description": "This capability declares that something WATCHES a run: which kind of observer, and the runs it applies to. An observer is opened before the verb and closed after it, so a run that never comes back has already said that it started. WHICH runs are worth watching is stated here, as data, never decided in the machinery -- a rule about a host's runs spelled in an interpreter is a judgement in the one place a host cannot reach.",
       "type": "array",

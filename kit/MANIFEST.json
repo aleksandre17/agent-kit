@@ -136,6 +136,7 @@
     "receipt": "schemas/receipt.schema.json",
     "observation": "schemas/observation.schema.json",
     "quality": "schemas/quality.schema.json",
+    "consumption": "schemas/consumption.schema.json",
     "judgement": "schemas/judgement.schema.json",
     "archetype": "schemas/archetype.schema.json",
     "overlay": "schemas/overlay.schema.json",
