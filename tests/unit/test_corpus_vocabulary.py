@@ -77,7 +77,7 @@ def _vocabulary() -> dict:
 # --------------------------------------------------------------------------------------------
 def _refusals(places: list[dict], vocabulary: dict) -> list[tuple[int, str]]:
     classes = {row["id"] for row in vocabulary["kinds"]}
-    ceilings = {row["id"] for row in vocabulary["authorities"] if row["place_may_declare"]}
+    ceilings = {row["id"] for row in vocabulary["authorities"] if row["place_default"]}
     out: list[tuple[int, str]] = []
     for index, place in enumerate(places):
         if place["holds"] not in classes:
@@ -89,7 +89,11 @@ def _refusals(places: list[dict], vocabulary: dict) -> list[tuple[int, str]]:
 
 
 def _map_of(places: list[dict]) -> dict:
-    return {"schema_version": 1, "summary": "fixture, for this test only", "places": places}
+    """A map file. It carries an `id` because a host may write SEVERAL of them and they are read
+    as one collection -- where a file with no identity is a file that cannot be told from another
+    (S2a; the field was added when the map was declared readable)."""
+    return {"schema_version": 1, "id": "fixture", "summary": "fixture, for this test only",
+            "places": places}
 
 
 def _declared_class(vocabulary: dict) -> str:
@@ -97,11 +101,11 @@ def _declared_class(vocabulary: dict) -> str:
 
 
 def _declared_ceiling(vocabulary: dict) -> str:
-    return next(a["id"] for a in vocabulary["authorities"] if a["place_may_declare"])
+    return next(a["id"] for a in vocabulary["authorities"] if a["place_default"])
 
 
 def _forbidden_ceiling(vocabulary: dict) -> str:
-    return next(a["id"] for a in vocabulary["authorities"] if not a["place_may_declare"])
+    return next(a["id"] for a in vocabulary["authorities"] if not a["place_default"])
 
 
 # --------------------------------------------------------------------------------------------
@@ -141,22 +145,28 @@ def test_the_authority_vocabulary_is_comparable_and_its_top_is_unreachable_from_
     assert len(ids) == len(set(ids)), "an authority id is declared twice"
 
     top = max(a["binding_rank"] for a in authorities)
-    unreachable = [a["id"] for a in authorities if not a["place_may_declare"]]
-    print(f"{len(authorities)} authority state(s); top rank {top}; "
-          f"no place may declare: {unreachable}")
+    defaults = [a["id"] for a in authorities if a["place_default"]]
+    print(f"{len(authorities)} authority state(s); top rank {top}; default ceiling {defaults}")
 
-    assert unreachable, (
-        "every authority state may be declared by a place -- then a place row can raise authority, "
-        "which is the one thing ADR-019 decision 1 forbids"
+    assert len(defaults) == 1, (
+        "the vocabulary declares no single default ceiling, or more than one -- and a place that "
+        "names none would then be capped by whichever row a reader happened to take first"
     )
-    assert unreachable == [a["id"] for a in authorities if a["binding_rank"] == top], (
-        "the states a place may not declare are not exactly the most binding ones -- either a "
-        "place can reach the top, or a harmless state has been locked away for no reason"
+    default = next(a for a in authorities if a["place_default"])
+    assert default["binding_rank"] < top, (
+        "the DEFAULT ceiling is the most binding state there is -- then a place that says nothing "
+        "at all admits the strongest claim in the vocabulary, and silence has granted authority. "
+        "A place may lower a claim and may never raise one (ADR-019 amendment 1), which is only "
+        "worth anything if the unstated cap is below the top."
+    )
+    assert len([a for a in authorities if a["binding_rank"] == top]) == 1, (
+        "two states tie at the most binding rank, so which one a claim must OWN against is "
+        "decided by whichever row a reader reached first"
     )
 
     defaults = [a for a in authorities if a["place_default"]]
     assert len(defaults) == 1, f"the default ceiling is declared {len(defaults)} times, not once"
-    assert defaults[0]["place_may_declare"], "the default ceiling is a state no place may declare"
+    assert defaults[0]["place_default"], "the default ceiling is a state no place may declare"
     assert defaults[0]["binding_rank"] < top, (
         "the DEFAULT ceiling is the top authority -- every unmapped place would confer the highest "
         "authority in the system by saying nothing"
@@ -210,7 +220,7 @@ def test_a_place_conferring_a_class_the_vocabulary_does_not_declare_is_refused()
     assert _refusals(fixture["places"], vocabulary) == [(0, "holds")]
 
 
-def test_a_place_reaching_above_the_ceiling_a_place_may_declare_is_refused():
+def test_a_place_reaching_above_the_ceiling_a_place_default_is_refused():
     vocabulary = _vocabulary()
     reaching = _map_of([{
         "path": "docs/somewhere/",
@@ -252,12 +262,23 @@ def test_a_host_that_declares_no_corpus_map_is_legal_and_green(capsys):
     vocabulary = _vocabulary()
     assert _refusals([], vocabulary) == [], "a host with no places declared is refused something"
 
-    governance = _json(GOVERNANCE)
-    shipped = [d for d in governance["documents"] if d["validates"] == CORPUS_MAP_SCHEMA]
+    manifest = _json(KIT / "MANIFEST.json")
+    declarations = [_json(KIT / entry["declaration"]) for entry in manifest["capabilities"]]
+
+    shipped = [d for c in declarations for d in c.get("documents", [])
+               if d["validates"] == CORPUS_MAP_SCHEMA]
     assert shipped == [], f"the kit ships a corpus map of its own: {shipped}"
 
-    installs = [i for i in governance.get("installs", []) if "corpus" in i["target"]]
-    assert installs == [], f"an install materializes a corpus map: {installs}"
+    carriers = [i for c in declarations for i in c.get("installs", [])
+                if i.get("validates") == CORPUS_MAP_SCHEMA]
+    assert [i["mode"] for i in carriers] == ["space"], (
+        f"the corpus map arrives by something other than a SPACE a host may write in: {carriers}. "
+        f"A seed would put a map in every host on the day it installed, and a map nobody authored "
+        f"is a statement about a corpus nobody read"
+    )
+    assert all("source" not in i for i in carriers), (
+        f"a corpus-map install carries content: {carriers}"
+    )
 
     layout = _json(KIT / "capabilities" / "governance" / "host-layout.json")
     demanded = [e for e in layout["entries"] if "corpus" in e["path"] and "pending" not in e]

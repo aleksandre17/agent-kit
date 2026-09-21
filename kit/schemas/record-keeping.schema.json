@@ -19,13 +19,12 @@
       "description": "How much an artifact BINDS -- the single vocabulary for that question, so that no document needs a second `status` field whose values would overlap these (ADR-019 decision 3). Every row carries two machine facts beside its prose, because an interpreter must be able to compare two authorities and to refuse a place that reaches too high WITHOUT holding any of these words in its code (Cardinal IV).",
       "type": "array",
       "minItems": 1,
-      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary", "binding_rank", "place_default", "place_may_declare"],
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary", "binding_rank", "place_default"],
         "properties": {
           "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" },
           "summary": { "type": "string", "minLength": 1 },
           "place_default": { "description": "Whether this is the ceiling a place row that declares none is read at. Exactly one row says true, and it is DATA for the same reason the flag beside it is: an interpreter that knew which state was the default would be an interpreter holding the most consequential policy in the vocabulary.", "type": "boolean" },
-          "binding_rank": { "description": "How much this state binds, as a comparable number: a declared authority is admitted under a ceiling when its rank is not greater than the ceiling's. Equal ranks bind equally; the number orders the vocabulary and means nothing on its own. This exists so that `above the ceiling` is decidable from data -- an interpreter that knew the order would be an interpreter holding policy.", "type": "integer" },
-          "place_may_declare": { "description": "Whether a PLACE may name this state as its `authority_ceiling`. False is the whole of ADR-019 decision 1 made structural: a place declaration may confer a class and may NEVER raise authority, so the top state is reachable only by an artifact's own front matter. A ceiling naming a row that says false is refused -- and the refusal names no word, it reads this flag.", "type": "boolean" }
+          "binding_rank": { "description": "How much this state binds, as a comparable number: a declared authority is admitted under a ceiling when its rank is not greater than the ceiling's. Equal ranks bind equally; the number orders the vocabulary and means nothing on its own. This exists so that `above the ceiling` is decidable from data -- an interpreter that knew the order would be an interpreter holding policy.", "type": "integer" }
         } }
     },
     "kinds": {

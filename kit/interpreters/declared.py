@@ -99,14 +99,43 @@ def sources(ctx, names) -> dict:
     return found
 
 
-def rules(ctx, names: list, field: str) -> list:
+#: The two words a `where` is written in. A filter is ONE field and ONE value, and that narrowness
+#: is the design: a referent set is often a SUBSET of a declared list -- the states a place may
+#: name, the kinds of one plane -- and the alternative to expressing it as data was a gate module
+#: per subset, each holding in Python a rule the vocabulary already states in a row. What it cannot
+#: express is deliberate: no absence, no negation, no range, no second field, no expression. A
+#: declaration that could compute would stop being data, and nothing could generate it (Cardinal IV).
+FIELD, EQUALS = "field", "equals"
+
+
+def matching(rows: list, where) -> list:
+    """The rows a filter selects, or all of them when no filter was declared. A row that does not
+    CARRY the field is not selected: absent is not equal to anything, and a filter that admitted
+    it would widen a referent set by silence."""
+    if where is None:
+        return rows
+    if not isinstance(where, dict) or set(where) != {FIELD, EQUALS}:
+        raise DeclarationError(
+            f"a filter is {{{FIELD!r}: <field>, {EQUALS!r}: <value>}}; {where!r} is neither, and a "
+            f"selector nobody can read would select whatever a guess decided")
+    return [row for row in rows if row.get(where[FIELD], _ABSENT) == where[EQUALS]]
+
+
+#: Distinct from every value a declaration can carry, so *absent* and *declared null* stay two
+#: states rather than one.
+_ABSENT = object()
+
+
+def rules(ctx, names: list, field: str, where=None) -> list:
     """Every row of every named source, in the order the sources were declared, with each id
-    claimed exactly once. `field` is the word the source's own SCHEMA gives its rows."""
+    claimed exactly once. `field` is the word the source's own SCHEMA gives its rows; `where`, when
+    a declaration carries one, narrows those rows to the ones it names -- and the narrowing is read
+    from the row, never from a word held here."""
     names = named(ctx.enabled_capabilities(), names)
     found = sources(ctx, names)
     rows, owners = [], {}
     for name in names:
-        for rule in found[name][field]:
+        for rule in matching(found[name][field], where):
             if rule["id"] in owners:
                 raise DeclarationError(
                     f"rule {rule['id']!r} is declared by both {owners[rule['id']]!r} and "

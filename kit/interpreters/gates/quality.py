@@ -63,6 +63,12 @@ def _referents(ctx, among: dict) -> set:
 #: kind's own params, exactly as `source` is -- one home each, and never both on one reference.
 SOURCES = "sources"
 
+#: And the word by which a reference says its referents are a SUBSET of that list -- the rows the
+#: vocabulary itself marks. Optional, one field and one value, and read where the rows are resolved
+#: (`declared.matching`): a subset stated as data is a declaration, and the alternative was a gate
+#: module per subset, each holding in Python a rule a row already states.
+WHERE = "where"
+
 
 def _referents_across(ctx, among: dict) -> set:
     """Every identity declared in one named list ACROSS several named sources.
@@ -78,7 +84,7 @@ def _referents_across(ctx, among: dict) -> set:
     the failure a multi-source referent set brings with it.
     """
     return {row[collection.IDENTITY]
-            for row in declared.rules(ctx, among[SOURCES], among[LIST])}
+            for row in declared.rules(ctx, among[SOURCES], among[LIST], among.get(WHERE))}
 
 
 #: The word a reference uses to say that the field it reads holds MANY pointers rather than one,

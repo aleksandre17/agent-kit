@@ -22,6 +22,13 @@
       "class": "binding",
       "target": "docs/reference/README.md",
       "source": "capabilities/knowledge/payload/reference-README.md"
+    },
+    {
+      "mode": "space",
+      "class": "binding",
+      "target": ".agents/project/corpus/",
+      "validates": "corpus-map",
+      "reads_as": "corpus_maps"
     }
   ],
   "gates": [
@@ -43,6 +50,97 @@
           { "id": "design", "pattern": "^DESIGN-" },
           { "id": "law", "pattern": "^LAW-" }
         ]
+      }
+    },
+    {
+      "id": "FF-CORPUS-VOCABULARY",
+      "kind": "reference-declared-across",
+      "params": {
+        "over": "corpus_maps",
+        "references": [
+          {
+            "id": "a-place-conferring-a-class-nobody-declares",
+            "field": "places",
+            "each": "holds",
+            "among": {
+              "sources": { "validates": "record-keeping" },
+              "list": "kinds"
+            },
+            "because": "a place row confers this class on every resident that declares none, so a word no row declares classifies documents into a section of the catalog that can never exist.",
+            "instead": "Add the class as a row of the record-keeping vocabulary, or name one that is already there.",
+            "proves": { "places": [{ "holds": "a-class-nobody-declares" }] },
+            "admits": { "places": [{ "holds": "decision" }] }
+          },
+          {
+            "id": "a-place-capping-with-an-authority-nobody-declares",
+            "field": "places",
+            "each": "authority_ceiling",
+            "among": {
+              "sources": { "validates": "record-keeping" },
+              "list": "authorities"
+            },
+            "because": "a ceiling is the MOST a resident of that place may bind, and it is read by comparing ranks -- so a ceiling naming a word the authority vocabulary does not declare has no rank at all, and every comparison downstream would silently fall back to the default while the row went on reading as a cap somebody wrote. Caught here as a dangling reference rather than by a gate module holding the rule in code.",
+            "instead": "Cap with an authority the vocabulary declares. A place may LOWER what its residents claim and may never RAISE it, so a ceiling is legitimate at every rank -- including the most binding one, in the place where that claim belongs (ADR-019 amendment 1).",
+            "proves": { "places": [{ "authority_ceiling": "a-word-no-vocabulary-row-declares" }] },
+            "admits": { "places": [{ "authority_ceiling": "canonical" }] }
+          },
+          {
+            "id": "a-place-whose-writer-nobody-declares",
+            "field": "places",
+            "each": "writer",
+            "among": {
+              "sources": { "validates": "record-keeping" },
+              "list": "writers"
+            },
+            "because": "who may write a place is an accountable authority named by the one vocabulary that holds them; a word nobody declared names nobody.",
+            "instead": "Name one of the declared writers, or add the row that declares this one.",
+            "proves": { "places": [{ "writer": "a-writer-nobody-declares" }] },
+            "admits": { "places": [{ "writer": "owner" }] }
+          },
+          {
+            "id": "a-place-whose-lifecycle-nobody-declares",
+            "field": "places",
+            "each": "lifecycle",
+            "among": {
+              "sources": { "validates": "record-keeping" },
+              "list": "lifecycles"
+            },
+            "because": "how a place's content ages decides whether an old document there is a record or a defect; a lifecycle nobody declared answers neither.",
+            "instead": "Name one of the declared lifecycles, or add the row that declares this one.",
+            "proves": { "places": [{ "lifecycle": "a-lifecycle-nobody-declares" }] },
+            "admits": { "places": [{ "lifecycle": "living" }] }
+          }
+        ]
+      }
+    },
+    {
+      "id": "FF-CORPUS-DECLARED",
+      "kind": "artifact-classified",
+      "params": {
+        "map": "corpus_maps",
+        "classes": {
+          "sources": { "validates": "record-keeping" },
+          "list": "kinds"
+        },
+        "authorities": {
+          "sources": { "validates": "record-keeping" },
+          "list": "authorities"
+        }
+      }
+    },
+    {
+      "id": "FF-AUTHORITY-DECLARED",
+      "kind": "authority-declared",
+      "params": {
+        "map": "corpus_maps",
+        "classes": {
+          "sources": { "validates": "record-keeping" },
+          "list": "kinds"
+        },
+        "authorities": {
+          "sources": { "validates": "record-keeping" },
+          "list": "authorities"
+        }
       }
     }
   ]

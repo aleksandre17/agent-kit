@@ -32,7 +32,6 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 KIT = REPO / "kit"
 
-sys.dont_write_bytecode = True
 for extra in [KIT / "interpreters", *sorted(p for p in (KIT / "interpreters").iterdir()
                                             if p.is_dir() and not p.name.startswith("_"))]:
     sys.path.insert(0, str(extra))

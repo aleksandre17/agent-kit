@@ -44,43 +44,37 @@
       "id": "canonical",
       "summary": "The one owner of the fact it states: cite it and the question is settled. The specification's CANONICAL. Reachable ONLY by an artifact's own declaration -- no place may confer it, which is why this row is the one that refuses to be a ceiling. A canonical artifact names the topic it owns, and two of them owning one topic is a refusal, not a tie.",
       "binding_rank": 3,
-      "place_default": false,
-      "place_may_declare": false
+      "place_default": false
     },
     {
       "id": "supporting",
       "summary": "True, citable, and subordinate: it supports a canonical statement or stands until one exists. The specification's SUPPORTING. The default ceiling of every place, because a place is a declaration about a location and a location is never a reason to believe something.",
       "binding_rank": 2,
-      "place_default": true,
-      "place_may_declare": true
+      "place_default": true
     },
     {
       "id": "migration-only",
       "summary": "Binds only inside a declared migration, and only until it completes. The specification's MIGRATION_ONLY. It is not a weaker rule; it is a rule with an end condition written into its authority, so a reader outside the migration knows it is not addressed to them.",
       "binding_rank": 1,
-      "place_default": false,
-      "place_may_declare": true
+      "place_default": false
     },
     {
       "id": "superseded",
       "summary": "Was authoritative and has been replaced by a named successor. The specification's SUPERSEDED. It binds nothing, and it is not silent: it names what replaced it, in both directions, so a reader who arrives at the old text is carried to the new one instead of obeying it.",
       "binding_rank": 0,
-      "place_default": false,
-      "place_may_declare": true
+      "place_default": false
     },
     {
       "id": "historical",
       "summary": "Kept for the record of what was believed, with no successor to point at. The specification's HISTORICAL. The same word is also a document KIND: the kind says what a document IS, this says what it BINDS -- a current reference may declare historical authority, and a historical record may not declare any other.",
       "binding_rank": 0,
-      "place_default": false,
-      "place_may_declare": true
+      "place_default": false
     },
     {
       "id": "unclassified",
       "summary": "The artifact has declared nothing, and that is a STATE the system names rather than an absence it hides (ADR-019 decision 2). It is counted against a declared budget, named in the catalog, forbidden as a citation, and left exactly where it is. Nothing fails merely because it exists; nothing may rest on it either.",
       "binding_rank": 0,
-      "place_default": false,
-      "place_may_declare": true
+      "place_default": false
     }
   ],
   "kinds": [

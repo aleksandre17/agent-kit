@@ -1,12 +1,18 @@
 {
   "$id": "corpus-map",
   "title": "A host's corpus map -- what each PLACE holds, and how high a resident of it may reach (ADR-019 decision 1)",
-  "description": "The second and last of the two sites from which an artifact's class and authority may be read; the first is the artifact's own front matter. A host writes `.agents/project/corpus/*.json` -- one file or several, each an independent set of rows, merged by path -- and states in TENS of rows what its THOUSANDS of documents are made of. Modelled row-for-row on the records map (`layout` schema): every field an entry there already has means the same thing here and is spelled the same way, because a second word for one truth is the drift this ADR exists to stop. Two properties are the whole design. (1) A row may CONFER a class on a place's residents and may NEVER RAISE authority: `authority_ceiling` caps what a resident may declare and supplies nothing, and the top authority is unreachable from here by construction -- the vocabulary's own rows say which states a place may name, so no word of the vocabulary appears in this schema or in any interpreter (Cardinals II and IV). (2) A row is a DECLARATION a human wrote, reviewable in one diff, with one author -- never an inference from a filename or a path, which is the defect this replaces (Cardinal VII). LAZY: a host that declares no corpus map at all is legal and green. The mechanism exists from the day it ships; the artifact is instantiated the day it has content, and an empty map is the absence of a map, not a row saying nothing.",
+  "description": "The second and last of the two sites from which an artifact's class and authority may be read; the first is the artifact's own front matter. A host writes `.agents/project/corpus/*.json` -- one file or several, each an independent set of rows, merged by path -- and states in TENS of rows what its THOUSANDS of documents are made of. Modelled row-for-row on the records map (`layout` schema): every field an entry there already has means the same thing here and is spelled the same way, because a second word for one truth is the drift this ADR exists to stop. Two properties are the whole design. (1) A row may CONFER a class on a place's residents and may NEVER RAISE authority: `authority_ceiling` caps what a resident may declare and supplies nothing, and no word of the vocabulary appears in this schema or in any interpreter (Cardinals II and IV). (2) A row is a DECLARATION a human wrote, reviewable in one diff, with one author -- never an inference from a filename or a path, which is the defect this replaces (Cardinal VII). LAZY: a host that declares no corpus map at all is legal and green. The mechanism exists from the day it ships; the artifact is instantiated the day it has content, and an empty map is the absence of a map, not a row saying nothing.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "places"],
+  "required": ["schema_version", "id", "places"],
   "properties": {
     "schema_version": { "type": "integer", "const": 1 },
+    "id": {
+      "description": "What this FILE of the map is, so that a host writing several of them names each one once. A map is merged by path across files; the id is the file's identity and never a place's, and two files claiming one id is refused where every collection's identity is -- a name that resolves to two things is not a name.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
     "summary": {
       "description": "What this file of the map covers, for a reader deciding whether to open it. Free prose: it binds nothing and is projected nowhere.",
       "type": "string"
@@ -31,7 +37,7 @@
             "minLength": 1
           },
           "authority_ceiling": {
-            "description": "The MOST a resident of this place may bind: the id of one `authorities` row whose own `place_may_declare` is true. It caps and never confers -- an artifact that declares nothing is unclassified here as everywhere, and an artifact that declares more than the ceiling is refused rather than trusted. Absent means the default ceiling, which is the vocabulary's ordinary supporting state; the one authority no place may name is the one whose row forbids it.",
+            "description": "The MOST a resident of this place may bind: the id of any `authorities` row. It CAPS and never confers -- an artifact that declares nothing is unclassified here as everywhere, and an artifact that declares more than the ceiling is REFUSED rather than quietly demoted, because a document whose own word and whose place disagree is a contradiction a person must settle. A place may LOWER a claim and may never RAISE one, with no exception at the top: that is how a place where nothing may be current (a history, an archive) demotes a stale claim by location, which is the failure a filename-derived authority produces and this design exists to kill. Absent means the default ceiling -- the vocabulary's ordinary supporting row -- so the most binding state is reachable only where a place says so AND the artifact says so (ADR-019 amendment 1).",
             "type": "string",
             "minLength": 1
           },

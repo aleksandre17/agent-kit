@@ -415,6 +415,60 @@ reachability are invariants we had never named.
 - The corpus can no longer get worse without a refusal. It can still be wrong; it can no longer be
   wrong in a way nobody can see.
 
+## Amendment 1 — a place may LOWER a claim and may never RAISE one (2026-09-21, building S2a)
+
+**The defect this cures is in decision 1's own words.** It says front matter is "the ONLY site
+that can grant an authority above the place's ceiling" and, four lines later, that
+"`authority_ceiling` caps what an artifact resident there may declare". Both cannot hold. Authority
+is read from the artifact and from nowhere else — decision 1 says so itself, and the implementation
+proves it — so a ceiling that a self-declaration may always exceed governs nothing at all. Read
+strictly, the field was INERT: a host would write it, a reviewer would read it as a constraint, and
+no comparison anywhere would ever consult it against the claim it was written to stop. A field with
+no effect is worse than no field, because it is believed.
+
+**THE DECISION: the ceiling binds every claim in its place, with no exception at the top.** A place
+may LOWER what its residents claim; it may never RAISE it. The most binding state is therefore
+reachable only where TWO declarations agree — the place says that claim is legitimate here, and the
+artifact makes it — and a place that says nothing caps at the ordinary supporting default, so
+silence grants nothing. A claim above the ceiling is REFUSED by name, naming the claim, the ceiling
+and the place.
+
+*Rejected:* the original asymmetry (the top state outside every ceiling's jurisdiction) — it leaves
+a `history/` or `archive/` place unable to cap a stale artifact that once declared itself canonical,
+which is the exact failure the owner's specification names in §35 and which Law 15 answers with
+*dead by location*. A design whose strongest guard cannot reach its most dangerous case has guarded
+the easy half. *Rejected:* capping SILENTLY — resolving the claim down to the ceiling and reporting
+it as the resolved value. That is two truths in one system: the artifact says one thing, the corpus
+reads another, and both are locally correct (Cardinal III, in its fatal form). A contradiction
+between a document and its place is a person's to settle, so it is refused and named, never
+smoothed over.
+
+**Consequently `place_may_declare` is DELETED from the authority vocabulary.** It existed to mark
+the state outside every ceiling's jurisdiction; with no jurisdiction carve-out it has no reader, and
+a field nothing reads is exactly what this amendment removed in the first place. What remains is
+`binding_rank` (the comparison) and `place_default` (the cap a silent place gets), and the
+vocabulary's own test now asserts the invariant that matters: the default ceiling is BELOW the top,
+so no place grants the strongest state by saying nothing.
+
+**Two defects found by the same slice, both cured here, both worth stating as identities:**
+
+*A gate that fails on a LEGAL state teaches its reader to ignore it.* `FF-CORPUS-DECLARED` is a
+census — it reads, it counts, and an unclassified document is a declared state (decision 2), not a
+finding. It now PRINTS its reading, in the voice `activated` and `floor` already use, and RETURNS
+only what is genuinely wrong: a word no vocabulary declares, a declaration that cannot be read, a
+place holding nothing. Whether the unclassified COUNT is too high is a different proposition, it
+belongs to a budget, and the budget belongs to the host.
+
+*The kit may not ship a host's stance.* The first build of these gates carried
+`"stance": {"ships": "observe"}`, which `governance/stances.json` forbids in its own summary — the
+kit ships the vocabulary and the unanswered default, and WHEN a gate is lowered or raised is the
+host's declaration (ADR-006, ADR-001 point 4). That mechanism is deleted. It only ever existed to
+neutralise the false failure above: two defects compensating each other, which is how a gate set
+becomes decorative while every light stays green. With the census honest, no stance is needed —
+`FF-AUTHORITY-DECLARED` stands unanswered at `enforce` like every other gate, and finds nothing on
+either host today, because a corpus in which 1835 documents declare nothing has no authority
+conflicts to have.
+
 ## Amendments
 
 *(none yet — appended on record, in the form of ADR-015 and ADR-017)*
