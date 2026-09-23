@@ -111,10 +111,22 @@ def _by_hand(text: str, shape: dict, rows: list) -> list:
     return found
 
 
-def _restated(ctx, params) -> int:
+def _restated(ctx, params):
     """How many second homes this artifact holds -- the number, and no verdict about it. Whether
-    it is too high is a ceiling, a ceiling is a number, and every number is the host's."""
-    return len(_found(ctx, params))
+    it is too high is a ceiling, a ceiling is a number, and every number is the host's.
+
+    `None`, never 0, where nothing was read. A host that declares no bounded artifact has not got
+    zero second homes: it holds a question nobody asked, and a zero there would report an unread
+    world as a clean one -- which is the reading a ceiling would then be congratulated for.
+    """
+    over = params.get(OVER)
+    if over is None:
+        return None
+    try:
+        reading = collection.named_reading(ctx, over, declared.DeclarationError)
+    except declared.DeclarationError:
+        return None
+    return len(_found(ctx, params)) if reading.records else None
 
 
 KINDS = {"section-restating-a-record": _found}

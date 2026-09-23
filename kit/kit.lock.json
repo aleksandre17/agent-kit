@@ -659,7 +659,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a9a114e9776aba821b1370f8e504f322021122d49649e12c4dfd88f10b63a525",
+      "digest": "47e24265140b3fe70c9836d3bd1dacc17843882331b8aba7288ac32e7cbf9889",
       "path": "interpreters/gates/restatement.py"
     },
     {
@@ -1338,5 +1338,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-23T22:46:41+00:00"
+  "taken_at": "2026-09-23T23:08:14+00:00"
 }
