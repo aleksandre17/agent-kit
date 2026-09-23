@@ -34,8 +34,10 @@ Three things it refuses to decide, because each belongs to somebody else:
     port -- `land` -- handed in by the caller, exactly as the journal and the artifact are.
   * WHETHER THE DESTINATION IS A DECLARED KIND. That is a property of the declaration and is
     judged statically, over the whole host, by the gate that reads the shape against the
-    vocabulary (`FF-POSITION-SHAPE`). A passage that re-checked it would be a second reading of a
-    vocabulary at a different moment, and the two would disagree the day one of them was fixed.
+    vocabulary -- which is deliberately not named here: an interpreter that spells one gate's id
+    has privileged it, and the registry is what says which gate reads this declaration. A passage
+    that re-checked the vocabulary would be a second reading of it at a different moment, and the
+    two would disagree the day one of them was fixed.
   * WHETHER A SPAN SHOULD HAVE COOLED AT ALL. Cooling is a curated act the caller chooses; the
     ordinary editorial cut still goes through `eviction.accept` with no landing, is counted, and
     is never refused. A mechanism that made every removal a curation would be switched off within
@@ -149,14 +151,14 @@ def cool(ctx, *, shape: dict, section: str, prior: str, candidate: str, land, ap
               f"is preserved in the journal and counted as an unlanded removal."
         )
 
-    landed = None
+    landing = None
     if removed:
-        landed = eviction.landing(cools_to, _addressed(land(cools_to, removed), cools_to,
+        landing = eviction.landing(cools_to, _addressed(land(cools_to, removed), cools_to,
                                                        artifact, removed))
 
     return eviction.accept(
         ctx, prior=prior, candidate=candidate, append=append, write=write, at=at,
-        artifact=artifact, section=section, rev=rev, runtime=runtime, landed=landed)
+        artifact=artifact, section=section, rev=rev, runtime=runtime, landing=landing)
 
 
 def _addressed(address, cools_to: str, artifact: str, removed: list) -> str:

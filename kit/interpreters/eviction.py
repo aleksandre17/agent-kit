@@ -57,7 +57,7 @@ EVENT = "eviction"
 
 #: The event's own field names -- the schema is their home; these are the ones this module and the
 #: measure beside it resolve with.
-REMOVED, CHARS, LANDED = "removed", "removed_chars", "landed"
+REMOVED, CHARS, LANDING = "removed", "removed_chars", "landing"
 
 #: The front-matter field a bounded artifact carries its unlanded count in (schema `front-matter`).
 #: Declared HERE, in the module that owns the eviction vocabulary, and imported by the measure that
@@ -103,7 +103,7 @@ def spans(prior: str, candidate: str) -> list:
 
 
 def event(ctx, *, prior: str, candidate: str, at: str, artifact: str, section: str = None,
-          rev: int = None, runtime: str = None, landed: dict = None) -> "dict | None":
+          rev: int = None, runtime: str = None, landing: dict = None) -> "dict | None":
     """The before-image of one accepted write, or `None` when the write removes nothing.
 
     `None` is not an empty event: a write that only adds has evicted nothing, and a journal line
@@ -121,7 +121,7 @@ def event(ctx, *, prior: str, candidate: str, at: str, artifact: str, section: s
         "artifact": artifact,
         CHARS: sum(len(span) for span in removed),
         REMOVED: removed,
-        LANDED: landed,
+        LANDING: landing,
     }
     for field, given in (("section", section), ("rev", rev), ("runtime", runtime)):
         if given is not None:
@@ -137,7 +137,7 @@ def event(ctx, *, prior: str, candidate: str, at: str, artifact: str, section: s
 
 def accept(ctx, *, prior: str, candidate: str, append, write, at: str, artifact: str,
            section: str = None, rev: int = None, runtime: str = None,
-           landed: dict = None) -> "dict | None":
+           landing: dict = None) -> "dict | None":
     """One accepted write, in the only order that is safe: journal, then replace.
 
     The ORDER is held here rather than asked of the caller, which is the difference between a
@@ -157,7 +157,7 @@ def accept(ctx, *, prior: str, candidate: str, append, write, at: str, artifact:
     never called at all if the record could not be extended first.
     """
     accepted = event(ctx, prior=prior, candidate=candidate, at=at, artifact=artifact,
-                     section=section, rev=rev, runtime=runtime, landed=landed)
+                     section=section, rev=rev, runtime=runtime, landing=landing)
     if accepted is not None:
         try:
             append(accepted)
@@ -238,4 +238,4 @@ def restated(raw, accepted: "dict | None", where: str = None) -> str:
     passage is for.
     """
     current = count(raw, where)
-    return str(current + (1 if accepted is not None and accepted[LANDED] is None else 0))
+    return str(current + (1 if accepted is not None and accepted[LANDING] is None else 0))

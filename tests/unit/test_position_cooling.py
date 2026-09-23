@@ -131,8 +131,8 @@ def test_a_span_cools_to_the_destination_its_section_declares_and_the_event_carr
     line = json.loads(journal.read_text(encoding="utf-8").splitlines()[0])
     assert line == event
     assert MANIFEST.validate(line, eviction.SCHEMA) == []
-    assert line["landed"] is not None
-    assert line["landed"] == {"kind": "run-evidence", "at": "work/evidence/2026-09-23.md"}
+    assert line["landing"] is not None
+    assert line["landing"] == {"kind": "run-evidence", "at": "work/evidence/2026-09-23.md"}
     assert land.carried["destination"] == "run-evidence"
     assert "the deletion of true, dated history" in (
         tmp_path / "work/evidence/2026-09-23.md").read_text(encoding="utf-8")
@@ -235,7 +235,7 @@ def test_the_passage_holds_no_section_name_and_reads_only_what_the_declaration_s
         append=eviction.appender(tmp_path / "j.jsonl"), write=_writer(_artifact(tmp_path)),
         at="2026-09-23T23:47:00Z")
 
-    assert event["landed"]["kind"] == "work-evidence"
+    assert event["landing"]["kind"] == "work-evidence"
     assert event["section"] == "whatever-this-host-calls-it"
     source = (KIT / "interpreters" / "cooling.py").read_text(encoding="utf-8")
     for privileged in ("ledger", "CONTINUE-HERE", "work-evidence", "run-evidence"):

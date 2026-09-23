@@ -491,7 +491,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "05125b6aed7cf8a435deba9ecda33118ddf73a2b584b333eab59456c331d69ab",
+      "digest": "bfc0e91fde846b416979ee98503bdb24fe8cb856cb365666f76d841a706a1cc7",
       "path": "interpreters/cooling.py"
     },
     {
@@ -533,7 +533,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "aae6bbe097815c45f214da682def52175ae8efb33346db61ee6f66e0e4144a4b",
+      "digest": "3c05e9b74a9a56278098c8c3564f03eee445abb12b6e09ce5a8595f6a54c0381",
       "path": "interpreters/eviction.py"
     },
     {
@@ -1025,7 +1025,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "c1ee1a59f160993624794cc51733f5e8f8f1994b5855d951899fab36c9886e78",
+      "digest": "3b4841aecd2835645e1a78c7a33beec400290d59b27872c76e6e28a6352d8a2d",
       "path": "schemas/eviction.schema.json"
     },
     {
@@ -1248,5 +1248,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-23T19:37:12+00:00"
+  "taken_at": "2026-09-23T19:59:59+00:00"
 }

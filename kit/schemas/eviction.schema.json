@@ -4,7 +4,7 @@
   "description": "A bounded artifact holds the current POSITION and only that; what was true earlier is the RECORD, and the record is append-only and unbounded. This document is one line of that record: the before-image of a single accepted write, journalled inside the lock the writer already holds and BEFORE the artifact is replaced. An event that cannot be appended refuses the write it belongs to, so a removal that is not written down cannot be performed -- deletion becomes a MOVE by construction rather than by discipline. Two properties are the point and both are carried here as data. The TEXT is preserved, not a digest of it: a digest proves that something was lost and returns nothing, which answers half of a cardinal. And every event STATES WHERE THE TEXT LANDED, or states `null` -- an ordinary editorial cut that was curated nowhere is legal and honest, and it is COUNTED against a budget rather than refused, because a gate that fires on ordinary work is switched off within a week. The log is AHEAD of the artifact by construction and never behind it: if the write that follows an accepted event fails, the text is preserved twice and lost zero times, which is the asymmetry the ordering exists to buy. Retention is NOT decided (ADR-020 absence 5): until a retention passage is declared, a journal of these is append-only and is never compacted, because a compaction that dropped the unlanded events would re-create the loss this document prevents, in slow motion.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "event", "at", "artifact", "removed_chars", "removed", "landed"],
+  "required": ["schema_version", "event", "at", "artifact", "removed_chars", "removed", "landing"],
   "properties": {
     "schema_version": {
       "description": "The version of this contract (ADR-009). Written by the passage that produces the event, read from the kit's manifest -- never spelled by a caller.",
@@ -50,7 +50,7 @@
       "minItems": 1,
       "items": { "type": "string", "minLength": 1 }
     },
-    "landed": {
+    "landing": {
       "description": "Where the removed text was curated to, or `null`. A reference is a record KIND from the record-keeping vocabulary and the address it landed at, so a reader can go and find the text in its new home. `null` is legal and honest: it means the text is preserved in this log and was curated nowhere, and it is what the unlanded counter counts. Required, never omitted: an event that simply left the field out would be indistinguishable from one written by a writer that does not know about landing.",
       "type": ["object", "null"],
       "additionalProperties": false,

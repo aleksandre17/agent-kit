@@ -96,7 +96,7 @@ def test_an_accepted_write_journals_the_text_it_removed_before_the_artifact_is_r
     assert MANIFEST.validate(line, eviction.SCHEMA) == []
     assert line["removed_chars"] == sum(len(span) for span in line["removed"])
     assert "the deletion of true, dated history" in "".join(line["removed"])
-    assert line["landed"] is None
+    assert line["landing"] is None
     assert artifact.read_text(encoding="utf-8") == candidate
     assert "\r" not in journal.read_bytes().decode("utf-8")
     print("\nJOURNAL EVENT:\n" + json.dumps(line, indent=2, ensure_ascii=False))
@@ -140,9 +140,9 @@ def test_a_removal_that_landed_nowhere_is_counted_and_one_that_landed_is_a_move(
                              at="2026-09-23T23:14:00Z", artifact="work/CONTINUE-HERE.md")
     landed = eviction.event(Ctx(), prior=PRIOR, candidate="# position\n",
                             at="2026-09-23T23:14:00Z", artifact="work/CONTINUE-HERE.md",
-                            landed={"kind": "work-card", "at": "work/cards/C-0001.md"})
+                            landing={"kind": "work-card", "at": "work/cards/C-0001.md"})
 
-    assert nowhere["landed"] is None and landed["landed"]["kind"] == "work-card"
+    assert nowhere["landing"] is None and landed["landing"]["kind"] == "work-card"
     assert eviction.restated("2", nowhere) == "3"
     assert eviction.restated("2", landed) == "2"
     assert eviction.restated(None, nowhere) == "1"
