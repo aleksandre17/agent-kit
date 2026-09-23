@@ -198,6 +198,26 @@
       }
     },
     {
+      "id": "FF-CORPUS-RATCHET",
+      "kind": "budget-ratchet",
+      "params": {
+        "map": "corpus_maps",
+        "classes": {
+          "sources": { "validates": "record-keeping" },
+          "list": "kinds"
+        },
+        "authorities": {
+          "sources": { "validates": "record-keeping" },
+          "list": "authorities"
+        },
+        "roots": { "field": "entry", "equals": true },
+        "markers": {
+          "sources": { "validates": "obligation-markers" },
+          "list": "markers"
+        }
+      }
+    },
+    {
       "id": "FF-INDEX-COMPLETE",
       "kind": "index-complete",
       "params": {

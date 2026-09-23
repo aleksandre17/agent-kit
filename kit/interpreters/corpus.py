@@ -374,11 +374,15 @@ def _vocabulary(ctx, among: dict) -> dict:
     return {row[collection.IDENTITY]: row for row in rows}
 
 
-def read(ctx, params: dict) -> Reading:
-    """The corpus, as this host declared it and as its documents declare themselves.
+def declaration(ctx, params: dict) -> tuple:
+    """WHERE this host writes its corpus map, and the files of it as the tree holds them now:
+    `(the space, [(path, document)])`.
 
-    A host that has declared no map is not an error and not an empty corpus: it is a host whose
-    corpus was never mapped, and the reading says exactly that instead of reporting a green zero.
+    One home for *which space is the map*, because two readers ask it. The reading below merges the
+    places out of the files; the ratchet must find the same space in the PREVIOUS accepted state,
+    where the files are whatever HEAD holds and not what is on disk. A caller that located the space
+    for itself would be a second answer to a question the install declaration already owns, and the
+    two would agree until the day the capability moved it (Cardinal III).
     """
     readings = collection.read_all(ctx, ctx.enabled_capabilities())
     if params[MAP] not in readings:
@@ -386,10 +390,21 @@ def read(ctx, params: dict) -> Reading:
             f"this gate was declared over a corpus map named {params[MAP]!r}, which no enabled "
             f"capability declares readable; the names declared are {sorted(readings)}"
         )
-    found = readings[params[MAP]]
+    space = next(item["target"] for capability in ctx.enabled_capabilities()
+                 for item in capability.installs if item.get("reads_as") == params[MAP])
+    return space.rstrip("/"), readings[params[MAP]].records
+
+
+def read(ctx, params: dict) -> Reading:
+    """The corpus, as this host declared it and as its documents declare themselves.
+
+    A host that has declared no map is not an error and not an empty corpus: it is a host whose
+    corpus was never mapped, and the reading says exactly that instead of reporting a green zero.
+    """
+    _space, records = declaration(ctx, params)
 
     rows: list = []
-    for _rel, document in found.records:
+    for _rel, document in records:
         rows.extend(document["places"])
 
     residents: dict = {}
@@ -416,7 +431,7 @@ def read(ctx, params: dict) -> Reading:
             read_back.append(Resident(rel, residents[rel], None, f"it cannot be read -- {exc}"))
 
     return Reading(
-        maps=len(found.records),
+        maps=len(records),
         places=rows,
         residents=read_back,
         missing_places=missing,

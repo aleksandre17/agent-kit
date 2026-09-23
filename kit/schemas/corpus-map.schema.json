@@ -68,6 +68,36 @@
           }
         }
       }
+    },
+    "budgets": {
+      "description": "One row per corpus-wide invariant this host undertakes to hold, and the whole of what turns the counts above into a VERDICT (ADR-019 decision 9). A budget is a CEILING that may fall in an ordinary edit and may never rise: `FF-CORPUS-RATCHET` refuses a row raised above the value of the previous accepted state, a row that was accepted and is now deleted, and a measured count standing above the ceiling that was meant to cap it. Nothing else. Absent means this host has undertaken nothing -- legal, green, and stated as such rather than reported as a corpus within its budgets. Deliberately NOT a percentage and not a deadline: a ratio improves when its denominator grows, so a corpus could 'improve' by acquiring documents, and a date is not a mechanism because it expires and takes the rule with it.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["measures", "ceiling", "measured"],
+        "properties": {
+          "measures": {
+            "description": "The id of the MEASURE this row caps -- a count published by the module of the kit that already reads it, exactly as a gate kind is answered by the module that judges it. No measure is listed in this schema or in the ratchet: a budget over a count nobody can take is refused at run time with the published names printed, because a closed list here would mean a host could only budget what this file was last edited to know about (Cardinals II and IV).",
+            "type": "string",
+            "minLength": 1
+          },
+          "ceiling": {
+            "description": "The most this host accepts for that measure. An integer and never a rate. Zero is the terminal value: a budget that reaches it matures its gate to `enforce` under ADR-006, and the zero becomes unraisable like every other value -- by the same refusal, with no special case for it. No lower bound is stated here because this kit's schema subset carries no numeric bounds, deliberately (`validation.py`), and a keyword the validator would refuse is worse than none: a ceiling below anything measurable needs no schema to catch it, since the measured count then stands above it and the ratchet refuses on that.",
+            "type": "integer"
+          },
+          "measured": {
+            "description": "The date the number was taken, ISO `YYYY-MM-DD`. Required, because a ceiling is a reading of the world at a moment and a reading whose moment is unstated cannot be told apart from a guess (Cardinal III). It is never checked for freshness -- the measured count is compared with the ceiling on every run, which is a stronger answer than any date could give -- and it is what a reader uses to tell a budget that was measured from a budget that was hoped for.",
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "note": {
+            "description": "Why this host carries this budget, for the reader of the next raise attempt. Free prose: it binds nothing and is projected nowhere.",
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }

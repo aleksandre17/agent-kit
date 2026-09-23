@@ -192,9 +192,27 @@ def _succession(ctx, resident, residents) -> list:
     return findings
 
 
+def _unclassified(ctx, params) -> "int | None":
+    """How many documents have never said what they are -- the number, and nothing about it.
+
+    A MEASURE, which is a count offered to whoever has a ceiling for it; the census above prints
+    the same number and returns no verdict on it, and both read it off the one reading rather than
+    counting twice. `None` where nothing was read: a host with no map has not got zero unclassified
+    documents, and a measure that answered 0 there would report a clean corpus nobody looked at.
+    """
+    reading = corpus.read(ctx, params)
+    return None if reading.nothing_read() else len(reading.undeclared)
+
+
 #: What this module PROVIDES. Two kinds, one reading: a new question about the same corpus is a
 #: row here and a function beside these -- never a second resolution of what a document is.
 KINDS = {
     "artifact-classified": _census,
     "authority-declared": _claims,
 }
+
+#: What this module can be held to a BUDGET on (ADR-019 decision 9). Declared here, in the module
+#: that owns the reading it comes from, and discovered by the same registry that finds a gate kind
+#: -- so the ratchet spells no measure of its own and a new budgetable fact is a row beside this
+#: one. The name is the word a host writes in its map, and it is the ADR's own spelling.
+MEASURES = {"unclassified_documents": _unclassified}

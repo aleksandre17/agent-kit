@@ -120,22 +120,29 @@ def _owed(ctx, resident, marks: list) -> list:
     return found
 
 
-def _routed(ctx, params) -> list:
-    """Which documents owe something, and which of those no declared entry can reach."""
+def _unreached(ctx, params) -> tuple:
+    """`(the absence in words or None, the reading, the graph, the marks, what is owed, the
+    unrouted paths, findings)` -- the ONE computation of *which documents carry an obligation that
+    no declared entry reaches*.
+
+    Two callers ask it: the gate below, which names them, and the MEASURE, which only counts them
+    for whoever holds a budget over the number. Walked twice it would be two answers to one
+    question, agreeing until the day one of them was fixed (Cardinal III). When nothing could be
+    walked the absence is returned IN WORDS -- never as an empty set, which reads like a corpus
+    whose obligations are all routed.
+    """
     reading = corpus.read(ctx, params)
     absent = reading.nothing_read()
     if absent:
-        print(f"        {absent}")
-        return []
+        return absent, reading, None, [], {}, [], []
 
     marks, findings = _markers(ctx, params[MARKERS])
     if not marks:
-        print(
-            f"        NOTHING WAS COUNTED: not one of the {len(findings)} declared mark(s) can be "
-            f"used, so no document was read for what it owes. The reading below is absent, not "
-            f"empty."
+        return (
+            f"NOTHING WAS COUNTED: not one of the {len(findings)} declared mark(s) can be used, so "
+            f"no document was read for what it owes. The reading below is absent, not empty.",
+            reading, None, marks, {}, [], findings,
         )
-        return findings
 
     graph = corpus.routes(ctx, reading, params.get(corpus.ROOTS))
     owed = {}
@@ -146,6 +153,17 @@ def _routed(ctx, params) -> list:
 
     unreachable = {resident.path for resident in graph.unreachable}
     unrouted = sorted(path for path in owed if path in unreachable)
+    return None, reading, graph, marks, owed, unrouted, findings
+
+
+def _routed(ctx, params) -> list:
+    """Which documents owe something, and which of those no declared entry can reach."""
+    absent, reading, graph, marks, owed, unrouted, findings = _unreached(ctx, params)
+    if absent:
+        print(f"        {absent}")
+        return findings
+
+    unreachable = {resident.path for resident in graph.unreachable}
     quiet = len(unreachable) - len(unrouted)
     depths = graph.by_depth()
     spread = ", ".join(f"{distance}:{depths[distance]}" for distance in sorted(depths)) or "none"
@@ -297,9 +315,22 @@ def _completeness(ctx, reading, residents: dict, entry) -> tuple:
     return findings, elsewhere
 
 
+def _unrouted_obligations(ctx, params) -> "int | None":
+    """How many documents carry an obligation no declared entry reaches. The number alone: whether
+    it is too many is a ceiling's verdict, and the ceiling is the host's (ADR-019 decision 9).
+    `None` where nothing could be walked -- an unwalked corpus has not got zero unrouted
+    obligations, and a measure that said 0 there would report a promise being kept by nobody."""
+    absent, _reading, _graph, _marks, _owed, unrouted, _findings = _unreached(ctx, params)
+    return None if absent else len(unrouted)
+
+
 #: What this module PROVIDES. Two kinds, one graph: a further question about what reaches what is a
 #: row here and a function beside these -- never a second walk of the same corpus.
 KINDS = {
     "obligation-reachable": _routed,
     "index-complete": _indexed,
 }
+
+#: What this module can be held to a BUDGET on -- published where the walk that produces it lives,
+#: and read by the same discovery that finds a gate kind, so the ratchet names no measure itself.
+MEASURES = {"unrouted_obligation_docs": _unrouted_obligations}

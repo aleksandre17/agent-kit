@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 201,
+  "count": 202,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -257,7 +257,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "acb06397d17a87a6905b08892bf2134afa90298b834415d7eef9dbfa469af944",
+      "digest": "1e594a4e2e2ad38998af56ceb036ca87e65dd8d332e4cd03063804da375f2583",
       "path": "capabilities/knowledge/capability.json"
     },
     {
@@ -443,7 +443,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "3f709cbe496b44e333ffa2f15475a295b7aadc42400cdaccd8af0a48bef5d596",
+      "digest": "c16c11cbf70ddb29d2b97ff014aea7040e0f548eacbcf33d3d23424936189728",
       "path": "diagnostics.json"
     },
     {
@@ -491,7 +491,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "aae8931ef44a689141c9e63dc7229f4b92203721ba581928f8b6247c157ceb63",
+      "digest": "f9f6b40a50347bd646c773bf35ff3ef043c814b9432cd40742974a925d6c64a9",
       "path": "interpreters/corpus.py"
     },
     {
@@ -545,7 +545,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ed278ac3c3711185eb38771400464d4feaedcc0778996b9783136887c181b4a3",
+      "digest": "ec772c42c57b09c2d1795bc0ae69795951ad79810043acb51429f7bcac30f0ca",
       "path": "interpreters/gates/artifacts.py"
     },
     {
@@ -599,13 +599,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "117b8e680881c55553b20ee38eebcb349909afabdbea88270137f033e7ffd483",
+      "path": "interpreters/gates/ratchet.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "2b68286518d840b0bf61ad49239f041ed4f7339c26071fb20933eaf155d72328",
       "path": "interpreters/gates/records.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f5dc85272447ee8612055590e8ff2ac139331f02e6aac310b2f70dc20c98dbfb",
+      "digest": "0ef62b30ce2f1536e585140cc94380faa2fd9d07d1922b116894683cbf11acfc",
       "path": "interpreters/gates/routes.py"
     },
     {
@@ -947,7 +953,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "c3b43f9127feed19e967210a8f96883af6c698dedafd5d518286bea98ad3104c",
+      "digest": "8de4cf3c2ae49d7dcbe30cd99689762634adc69b9e38523cd479acfa14b19c84",
       "path": "schemas/corpus-map.schema.json"
     },
     {
@@ -1212,5 +1218,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-21T04:01:38+00:00"
+  "taken_at": "2026-09-23T18:08:01+00:00"
 }

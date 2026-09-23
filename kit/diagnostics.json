@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 54,
+  "issued": 55,
   "codes": [
     {
       "code": "KIT0001",
@@ -326,6 +326,12 @@
       "status": "active",
       "title": "a declaration names a resolver kind nothing answers for",
       "explanation": "A capability may declare that a READING reaches its pages -- a `resolves` row naming a kind and the parameters that kind needs -- and the kind is answered by whichever module owns that reading, exactly as a gate kind is answered by the module that judges it. This refusal is raised when a declaration names a kind no module publishes: almost always a spelling, occasionally a capability shipped against a kit that does not carry its resolver yet. It is refused rather than skipped because the alternative is a page that renders with a section quietly missing, which reads exactly like a corpus that had nothing to put there (Cardinal V). The set of kinds stays OPEN: a new reading is a new module publishing a row, never an edit to the interpreter that dispatches them."
+    },
+    {
+      "code": "KIT0055",
+      "status": "active",
+      "title": "a budget is declared over a measure nothing can take",
+      "explanation": "A host caps a corpus-wide count by writing a budget row in its corpus map: the id of a MEASURE, the ceiling it undertakes to hold, and the date the number was taken. The measures are published by the modules of the kit that already perform those readings, and discovered exactly as gate kinds are. This refusal is raised when a row names a measure no module publishes -- almost always a spelling, occasionally a map written against a kit that does not carry that reading yet. It is refused rather than skipped because a ceiling over a count nobody can take would pass FF-CORPUS-RATCHET on every run for the rest of its life, and would read, to anyone auditing the map, exactly like a budget that was being honoured (Cardinal V). The published names are printed with the refusal: name one of them, or delete the row."
     }
   ]
 }
