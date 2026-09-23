@@ -421,3 +421,27 @@ amendment 7, point 4).
 4. **ADR-019, declared absence 1** (the adversarial verification matrix). Its list of forbidden states
    should gain *a record destroyed to buy currency in a bounded artifact*, classified UNCONTROLLED until
    S1 lands.
+
+## Amendment 1 — two things this ADR said twice, restated once (2026-09-23, on building S0+S1)
+
+Both were found by the slice that implements this decision, which is where a contradiction in a
+declaration is supposed to surface: the builder had to choose, and a builder choosing between two
+sentences of its own specification is the defect, not the choice.
+
+**1. The kind is `budget-ratchet`.** Decision 2 and the slice table call the ratchet
+`budget-monotonic`. No such gate kind exists anywhere in this kit; the kind published by ADR-019 and
+running today is **`budget-ratchet`**, and S1 reused it whole, as instructed. The name in this ADR
+was wrong on arrival. A second spelling of a live kind is not a synonym — it is a second home for a
+name, and the first reader to trust it would go looking for a mechanism that is not there.
+
+**2. Proof-reference kinds are a REGISTRY, not a vocabulary row.** The S0 row of the slice table
+lists "proof-ref kinds" among the words to be declared; decision 7 declares them an OPEN registry of
+resolver modules, discovered exactly as gate kinds are. Both cannot hold: rows would be a second
+home for a set the registry owns, and every new resolver would then cost a vocabulary edit — the
+closed enumeration Cardinal II refuses. **Decision 7 stands; the table cell was a summary that
+over-reached.** S0 therefore declared no proof-reference words, correctly, and S3 lands the registry.
+
+*The rule this amendment follows:* where a numbered decision and a table summarising it disagree,
+the DECISION governs and the table is corrected — a summary never legislates. Recorded here rather
+than edited into the table above, because an amendment that rewrote the sentence it amends leaves a
+doctrine whose clauses nobody can date (Cardinal VI).
