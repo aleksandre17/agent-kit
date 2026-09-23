@@ -72,7 +72,7 @@ _empty_
 - `bet` → `in-flight` · owner **doer**
   - exit: the work has started and the host had a free slot for it
 - `in-flight` → `verified` · owner **verifier**
-  - exit: evidence, not testimony: the exit criterion was observed to hold
+  - exit: evidence, not testimony: every criterion the card declares resolved to a proof that held, and the machine refuses the passage until they do
 - `verified` → `landed` · owner **doer**
   - exit: the change is in the trunk and reachable by everyone
 - `landed` → `learned` · owner **owner**

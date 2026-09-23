@@ -334,15 +334,18 @@
   "criterion_statuses": [
     {
       "id": "proved",
-      "summary": "The proof this criterion names was resolved and it held. The only status that may stand behind a claim that work is done, and no principal may write it: it is COMPUTED from a reading, because a status anybody can type is testimony wearing a machine's clothes (ADR-020 decisions 7 and 8)."
+      "summary": "The proof this criterion names was resolved and it held. The only status that may stand behind a claim that work is done, and no principal may write it: it is COMPUTED from a reading, because a status anybody can type is testimony wearing a machine's clothes (ADR-020 decisions 7 and 8).",
+      "holds": true
     },
     {
       "id": "failed",
-      "summary": "The proof was resolved and it did NOT hold. A fact about the work, and the one status that is an instruction: something named is measurably not true."
+      "summary": "The proof was resolved and it did NOT hold. A fact about the work, and the one status that is an instruction: something named is measurably not true.",
+      "holds": false
     },
     {
       "id": "unproven",
-      "summary": "The proof resolved to nothing -- it names nothing, or names something no resolver can read. A declared, counted, honest absence: never a failure, because a missing referent and a refuted criterion are different facts about the world, and never a pass, because nothing was observed. Collapsing it into either one trains the reader to ignore both."
+      "summary": "The proof resolved to nothing -- it names nothing, or names something no resolver can read. A declared, counted, honest absence: never a failure, because a missing referent and a refuted criterion are different facts about the world, and never a pass, because nothing was observed. Collapsing it into either one trains the reader to ignore both.",
+      "holds": null
     }
   ],
   "appetite_units": [

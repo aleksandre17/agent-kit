@@ -49,11 +49,12 @@
         "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
     },
     "criterion_statuses": {
-      "description": "What a card's acceptance criterion may be COMPUTED to be (ADR-020 decision 7). A vocabulary and never an enum in a schema: a new reading of a proof is a row, and no interpreter holds the set. None of these is writable by any principal -- the rows describe results of a resolution, not fields on a document.",
+      "description": "What a card's acceptance criterion may be COMPUTED to be (ADR-020 decision 7). A vocabulary and never an enum in a schema: a new reading of a proof is a row, and no interpreter holds the set. None of these is writable by any principal -- the rows describe results of a resolution, not fields on a document. Every row carries one machine fact beside its prose, for the reason the authorities rows do: an interpreter must be able to turn a reading into the word for it WITHOUT holding any of these words in its code (Cardinal IV).",
       "type": "array",
       "minItems": 1,
-      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
-        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary", "holds"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 },
+          "holds": { "description": "Which reading this word is the word for: true where the proof was taken and held, false where it was taken and did not hold, null where no reading could be taken at all. Three-valued on purpose and never flattened to a boolean -- a missing referent and a refuted claim are different facts about the world, and the null is what keeps them apart all the way to the surface. Exactly one row may carry each value.", "type": ["boolean", "null"] } } }
     },
     "appetite_units": {
       "description": "The units a bet's APPETITE may be declared in (ADR-020 decision 9). The kit ships the words and never a number: how much is the host's, stated on its own card, and a unit is legitimate here only while consumption in it can be read passively from records the system already writes.",

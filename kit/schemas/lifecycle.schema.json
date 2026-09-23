@@ -43,6 +43,18 @@
             "type": "string",
             "minLength": 1
           },
+          "computed": {
+            "description": "A passage DECIDED BY A MACHINE, and the reference that decides it (ADR-020 decision 8). What is machine-decidable is never set by hand: a state a principal could type means only that somebody said so, and the evidence beside it becomes decoration. This and `door` are the two modes a passage may declare and they are exclusive -- a passage that declared both would be claiming a judgement nobody may automate and a computation nobody may make.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["proof"],
+            "properties": {
+              "proof": {
+                "description": "A typed reference about the card standing at this passage, resolved through the same open registry a criterion's proof is resolved through -- so a condition is declared in exactly the grammar a proof is declared in, and the interpreter that reads it holds no condition of its own. The GRAMMAR of a reference has one home, on the criterion that declares one; nothing here restates it, because a shape declared twice drifts while both copies go on reading as correct. What a reference that cannot be read means is settled where it is resolved: no reading, therefore no passage -- never a pass.",
+                "type": "object"
+              }
+            }
+          },
           "when": {
             "description": "A DECLARED bypass (ITIL's pre-approved standard change): this passage is open only to cards whose field holds this value. Bypass by declaration, never by omission -- a card is still written.",
             "type": "object",

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
+import collection
 import doors
 from errors import KitError
 
@@ -21,11 +22,25 @@ from errors import KitError
 HISTORY = "history"
 CREATED_AT = "created_at"
 
+#: The two modes a passage may declare, as the grammar carries them: the principal who holds a
+#: judgement, and the reference that decides a computation. The words themselves are the host's
+#: vocabulary; these are the FIELDS the declaration puts them in.
+DOOR = "door"
+COMPUTED = "computed"
+PROOF = "proof"
+
 
 class LifecycleError(KitError):
     """A card, a move or a board contradicts the lifecycle that was declared."""
 
     code = "KIT0011"
+
+
+class UncomputedPassage(KitError):
+    """A passage a machine decides was asked for, and the reference that decides it did not hold
+    -- or could not be read, which is not the same thing and is not treated as one."""
+
+    code = "KIT0061"
 
 
 class Governed:
@@ -219,8 +234,8 @@ def _route_note(governed: Governed, card: dict, start: str, target: str, skip: l
     drawn = " -> ".join([start] + [edge["to"] for edge in route])
     note = f"the declared way from {start!r} to {target!r} is: {drawn}"
     for edge in route:
-        if edge.get("door"):
-            note += (f"; and {edge['from']} -> {edge['to']} is a DOOR only the {edge['door']} "
+        if edge.get(DOOR):
+            note += (f"; and {edge['from']} -> {edge['to']} is a DOOR only the {edge[DOOR]} "
                      f"may open (--approve <who>). You may skip neither a state nor a door.")
     return note
 
@@ -250,7 +265,7 @@ def resolve(governed: Governed, card: dict, target: str, approver) -> dict:
         )
 
     edge = usable[0]
-    door = edge.get("door")
+    door = edge.get(DOOR)
     if door and not approver:
         doors.refuse(
             what=(f"card {card['id']!r} stands at {state} -> {target}, and the lifecycle declares "
@@ -266,6 +281,55 @@ def resolve(governed: Governed, card: dict, target: str, approver) -> dict:
             f"nobody made; use --by <who> for a passage a machine may make."
         )
     return edge
+
+
+def decided_by(edge: dict) -> "dict | None":
+    """The reference that DECIDES this passage, or None where the declaration names none.
+
+    A passage that declares a principal AND a reference is refused before anything is read: it
+    claims at once a judgement no machine may make and a computation no principal may declare, and
+    nothing can honour both. A passage that declares NEITHER is not refused -- most lifecycles in
+    the world are written that way, and a rule that reddened every one of them on the day it
+    arrived would be switched off by the end of the week -- but it is an unowned passage, and an
+    unowned passage is how work silently advances.
+    """
+    condition = edge.get(COMPUTED)
+    if condition is None:
+        return None
+    if edge.get(DOOR):
+        raise LifecycleError(
+            f"the passage {edge['from']} -> {edge['to']} declares both a principal who holds it "
+            f"and a reference that decides it. Those are the two modes a passage may have and "
+            f"they exclude each other: one says no machine may make this move, the other says no "
+            f"principal may. Declare one"
+        )
+    return condition[PROOF]
+
+
+def refuse_uncomputed(card: dict, edge: dict, verdict) -> None:
+    """The machine's own refusal to enter a state it computes.
+
+    This is what makes such a state mean anything: it is not entered because somebody said so, and
+    the reading that refused it is printed rather than summarised. A reference that could not be
+    read at all refuses the passage exactly as a refuted one does -- nothing may pass on an
+    unobserved proof -- but it is NAMED differently, because the cure for the two is different:
+    one is work to finish, the other is a reference to fix.
+    """
+    if verdict.holds is True:
+        return
+    unread = verdict.holds is None
+    raise UncomputedPassage(
+        f"card {card[collection.IDENTITY]!r} may not enter {edge['to']!r}: that passage is decided "
+        f"by a machine, and the reference that decides it "
+        + ("could not be read" if unread else "was read and did not hold")
+        + f" -- {verdict.reading}. "
+        + ("Nothing was observed, so nothing is claimed in either direction: fix what the "
+           "reference points at, or point it at something that is there."
+           if unread else
+           "This is a fact about the work, not about the record.")
+        + " No principal may declare this passage instead; a state anybody could type is a "
+          "state that means only that somebody said so"
+    )
 
 
 def moved(governed: Governed, card: dict, edge: dict, when: str, by: str, approver=None) -> dict:

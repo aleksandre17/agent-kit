@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 59,
+  "issued": 61,
   "codes": [
     {
       "code": "KIT0001",
@@ -356,6 +356,18 @@
       "status": "active",
       "title": "a span was carried somewhere no address came back from",
       "explanation": "A landing is a reference a later reader FOLLOWS: the record kind the text went to, and the address it is now at. This refusal is raised when the port that carries a cooled span returns no usable address. It is refused rather than journalled with a blank, because an event that names a kind and no address claims the text is somewhere without saying where -- exactly as useful as a digest, and worse than useless in one way that matters: it would be counted as a MOVE, so the artifact's unlanded counter would fall while the span became unfindable. Nothing was journalled and the artifact is unchanged. Whether the carrying itself happened is the port's to report and is not assumed here in either direction; fix the port to return the address it landed at, and cool again."
+    },
+    {
+      "code": "KIT0060",
+      "status": "active",
+      "title": "a kind of proof is claimed by two resolvers, or a reading has no word",
+      "explanation": "A criterion names its proof as a TYPED REFERENCE, and the kinds of reference are an open registry: a module publishes the kinds it answers and the registry finds it because it is there (ADR-020 decision 7). This refusal is raised when two modules publish the same kind -- a name that resolves to two readings is not a name, and ordering them by filename would make which reading you get a property of the alphabet -- and when a reading comes back that the status vocabulary has no word for, which happens when a row is added to the registry's answers without a row being added to the words. Note what is NOT this refusal: a reference whose kind nothing installed here answers is not an error at all. It is a reading nobody could take, it is reported as such, and it never passes and never fails. Nothing was computed and no card was touched. Publish the kind from one module, or declare the missing word where the words are declared."
+    },
+    {
+      "code": "KIT0061",
+      "status": "active",
+      "title": "a passage a machine decides was asked for, and the reference that decides it did not hold",
+      "explanation": "Every passage between two work states is either a judgement a named principal holds or a computation a machine makes, and the two exclude each other (ADR-020 decision 8). This refusal is raised on the second kind: the passage was asked for, the reference the declaration names was resolved, and it did not come back true. The refusal says which of the two reasons it was, because the cure differs -- a reference that was read and did NOT hold is a fact about the work, and a reference that could not be read at all is a fact about the record, most often a referent that has moved or was never there. Neither one passes: nothing enters a computed state on an unobserved proof, and no principal may declare it instead, because a state anybody could type means only that somebody said so and turns every piece of evidence beside it into decoration. The card is unchanged and no passage was recorded. Make the reference hold, or fix what it points at."
     }
   ]
 }

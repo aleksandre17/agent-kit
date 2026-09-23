@@ -1,0 +1,61 @@
+"""A reference to a RULE this host already declares: does it hold, right now, as it stands?
+
+The strongest proof a criterion can name is one the host was already going to run. This resolver
+takes the name of a declared rule, finds the capability that declares it, asks the module
+registered for that rule's kind to evaluate it, and reports what came back -- the verdict and the
+findings it was given, never a summary of them.
+
+It privileges nothing and knows no rule. The name arrives as data on the card; the params arrive
+from the declaration that owns the rule, never from the card, because a criterion that could
+restate a rule's parameters would be judging itself against a rule of its own invention.
+
+A name this host declares nowhere is READ AS NOTHING rather than as a failure: the criterion names
+a referent that is not there, which is an absence and stays one until somebody declares it.
+"""
+
+from __future__ import annotations
+
+import collection
+import criteria
+import gatekinds
+
+#: What a capability's declaration of a rule carries beside its name. Declaration vocabulary.
+OF_KIND = "kind"
+WITH = "params"
+
+
+def _declared_rule_holds(request) -> criteria.Verdict:
+    named = [
+        (capability, rule)
+        for capability in request.ctx.enabled_capabilities()
+        for rule in capability.gates
+        if rule[collection.IDENTITY] == request.ref
+    ]
+    if not named:
+        return criteria.Verdict.unreadable(
+            f"no capability enabled on this host declares a rule called {request.ref!r}, so there "
+            f"is nothing to evaluate. The criterion names a referent that is not here"
+        )
+    if len(named) > 1:
+        return criteria.Verdict.unreadable(
+            f"{request.ref!r} is declared by {sorted(c.id for c, _ in named)}; a name that resolves "
+            f"to two rules resolves to none, and this reading is not taken on a guess"
+        )
+    capability, rule = named[0]
+    judges = gatekinds.registry()
+    if rule[OF_KIND] not in judges:
+        return criteria.Verdict.unreadable(
+            f"{request.ref!r} is declared by {capability.id!r} as kind {rule[OF_KIND]!r}, and no "
+            f"module installed here evaluates that kind; the reading could not be taken"
+        )
+    findings = judges[rule[OF_KIND]](request.ctx, rule.get(WITH, {}))
+    if findings:
+        return criteria.Verdict(False, f"{request.ref} was evaluated and did not hold: "
+                                       + "; ".join(str(f) for f in findings))
+    return criteria.Verdict(True, f"{request.ref} was evaluated as declared by {capability.id} "
+                                  f"and held")
+
+
+#: The kind of reference this module answers. A row here and a function beside it -- and the
+#: registry finds it because it is in this directory, not because anything names this file.
+RESOLVERS = {"declared-rule-holds": _declared_rule_holds}

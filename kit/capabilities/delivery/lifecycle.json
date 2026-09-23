@@ -91,7 +91,8 @@
       "from": "in-flight",
       "to": "verified",
       "owner": "verifier",
-      "exit": "evidence, not testimony: the exit criterion was observed to hold"
+      "computed": { "proof": { "kind": "criteria-all-hold", "ref": "criteria" } },
+      "exit": "evidence, not testimony: every criterion the card declares resolved to a proof that held, and the machine refuses the passage until they do"
     },
     {
       "from": "verified",
