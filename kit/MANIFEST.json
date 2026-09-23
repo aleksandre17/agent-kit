@@ -132,6 +132,7 @@
     "corpus-map": "schemas/corpus-map.schema.json",
     "front-matter": "schemas/front-matter.schema.json",
     "eviction": "schemas/eviction.schema.json",
+    "position-shape": "schemas/position-shape.schema.json",
     "obligation-markers": "schemas/obligation-markers.schema.json",
     "card": "schemas/card.schema.json",
     "delivery-policy": "schemas/delivery-policy.schema.json",

@@ -174,6 +174,19 @@ def accept(ctx, *, prior: str, candidate: str, append, write, at: str, artifact:
     return accepted
 
 
+def landing(kind: str, at: str) -> dict:
+    """Where a removed span was curated to, in the two words the event's schema declares it in:
+    WHAT the destination is -- a record kind -- and WHERE it is.
+
+    A constructor rather than two field names a caller spells for itself. The words belong to this
+    event and the schema is their home; a second passage that wrote them out would be a second
+    home for the vocabulary of a landing, and the two would stay internally correct while they
+    drifted (Cardinal III). Nothing is validated here: the event this is handed to is validated
+    whole, by the schema, before anything is appended anywhere.
+    """
+    return {"kind": kind, "at": at}
+
+
 def appender(path):
     """A durable line-appender over one journal file, as a closure the caller hands to `accept`.
 

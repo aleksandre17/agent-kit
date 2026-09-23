@@ -359,6 +359,30 @@
       "summary": "A calendar day of elapsed time, whatever was spent inside it. The unit for work whose cost is waiting rather than effort."
     }
   ],
+  "section_sources": [
+    {
+      "id": "authored",
+      "summary": "A principal writes this section and it is the ONE home of what it says. Nothing derives it, so deleting it destroys something -- which is precisely why a section of this source is the kind that must be able to COOL somewhere before a ceiling makes the choice for it (ADR-020 decisions 3 and 4)."
+    },
+    {
+      "id": "projected",
+      "summary": "This section is DERIVED from a declaration that lives elsewhere and carries no truth of its own: delete it and it comes back byte-identical. A hand-written line here is a second home for a fact somebody else owns, and it is the defect a projection gate names rather than a style to be discouraged. It cools to nothing by itself -- what would be preserved is its source, which was never at risk."
+    }
+  ],
+  "audiences": [
+    {
+      "id": "author",
+      "summary": "Whoever is doing the work and writing here: they read this section to act, now. Content addressed to them ages fastest, because what the next move is stops being true the moment it is made."
+    },
+    {
+      "id": "steward",
+      "summary": "Whoever is accountable for this artifact continuing to be true: they read to curate rather than to act -- what has accumulated, what has gone stale, what belongs somewhere colder. A section with this audience is read rarely and is the first casualty of a ceiling, which is why it is named rather than assumed."
+    },
+    {
+      "id": "system",
+      "summary": "No human reader. An interpreter resolves this section and nothing projects it to anybody by default: a field shown to a person who cannot act on it is plumbing rendered as content, and a surface that shows its own machinery teaches its reader to stop looking at it."
+    }
+  ],
   "transition_modes": [
     {
       "id": "computed",

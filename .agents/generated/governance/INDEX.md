@@ -51,6 +51,7 @@ Declares the four-class seam for a host: the reading, the declaration, the seede
 | `.agents/project/laws.md` | binding | seed |
 | `.agents/project/law-scopes.json` | binding | seed |
 | `.agents/project/laws/` | binding | space |
+| `.agents/project/position/` | binding | space |
 | `.agents/.gitignore` | binding | seed |
 | `.agents/kit/` | vendor | pinned |
 | `.agents/project/kit.lock.json` | binding | pinned-lock |
@@ -72,6 +73,7 @@ Gates declared by this capability:
 - **FF-TAKEN-INTACT** — `taken-intact`
 - **FF-HOST-FLOOR** — `layout-floor-present`
 - **FF-RECORDS-DECLARED** — `reference-declared-across`
+- **FF-POSITION-SHAPE** — `reference-declared-across`
 
 ### observability 0.1.0
 

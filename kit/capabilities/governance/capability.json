@@ -33,6 +33,7 @@
       "succession-act",
       "layout",
       "record-keeping",
+      "position-shape",
       "taken",
       "law-scope"
     ]
@@ -120,6 +121,13 @@
       "mode": "space",
       "class": "binding",
       "target": ".agents/project/laws/"
+    },
+    {
+      "mode": "space",
+      "class": "binding",
+      "target": ".agents/project/position/",
+      "validates": "position-shape",
+      "reads_as": "position_shapes"
     },
     {
       "mode": "seed",
@@ -352,6 +360,96 @@
       },
       "stance": {
         "floor": "enforce"
+      }
+    },
+    {
+      "id": "FF-POSITION-SHAPE",
+      "kind": "reference-declared-across",
+      "params": {
+        "over": "position_shapes",
+        "references": [
+          {
+            "id": "a-section-cooling-to-an-undeclared-kind",
+            "field": "sections",
+            "each": "cools_to",
+            "among": {
+              "sources": [
+                "record_keeping"
+              ],
+              "list": "kinds"
+            },
+            "because": "this section declares that its cold spans belong to a kind of record the vocabulary does not name, so the one passage that carries a span out of a bounded artifact has a destination nobody can resolve -- and a destination that resolves to nothing is how a preserved span becomes a graveyard with a label on it.",
+            "instead": "declared as a `kinds` row of governance's record-keeping vocabulary first, or the section cools to a kind already declared there -- or it declares no `cools_to` at all, which says that nothing here cools and is a complete answer.",
+            "proves": {
+              "sections": [
+                {
+                  "cools_to": "a-kind-nobody-declares"
+                }
+              ]
+            },
+            "admits": {
+              "sections": [
+                {
+                  "id": "a-section-that-does-not-cool"
+                }
+              ]
+            }
+          },
+          {
+            "id": "a-section-from-an-undeclared-source",
+            "field": "sections",
+            "each": "source",
+            "among": {
+              "sources": [
+                "record_keeping"
+              ],
+              "list": "section_sources"
+            },
+            "because": "this section says its content comes from somewhere the vocabulary does not name, so nothing can tell whether a hand may legitimately write here -- and the difference between an authored line and a projected one is the difference between destroying a truth and regenerating a copy.",
+            "instead": "declared as a `section_sources` row of the vocabulary first, or the section names a provenance already declared there.",
+            "proves": {
+              "sections": [
+                {
+                  "source": "a-source-nobody-declares"
+                }
+              ]
+            },
+            "admits": {
+              "sections": [
+                {
+                  "source": "authored"
+                }
+              ]
+            }
+          },
+          {
+            "id": "a-section-written-for-an-undeclared-audience",
+            "field": "sections",
+            "each": "audience",
+            "among": {
+              "sources": [
+                "record_keeping"
+              ],
+              "list": "audiences"
+            },
+            "because": "this section names a reader the vocabulary does not declare, so its audience is legible to its author and to nobody else -- and a section whose reader cannot be resolved is projected by guess, to everyone or to no one.",
+            "instead": "declared as an `audiences` row of the vocabulary first, or the section names a reader already declared there.",
+            "proves": {
+              "sections": [
+                {
+                  "audience": "a-reader-nobody-declares"
+                }
+              ]
+            },
+            "admits": {
+              "sections": [
+                {
+                  "audience": "steward"
+                }
+              ]
+            }
+          }
+        ]
       }
     }
   ]

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 57,
+  "issued": 59,
   "codes": [
     {
       "code": "KIT0001",
@@ -344,6 +344,18 @@
       "status": "active",
       "title": "an artifact declares a count of its own losses that is not a count",
       "explanation": "A bounded artifact states, in its own front matter, how many of its removals were preserved in the record and curated nowhere -- the number a host may cap with a budget row over the measure of the same name. This refusal is raised when that field holds something other than digits. It is refused rather than read as zero: the field is the count of what this artifact has lost, and an interpreter that substituted a zero would report a corpus that has lost nothing in exactly the case where the count of its losses is unreadable (Cardinal V). Write digits, or remove the field entirely -- an artifact that says nothing has honestly said nothing, and is counted as such."
+    },
+    {
+      "code": "KIT0058",
+      "status": "active",
+      "title": "a span was told to cool and its section declares no destination",
+      "explanation": "The sections of a bounded position artifact are ROWS of a declaration, and each row states the record KIND a cold span of that section belongs to (ADR-020 decision 3). Cooling is one generic passage -- evict the span, land it at the destination its section declares, journal both halves -- and it knows no section name and no path. This refusal is raised when the shape declares no such section, or declares it without a `cools_to`. Both are LEGAL states of a declaration and neither is a defect in the artifact: the first says the section has not been described yet, the second says that nothing in this section cools. What is refused is the guess. A destination invented at the moment of pressure is how true, dated history ends up filed where nobody will look for it -- tidy, preserved, and lost. Nothing was moved and the artifact is unchanged. Declare `cools_to` on the section and cool again, or remove the text through the ordinary write, where it is journalled before it leaves and counted as an unlanded removal."
+    },
+    {
+      "code": "KIT0059",
+      "status": "active",
+      "title": "a span was carried somewhere no address came back from",
+      "explanation": "A landing is a reference a later reader FOLLOWS: the record kind the text went to, and the address it is now at. This refusal is raised when the port that carries a cooled span returns no usable address. It is refused rather than journalled with a blank, because an event that names a kind and no address claims the text is somewhere without saying where -- exactly as useful as a digest, and worse than useless in one way that matters: it would be counted as a MOVE, so the artifact's unlanded counter would fall while the span became unfindable. Nothing was journalled and the artifact is unchanged. Whether the carrying itself happened is the port's to report and is not assumed here in either direction; fix the port to return the address it landed at, and cool again."
     }
   ]
 }

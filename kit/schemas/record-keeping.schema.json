@@ -62,6 +62,20 @@
       "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
         "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
     },
+    "section_sources": {
+      "description": "Where a declared section of a bounded artifact gets its content FROM (ADR-020 decisions 3 and 4). A vocabulary and never an enum in a schema, for the same reason every other list here is one: the day a third provenance exists it is a row, and no shape declaration, gate or passage is edited to admit it.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+    },
+    "audiences": {
+      "description": "Who a declared field or section is written FOR (ADR-020 decision 3). Named rather than assumed: content whose reader is unstated is addressed to whoever happens to open the artifact, and under a ceiling that reader is the one who decides what to cut. A new audience is a row here.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+    },
     "transition_modes": {
       "description": "How a passage between two work states is decided (ADR-020 decision 8). Every transition is one of these or it is an unowned passage, which is how work silently advances; the words live here and the lifecycle grammar carries the parameter each of them needs.",
       "type": "array",
