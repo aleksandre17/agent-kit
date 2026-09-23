@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 62,
+  "issued": 65,
   "codes": [
     {
       "code": "KIT0001",
@@ -374,6 +374,24 @@
       "status": "active",
       "title": "a unit of spend is claimed by two readings",
       "explanation": "A record may declare an APPETITE -- an amount and the unit it is counted in -- and what has been spent against it is READ from the receipts this system already writes, through an open registry: a module publishes the units it can read and the registry finds it because it is there (ADR-020 decision 9). This refusal is raised when two modules publish the same unit. A name that resolves to two readings is not a name, and ordering them by filename would make which number you get a property of the alphabet. Note the two things that are NOT this refusal, because neither is an error at all. An appetite declared in a unit nothing installed here reads is a reading nobody could take: it is REPORTED, in those words, and it never passes and never fails -- a limit nothing can measure reads exactly like a limit that is being kept, which is why it is said out loud. And a limit found SPENT is not a refusal of this kind either: it is the line stopping at a door, reported with the owner named, because whether work past its limit is worth finishing is the owner's judgement and no machine's. Publish the unit from one module."
+    },
+    {
+      "code": "KIT0063",
+      "status": "active",
+      "title": "a computation was asked for a section that has no span",
+      "explanation": "A section of a bounded artifact whose provenance carries the machine fact that its content is COMPUTED holds no truth of its own: it is filled from the records that own what it says, and anything a hand writes there is replaced unread (ADR-020 decision 4). This refusal is raised when there is no text the passage may address -- either the shape declares no such section as computed from anything, or the artifact does not mark out where the section stands. Both are one state and both have one cure. The place is never guessed: a computation appended wherever there happened to be room would be correct in its content and wrong in its position, which is the one kind of wrong a reader does not notice, because what it says is true. Nothing was written and the artifact is unchanged. Say which section is computed and from what, put the two marker lines the refusal prints where the section belongs, and run again. Note what is NOT this refusal: a section a principal owns is not refused here at all -- it is simply not something this passage can address, and nothing in it is ever touched."
+    },
+    {
+      "code": "KIT0064",
+      "status": "active",
+      "title": "one computed section is marked out in two places",
+      "explanation": "Where a computed section stands is said by a pair of marker lines carrying its name, and the pair is what the filling passage replaces between. This refusal is raised when a name is marked out more than once in one artifact. It is refused rather than resolved by picking the first: a name that resolves to two spans is not a name, and filling both would put one fact in two places inside the very file the mechanism exists to keep single -- after which the two would drift under editing while each went on being regenerated correctly. Ordering them by position would make which span is authoritative a property of where somebody happened to paste a marker. Nothing was written and the artifact is unchanged. Remove the span that is not the section's home, and run again."
+    },
+    {
+      "code": "KIT0065",
+      "status": "active",
+      "title": "a computed section names rows this host does not compute",
+      "explanation": "A computed section declares what it is one line per: a name in the view this host's own declarations already produce. This refusal is raised when that name resolves to nothing there, or to something that is not a set of rows. It is refused rather than rendered as empty, and the difference is the whole point of it -- a section that fell silent on a name nobody computes is indistinguishable from a section whose rows have all gone, so the surface would be stating an emptiness nobody declared and a reader could not tell the two apart by looking (Cardinal V). Nothing was rendered and the artifact is unchanged. Name a set this host computes, or declare the thing that would produce it."
     }
   ]
 }

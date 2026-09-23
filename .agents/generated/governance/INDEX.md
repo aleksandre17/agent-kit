@@ -21,6 +21,7 @@ Gates declared by this capability:
 - **FF-DELIVERY-AGE** — `state-age-within-limit`
 - **FF-DELIVERY-LINEAGE** — `lineage-resolves`
 - **FF-DELIVERY-APPETITE** — `appetite-within-limit`
+- **FF-DELIVERY-RESTATED** — `section-restating-a-record`
 
 ### evaluation 0.1.0
 

@@ -365,11 +365,13 @@
   "section_sources": [
     {
       "id": "authored",
-      "summary": "A principal writes this section and it is the ONE home of what it says. Nothing derives it, so deleting it destroys something -- which is precisely why a section of this source is the kind that must be able to COOL somewhere before a ceiling makes the choice for it (ADR-020 decisions 3 and 4)."
+      "summary": "A principal writes this section and it is the ONE home of what it says. Nothing derives it, so deleting it destroys something -- which is precisely why a section of this source is the kind that must be able to COOL somewhere before a ceiling makes the choice for it (ADR-020 decisions 3 and 4).",
+      "derived": false
     },
     {
       "id": "projected",
-      "summary": "This section is DERIVED from a declaration that lives elsewhere and carries no truth of its own: delete it and it comes back byte-identical. A hand-written line here is a second home for a fact somebody else owns, and it is the defect a projection gate names rather than a style to be discouraged. It cools to nothing by itself -- what would be preserved is its source, which was never at risk."
+      "summary": "This section is DERIVED from a declaration that lives elsewhere and carries no truth of its own: delete it and it comes back byte-identical. A hand-written line here is a second home for a fact somebody else owns, and it is the defect a projection gate names rather than a style to be discouraged. It cools to nothing by itself -- what would be preserved is its source, which was never at risk.",
+      "derived": true
     }
   ],
   "audiences": [

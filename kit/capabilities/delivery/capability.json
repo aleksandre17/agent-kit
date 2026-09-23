@@ -68,6 +68,23 @@
       "id": "FF-DELIVERY-APPETITE",
       "kind": "appetite-within-limit",
       "params": {}
+    },
+    {
+      "id": "FF-DELIVERY-RESTATED",
+      "kind": "section-restating-a-record",
+      "params": {
+        "over": "position_shapes",
+        "sources": [
+          "record_keeping"
+        ],
+        "list": "section_sources",
+        "fields": [
+          "id",
+          "title"
+        ],
+        "because": "a record is the one home of what it states, and a hand-written line of a steering artifact that says the same thing again is a second home for it. Neither copy is wrong on the day it is written -- that is the danger: they stay internally correct while they drift, and from then on no reader can tell which one is lying, because each is right from where it stands.",
+        "instead": "let this section be computed from the records, so the line comes back byte-identical and cannot go stale -- or, where what stands here is genuinely something no record owns, say the part only this artifact holds and drop the part a record already carries."
+      }
     }
   ]
 }

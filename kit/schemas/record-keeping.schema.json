@@ -67,8 +67,9 @@
       "description": "Where a declared section of a bounded artifact gets its content FROM (ADR-020 decisions 3 and 4). A vocabulary and never an enum in a schema, for the same reason every other list here is one: the day a third provenance exists it is a row, and no shape declaration, gate or passage is edited to admit it.",
       "type": "array",
       "minItems": 1,
-      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
-        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary", "derived"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 },
+          "derived": { "description": "The machine fact this word carries: whether a section of this provenance has its content COMPUTED from a declaration that lives elsewhere. It is here, on the row, for the same reason a criterion status carries its reading: the passage that fills a section and the gate that judges one must be able to tell the two apart, and an interpreter that recognised a particular word would have privileged a row of somebody else's vocabulary -- so the day a third provenance is declared, it says which of the two it behaves like and nothing is edited to admit it. `true` means a hand writing here is writing a second home for a fact it does not own, and what it wrote is replaced unread. `false` means this section IS the one home of what it says, so nothing may overwrite it and deleting it destroys something.", "type": "boolean" } } }
     },
     "audiences": {
       "description": "Who a declared field or section is written FOR (ADR-020 decision 3). Named rather than assumed: content whose reader is unstated is addressed to whoever happens to open the artifact, and under a ceiling that reader is the one who decides what to cut. A new audience is a row here.",
