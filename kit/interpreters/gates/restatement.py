@@ -134,3 +134,8 @@ KINDS = {"section-restating-a-record": _found}
 #: What this module can be held to a BUDGET on, published where the reading lives and discovered
 #: by the same registry that finds a gate kind.
 MEASURES = {"restated_record_fields": _restated}
+
+#: Which of THIS module's judgements that count is the reading of -- both words its own, one home
+#: for the pairing. It is the only way an undertaking at the terminal value reaches this judgement;
+#: the consequence is settled where stances are, never here.
+JUDGED_BY = {"restated_record_fields": "section-restating-a-record"}

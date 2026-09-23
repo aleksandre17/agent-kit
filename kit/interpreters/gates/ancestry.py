@@ -81,3 +81,8 @@ KINDS = {"lineage-resolves": _lineage_resolves}
 #: What this module can be held to a BUDGET on, published where the reading lives and discovered
 #: by the same registry that finds a gate kind. The host writes this word in its own map.
 MEASURES = {lineage.UNJUSTIFIED: _without_origin}
+
+#: Which of THIS module's judgements that count is the reading of -- both words its own, one home
+#: for the pairing. An undertaking at the terminal value reaches the judgement through this row,
+#: and what the maturation then costs is settled where every stance is.
+JUDGED_BY = {lineage.UNJUSTIFIED: "lineage-resolves"}

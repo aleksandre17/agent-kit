@@ -21,9 +21,12 @@ import re
 import unittest
 from pathlib import Path
 
-from harness import KIT, Fixtures
-from manifest import Manifest
-from stance import StanceError, vocabulary
+from harness import KIT, Fixtures  # noqa: I001  (it is what puts the interpreter on the path)
+
+import gatekinds  # noqa: E402
+import maturation  # noqa: E402
+from manifest import Manifest  # noqa: E402
+from stance import StanceError, vocabulary  # noqa: E402
 
 MANIFEST = Manifest(KIT)
 ROWS, UNANSWERED = vocabulary(MANIFEST)
@@ -42,6 +45,19 @@ LOWEST = min(ROWS.values(), key=lambda row: row["rank"])
 QUIET = next(row["id"] for row in sorted(ROWS.values(), key=lambda r: r["rank"])
              if not row["fails"])
 BITES = next(row["id"] for row in sorted(ROWS.values(), key=lambda r: -r["rank"]) if row["fails"])
+
+
+#: Where this host writes what it undertakes, the class a place may confer, and the judgement one
+#: of those undertakings caps -- every one read from the declaration that owns it. Nothing about
+#: maturation is restated here: a suite that spelled the pairing would go on passing after it moved.
+CORPUS = next((c, i) for c in MANIFEST.capabilities for i in c.installs
+              if i.get("validates") == "corpus-map")
+CLASS = next(c.documents[d["id"]]["kinds"][0]["id"] for c in MANIFEST.capabilities
+             for d in c.raw.get("documents", []) if d["validates"] == "record-keeping")
+PAIRED = gatekinds.registry(maturation.JUDGED_BY)
+CAPPED = next(measure for measure in sorted(PAIRED)
+              if any(g["kind"] == PAIRED[measure] for g in CORPUS[0].gates))
+UNDERTAKEN = next(g["id"] for g in CORPUS[0].gates if g["kind"] == PAIRED[CAPPED])
 
 
 def gate_line(stdout: str, gate_id: str) -> str:
@@ -159,6 +175,61 @@ class GateStance(Fixtures, unittest.TestCase):
         self.assertEqual(1, matured.returncode, "a restated stance did not bite")
         self.assertIn(f"[{BITES}: declared by acceptance-suite at 2026-09-12]",
                       gate_line(matured.stdout, WATCHED))
+
+
+    # == 6. an undertaking the host finished matures the judgement it bought grace from =========
+    #: A place that holds a document declaring its own class -- so the count this host undertakes
+    #: reads NOTHING -- and a second place the tree does not have, which is what the judgement over
+    #: this corpus fails on. The two are deliberately separate: the failure under judgement must
+    #: not be the count itself, or a matured run could not be told from a run over its budget.
+    RESIDES, ABSENT = "docs/mapped/", "docs/nothing-resides-here/"
+
+    def undertake(self, host: Path, ceiling: int) -> None:
+        """The host's own undertaking, written where the host writes it. The kit writes nothing
+        here and answers no gate: the only two declarations in play below are this one and the
+        host's stance, and both are the host's."""
+        resident = host / self.RESIDES / "declares-itself.md"
+        resident.parent.mkdir(parents=True, exist_ok=True)
+        resident.write_text(f"---\nkind: {CLASS}\n---\n\n# it says what it is\n",
+                            encoding="utf-8", newline="\n")
+        target = host / CORPUS[1]["target"]
+        target.mkdir(parents=True, exist_ok=True)
+        (target / "map.json").write_text(json.dumps({
+            "schema_version": 1,
+            "id": "acceptance",
+            "places": [{"path": self.RESIDES, "holds": CLASS},
+                       {"path": self.ABSENT, "holds": CLASS}],
+            "budgets": [{"measures": CAPPED, "ceiling": ceiling, "measured": "2026-09-24"}],
+        }, indent=2) + "\n", encoding="utf-8", newline="\n")
+        self.run_kit(KIT, host, "render")
+
+    def test_194_an_undertaking_reaching_its_terminal_value_matures_the_judgement_it_caps(self):
+        """The maturation ADR-019 decision 9 promises and ADR-020's last slice lands: while the
+        host is still working a count down, the stance it declared stands untouched; the moment the
+        undertaking is *nothing of this*, the concession it bought is spent and the judgement stands
+        where an unanswered one stands -- with the row that did it named on the line, so nobody has
+        to take the surface's word for who decided."""
+        host = self.installed()
+        self.declare(host, self.row(UNDERTAKEN, QUIET))
+
+        self.undertake(host, 1)
+        working = self.run_kit(KIT, host, "check")
+        self.assertEqual(0, working.returncode, "a watched judgement failed the run while the "
+                                                "host was still working its undertaking down")
+        self.assertIn(f"FAIL  {UNDERTAKEN}", working.stdout)
+        self.assertIn(f"[{QUIET}: declared by acceptance-suite",
+                      gate_line(working.stdout, UNDERTAKEN))
+
+        self.undertake(host, 0)
+        matured = self.run_kit(KIT, host, "check")
+        line = gate_line(matured.stdout, UNDERTAKEN)
+        self.assertIn(f"[{UNANSWERED}: matured", line)
+        self.assertIn(CAPPED, line, "the undertaking that matured it is not named on the line")
+        self.assertNotIn(f"[{QUIET}", line)
+        self.assertNotIn(f"{UNDERTAKEN} [{QUIET}]", matured.stdout,
+                         "a matured judgement is still being counted as one that does not fail")
+        self.assertEqual(1, matured.returncode, "the maturation did not bite")
+        self.assertIn("check: 1 gate(s) failed", matured.stdout)
 
 
 if __name__ == "__main__":

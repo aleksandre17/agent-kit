@@ -218,3 +218,10 @@ KINDS = {
 #: -- so the ratchet spells no measure of its own and a new budgetable fact is a row beside this
 #: one. The name is the word a host writes in its map, and it is the ADR's own spelling.
 MEASURES = {"unclassified_documents": _unclassified}
+
+#: Which of THIS module's judgements each of those counts is the reading of. Both words belong to
+#: this module -- the count it takes and the judgement it takes it for -- so the pairing has one
+#: home and no other file spells either side of it. A host that undertakes a count at the terminal
+#: value has spent the grace the undertaking bought, and this row is how that fact finds the
+#: judgement it applies to; without it the undertaking would mature nothing and say so.
+JUDGED_BY = {"unclassified_documents": "artifact-classified"}

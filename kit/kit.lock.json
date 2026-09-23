@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 222,
+  "count": 223,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -443,7 +443,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "518d494b7c40188d740b788f2fa830208669a4066da424e7c659112041e86808",
+      "digest": "7e1d1c0fdee5221d08dc4651d65f4e385e54b1660c0f8e50fc263ba235d991ee",
       "path": "diagnostics.json"
     },
     {
@@ -569,7 +569,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ef9492ebc40399e350618d50af1707cc9399b95d318ec2f247ac2cbe756c7c96",
+      "digest": "202dd3a30ad62f5f93f4ba1d6901ed2b55cf0d689a4f5f16ccd090ae93f51418",
       "path": "interpreters/gates/ancestry.py"
     },
     {
@@ -581,7 +581,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0d9a18f7d3dff57f504e088e4ea197943ac23a1095a73ca39ae1d1a558aff820",
+      "digest": "74e56baf36b615a75a9ac3bd3c05c5ed27080bf4de1056f28dd726fcf8a93613",
       "path": "interpreters/gates/artifacts.py"
     },
     {
@@ -635,7 +635,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ce5816b5623c416f0668bb5bd623d3abd51e15e536aeb7d8b063896e2dd65de3",
+      "digest": "14c8f2943425c45d65b1dd50828c7dc6b5fd4f1e3c6dbadb923a65580602cca2",
       "path": "interpreters/gates/position.py"
     },
     {
@@ -647,7 +647,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "117b8e680881c55553b20ee38eebcb349909afabdbea88270137f033e7ffd483",
+      "digest": "07c967303415e997053f9aa09a380af87b8a4b3ee2be01a1b5ece2d4f2dabc83",
       "path": "interpreters/gates/ratchet.py"
     },
     {
@@ -659,13 +659,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "47e24265140b3fe70c9836d3bd1dacc17843882331b8aba7288ac32e7cbf9889",
+      "digest": "ebd92bc86fe492c49be19fca0c3a8bb57d717d794ef91b44c166fc534b6eb11b",
       "path": "interpreters/gates/restatement.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0ef62b30ce2f1536e585140cc94380faa2fd9d07d1922b116894683cbf11acfc",
+      "digest": "bb54b5205f903ece6518cd25a1f85d1bfbe5ef356f2268777d87306a0a72abd5",
       "path": "interpreters/gates/routes.py"
     },
     {
@@ -715,6 +715,12 @@
       "class": "interpreter",
       "digest": "189350188fc22b68656a1cf4f6c28c8028e06a8972740e42ce886c5e77e4c645",
       "path": "interpreters/lockfile.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "f7c83bae72913a538c0c2c1974a2b6a1e4e29b9d4183747406a79ca010ca6293",
+      "path": "interpreters/maturation.py"
     },
     {
       "accounted_by": "interpreter",
@@ -875,7 +881,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "374edabede857512f5c22499645d21e4df1b2f6db67e4acfc0ec271e96927e5c",
+      "digest": "5ee41dfa888119d3da2c9bea331186b4962642799b43fb23ec2a3a8980b6b7c0",
       "path": "interpreters/stance.py"
     },
     {
@@ -917,7 +923,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0e32b32c6e2463c4443593c36d6c0ee2f1bc98718d6e4ca078322de8485e5f45",
+      "digest": "3c0d5379304eac17f1c44349bde40b48724d386a87d43904fc4f92a5bac09cce",
       "path": "interpreters/verbs/check.py"
     },
     {
@@ -1338,5 +1344,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-23T23:08:14+00:00"
+  "taken_at": "2026-09-23T23:39:20+00:00"
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 65,
+  "issued": 66,
   "codes": [
     {
       "code": "KIT0001",
@@ -392,6 +392,12 @@
       "status": "active",
       "title": "a computed section names rows this host does not compute",
       "explanation": "A computed section declares what it is one line per: a name in the view this host's own declarations already produce. This refusal is raised when that name resolves to nothing there, or to something that is not a set of rows. It is refused rather than rendered as empty, and the difference is the whole point of it -- a section that fell silent on a name nobody computes is indistinguishable from a section whose rows have all gone, so the surface would be stating an emptiness nobody declared and a reader could not tell the two apart by looking (Cardinal V). Nothing was rendered and the artifact is unchanged. Name a set this host computes, or declare the thing that would produce it."
+    },
+    {
+      "code": "KIT0066",
+      "status": "active",
+      "title": "an undertaking that has run out points at something that cannot mature",
+      "explanation": "A host caps a count in its corpus map and works it down; when the cap reaches the terminal value the host has undertaken that the count does not exist here at all, and the grace that undertaking bought the judgement reading it is spent -- the judgement then stands where an unanswered one stands, under ADR-006, out of the host's own two declarations and with no stance written anywhere by this kit. Which judgement a count is the reading of is published by the module that owns both words. This refusal is raised when an exhausted undertaking reaches a pairing whose target no module publishes as a judgement. It is refused rather than passed over because a cap that matured nothing reads, on every later run, exactly like a host still working its way down (Cardinal V). It is also the point at which this mechanism declines to reach past its own subject: what matures is the consequence a FAILURE carries, and only a judgement has one -- a passage a declaration puts in a party's hands carries that party and no consequence at all, so no cap at any value can mature it, and nothing here will invent the party it would have to stand in for. Pair the count with a judgement the kit publishes, or leave it unpaired and hold the cap."
     }
   ]
 }

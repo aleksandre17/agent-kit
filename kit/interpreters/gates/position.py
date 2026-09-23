@@ -48,3 +48,10 @@ def _unlanded(ctx, params) -> "int | None":
 #: word a host writes in its map, and it is the field's own spelling -- one word, one meaning, at
 #: both ends of the boundary between a declaration and the count it caps.
 MEASURES = {eviction.UNLANDED: _unlanded}
+
+#: NO pairing is published beside it, and the absence is declared rather than left to be noticed:
+#: this module takes a count and evaluates nothing, so there is no judgement of its own whose
+#: consequence an undertaking at the terminal value could mature. A host may cap this count and
+#: reach the cap; what it gets is the cap held, and a run that says in its own words that the
+#: undertaking matured nothing here. The day a judgement over this reading lands in this module,
+#: the pairing is a row beside this comment -- never an edit to whatever reads it.

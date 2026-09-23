@@ -79,10 +79,21 @@ def _row(rows: dict, stance: str, where: str) -> dict:
     return rows[stance]
 
 
-def resolve(manifest, answers: dict, enabled) -> tuple[dict, list]:
+def resolve(manifest, answers: dict, enabled, matured: "dict | None" = None) -> tuple[dict, list]:
     """(capability id, gate id) -> Resolved for every gate an ENABLED capability declares, and the
     host rows that bind no such gate. Every gate the kit declares is checked for a sound floor,
-    enabled or not: a stance that lowers a floor is illegitimate whether or not the gate runs."""
+    enabled or not: a stance that lowers a floor is illegitimate whether or not the gate runs.
+
+    `matured` carries the gate kinds whose concession the HOST'S OWN undertaking has spent -- the
+    fact is read elsewhere, by whoever owns those rows, and arrives here already taken. What it
+    does is the narrowest thing that can be called a maturation: a rung that does not fail is a
+    CONCESSION, a concession rests on an undertaking, and when the undertaking is finished the gate
+    stands where a gate nobody answered for stands. It can only ever REMOVE a concession -- a
+    declaration that already ranks at or above that rung is untouched, so nothing here can lower
+    what a publisher or a host declared, and no stance is written into any document by anyone.
+    The surface names the maturation and the row that caused it, because a consequence whose origin
+    a reader cannot check is the same thing as a machine that decided (Cardinal V).
+    """
     rows, unanswered = vocabulary(manifest)
 
     declared: dict = {}
@@ -133,6 +144,9 @@ def resolve(manifest, answers: dict, enabled) -> tuple[dict, list]:
                 stance, source = published["ships"], f"shipped so by capability {capability.id!r}"
             else:
                 stance, source = unanswered, "unanswered -- the vocabulary's declared default"
+            grown = (matured or {}).get(gate["kind"])
+            if grown is not None and rows[stance]["rank"] < rows[unanswered]["rank"]:
+                stance, source = unanswered, grown.says()
             resolved[(capability.id, gate["id"])] = Resolved(stance, rows[stance], source)
 
     running = {gate_id for _cap, gate_id in resolved}

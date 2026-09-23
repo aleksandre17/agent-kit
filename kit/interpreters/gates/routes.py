@@ -334,3 +334,8 @@ KINDS = {
 #: What this module can be held to a BUDGET on -- published where the walk that produces it lives,
 #: and read by the same discovery that finds a gate kind, so the ratchet names no measure itself.
 MEASURES = {"unrouted_obligation_docs": _unrouted_obligations}
+
+#: Which of THIS module's judgements that count is the reading of -- both words this module's own,
+#: so the pairing has one home. It is what lets an undertaking at the terminal value reach the
+#: judgement it bought grace from; the consequence itself is settled where stances are.
+JUDGED_BY = {"unrouted_obligation_docs": "obligation-reachable"}
