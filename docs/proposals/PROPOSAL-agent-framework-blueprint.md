@@ -258,7 +258,7 @@ plugin, Cargo feature — *„დეკლარირებული ერთ�
 ║ ├ playbooks/                              ║   ║ docs/                        ← knowledge cap ║
 ║ ├ interpreters/    L3 ★ ერთადერთი კოდი    ║   ║ ├ intent/      VISION·ROADMAP·REGISTRY       ║
 ║ │   ├ ports/  Manifest·Workspace·Probe    ║   ║ ├ decisions/   ADR — DECLARES                ║
-║ │   │         ·Runtime·Clock              ║   ║ ├ reference/   subsystems·audits·CANON-LEDGER║
+║ │   │         ·Runtime·Clock              ║   ║ ├ reference/   subsystems·audits·STANDARDS-LEDGER║
 ║ │   ├ verbs/  init·render·check           ║   ║ ├ guides/                                    ║
 ║ │   │         ·upgrade·eject  (--plan)    ║   ║ ├ work/        ← delivery capability         ║
 ║ │   └ hooks/                              ║   ║ │   CONTINUE-HERE · BOARD[P]                 ║

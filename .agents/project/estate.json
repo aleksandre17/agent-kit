@@ -44,6 +44,20 @@
       "path": ".agents/generated/SERVED.json"
     },
     {
+      "capability": "knowledge",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/corpus/CATALOG.md"
+    },
+    {
+      "capability": "knowledge",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/corpus/ROUTES.md"
+    },
+    {
       "capability": "delivery",
       "class": "projection",
       "digest": null,
@@ -56,6 +70,13 @@
       "digest": null,
       "mode": "projection",
       "path": ".agents/generated/evaluation/QUALITY.md"
+    },
+    {
+      "capability": "evaluation",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/evaluation/VERIFICATION.md"
     },
     {
       "capability": "governance",
@@ -105,6 +126,13 @@
       "digest": "8dbec916c20deafb56c9b2c47decc68a477191310910ce200023249d668446db",
       "mode": "seed",
       "path": ".agents/project/allowed_signers"
+    },
+    {
+      "capability": "knowledge",
+      "class": "binding",
+      "digest": null,
+      "mode": "space",
+      "path": ".agents/project/corpus/"
     },
     {
       "capability": "delivery",
@@ -214,7 +242,7 @@
     {
       "capability": "governance",
       "class": "binding",
-      "digest": "a56efc3a817ffc71bea7d76e82c0cbc4a2939c6c1069d05916187c5eccb02156",
+      "digest": "352a837cd492b06a44559481fc5f016c4f8ac892edf01145ebae22352274852b",
       "mode": "declaration",
       "path": ".agents/project/project.json"
     },
@@ -280,12 +308,26 @@
       "digest": null,
       "mode": "taken",
       "path": ".agents/taken/"
+    },
+    {
+      "capability": "knowledge",
+      "class": "binding",
+      "digest": "e8752dc32ff7090d128c51cd39c8cf3ce0dee4d948c73a73b546d474b7809dcc",
+      "mode": "seed",
+      "path": "docs/decisions/ADR-0001-a-documents-kind-decides-its-authority.md"
+    },
+    {
+      "capability": "knowledge",
+      "class": "binding",
+      "digest": "f920a5735a787286599bcbbe235f19ecd04fdc98ce9f04d7c8cae85028fd6a1b",
+      "mode": "seed",
+      "path": "docs/reference/README.md"
     }
   ],
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "signed_by": "agent-linkB(owner-delegated:ADR-015)",
+  "signed_by": "agent-backend(owner-delegated:ADR-019-corpus-walk)",
   "succession_acts": [],
   "taken": [
     {
@@ -361,5 +403,5 @@
       "version": "1.0.0"
     }
   ],
-  "taken_at": "2026-09-17T15:48:55+00:00"
+  "taken_at": "2026-09-23T18:45:02+00:00"
 }

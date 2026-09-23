@@ -1,58 +1,325 @@
 {
   "schema_version": 1,
-  "summary": "The words the records map is written in (ADR-015 amendment 8). A place names one kind, one writer and one lifecycle from here; a new word is a new row, never an edit to a schema or an interpreter.",
+  "summary": "The words the records map and the corpus map are written in (ADR-015 amendment 8; ADR-019 decision 3). A place names one kind, one writer and one lifecycle from here, and may cap what its residents claim with one authority from here; a new word is a new row, never an edit to a schema or an interpreter. The specification of 2026-09-21 arrived with its own eleven-class taxonomy and its own authority states: where a word of ours already means one of theirs, OUR word stays and THEIRS is recorded as an alias in that row's summary -- one truth, one home, and a reader of either vocabulary lands on the same row. ONE WORD, TWO REFERENTS, STATED AT BOTH ENDS: the `planes` here are SEMANTIC -- what a record is ABOUT -- and they are not `MANIFEST.planes`, which are the kit's INSTALL planes: physical roots in a host tree, each with an install class and an unaccounted rule. Nothing derives one from the other and no interpreter reads these. The two are named alike because each is the right word where it stands, and a reader who meets the bare word without its document has met an ambiguity, not a fact (Cardinal III).",
+  "planes": [
+    {
+      "id": "intent",
+      "summary": "Why the work exists at all: the outcome it serves and the standing requirements of whoever wants it. Nothing here says how, and nothing here binds a change on its own."
+    },
+    {
+      "id": "rule",
+      "summary": "What BINDS. Read a document of this plane and you are obliged by it: a decision that was accepted, a contract between parts, a law of the host. The only plane whose residents may claim the top authority."
+    },
+    {
+      "id": "knowledge",
+      "summary": "What is TRUE, described rather than commanded: registers, ledgers, drawings, guides, curated memory. Consulted, never obeyed -- a rule found here is in the wrong plane."
+    },
+    {
+      "id": "navigation",
+      "summary": "What exists and where the thing that answers a question lives. Nothing here is a source: every resident points at one, and is derived, so deleting it changes nothing but the walk."
+    },
+    {
+      "id": "control",
+      "summary": "Where the work is STEERED from: what is in flight, what is next, who takes it, what a dispatch already knows. Current by construction; a stale resident of this plane is a defect, not a record."
+    },
+    {
+      "id": "work",
+      "summary": "The unit of work itself -- what is to be done, its state, and what each state must produce. One home for work, so a second board cannot be opened."
+    },
+    {
+      "id": "evidence",
+      "summary": "What was OBSERVED, carrying the moment it was taken. Evidence outranks testimony and ages instantly: a reading is true of its moment and of no other."
+    },
+    {
+      "id": "machinery",
+      "summary": "The apparatus the system runs on: the pinned release, the pins and locks that prove it, the journals of its operations, the declarations that configure it. Read to operate or to verify, never to learn what the project is."
+    },
+    {
+      "id": "history",
+      "summary": "What no longer binds, kept because it happened. Dead by location or dead by declaration -- either way, nothing here may be cited as a reason for a present decision."
+    }
+  ],
+  "authorities": [
+    {
+      "id": "canonical",
+      "summary": "The one owner of the fact it states: cite it and the question is settled. The specification's CANONICAL. Reachable ONLY by an artifact's own declaration -- no place may confer it, which is why this row is the one that refuses to be a ceiling. A canonical artifact names the topic it owns, and two of them owning one topic is a refusal, not a tie.",
+      "binding_rank": 3,
+      "place_default": false
+    },
+    {
+      "id": "supporting",
+      "summary": "True, citable, and subordinate: it supports a canonical statement or stands until one exists. The specification's SUPPORTING. The default ceiling of every place, because a place is a declaration about a location and a location is never a reason to believe something.",
+      "binding_rank": 2,
+      "place_default": true
+    },
+    {
+      "id": "migration-only",
+      "summary": "Binds only inside a declared migration, and only until it completes. The specification's MIGRATION_ONLY. It is not a weaker rule; it is a rule with an end condition written into its authority, so a reader outside the migration knows it is not addressed to them.",
+      "binding_rank": 1,
+      "place_default": false
+    },
+    {
+      "id": "superseded",
+      "summary": "Was authoritative and has been replaced by a named successor. The specification's SUPERSEDED. It binds nothing, and it is not silent: it names what replaced it, in both directions, so a reader who arrives at the old text is carried to the new one instead of obeying it.",
+      "binding_rank": 0,
+      "place_default": false
+    },
+    {
+      "id": "historical",
+      "summary": "Kept for the record of what was believed, with no successor to point at. The specification's HISTORICAL. The same word is also a document KIND: the kind says what a document IS, this says what it BINDS -- a current reference may declare historical authority, and a historical record may not declare any other.",
+      "binding_rank": 0,
+      "place_default": false
+    },
+    {
+      "id": "unclassified",
+      "summary": "The artifact has declared nothing, and that is a STATE the system names rather than an absence it hides (ADR-019 decision 2). It is counted against a declared budget, named in the catalog, forbidden as a citation, and left exactly where it is. Nothing fails merely because it exists; nothing may rest on it either.",
+      "binding_rank": 0,
+      "place_default": false
+    }
+  ],
   "kinds": [
-    { "id": "pinned-release", "summary": "A verbatim copy of one published kit release. The host runs it and never edits it; a change here is a change of release, not of content." },
-    { "id": "integrity-pin", "summary": "Which release a host was given and the digests that prove the copy is that release. Read to verify, never to learn." },
-    { "id": "take-declaration", "summary": "What a host added beside its pinned release: one row per taken capability, with where it came from, the digest of its copy, who took it and when. Stated by the owner, never by the publisher." },
-    { "id": "environment-reading", "summary": "A measurement of the host as it was found, stamped with the moment it was taken. True of that moment only." },
-    { "id": "host-declaration", "summary": "The host's own answers: what this project is and which capabilities it enables. Stated, not measured." },
-    { "id": "staffing", "summary": "Who is on the team: which roles are filled, by what, for which work." },
-    { "id": "role-definition", "summary": "What one role is: the archetype it composes and the host's delta over it." },
-    { "id": "host-law", "summary": "Binding doctrine this host adds over the kit's: laws a gate or a reviewer may hold work to." },
-    { "id": "private-memory", "summary": "What one role learned and keeps for itself: corrections, validated approaches, its own open threads." },
-    { "id": "shared-knowledge", "summary": "Curated facts more than one role must read the same way. The coordination plane, not a notebook." },
-    { "id": "projection", "summary": "A surface derived from declarations. It carries no truth of its own: delete it and it comes back byte-identical." },
-    { "id": "run-evidence", "summary": "What a run observably did: receipts and dispositions written as it happened. Evidence, never testimony." },
-    { "id": "measurement-stream", "summary": "Accumulating measurements of cost and usage, one row per event, read in aggregate." },
-    { "id": "dispatch-ground", "summary": "Facts already verified for a dispatch, each with the instrument and the moment of its reading, so the receiver builds on them instead of re-deriving them." },
-    { "id": "guard-state", "summary": "The live state an enforcement hook keeps between calls: counters, open holds, what it has already refused." },
-    { "id": "operation-journal", "summary": "The step-by-step record of one mutating operation: what was intended and what was done, so an interrupted operation is recoverable and never reads as success." },
-    { "id": "exclusive-hold", "summary": "The mark that one writer holds the host. Its presence is the fact; it carries nothing else." },
-    { "id": "automation-definition", "summary": "Machine-run pipelines: what runs on which event, and which gates it holds a change to." },
-    { "id": "intent", "summary": "Why the work exists and what outcome it serves: vision, goals, the owner's standing requirements." },
-    { "id": "decision", "summary": "A binding choice with its context, the alternatives rejected and its consequences. Authoritative once accepted." },
-    { "id": "reference", "summary": "Descriptive, current facts about the system -- registers, ledgers, drawings -- consulted, not followed." },
-    { "id": "guide", "summary": "How to do one task, step by step, for a reader who already knows what they want." },
-    { "id": "work-position", "summary": "Where the work stands right now and the next move: the one page a resuming session reads first." },
-    { "id": "work-queue", "summary": "The ordered set of work in flight and next, one line per card." },
-    { "id": "work-card", "summary": "One unit of work: its outcome, its state, and the artifact each state produces." },
-    { "id": "work-evidence", "summary": "Reports produced while doing work -- audits, probes, measurements -- that support a card or a decision and hold no authority of their own." },
-    { "id": "retired-record", "summary": "A record no longer current, kept for its history. Dead by location: nothing here binds." }
+    {
+      "id": "pinned-release",
+      "plane": "machinery",
+      "summary": "A verbatim copy of one published kit release. The host runs it and never edits it; a change here is a change of release, not of content."
+    },
+    {
+      "id": "integrity-pin",
+      "plane": "machinery",
+      "summary": "Which release a host was given and the digests that prove the copy is that release. Read to verify, never to learn."
+    },
+    {
+      "id": "take-declaration",
+      "plane": "machinery",
+      "summary": "What a host added beside its pinned release: one row per taken capability, with where it came from, the digest of its copy, who took it and when. Stated by the owner, never by the publisher."
+    },
+    {
+      "id": "environment-reading",
+      "plane": "evidence",
+      "summary": "A measurement of the host as it was found, stamped with the moment it was taken. True of that moment only."
+    },
+    {
+      "id": "host-declaration",
+      "plane": "machinery",
+      "summary": "The host's own answers: what this project is and which capabilities it enables. Stated, not measured."
+    },
+    {
+      "id": "staffing",
+      "plane": "control",
+      "summary": "Who is on the team: which roles are filled, by what, for which work."
+    },
+    {
+      "id": "role-definition",
+      "plane": "machinery",
+      "summary": "What one role is: the archetype it composes and the host's delta over it."
+    },
+    {
+      "id": "host-law",
+      "plane": "rule",
+      "summary": "Binding doctrine this host adds over the kit's: laws a gate or a reviewer may hold work to."
+    },
+    {
+      "id": "private-memory",
+      "plane": "knowledge",
+      "summary": "What one role learned and keeps for itself: corrections, validated approaches, its own open threads."
+    },
+    {
+      "id": "shared-knowledge",
+      "plane": "knowledge",
+      "summary": "Curated facts more than one role must read the same way. The coordination plane, not a notebook."
+    },
+    {
+      "id": "projection",
+      "plane": "navigation",
+      "summary": "A surface derived from declarations. It carries no truth of its own: delete it and it comes back byte-identical."
+    },
+    {
+      "id": "run-evidence",
+      "plane": "evidence",
+      "summary": "What a run observably did: receipts and dispositions written as it happened. Evidence, never testimony. The specification's EVIDENCE class arrives here and at `work-evidence`: ours splits it by what produced the reading -- a run, or an agent doing a card."
+    },
+    {
+      "id": "measurement-stream",
+      "plane": "evidence",
+      "summary": "Accumulating measurements of cost and usage, one row per event, read in aggregate."
+    },
+    {
+      "id": "dispatch-ground",
+      "plane": "control",
+      "summary": "Facts already verified for a dispatch, each with the instrument and the moment of its reading, so the receiver builds on them instead of re-deriving them."
+    },
+    {
+      "id": "guard-state",
+      "plane": "machinery",
+      "summary": "The live state an enforcement hook keeps between calls: counters, open holds, what it has already refused."
+    },
+    {
+      "id": "operation-journal",
+      "plane": "machinery",
+      "summary": "The step-by-step record of one mutating operation: what was intended and what was done, so an interrupted operation is recoverable and never reads as success."
+    },
+    {
+      "id": "exclusive-hold",
+      "plane": "machinery",
+      "summary": "The mark that one writer holds the host. Its presence is the fact; it carries nothing else."
+    },
+    {
+      "id": "automation-definition",
+      "plane": "machinery",
+      "summary": "Machine-run pipelines: what runs on which event, and which gates it holds a change to."
+    },
+    {
+      "id": "intent",
+      "plane": "intent",
+      "summary": "Why the work exists and what outcome it serves: vision, goals, the owner's standing requirements."
+    },
+    {
+      "id": "decision",
+      "plane": "rule",
+      "summary": "A binding choice with its context, the alternatives rejected and its consequences. Authoritative once accepted. The specification's DECISION, and its ARCHITECTURE class too: an architectural statement that BINDS is a decision, and one that merely describes the shape of the system is a `reference` -- the split is by authority, not by subject."
+    },
+    {
+      "id": "reference",
+      "plane": "knowledge",
+      "summary": "Descriptive, current facts about the system -- drawings, models, explanations -- consulted, not followed. The specification's REFERENCE. A reference that accumulates rows is a `register`."
+    },
+    {
+      "id": "guide",
+      "plane": "knowledge",
+      "summary": "How to do one task, step by step, for a reader who already knows what they want. The specification's GUIDE."
+    },
+    {
+      "id": "work-position",
+      "plane": "control",
+      "summary": "Where the work stands right now and the next move: the one page a resuming session reads first. The specification's CONTROL class -- ours is one page with one writer, because a control plane with two authors forks the moment both are right."
+    },
+    {
+      "id": "work-queue",
+      "plane": "control",
+      "summary": "The ordered set of work in flight and next, one line per card."
+    },
+    {
+      "id": "work-card",
+      "plane": "work",
+      "summary": "One unit of work: its outcome, its state, and the artifact each state produces. The specification's WORK class."
+    },
+    {
+      "id": "work-evidence",
+      "plane": "evidence",
+      "summary": "Reports produced while doing work -- audits, probes, measurements -- that support a card or a decision and hold no authority of their own. The specification's EVIDENCE class, narrowed to what a card produced; an unattached reading is a `report`."
+    },
+    {
+      "id": "contract",
+      "plane": "rule",
+      "summary": "What two parts of the system promise each other: a schema, an interface, a protocol, a wire format. The specification's CONTRACT. It binds like a decision and differs in what it addresses -- a decision is answerable to a reason, a contract is answerable to the other side, and breaking one is a version, not an amendment."
+    },
+    {
+      "id": "register",
+      "plane": "knowledge",
+      "summary": "An open, appended list that is the ONE home of some set -- a ledger, a roll, an index of what exists. The specification's REGISTER. Its authority is completeness, not prose: a register that is missing a row is wrong in a way a `reference` cannot be, because something read it as the whole set."
+    },
+    {
+      "id": "report",
+      "plane": "evidence",
+      "summary": "A reading of the system taken at a moment and published on its own account -- an audit, a probe, a measurement that no card commissioned. The specification's REPORT. It states what was found and when, binds nothing, and is replaced by the next reading rather than amended; evidence attached to a card is `work-evidence`."
+    },
+    {
+      "id": "historical",
+      "plane": "history",
+      "summary": "A document kept, where it is, for the record of what was once believed or done. The specification's HISTORICAL, and dead BY DECLARATION -- which is what distinguishes it from `retired-record`, dead by location: this one still sits among living documents and must therefore say so itself."
+    },
+    {
+      "id": "retired-record",
+      "plane": "history",
+      "summary": "A record no longer current, kept for its history. Dead by location: nothing here binds."
+    }
   ],
   "writers": [
-    { "id": "kit-publisher", "summary": "The upstream kit, through a release. No host hand writes here; a host that disagrees changes release." },
-    { "id": "kit-verb", "summary": "A kit command that mutates the host (init, lock, upgrade), under the host hold and through its plan." },
-    { "id": "renderer", "summary": "The render verb, and nothing else. A hand edit here is a defect that the next render erases." },
-    { "id": "runtime-observer", "summary": "An observer or hook, recording what happened as it happened. No agent writes here by hand." },
-    { "id": "owner", "summary": "The accountable human. Agents may draft; the write that makes it true is the owner's." },
-    { "id": "decision-authority", "summary": "Whoever the host's governance lets accept a decision -- drafted by any role, accepted on record." },
-    { "id": "dispatcher", "summary": "The session that dispatches work and holds the position: one writer, so the position cannot fork." },
-    { "id": "owning-role", "summary": "The one role the place belongs to. Every other role reads, if it reads at all." },
-    { "id": "curator", "summary": "Whoever promotes knowledge into a shared place: a row enters by curation, never by a passing write." },
-    { "id": "assigned-agent", "summary": "The agent executing the card that produces the artifact, within that card's declared write set." },
-    { "id": "archivist", "summary": "The act that retires a record: content arrives here only by transfer from its living place, never by authoring." }
+    {
+      "id": "kit-publisher",
+      "summary": "The upstream kit, through a release. No host hand writes here; a host that disagrees changes release."
+    },
+    {
+      "id": "kit-verb",
+      "summary": "A kit command that mutates the host (init, lock, upgrade), under the host hold and through its plan."
+    },
+    {
+      "id": "renderer",
+      "summary": "The render verb, and nothing else. A hand edit here is a defect that the next render erases."
+    },
+    {
+      "id": "runtime-observer",
+      "summary": "An observer or hook, recording what happened as it happened. No agent writes here by hand."
+    },
+    {
+      "id": "owner",
+      "summary": "The accountable human. Agents may draft; the write that makes it true is the owner's."
+    },
+    {
+      "id": "decision-authority",
+      "summary": "Whoever the host's governance lets accept a decision -- drafted by any role, accepted on record."
+    },
+    {
+      "id": "dispatcher",
+      "summary": "The session that dispatches work and holds the position: one writer, so the position cannot fork."
+    },
+    {
+      "id": "owning-role",
+      "summary": "The one role the place belongs to. Every other role reads, if it reads at all."
+    },
+    {
+      "id": "curator",
+      "summary": "Whoever promotes knowledge into a shared place: a row enters by curation, never by a passing write."
+    },
+    {
+      "id": "assigned-agent",
+      "summary": "The agent executing the card that produces the artifact, within that card's declared write set."
+    },
+    {
+      "id": "archivist",
+      "summary": "The act that retires a record: content arrives here only by transfer from its living place, never by authoring."
+    }
   ],
   "lifecycles": [
-    { "id": "replaced-by-release", "summary": "Replaced whole when the host takes another release; the previous copy is not retained here -- its release is its archive." },
-    { "id": "regenerable", "summary": "Destroyed and recreated at will from its declarations; never backed up, never migrated, never hand-kept." },
-    { "id": "current-only", "summary": "Only the latest state is kept; each write replaces the last, and the moment it was taken travels with it so staleness is visible." },
-    { "id": "living", "summary": "Amended in place by its writer for as long as it is true; version control is its history." },
-    { "id": "permanent", "summary": "Never edited once accepted; superseded only by a new record that names it, and kept forever." },
-    { "id": "curated", "summary": "Kept while it earns its place; reviewed, promoted or pruned by curation, never silently grown." },
-    { "id": "rotated", "summary": "Appended while it is recent, kept for a declared retention window, then rotated out whole." },
-    { "id": "per-operation", "summary": "Exists for one operation: made when it starts, cleared when it ends; its survival past the end is itself the signal of an interruption." },
-    { "id": "closed-then-archived", "summary": "Active while its work is open; when the work closes it is transferred to the archive, never deleted." },
-    { "id": "archived", "summary": "Terminal. Frozen as it was transferred; read for history, never amended, never binding." }
+    {
+      "id": "replaced-by-release",
+      "summary": "Replaced whole when the host takes another release; the previous copy is not retained here -- its release is its archive."
+    },
+    {
+      "id": "regenerable",
+      "summary": "Destroyed and recreated at will from its declarations; never backed up, never migrated, never hand-kept."
+    },
+    {
+      "id": "current-only",
+      "summary": "Only the latest state is kept; each write replaces the last, and the moment it was taken travels with it so staleness is visible."
+    },
+    {
+      "id": "living",
+      "summary": "Amended in place by its writer for as long as it is true; version control is its history."
+    },
+    {
+      "id": "permanent",
+      "summary": "Never edited once accepted; superseded only by a new record that names it, and kept forever."
+    },
+    {
+      "id": "curated",
+      "summary": "Kept while it earns its place; reviewed, promoted or pruned by curation, never silently grown."
+    },
+    {
+      "id": "rotated",
+      "summary": "Appended while it is recent, kept for a declared retention window, then rotated out whole."
+    },
+    {
+      "id": "per-operation",
+      "summary": "Exists for one operation: made when it starts, cleared when it ends; its survival past the end is itself the signal of an interruption."
+    },
+    {
+      "id": "closed-then-archived",
+      "summary": "Active while its work is open; when the work closes it is transferred to the archive, never deleted."
+    },
+    {
+      "id": "archived",
+      "summary": "Terminal. Frozen as it was transferred; read for history, never amended, never binding."
+    }
   ]
 }

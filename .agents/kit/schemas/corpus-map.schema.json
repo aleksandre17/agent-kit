@@ -1,0 +1,103 @@
+{
+  "$id": "corpus-map",
+  "title": "A host's corpus map -- what each PLACE holds, and how high a resident of it may reach (ADR-019 decision 1)",
+  "description": "The second and last of the two sites from which an artifact's class and authority may be read; the first is the artifact's own front matter. A host writes `.agents/project/corpus/*.json` -- one file or several, each an independent set of rows, merged by path -- and states in TENS of rows what its THOUSANDS of documents are made of. Modelled row-for-row on the records map (`layout` schema): every field an entry there already has means the same thing here and is spelled the same way, because a second word for one truth is the drift this ADR exists to stop. Two properties are the whole design. (1) A row may CONFER a class on a place's residents and may NEVER RAISE authority: `authority_ceiling` caps what a resident may declare and supplies nothing, and no word of the vocabulary appears in this schema or in any interpreter (Cardinals II and IV). (2) A row is a DECLARATION a human wrote, reviewable in one diff, with one author -- never an inference from a filename or a path, which is the defect this replaces (Cardinal VII). LAZY: a host that declares no corpus map at all is legal and green. The mechanism exists from the day it ships; the artifact is instantiated the day it has content, and an empty map is the absence of a map, not a row saying nothing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "places"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "id": {
+      "description": "What this FILE of the map is, so that a host writing several of them names each one once. A map is merged by path across files; the id is the file's identity and never a place's, and two files claiming one id is refused where every collection's identity is -- a name that resolves to two things is not a name.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "summary": {
+      "description": "What this file of the map covers, for a reader deciding whether to open it. Free prose: it binds nothing and is projected nowhere.",
+      "type": "string"
+    },
+    "places": {
+      "description": "One row per PLACE -- a directory or a single file -- that this host wishes to state something about. Absence of a row is not a defect: an unmapped place holds unclassified artifacts, which is a declared state and is counted, never guessed at.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "holds"],
+        "properties": {
+          "path": {
+            "description": "Root-relative, POSIX-formed; a directory path ends in '/'. The same spelling rule as the records map, so one reader reads both.",
+            "type": "string",
+            "minLength": 1
+          },
+          "holds": {
+            "description": "The class this place CONFERS on a resident that declares none: the id of one `kinds` row of the record-keeping vocabulary, never a free word. Conferred, not inferred -- a human wrote this row about this place. A resident that declares its own kind keeps it; a resident of no mapped place stays unclassified and is counted as such, and the catalog can tell the three apart.",
+            "type": "string",
+            "minLength": 1
+          },
+          "authority_ceiling": {
+            "description": "The MOST a resident of this place may bind: the id of any `authorities` row. It CAPS and never confers -- an artifact that declares nothing is unclassified here as everywhere, and an artifact that declares more than the ceiling is REFUSED rather than quietly demoted, because a document whose own word and whose place disagree is a contradiction a person must settle. A place may LOWER a claim and may never RAISE one, with no exception at the top: that is how a place where nothing may be current (a history, an archive) demotes a stale claim by location, which is the failure a filename-derived authority produces and this design exists to kill. Absent means the default ceiling -- the vocabulary's ordinary supporting row -- so the most binding state is reachable only where a place says so AND the artifact says so (ADR-019 amendment 1).",
+            "type": "string",
+            "minLength": 1
+          },
+          "entry": {
+            "description": "Whether this place is a ROOT of the route graph -- one of the few surfaces from which the work is actually steered, and therefore a place every live obligation must be reachable FROM. Absent means false: an entry root is claimed, never assumed, because a graph whose roots are everything has no unreachable nodes and measures nothing.",
+            "type": "boolean"
+          },
+          "read_when": {
+            "description": "The retrieval key: the task triggers, in the words a task actually arrives in, that pull this place into context. The same field, spelled the same way, as on a records-map entry -- the navigation projection reads both and invents no `answers` vocabulary of its own. A row without it is legal and simply answers no question.",
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "indexed_by": {
+            "description": "The root-relative path of the artifact that INDEXES this place. Two things follow from one declaration: the place's residents become reachable through it in the route graph, and the index becomes answerable for completeness in both directions -- a resident it omits and a link that resolves to nothing are equally its defect. Absent means the place has no index and none is expected of it.",
+            "type": "string",
+            "minLength": 1
+          },
+          "writer": {
+            "description": "Who may write this place: the id of one `writers` row of the record-keeping vocabulary. Same field and same vocabulary as the records map; projected into the catalog beside the class.",
+            "type": "string",
+            "minLength": 1
+          },
+          "lifecycle": {
+            "description": "How this place's content ages and where it goes: the id of one `lifecycles` row of the record-keeping vocabulary. Same field and same vocabulary as the records map.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "budgets": {
+      "description": "One row per corpus-wide invariant this host undertakes to hold, and the whole of what turns the counts above into a VERDICT (ADR-019 decision 9). A budget is a CEILING that may fall in an ordinary edit and may never rise: `FF-CORPUS-RATCHET` refuses a row raised above the value of the previous accepted state, a row that was accepted and is now deleted, and a measured count standing above the ceiling that was meant to cap it. Nothing else. Absent means this host has undertaken nothing -- legal, green, and stated as such rather than reported as a corpus within its budgets. Deliberately NOT a percentage and not a deadline: a ratio improves when its denominator grows, so a corpus could 'improve' by acquiring documents, and a date is not a mechanism because it expires and takes the rule with it.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["measures", "ceiling", "measured"],
+        "properties": {
+          "measures": {
+            "description": "The id of the MEASURE this row caps -- a count published by the module of the kit that already reads it, exactly as a gate kind is answered by the module that judges it. No measure is listed in this schema or in the ratchet: a budget over a count nobody can take is refused at run time with the published names printed, because a closed list here would mean a host could only budget what this file was last edited to know about (Cardinals II and IV).",
+            "type": "string",
+            "minLength": 1
+          },
+          "ceiling": {
+            "description": "The most this host accepts for that measure. An integer and never a rate. Zero is the terminal value: a budget that reaches it matures its gate to `enforce` under ADR-006, and the zero becomes unraisable like every other value -- by the same refusal, with no special case for it. No lower bound is stated here because this kit's schema subset carries no numeric bounds, deliberately (`validation.py`), and a keyword the validator would refuse is worse than none: a ceiling below anything measurable needs no schema to catch it, since the measured count then stands above it and the ratchet refuses on that.",
+            "type": "integer"
+          },
+          "measured": {
+            "description": "The date the number was taken, ISO `YYYY-MM-DD`. Required, because a ceiling is a reading of the world at a moment and a reading whose moment is unstated cannot be told apart from a guess (Cardinal III). It is never checked for freshness -- the measured count is compared with the ceiling on every run, which is a stronger answer than any date could give -- and it is what a reader uses to tell a budget that was measured from a budget that was hoped for.",
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "note": {
+            "description": "Why this host carries this budget, for the reader of the next raise attempt. Free prose: it binds nothing and is projected nowhere.",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

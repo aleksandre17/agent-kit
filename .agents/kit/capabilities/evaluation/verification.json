@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "readings": [
+    {
+      "id": "test-command",
+      "means": "the command this host itself declares for proving a change",
+      "reads": "quality.tests.command",
+      "gap": "THIS HOST DECLARES NO TEST COMMAND. Not \"none found\" and not an empty profile: the reading was taken, the tree was asked, and nothing in it declares a command that proves a change. No default is supplied here and none ever will be -- a framework that filled this blank would be publishing a way of proving a change into a host that has not chosen one, and every later reader would take the invention for a measurement. The cure is the host's: declare a test command where this kit's detectors can read it, and the next reading carries it."
+    }
+  ]
+}

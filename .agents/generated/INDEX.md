@@ -65,7 +65,7 @@ planes.
 | private-memory | What one role learned and keeps for itself: corrections, validated approaches, its own open threads. |
 | shared-knowledge | Curated facts more than one role must read the same way. The coordination plane, not a notebook. |
 | projection | A surface derived from declarations. It carries no truth of its own: delete it and it comes back byte-identical. |
-| run-evidence | What a run observably did: receipts and dispositions written as it happened. Evidence, never testimony. |
+| run-evidence | What a run observably did: receipts and dispositions written as it happened. Evidence, never testimony. The specification's EVIDENCE class arrives here and at `work-evidence`: ours splits it by what produced the reading -- a run, or an agent doing a card. |
 | measurement-stream | Accumulating measurements of cost and usage, one row per event, read in aggregate. |
 | dispatch-ground | Facts already verified for a dispatch, each with the instrument and the moment of its reading, so the receiver builds on them instead of re-deriving them. |
 | guard-state | The live state an enforcement hook keeps between calls: counters, open holds, what it has already refused. |
@@ -73,13 +73,17 @@ planes.
 | exclusive-hold | The mark that one writer holds the host. Its presence is the fact; it carries nothing else. |
 | automation-definition | Machine-run pipelines: what runs on which event, and which gates it holds a change to. |
 | intent | Why the work exists and what outcome it serves: vision, goals, the owner's standing requirements. |
-| decision | A binding choice with its context, the alternatives rejected and its consequences. Authoritative once accepted. |
-| reference | Descriptive, current facts about the system -- registers, ledgers, drawings -- consulted, not followed. |
-| guide | How to do one task, step by step, for a reader who already knows what they want. |
-| work-position | Where the work stands right now and the next move: the one page a resuming session reads first. |
+| decision | A binding choice with its context, the alternatives rejected and its consequences. Authoritative once accepted. The specification's DECISION, and its ARCHITECTURE class too: an architectural statement that BINDS is a decision, and one that merely describes the shape of the system is a `reference` -- the split is by authority, not by subject. |
+| reference | Descriptive, current facts about the system -- drawings, models, explanations -- consulted, not followed. The specification's REFERENCE. A reference that accumulates rows is a `register`. |
+| guide | How to do one task, step by step, for a reader who already knows what they want. The specification's GUIDE. |
+| work-position | Where the work stands right now and the next move: the one page a resuming session reads first. The specification's CONTROL class -- ours is one page with one writer, because a control plane with two authors forks the moment both are right. |
 | work-queue | The ordered set of work in flight and next, one line per card. |
-| work-card | One unit of work: its outcome, its state, and the artifact each state produces. |
-| work-evidence | Reports produced while doing work -- audits, probes, measurements -- that support a card or a decision and hold no authority of their own. |
+| work-card | One unit of work: its outcome, its state, and the artifact each state produces. The specification's WORK class. |
+| work-evidence | Reports produced while doing work -- audits, probes, measurements -- that support a card or a decision and hold no authority of their own. The specification's EVIDENCE class, narrowed to what a card produced; an unattached reading is a `report`. |
+| contract | What two parts of the system promise each other: a schema, an interface, a protocol, a wire format. The specification's CONTRACT. It binds like a decision and differs in what it addresses -- a decision is answerable to a reason, a contract is answerable to the other side, and breaking one is a version, not an amendment. |
+| register | An open, appended list that is the ONE home of some set -- a ledger, a roll, an index of what exists. The specification's REGISTER. Its authority is completeness, not prose: a register that is missing a row is wrong in a way a `reference` cannot be, because something read it as the whole set. |
+| report | A reading of the system taken at a moment and published on its own account -- an audit, a probe, a measurement that no card commissioned. The specification's REPORT. It states what was found and when, binds nothing, and is replaced by the next reading rather than amended; evidence attached to a card is `work-evidence`. |
+| historical | A document kept, where it is, for the record of what was once believed or done. The specification's HISTORICAL, and dead BY DECLARATION -- which is what distinguishes it from `retired-record`, dead by location: this one still sits among living documents and must therefore say so itself. |
 | retired-record | A record no longer current, kept for its history. Dead by location: nothing here binds. |
 
 ## Who may write

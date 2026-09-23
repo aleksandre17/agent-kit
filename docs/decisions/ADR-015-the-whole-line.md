@@ -233,7 +233,7 @@ lacked, and F is not done without it:
   and passages in the same grammar `move` already interprets for cards; a proposal is accepted or
   rejected, never left open. Doctrine (what binds) and work (what is being done) stay separate kinds.
 Built in F, after the rewrite (owner's ruling), measured against Stage-Gate and Shape Up at that time.
-Recorded as GAP-F1 in `docs/reference/CANON-LEDGER.md`.
+Recorded as GAP-F1 in `docs/reference/STANDARDS-LEDGER.md`.
 
 ## Why this order, and not the audit's
 

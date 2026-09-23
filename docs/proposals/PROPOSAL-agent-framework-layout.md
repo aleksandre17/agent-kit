@@ -409,7 +409,7 @@ speculatively.
 ## 10. GAPS met — declared per Cardinal VI, not improvised around
 
 Two questions arose that our doctrine does not answer. They are declared here and belong in the GAP
-register of `docs/architecture/CANON-LEDGER.md`.
+register of `docs/architecture/STANDARDS-LEDGER.md`.
 
 - **GAP — doctrine has no versioning semantics for ITSELF.** If a host pins kit 1.9.0 and the framework
   amends a Cardinal at 2.0.0, then `upgrade` rewrites the generated cardinals block inside the host's own

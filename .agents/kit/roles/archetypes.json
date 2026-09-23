@@ -90,6 +90,23 @@
         "idempotent apply, for a run that can be repeated without fear",
         "the plan-then-apply split, for an effect nobody saw coming being nobody's excuse"
       ]
+    },
+    {
+      "id": "dispatch-worker",
+      "seam": "The VISIBILITY of work carried out by an intelligence other than the one the operator is watching. It changes when the surface an operator watches changes, and for no other reason -- never when the work itself changes, because it does none.",
+      "duty": [
+        "relay the artifact unchanged -- a wrapper that summarises has replaced the worker's answer with its own, and the operator can no longer tell which one they are reading",
+        "hand the task to the one door that starts workers, and add no judgement of its own: the refusing, the leasing, the isolating and the recording belong to that door, and a second opinion here would be a gate with two homes",
+        "carry the refusal verbatim when the door refuses -- including the refusal of what the worker wrote on return, which is a different proposition from whether the worker finished",
+        "cost nothing it does not have to: this role exists so that work appears where an operator is already looking, so it is the cheapest instance that can relay, and never a second thinker in the line",
+        "state plainly that it is a relay -- an operator who mistakes the wrapper for the worker is being lied to by the surface"
+      ],
+      "reference_class": [
+        "the Adapter pattern, for a wrapper that changes the interface and never the content",
+        "A2A's task model, for an artifact that arrives as an artifact rather than as a status message",
+        "the Humble Object pattern, for a boundary piece thin enough that nothing needs testing inside it",
+        "the null renderer, for a surface that shows a declared absence rather than an invented answer"
+      ]
     }
   ]
 }

@@ -1,0 +1,69 @@
+{
+  "$id": "dispatch-packet",
+  "title": "A DISPATCH PACKET -- the complete statement of one task handed to the dispatch port, and the only thing the port accepts",
+  "description": "The orchestrator's half of a dispatch, and nothing else: WHICH task this is (a routed DISPATCH-ID), WHERE it was routed (an adapter id some taken capability declares), WHAT the worker is asked to do, and ON WHICH BRANCH its isolated workspace stands. A packet that cannot state all four is INCOMPLETE, and the port refuses it before a lease is taken, a workspace is made or a worker is started -- whatever runtime, hook or hand called it (ADR-017 decision 1: the gate has one home, independent of who calls it).\n\nWhat this document deliberately does NOT carry: a path. Where a worker's isolated tree lives is a property of the HOST's layout, not of the task, and a packet free to name any path would be a way to write anywhere in the host through the one door that exists to be passed. The port places every worker's tree inside the plane that holds what a run leaves behind, under the dispatch id, and the packet names only the branch.\n\nIt carries no behaviour: no command, no closure, no fetch (Cardinal IV). What a worker is STARTED with is the adapter's declaration; what it is ASKED is this packet's `instruction`, which is text and is never interpreted by the port.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "route",
+    "instruction",
+    "branch"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "description": "The DISPATCH-ID: this task's one name, in every record the dispatch leaves -- the lease, the workspace, the task record. A name is not a referent (Cardinal VII), so the form is constrained to what every boundary this id crosses reads the same way: a path segment, a branch component and a JSON key.",
+      "type": "string",
+      "minLength": 4,
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+    },
+    "route": {
+      "description": "The id of the dispatch ADAPTER this task was routed to. It is ROUTED only if some capability this host has enabled declares an adapter under exactly this id; an id that names no declared adapter is a name with no referent, and the port refuses it rather than choosing one.",
+      "type": "string",
+      "minLength": 1
+    },
+    "instruction": {
+      "description": "What the worker is asked to do, in words. Text, carried to the adapter's declared placeholder verbatim: the port never reads it, never matches on it and never decides anything by it.",
+      "type": "string",
+      "minLength": 1
+    },
+    "branch": {
+      "description": "The branch the worker's isolated workspace stands on. Isolation is the whole of decision 5: a runtime that cannot be stopped mid-command writes only inside its own workspace, and what it wrote is admitted to the host only after it is judged on return.",
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "description": "The role the worker is dispatched as, where the adapter declares a placeholder for one. Optional: an adapter that names no role placeholder is handed none, and nothing is invented for it.",
+      "type": "string",
+      "minLength": 1
+    },
+    "routed_by": {
+      "description": "WHY this route was chosen, as the router states it -- the decision, the moment, and the basis it read. Testimony that travels with the packet, so a task's route can be read back rather than guessed at. The port records it and does not judge it: routing on capabilities PROVEN in receipts (ADR-017 decision 4) is the router's half, not the port's.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "at"
+      ],
+      "properties": {
+        "basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

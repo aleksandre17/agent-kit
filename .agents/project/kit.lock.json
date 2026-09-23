@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 176,
+  "count": 202,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "25d1eeb02ecac9b3886a9508c178a312e5523eb7fcf9e1e2862c2135d2674dcb",
+      "digest": "fd6aa502b5a75bb938a9136569b400f033f441853f75d96fc2fd02be4c8f70b4",
       "path": "MANIFEST.json"
     },
     {
@@ -95,7 +95,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "a03367852110420ea48f5055dd90ef2cd307f4a9d55585e634f273375bcb62dc",
+      "digest": "30564fa71df2f78df190600c1cf97c07568ec47db2455b13982bd815051131e1",
       "path": "capabilities/evaluation/capability.json"
     },
     {
@@ -109,6 +109,12 @@
       "class": "payload",
       "digest": "a85967be61a11e7783ce7252c6aa21a432ad528bbcc95a75a56d0da05a7db546",
       "path": "capabilities/evaluation/payload/QUALITY.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "21560c16cef810449961f2baccd11e05faee7b1ae4867167b5bb4b0144df8723",
+      "path": "capabilities/evaluation/payload/VERIFICATION.md.mustache"
     },
     {
       "accounted_by": "declaration-closure",
@@ -131,6 +137,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "b1b9dc1dd592f9a4b7c5f6c7bcb356186ea6844f6bf1a6fe1affe343947cf793",
+      "path": "capabilities/evaluation/verification.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "c84d0b30eb80a2169987ab15980a83243f89567e9e650bf6f885bb59b97efadd",
       "path": "capabilities/fitness/capability.json"
     },
@@ -143,7 +155,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "909172b3f257f04df9c8c6dc788a5289b6460985c84d471c59da14b5a41c4291",
+      "digest": "1c52f8b7e4267477319a83b70f4e00f034a12ef46fec46c74a99c9998864835a",
       "path": "capabilities/governance/capability.json"
     },
     {
@@ -151,6 +163,12 @@
       "class": "declaration",
       "digest": "d1deed2c324d88add47fff55eaa799ee29cba7ce579ba6fdc8006f6e699349e6",
       "path": "capabilities/governance/host-layout.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "a7f0a01e082324246c4b4c49c2aa37445ddd0856f62215238029ee6ac710ea30",
+      "path": "capabilities/governance/obligation-markers.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -185,7 +203,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "257d373b11153ac58fac414486d53a211e0a8d55495eaa7098e511cfdde88777",
+      "digest": "2c896b7196b3b9d4fba1a952570a476d0ec7e6edd59522a3442e5a78180440b3",
       "path": "capabilities/governance/record-keeping.json"
     },
     {
@@ -239,7 +257,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "ebcb9cfc9ca97a2e83f83c802e6858861c6a47f0ce65e4af5b3536511b5e1736",
+      "digest": "1e594a4e2e2ad38998af56ceb036ca87e65dd8d332e4cd03063804da375f2583",
       "path": "capabilities/knowledge/capability.json"
     },
     {
@@ -247,6 +265,18 @@
       "class": "payload",
       "digest": "e8752dc32ff7090d128c51cd39c8cf3ce0dee4d948c73a73b546d474b7809dcc",
       "path": "capabilities/knowledge/payload/ADR-0001.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "c605da23ae6135950d1908c4de307ea475c1d91eba9227db8e984fb21ed82d45",
+      "path": "capabilities/knowledge/payload/CATALOG.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "3b6ae04960f76a183ea13dd48604cddde5782aabfee0bfa55da50dcc41528fe9",
+      "path": "capabilities/knowledge/payload/ROUTES.md.mustache"
     },
     {
       "accounted_by": "declaration-closure",
@@ -413,7 +443,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "0d2c0609a361c6dd66cd2a8d385ac5c67ab4ee334cc272b980b64b1c5158b2a4",
+      "digest": "c16c11cbf70ddb29d2b97ff014aea7040e0f548eacbcf33d3d23424936189728",
       "path": "diagnostics.json"
     },
     {
@@ -449,13 +479,25 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "79f06ca653842de120f51070803971b6e7aeeb27642746f17ca8b383995de8a1",
+      "path": "interpreters/consumption.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "a2c2b4c2f181ef4fe40aac11215fe5dd59f4dc7bb4b8ff7fd3da71984cdab5a2",
       "path": "interpreters/context.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "557296a17bf8cb7459a28b567418cee026ea78b7697b795e667fe5d7dfb0e932",
+      "digest": "f9f6b40a50347bd646c773bf35ff3ef043c814b9432cd40742974a925d6c64a9",
+      "path": "interpreters/corpus.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "484a86ac4214100cd571b97ede31c1894c67cd4f2ba09e0c5ffbdd1272a95358",
       "path": "interpreters/declared.py"
     },
     {
@@ -485,6 +527,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "fc0d780ad0c73b0b59957ac0258430429c1ff0303e678fea48ab11d98e8ce23c",
+      "path": "interpreters/gatekinds.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "7c3a0d605e7b9a4fa2d295d9c4d30648b9b6d363edfe7e092c8b8bf48286a506",
       "path": "interpreters/gates/activated.py"
     },
@@ -493,6 +541,18 @@
       "class": "interpreter",
       "digest": "f8c93f766eb400c275c56dc95d5d7b148b9a32b94468b3d1b9c614450fd47b94",
       "path": "interpreters/gates/arrow.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "0d9a18f7d3dff57f504e088e4ea197943ac23a1095a73ca39ae1d1a558aff820",
+      "path": "interpreters/gates/artifacts.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "8e6b836af9080ec25d94471f902f9443558c06856e7b0aa93da477f07a20482c",
+      "path": "interpreters/gates/consumed.py"
     },
     {
       "accounted_by": "interpreter",
@@ -509,7 +569,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "eef2038d8ece4024cf6413ad92f59d2f71741053b588c6e11a7f92bb55340ecd",
+      "digest": "caab8be0857b455f31deb5a1a15b3dcbc8d367f468fdebd4f69f53a1a2c8f0e7",
       "path": "interpreters/gates/edits.py"
     },
     {
@@ -533,8 +593,14 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7fd8e6637a3b379683ab4b68019b1774423987cd0f2e355b13bf21fe70854b40",
+      "digest": "1aa75f1a64981697dc1801c89b31c3d36119ae5c637ae547e2dd108906d48adc",
       "path": "interpreters/gates/quality.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "117b8e680881c55553b20ee38eebcb349909afabdbea88270137f033e7ffd483",
+      "path": "interpreters/gates/ratchet.py"
     },
     {
       "accounted_by": "interpreter",
@@ -545,13 +611,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "0ef62b30ce2f1536e585140cc94380faa2fd9d07d1922b116894683cbf11acfc",
+      "path": "interpreters/gates/routes.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "2910b36d8240ccb592050797a639c1c6ee65fc76c1c94df6c6f9069fadcf1181",
       "path": "interpreters/gates/taken.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b7a66ff03deba657992858bb9253e7a6d70d36ee22f9f297ad0fcdc273cf8c54",
+      "digest": "28ae4bb5178af91816669b7860b2dbcb1ec24a15d099089c14e3cb0cb5937bb2",
       "path": "interpreters/hostlock.py"
     },
     {
@@ -559,6 +631,12 @@
       "class": "interpreter",
       "digest": "a171057768a735dd3cdbe8daf7201148b89224a2460f1f54b994523a5b67fa6b",
       "path": "interpreters/journal.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "b55e3252497fb3079c44db6d3ce9d6b7147b9503a17277b727286b8280ac0c7c",
+      "path": "interpreters/judgement.py"
     },
     {
       "accounted_by": "interpreter",
@@ -593,14 +671,32 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "6942f9de450cbd7d29f0be53af102201cee646a71002c4797ebfc4be4494c505",
+      "path": "interpreters/placement.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "bd2e971a712302bbfe99a5dac68ed26efe5538b18e6a2648c8c77d78dc8e5346",
       "path": "interpreters/plan.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "853b6751a00c18f0000dd11a22ce1d8471c85bbdb16e040390fbcc13f5e1b552",
+      "path": "interpreters/ports/admission.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "8b75f7a4d6da099be729d80fa0e0fa706f06ba3edf98868fe52a7a4c673f53c9",
       "path": "interpreters/ports/clock.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "04895b0ee65b86168f80a7c14205b9b575f56000115e0d8813be3cae0f863c39",
+      "path": "interpreters/ports/dispatch_port.py"
     },
     {
       "accounted_by": "interpreter",
@@ -635,7 +731,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "855ff96d4a6c7e8fc142e923346ccc7364751a674db332e0bcb7867e2156bab9",
+      "digest": "7944424e97eef6cfd9b340f3e554bb769919dd0c8ab78ed2e965940f7e640ff4",
       "path": "interpreters/projection.py"
     },
     {
@@ -649,6 +745,12 @@
       "class": "interpreter",
       "digest": "2d83784e5b4a520b785aa043a29bd55afae15b616cbb0c7be219133257931ca2",
       "path": "interpreters/reconcile.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "c7dbd213ac7dbc3483e5d676f94399c3824c9d193e43e6183a4cb872aaacf784",
+      "path": "interpreters/resolution.py"
     },
     {
       "accounted_by": "interpreter",
@@ -707,8 +809,14 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "11b85a7c5a529fba81d04a874d83e73b351ee423ae1032dce97dd85fcd310c7d",
+      "digest": "0e32b32c6e2463c4443593c36d6c0ee2f1bc98718d6e4ca078322de8485e5f45",
       "path": "interpreters/verbs/check.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "f79889d2236422caae9f5ed5f5233c05a3441c89a6e5a8cd91bafb86b71ed31c",
+      "path": "interpreters/verbs/dispatch.py"
     },
     {
       "accounted_by": "interpreter",
@@ -737,7 +845,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b3c32207cf0bb5f9b8e76feddc70e093a6dd4ebace41863092ee83ddd3c39ec7",
+      "digest": "614535d6833e16a4211f4fe96d528b18d11762758cf58487b18f9daf9b8e7b80",
       "path": "interpreters/verbs/judge.py"
     },
     {
@@ -791,7 +899,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "ad57495f77d76138fe2fb6072d68934203205be5b862632bb95a3c4cfe88662f",
+      "digest": "6c775e075d49dd8754004f27fbfe8716f022f99bf4f93986c933ef0b4c183539",
       "path": "roles/archetypes.json"
     },
     {
@@ -821,7 +929,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "13a73ce1004f45009c2bf233a5849ae2eb7953724f79f6b47822b2be8839104c",
+      "digest": "e36627bb291afe0b3723593ef0cf226d3533b6f8cb6223a90d89841b0d0eb357",
       "path": "schemas/capability.schema.json"
     },
     {
@@ -835,6 +943,18 @@
       "class": "declaration",
       "digest": "fa1f0f14bea8a9f311061941cb585869d787040f47f458398059c389f213ad27",
       "path": "schemas/cardinal.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "3ab0bcdea3f2d479d4b6e61814670be3316cd57326b92fb00905327a4ac85a6d",
+      "path": "schemas/consumption.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "8de4cf3c2ae49d7dcbe30cd99689762634adc69b9e38523cd479acfa14b19c84",
+      "path": "schemas/corpus-map.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -857,6 +977,18 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "d06dca495deabab2a99da69142bb31fcbdd77e5d6e01f38602afd232d88ce01f",
+      "path": "schemas/dispatch-adapter.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "d5a535eb1b7279ce75cbb3db43d69881398de3afbd30d82cf0ca23d7025a6e7b",
+      "path": "schemas/dispatch-packet.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "a08f7f068d402a21d48263aa12a405a2464b4c2b36c5df71dec7c948b60f2f06",
       "path": "schemas/doctrine.schema.json"
     },
@@ -871,6 +1003,12 @@
       "class": "declaration",
       "digest": "884aa7ab84422694bc51f4f8a4bb889b42a31b969b038b6ecb9b0f4c98a6028a",
       "path": "schemas/estate.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "e58d588f6ec217704f85becc1b611db54e84735b5f6733871c6ad60571c17f68",
+      "path": "schemas/front-matter.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -917,7 +1055,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "2484bd0ab18d5b78efada51b6b71d614e535fe6d77d63bda3abf9480e8f265bb",
+      "digest": "9a3b7afa37a9885e822ef6e0edbcddea20c5e1b0485a47b383f312c04c65c44e",
       "path": "schemas/manifest.schema.json"
     },
     {
@@ -925,6 +1063,12 @@
       "class": "declaration",
       "digest": "7e67d51da212ff8ba7624a38f25bd932629acb09b05fc38952fd34ff9198d3ce",
       "path": "schemas/migration-map.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "6f7abb18be8e1013b911853ec8c5c1ab1c46a50544752e1d4ce2fe6160142d60",
+      "path": "schemas/obligation-markers.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -971,7 +1115,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "745c2816d28987d4f14d8eec7d2761529790d30c7a3854ac148698760025bae9",
+      "digest": "81223a87bf09216728e7dadb0042f1d7734a66de9c62fb875fba7e7efbebde11",
       "path": "schemas/record-keeping.schema.json"
     },
     {
@@ -1030,6 +1174,18 @@
     },
     {
       "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "3bf4a4b8974f6d66de2d98b9d79de743992b9acf0e70e0ac6209475e6099620c",
+      "path": "schemas/task.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "90b915105e41ec3a6ecdec3e7d3b402a9331592ba7837c797764dcd3eae5aa62",
+      "path": "schemas/workspace-provider.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
       "class": "payload",
       "digest": "d4d7a2ef5c4527b89290e315aafd4a8a81f973059d6d8a8cde4f623292bc9f7b",
       "path": "seeds/agents.gitignore"
@@ -1062,5 +1218,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-17T15:50:05+00:00"
+  "taken_at": "2026-09-23T18:26:37+00:00"
 }

@@ -129,6 +129,9 @@
     "lifecycle": "schemas/lifecycle.schema.json",
     "layout": "schemas/layout.schema.json",
     "record-keeping": "schemas/record-keeping.schema.json",
+    "corpus-map": "schemas/corpus-map.schema.json",
+    "front-matter": "schemas/front-matter.schema.json",
+    "obligation-markers": "schemas/obligation-markers.schema.json",
     "card": "schemas/card.schema.json",
     "delivery-policy": "schemas/delivery-policy.schema.json",
     "residence": "schemas/residence.schema.json",
@@ -136,6 +139,7 @@
     "receipt": "schemas/receipt.schema.json",
     "observation": "schemas/observation.schema.json",
     "quality": "schemas/quality.schema.json",
+    "consumption": "schemas/consumption.schema.json",
     "judgement": "schemas/judgement.schema.json",
     "archetype": "schemas/archetype.schema.json",
     "overlay": "schemas/overlay.schema.json",
@@ -155,6 +159,10 @@
     "edit-gate": "schemas/edit-gate.schema.json",
     "taken": "schemas/taken.schema.json",
     "law-scope": "schemas/law-scope.schema.json",
-    "arrow": "schemas/arrow.schema.json"
+    "arrow": "schemas/arrow.schema.json",
+    "dispatch-packet": "schemas/dispatch-packet.schema.json",
+    "dispatch-adapter": "schemas/dispatch-adapter.schema.json",
+    "workspace-provider": "schemas/workspace-provider.schema.json",
+    "task": "schemas/task.schema.json"
   }
 }

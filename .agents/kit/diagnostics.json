@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 48,
+  "issued": 55,
   "codes": [
     {
       "code": "KIT0001",
@@ -290,6 +290,48 @@
       "status": "active",
       "title": "a check was asked to run through a surface no taken adapter declares",
       "explanation": "`check --surface <id>` runs every gate as seen from the clone that surface's product runs in, and the surface's own declaration says what that clone is: an ephemeral one names a setting outside the tree NOT MEASURED instead of failing it. A name no taken adapter declares cannot say that, so the check is refused before any gate runs, rather than silently answering the question of a check run through no surface."
+    },
+    {
+      "code": "KIT0049",
+      "status": "active",
+      "title": "a task handed to the dispatch port is not one it will start",
+      "explanation": "The dispatch port is the one place a worker is started, so every refusal a dispatch can earn is taken there and not in any runtime's hook -- a gate that fires only where a runtime happens to have a pre-spawn hook is a property of the orchestrator, not a gate (ADR-017 decision 1). Refused, on pure reads, before anything is leased, made or started: what was handed over is not readable as a packet; the packet is INCOMPLETE against its declared shape; its DISPATCH-ID is routed to an adapter no enabled capability declares (a name with no referent); the id has already been dispatched on this host, or its workspace was found rather than made; or the adapter is started with a placeholder this packet states no value for, which is never filled with an empty string."
+    },
+    {
+      "code": "KIT0050",
+      "status": "active",
+      "title": "this host declares no way to carry a dispatch out",
+      "explanation": "A dispatch needs two declarations the kit core never ships: an ADAPTER that says how one intelligence is started as a worker, and a PROVIDER that says how an isolated workspace is made for it. Refused rather than defaulted, in each of its forms: no dispatch adapter has been taken at all; the enabled declarations of isolation are zero or more than one (a worker with nowhere of its own would write into the host, and 'the isolated workspace' must name one place); an adapter names a placeholder or reads an artifact from a channel the port does not provide; or a declared program is not present on this machine -- what a declaration claims about somebody else's software is a claim until it is measured, and an absent program is that measurement, never a worker that quietly did nothing."
+    },
+    {
+      "code": "KIT0051",
+      "status": "active",
+      "title": "the task vocabulary has two homes and they have parted",
+      "explanation": "The states a dispatched task can be in are A2A's, adopted whole, and their one home is the `task` schema. The dispatch port names the ones it writes; before the first write it holds those names against the schema's own declaration and refuses if either side has a state the other does not, rather than writing a record whose state no reader recognises. The same refusal covers a task record that does not honour its schema at any transition: a record that is not a task record is not written over the only account of what a worker did."
+    },
+    {
+      "code": "KIT0052",
+      "status": "active",
+      "title": "what a worker's tree came back with is NOT ADMITTED",
+      "explanation": "A runtime the kit cannot stop mid-command is not prevented from writing; it is ISOLATED, and what it wrote is judged on RETURN (ADR-017 decision 5). Verification at return replaces prevention at write, and it only replaces it if it actually runs -- so this refusal is raised whenever the change a worker left in its leased tree either violates one of this host's declared edit gates, or cannot be read at all. Both endings are one refusal on purpose: an unjudged write is not an allowed one, and a change that could not be read admitted 'because nothing was found' would be exactly the silence that makes isolation decorative. The worker's tree, its task record and its lease are left standing: they are the only account of what was refused, and the refusal is not the moment to destroy the evidence for it. The task's OWN state is untouched by this -- whether the worker finished is one proposition and whether what it wrote may enter the host is another, and a single word doing both jobs would hide one of them."
+    },
+    {
+      "code": "KIT0053",
+      "status": "active",
+      "title": "the corpus vocabulary cannot be read as declared",
+      "explanation": "Every reading of a corpus rests on a vocabulary that can be COMPARED: an order over the authority states, and exactly one of them marked as the ceiling a place gets when it declares none. This refusal is raised when that footing is missing -- two states tying at the most binding rank, or no single default ceiling -- and it is raised BEFORE any document is read, because every resolution downstream would otherwise inherit the guess and none of them would say so. A ceiling chosen by this interpreter to get past the moment would be the interpreter deciding policy (Cardinal IV), and a corpus read against an ambiguous order answers the same question differently depending on which row a reader reached first (Cardinal III). The cure is a declaration, not a fallback: the vocabulary says which state is the default and what the order is, or nothing is read at all."
+    },
+    {
+      "code": "KIT0054",
+      "status": "active",
+      "title": "a declaration names a resolver kind nothing answers for",
+      "explanation": "A capability may declare that a READING reaches its pages -- a `resolves` row naming a kind and the parameters that kind needs -- and the kind is answered by whichever module owns that reading, exactly as a gate kind is answered by the module that judges it. This refusal is raised when a declaration names a kind no module publishes: almost always a spelling, occasionally a capability shipped against a kit that does not carry its resolver yet. It is refused rather than skipped because the alternative is a page that renders with a section quietly missing, which reads exactly like a corpus that had nothing to put there (Cardinal V). The set of kinds stays OPEN: a new reading is a new module publishing a row, never an edit to the interpreter that dispatches them."
+    },
+    {
+      "code": "KIT0055",
+      "status": "active",
+      "title": "a budget is declared over a measure nothing can take",
+      "explanation": "A host caps a corpus-wide count by writing a budget row in its corpus map: the id of a MEASURE, the ceiling it undertakes to hold, and the date the number was taken. The measures are published by the modules of the kit that already perform those readings, and discovered exactly as gate kinds are. This refusal is raised when a row names a measure no module publishes -- almost always a spelling, occasionally a map written against a kit that does not carry that reading yet. It is refused rather than skipped because a ceiling over a count nobody can take would pass FF-CORPUS-RATCHET on every run for the rest of its life, and would read, to anyone auditing the map, exactly like a budget that was being honoured (Cardinal V). The published names are printed with the refusal: name one of them, or delete the row."
     }
   ]
 }

@@ -43,6 +43,7 @@
       "items": { "type": "string", "enum": ["vendor", "binding", "projection", "ephemeral"] }
     },
     "planes": {
+      "description": "The kit's INSTALL planes: physical roots in a host tree, each with an install class and a rule for what is found there unaccounted. These are NOT the SEMANTIC planes of `governance/record-keeping.json#planes`, which say what a record is ABOUT and which no interpreter reads. One word, two referents, stated at both ends so that a reader who meets the bare word knows to ask which one (Cardinal III).",
       "type": "array",
       "minItems": 1,
       "items": {

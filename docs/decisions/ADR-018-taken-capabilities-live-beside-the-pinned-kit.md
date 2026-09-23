@@ -6,7 +6,7 @@
   carries a pinned kit, and how the release identity of the core survives the take.
 - **Cures:** ADR-016 consequence *"A host that TAKES adapters pins a composition, labelled
   `+unreleased`"* — its named missing part: *"taken capabilities declared outside the issued
-  `MANIFEST.json`"*. Recorded as GAP-T1 in `docs/reference/CANON-LEDGER.md`.
+  `MANIFEST.json`"*. Recorded as GAP-T1 in `docs/reference/STANDARDS-LEDGER.md`.
 - **Amends:** ADR-014 decision 2 (the take is no longer "placed at `kit/capabilities/<id>/`, a
   manifest row"). **Relates:** ADR-008 (provenance of what a host takes) · ADR-016 · ADR-017 (C1).
 

@@ -1,0 +1,50 @@
+{
+  "$id": "obligation-markers",
+  "title": "The marks that say a document carries a LIVE obligation -- each with the calibration that proves it reads what it claims (ADR-019 decision 5)",
+  "description": "An obligation is a promise the system has made and not yet kept; a marker is how a machine can tell that a document carries one. This is the vocabulary of those marks, and it is DATA: a new mark is a row, and no interpreter holds a pattern of its own. ONE SHAPE, TWO SIDES -- the kit ships its default set as a governance document, and a host that needs its own marks declares another instance of this same schema in its corpus; the effective vocabulary is the union, and neither side edits the other's file. CALIBRATED BY CONSTRUCTION: every row carries one text it MUST match and one lookalike it MUST tolerate, exactly as the residence vocabulary calibrates every genre it refuses. This is not decoration. A marker vocabulary with no calibration is a regex somebody believed, and the first time it is wrong it is wrong silently, in the direction of reporting that nothing is owed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "summary", "markers"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "id": {
+      "description": "The id of this SET of marks -- the kit's default set, or a host's own. It names the instance, never the marks in it.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "summary": { "type": "string", "minLength": 1 },
+    "markers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "pattern", "because", "proves", "admits"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" },
+          "pattern": {
+            "description": "The expression, applied to one line of a document's text, whose match means: an obligation is open here. It is matched against text and never against a path -- what a document is called is not what it owes.",
+            "type": "string",
+            "minLength": 1
+          },
+          "because": {
+            "description": "Why a match of this mark is a LIVE obligation rather than a turn of phrase. Stated in the row so the reason travels with the pattern and a later reader can judge the pattern against it.",
+            "type": "string",
+            "minLength": 1
+          },
+          "proves": {
+            "description": "CALIBRATION, positive: one line this pattern MUST match. A row whose `proves` does not match is a broken detector, and it is caught by the vocabulary's own test rather than by a corpus that quietly reports nothing owed.",
+            "type": "string",
+            "minLength": 1
+          },
+          "admits": {
+            "description": "CALIBRATION, negative: one realistic lookalike this pattern MUST tolerate -- prose that mentions the mark, or a closed form of it. The false positive is the expensive failure here: it routes work that does not exist, and a gate that cries wolf is switched off within a week.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

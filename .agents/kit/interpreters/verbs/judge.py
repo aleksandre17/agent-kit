@@ -16,9 +16,10 @@ from __future__ import annotations
 import json
 import sys
 
-import check as check_verb
 import declared
 import edits as edits_module
+import judgement
+import placement
 from errors import KitError
 
 SUMMARY = "judge one edit a runtime hook hands over, against this host's declared edit gates"
@@ -74,20 +75,15 @@ def run(ctx, args) -> int:
     within, outside = [], []
     for path, text in handed:
         try:
-            rel = edits_module.host_relative(ctx.workspace.path("."), path)
-        except edits_module.Unplaceable as exc:
+            rel = placement.host_relative(ctx.workspace.path("."), path)
+        except placement.Unplaceable as exc:
             print(f"judge: REFUSED -- {exc}; an edit that cannot be placed is not one that lies "
                   f"outside this host.", file=sys.stderr)
             return no
         (within.append((rel, text)) if rel is not None else outside.append(path))
-    refused, unjudged = [], []
-    judges = check_verb.registry("EDITS")
-    for capability in ctx.enabled_capabilities():
-        for gate in capability.gates:
-            if gate["kind"] in judges:
-                found, blind = judges[gate["kind"]](ctx, gate.get("params", {}), within)
-                refused += found
-                unjudged += blind
+    # The gates are applied where that application has its one home, so this verb and the dispatch
+    # port's admission on return cannot come to hold different rule sets (ADR-017 amendment 6).
+    refused, unjudged = judgement.refusals(ctx, within)
     for path in outside:
         print(f"judge: {path} lies outside this host; its gates do not reach it")
     if unjudged:

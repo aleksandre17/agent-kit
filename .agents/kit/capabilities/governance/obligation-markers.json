@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "kit-default-markers",
+  "summary": "The marks this kit ships as the default reading of `a document owes something` (ADR-019 decision 5). Four rows, each calibrated, and deliberately few: a mark earns its place by being unambiguous in prose, not by being common. A host that writes obligations another way declares its own set against this same schema and the two are read together -- neither file edits the other. Modal verbs are NOT here on purpose: a document full of MUST is a law doing its job, and a marker that fires on every law would make the reachability reading a count of doctrine rather than a count of debts.",
+  "markers": [
+    {
+      "id": "open-checkbox",
+      "pattern": "^\\s*[-*] \\[ \\]\\s+\\S",
+      "because": "an unticked task box is the one mark whose meaning is settled by its own form: somebody wrote the box, and the box is not ticked. Its closed form is one character away, so the state is unambiguous in both directions.",
+      "proves": "- [ ] declare the budget row before the ratchet turns on",
+      "admits": "- [x] declare the budget row before the ratchet turns on"
+    },
+    {
+      "id": "todo-marker",
+      "pattern": "(^|[^0-9A-Za-z_])TODO[: ]",
+      "because": "the universal mark for work left behind in a document. It is followed by a colon or a space where it is meant as a marker, and by other letters where it is being discussed.",
+      "proves": "TODO: route this document from an entry before the ratchet is measured",
+      "admits": "the TODOs of the 2025 audit were all closed when the card closed"
+    },
+    {
+      "id": "fixme-marker",
+      "pattern": "(^|[^0-9A-Za-z_])FIXME[: ]",
+      "because": "a TODO that also asserts something is currently WRONG, which makes it an obligation with a defect attached. Kept as its own row rather than folded into the one above, because the two are counted differently by whoever triages them.",
+      "proves": "FIXME: this authority is read from the filename, which the ADR forbids",
+      "admits": "a FIXME, written as prose inside a sentence, is not a marker"
+    },
+    {
+      "id": "deferred-decision",
+      "pattern": "(^|[^0-9A-Za-z_])(TBD|TBC)[: .,)]",
+      "because": "a field left blank on purpose is an open decision with an owner, which is precisely an obligation the control plane must be able to reach. Terminated by punctuation or a space where it is a placeholder; followed by letters where it is being talked about.",
+      "proves": "owner: TBD, to be settled at the next review",
+      "admits": "the TBDs in that table were filled in before it was accepted"
+    }
+  ]
+}

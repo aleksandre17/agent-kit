@@ -140,5 +140,5 @@ the pinned tree, the interleave disappears, and so does the second copy named ab
 - **Host #0 runs without `knowledge`** (`--disable knowledge`, a reversible host choice). Its seed
   would write `docs/decisions/ADR-0001-…` beside this repository's `ADR-001…016` — two numbering
   schemes in one declaring folder — and its kind gate would, by its declared patterns, judge
-  `docs/reference/CANON-LEDGER.md` (a `CANON-` name in a kind that cannot declare; predicted from
+  `docs/reference/STANDARDS-LEDGER.md` (a `CANON-` name in a kind that cannot declare; predicted from
   the declaration, not run). Both are link E's to settle; neither is hidden by the choice.

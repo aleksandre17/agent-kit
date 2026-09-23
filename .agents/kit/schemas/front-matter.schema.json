@@ -1,0 +1,56 @@
+{
+  "$id": "front-matter",
+  "title": "What an artifact says about ITSELF -- the first and highest of the two declaration sites (ADR-019 decision 1)",
+  "description": "The contract for the block a document opens with. It is the ONLY site that can reach the authority no place may confer, and it is therefore the only site that can be wrong about one: a place row is a human's statement about a location, and this is a human's statement about the thing itself. The grammar a reader accepts is deliberately tiny -- one field per line, a scalar or a block list, no nesting and no expression -- because a declaration carries no behaviour (Cardinal IV) and a parser that guesses at a line it does not know produces a declaration nobody wrote. A block that cannot be read is NAMED as unreadable; it is never treated as a document that declared nothing, because those are two different states and only one of them is anybody's fault. ABSENT IS LEGAL: a document with no block at all is unclassified, which is a declared state that is counted and left exactly where it is -- nothing in this kit writes this block, and a `kind` no human chose is testimony wearing a field name.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "description": "The version of this CONTRACT (ADR-009), carried here because every registered schema must be able to say which version it is. It is NOT a field an author writes: a front-matter block is a human's sentence about a document, and version 1 is the version it has by saying nothing. Declared and not required, so an absent version means the first one -- which is the only thing it could mean.",
+      "type": "integer",
+      "const": 1
+    },
+    "kind": {
+      "description": "What this document IS: the id of one `kinds` row of the record-keeping vocabulary. Its PLANE is not written here and never may be -- a document that named both could contradict itself, and the plane is an attribute of the kind (ADR-019 decision 3).",
+      "type": "string",
+      "minLength": 1
+    },
+    "authority": {
+      "description": "How much this document BINDS: the id of one `authorities` row. A place may cap this and may never supply it, so a document that omits it binds nothing whatever its neighbours claim. The one state no place may declare is reachable here and nowhere else.",
+      "type": "string",
+      "minLength": 1
+    },
+    "owns": {
+      "description": "The topic id this document is the one owner of -- required of a document claiming the authority no place may confer, and meaningless without it: a settled answer that does not say what question it settles cannot be held against a second one. Two documents owning one id is a refusal, not a tie.",
+      "type": ["string", "array"],
+      "minLength": 1,
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "supersedes": {
+      "description": "The document(s) this one replaced, by host-relative path. Stated at BOTH ends or it is not stated: the other document must answer with `superseded_by`, because a succession written once leaves two documents internally correct and the pair contradictory.",
+      "type": ["string", "array"],
+      "minLength": 1,
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "superseded_by": {
+      "description": "The document(s) that replaced this one, by host-relative path. The other end of `supersedes`, and subject to the same two-way rule -- a reader who arrives at the old text is carried to the new one instead of obeying it.",
+      "type": ["string", "array"],
+      "minLength": 1,
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "indexes": {
+      "description": "The place this document is the INDEX of, by the path its corpus-map row declares. Declared here so the contract has one home; the completeness of an index in both directions is a later slice's invariant and nothing reads this field yet.",
+      "type": "string",
+      "minLength": 1
+    },
+    "read_when": {
+      "description": "The task triggers that pull this document into context, in the words a task actually arrives in. The same field, spelled the same way, as on a records-map and a corpus-map row -- one vocabulary for retrieval, never a second `answers` word. Declared here; projected by a later slice.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

@@ -1,0 +1,283 @@
+{
+  "$id": "task",
+  "title": "One dispatched TASK -- opened before a worker starts, rewritten at every transition, closed exactly once",
+  "description": "The dispatch port's receipt, and the ONE home of the task vocabulary this kit speaks. The states are A2A's, adopted whole and not translated: submitted, working, input-required, completed, failed, canceled (ADR-017 decision 3; a private vocabulary for a solved concept is a second home, Cardinal I/III). Results come back as ARTIFACTS, never as a status message pretending to be an answer.\n\nThe ORDER is the mechanism, exactly as it is for a run receipt: the record is written the moment the dispatch begins, holding `submitted` -- which means nothing has been concluded -- and rewritten as the work moves. A process that is killed leaves its record holding the state it was in forever, which is the record working: everything such a run leaves on disk otherwise reads exactly like the output of a run that finished.\n\n`input-required` is the one state that is not an ending. A worker that cannot proceed RETURNS ITS QUESTION instead of guessing, and this record then holds the question, whatever is needed to re-enter that same worker, and the exchange so far -- so an operator answers from the record and nowhere else. Which ending means 'I need input', and which declared artifact the question comes back in, are the ADAPTER's to state; this document is where what it said is kept.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "state",
+    "packet",
+    "adapter",
+    "workspace",
+    "branch",
+    "lease",
+    "opened_at",
+    "kit_version",
+    "boundary"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "description": "The DISPATCH-ID this record belongs to -- the packet's own, never a second name issued here.",
+      "type": "string",
+      "minLength": 1
+    },
+    "state": {
+      "description": "A2A's task states, adopted whole. `submitted`: accepted, nothing started. `working`: a worker was started and has declared no end. `input-required`: the worker cannot proceed and has asked a question instead of guessing -- it is STANDING, not ended, and `history` holds what it asked. `completed` / `failed`: the worker ended and said which. `canceled`: ended by a decision, not by the work.",
+      "enum": [
+        "submitted",
+        "working",
+        "input-required",
+        "completed",
+        "failed",
+        "canceled"
+      ]
+    },
+    "packet": {
+      "description": "The packet exactly as it was accepted. Carried, never re-declared: its shape is the `dispatch-packet` schema's to state, and a copy of that shape here would be the second home that drifts.",
+      "type": "object"
+    },
+    "adapter": {
+      "description": "The id of the adapter the packet's route resolved to, recorded at the moment it resolved.",
+      "type": "string",
+      "minLength": 1
+    },
+    "workspace": {
+      "description": "The host-relative directory the worker was given, and the only place it was asked to write.",
+      "type": "string",
+      "minLength": 1
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lease": {
+      "description": "The host-relative path of the lease standing on that workspace while this task runs -- so a reader of the task can reach the hold, and a reader of the hold can reach the task.",
+      "type": "string",
+      "minLength": 1
+    },
+    "opened_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "started_at": {
+      "description": "When the worker itself was started. Absent while the state is `submitted`: a moment that has not happened is not written as an empty string.",
+      "type": "string",
+      "minLength": 1
+    },
+    "resumed_at": {
+      "description": "When this worker was last re-entered with an operator's answer. Absent on a task nobody has resumed -- and present on one that was resumed and has not ended, which is the only pair of readings that can tell a worker standing on its FIRST question from one standing on a later one.",
+      "type": "string",
+      "minLength": 1
+    },
+    "ended_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "history": {
+      "description": "The exchange between the worker and this host, in A2A's own vocabulary and in the order it happened: `agent` is a question the worker asked instead of guessing, `user` the answer an operator carried back into it. A task that never asked has no history at all -- an absent exchange and an empty one would otherwise read alike, and only one of them means 'nothing was ever asked'. Nothing here is rewritten: a turn is appended, so a second question after an answer leaves both standing and the account of what this worker was told stays legible in one place.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "role",
+          "at"
+        ],
+        "properties": {
+          "role": {
+            "description": "Who spoke. A2A's two words, adopted whole rather than renamed.",
+            "enum": [
+              "agent",
+              "user"
+            ]
+          },
+          "at": {
+            "description": "When this turn was taken. Every turn carries its own moment: an exchange whose order is inferred from position cannot be contradicted by a clock.",
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "description": "What was said -- the worker's question, or the operator's answer. Absent exactly when `absent` says why nothing was read: an empty question and a question never asked read identically, and neither one can be answered.",
+            "type": "string",
+            "minLength": 1
+          },
+          "absent": {
+            "description": "Why the worker's question could not be read, when the adapter's declared channel produced nothing. A declared absence in the place the question would have been -- never an empty question.",
+            "type": "string",
+            "minLength": 1
+          },
+          "reentry": {
+            "description": "What the adapter's declared channel handed back as the way into THIS worker again -- a session name, a handle, whatever that product resumes by. Carried into the adapter's declared resume argv as `{reentry}` and never interpreted here: the port holds no grammar for anybody's session.",
+            "type": "string",
+            "minLength": 1
+          },
+          "reentry_absent": {
+            "description": "Why no way back in was read, when the adapter declared a channel for one and nothing came back on it. A resume that needs `{reentry}` is refused by name rather than run with a blank.",
+            "type": "string",
+            "minLength": 1
+          },
+          "unresumable": {
+            "description": "Why this question cannot be answered on this host at all -- an adapter that declares how its worker asks and not how one is re-entered, most of all. Written at the moment the question was READ, so a task nobody can answer never reads as one nobody has answered yet.",
+            "type": "string",
+            "minLength": 1
+          },
+          "by": {
+            "description": "Who answered, when the act said so. Recorded, never invented: an unattributed answer is honest and an attributed one is evidence.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "exit_code": {
+      "description": "What the worker's process returned, recorded BESIDE the state and never in place of it: an exit code is not a result.",
+      "type": "integer"
+    },
+    "status_message": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifacts": {
+      "description": "What the task produced, in A2A's own form: named parts, each stating where it was read from. An absent list and an empty list are different readings and both are honest -- absent means the worker never ended, empty means it ended and produced nothing.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "from"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "from": {
+            "description": "Where this part was read: the adapter's declared return channel, in the adapter's own words.",
+            "type": "string",
+            "minLength": 1
+          },
+          "media_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "description": "What was actually read from that channel. Absent exactly when `absent` says why nothing was read -- an artifact whose channel produced nothing is never recorded as an empty string, because an empty answer and an answer that was never given read identically and only one of them is a result.",
+            "type": "string"
+          },
+          "absent": {
+            "description": "Why nothing was read from this channel -- a worker that declared a file artifact and wrote no file, most of all. A declared absence, in the place the answer would have been.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "admission": {
+      "description": "Whether what the worker left in its isolated tree may enter this host -- ADR-017 decision 5's other half, made a record. A SEPARATE proposition from `state`: whether the worker finished is one question and whether what it wrote passes this host's gates is another, and one word doing both jobs would hide whichever it was not doing. Absent means the worker never returned far enough to be judged; it never means admitted.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verdict",
+        "at",
+        "judged"
+      ],
+      "properties": {
+        "verdict": {
+          "description": "`admitted`: every path the worker's tree came back with was judged by this host's declared edit gates and none was refused. `refused`: at least one was refused, or the change could not be read at all -- one word for both, because an unjudged write is not an allowed one.",
+          "enum": [
+            "admitted",
+            "refused"
+          ]
+        },
+        "at": {
+          "description": "When the return was read. A verdict without its moment goes on certifying forever.",
+          "type": "string",
+          "minLength": 1
+        },
+        "judged": {
+          "description": "Every host-relative path the worker's tree reported as changed, as the gates saw it.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "refusals": {
+          "description": "One row per refusal: the path, the gate that refused it, and that gate's own words.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "gate",
+              "because"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "gate": {
+                "type": "string",
+                "minLength": 1
+              },
+              "because": {
+                "type": "string",
+                "minLength": 1
+              },
+              "instead": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "unjudged": {
+          "description": "Gates that could not be applied because they are uncalibrated -- NAMED, never silently skipped and never trusted.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "unreadable": {
+          "description": "Paths the tree reported as changed whose text could not be read, so no gate could judge them. Their presence is why the verdict is `refused`.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "deleted": {
+          "description": "Paths the tree reported as changed which no longer exist in it. A deletion introduces no text, so there is nothing for a text gate to refuse; it is recorded rather than passed over in silence.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "because": {
+          "description": "Why the change could not be read at all, when that is what happened.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "kit_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "boundary": {
+      "description": "The translation layer this dispatch crossed, measured once and carried with the record (Cardinal VII): two intelligences can agree on a path's NAME and disagree completely on what it points to.",
+      "type": "object"
+    }
+  }
+}

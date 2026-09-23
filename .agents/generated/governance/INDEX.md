@@ -30,9 +30,11 @@ Declares the GRAMMAR of judgement and never a judgement. A run's receipt proves 
 | `.agents/project/evaluation/readings.json` | binding | seed |
 | `.agents/runtime/evaluation/judgements/` | ephemeral | space |
 | `.agents/generated/evaluation/QUALITY.md` | projection | projection |
+| `.agents/generated/evaluation/VERIFICATION.md` | projection | projection |
 
 Gates declared by this capability:
 
+- **FF-VERIFICATION-MEASURABLE** — `consumed-fact-declared`
 - **FF-QUALITY-JUDGEMENT** — `record-disposition`
 - **FF-QUALITY-REFERENT** — `reference-declared`
 
@@ -121,6 +123,28 @@ Declares RESIDENCE: the genres of document that have no home in an installed sur
 Gates declared by this capability:
 
 - **FF-RESIDENCE** — `residence-declared`
+
+### knowledge 0.1.0
+
+Grants a host the ability to hold knowledge with DECLARED AUTHORITY: a document's KIND decides whether it may declare a rule at all, and the gate catches a title claiming an authority its location cannot grant.
+
+| path | class | mode |
+| --- | --- | --- |
+| `docs/decisions/ADR-0001-a-documents-kind-decides-its-authority.md` | binding | seed |
+| `docs/reference/README.md` | binding | seed |
+| `.agents/project/corpus/` | binding | space |
+| `.agents/generated/corpus/CATALOG.md` | projection | projection |
+| `.agents/generated/corpus/ROUTES.md` | projection | projection |
+
+Gates declared by this capability:
+
+- **FF-KIND-AUTHORITY** — `title-claim-within-authority`
+- **FF-CORPUS-VOCABULARY** — `reference-declared-across`
+- **FF-CORPUS-DECLARED** — `artifact-classified`
+- **FF-AUTHORITY-DECLARED** — `authority-declared`
+- **FF-OBLIGATION-ROUTED** — `obligation-reachable`
+- **FF-CORPUS-RATCHET** — `budget-ratchet`
+- **FF-INDEX-COMPLETE** — `index-complete`
 
 ### roles 0.1.0
 

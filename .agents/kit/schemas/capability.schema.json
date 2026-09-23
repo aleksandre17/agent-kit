@@ -385,6 +385,73 @@
         }
       }
     },
+    "consumes": {
+      "description": "This capability READS a fact of the host's measured profile and projects from it. Every name here points at something declared elsewhere -- the documents carrying the rows, the field they live under, and the field of a row that names the fact -- never at a fact, because the instant an interpreter or a base declaration knows the name of one fact, a host that emits a different one needs the framework's permission to be understood. What the block makes unreachable is the quiet half of a measurement: a kit that emits facts nobody consumes produces a reading whose every row is correct and whose every row is unread, and nothing about that state looks wrong from any surface.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sources",
+        "list",
+        "names"
+      ],
+      "properties": {
+        "id": {
+          "description": "The view-model name the resolved rows are claimed under -- one name, one meaning, refused if another capability already means something else by it.",
+          "type": "string",
+          "minLength": 1
+        },
+        "sources": {
+          "description": "The named documents holding the consumption rows -- shipped by this capability, or authored by the host in a path it declared readable. The same source grammar every other declared rule set uses, and never a second one.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "list": {
+          "description": "The field those documents carry their rows under, as their own schema names it.",
+          "type": "string",
+          "minLength": 1
+        },
+        "names": {
+          "description": "The field of a row that NAMES the fact it consumes. The one word the resolver needs, and it is handed to it rather than known by it.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "resolves": {
+      "description": "This capability's projections READ something of the host's own tree, and the reading reaches the view model here. Three blocks already carry a declaration into a view -- `governs` a board, `composes` a set of instances, `consumes` a measured fact -- and none of them can carry a RESOLUTION: a reading performed by an interpreter, configured by params only that interpreter understands. A row names the view-model id, the KIND of resolver that answers for it, and the params handed to that resolver untouched; it names no place, no plane and no class, because the instant a block knows the subject of a reading, a host that declares a different one needs the framework's permission to be projected. What the block makes unreachable is a navigation surface kept by hand beside machinery that already holds the answer -- two homes for one truth, drifting from the first edit, each internally correct (ADR-019 decision 4).",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "params"
+        ],
+        "properties": {
+          "id": {
+            "description": "The view-model name the resolved reading is claimed under -- one name, one meaning, refused if another capability already means something else by it.",
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "description": "Which resolver produces it. An open registry the resolvers themselves fill: a kind no resolver answers for is refused by name, never rendered as an empty view.",
+            "type": "string",
+            "minLength": 1
+          },
+          "params": {
+            "description": "What the resolver is configured with, in the resolver's own vocabulary. Free-form on purpose and validated by nothing here: a schema that enumerated the params of every resolver would be a second home for each one, and the day a resolver grew a param the schema would refuse a declaration that was already correct.",
+            "type": "object"
+          }
+        }
+      }
+    },
     "observes": {
       "description": "This capability declares that something WATCHES a run: which kind of observer, and the runs it applies to. An observer is opened before the verb and closed after it, so a run that never comes back has already said that it started. WHICH runs are worth watching is stated here, as data, never decided in the machinery -- a rule about a host's runs spelled in an interpreter is a judgement in the one place a host cannot reach.",
       "type": "array",
