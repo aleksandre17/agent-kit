@@ -48,8 +48,10 @@ def _census(ctx, params) -> list:
     as a gate that passes on an illegal one, arriving by the opposite road.
 
     Whether the unclassified COUNT is too high is a different proposition, it belongs to a budget,
-    and the budget belongs to the host (ADR-006, ADR-001 point 4). `FF-CORPUS-RATCHET` is where
-    that verdict lives when it is built; this gate produces the number it will compare.
+    and the budget belongs to the host (ADR-006, ADR-001 point 4). The ratchet over this corpus's
+    budgets is where that verdict lives; this gate produces the number it compares. That gate is
+    not named here on purpose: an interpreter that spells one gate's id has privileged it, and the
+    registry -- never this docstring -- is what says which gate consumes this measure.
     """
     reading = corpus.read(ctx, params)
     absent = reading.nothing_read()

@@ -545,7 +545,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ec772c42c57b09c2d1795bc0ae69795951ad79810043acb51429f7bcac30f0ca",
+      "digest": "0d9a18f7d3dff57f504e088e4ea197943ac23a1095a73ca39ae1d1a558aff820",
       "path": "interpreters/gates/artifacts.py"
     },
     {
@@ -1218,5 +1218,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-23T18:08:01+00:00"
+  "taken_at": "2026-09-23T18:26:37+00:00"
 }
