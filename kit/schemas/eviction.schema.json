@@ -1,0 +1,72 @@
+{
+  "$id": "eviction",
+  "title": "One eviction from a bounded artifact -- the text that left, written down BEFORE it left (ADR-020 decision 2)",
+  "description": "A bounded artifact holds the current POSITION and only that; what was true earlier is the RECORD, and the record is append-only and unbounded. This document is one line of that record: the before-image of a single accepted write, journalled inside the lock the writer already holds and BEFORE the artifact is replaced. An event that cannot be appended refuses the write it belongs to, so a removal that is not written down cannot be performed -- deletion becomes a MOVE by construction rather than by discipline. Two properties are the point and both are carried here as data. The TEXT is preserved, not a digest of it: a digest proves that something was lost and returns nothing, which answers half of a cardinal. And every event STATES WHERE THE TEXT LANDED, or states `null` -- an ordinary editorial cut that was curated nowhere is legal and honest, and it is COUNTED against a budget rather than refused, because a gate that fires on ordinary work is switched off within a week. The log is AHEAD of the artifact by construction and never behind it: if the write that follows an accepted event fails, the text is preserved twice and lost zero times, which is the asymmetry the ordering exists to buy. Retention is NOT decided (ADR-020 absence 5): until a retention passage is declared, a journal of these is append-only and is never compacted, because a compaction that dropped the unlanded events would re-create the loss this document prevents, in slow motion.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event", "at", "artifact", "removed_chars", "removed", "landed"],
+  "properties": {
+    "schema_version": {
+      "description": "The version of this contract (ADR-009). Written by the passage that produces the event, read from the kit's manifest -- never spelled by a caller.",
+      "type": "integer",
+      "const": 1
+    },
+    "event": {
+      "description": "What this line of the journal IS. A journal may carry the lines of more than one mechanism, and a line that does not say what it is can only be read by guessing at its fields. Other mechanisms declare their own word in their own schema; this one is never widened here.",
+      "type": "string",
+      "const": "eviction"
+    },
+    "at": {
+      "description": "The moment the eviction was journalled, as the writer's clock stated it. A reading states when it was taken or it is a claim about now, forever (Cardinal VII).",
+      "type": "string",
+      "minLength": 1
+    },
+    "artifact": {
+      "description": "The bounded artifact the text left, as a host-relative path. The kit ships no path of its own: which artifact holds a host's position is the host's declaration, and an interpreter that knew it would be deciding where a host steers from.",
+      "type": "string",
+      "minLength": 1
+    },
+    "section": {
+      "description": "The section of the artifact the write addressed, where the writer addresses sections. Optional because a bounded artifact need not have any, and absent is a legal state rather than an empty string.",
+      "type": "string",
+      "minLength": 1
+    },
+    "rev": {
+      "description": "The revision of the artifact this write was accepted against -- the monotonic counter the writer's compare-and-swap is addressed to. Carried so that an event can be placed in the artifact's own order of writes, and not merely in time.",
+      "type": "integer"
+    },
+    "runtime": {
+      "description": "Which runtime's writer performed the write, where a host runs more than one. The journal is per-runtime in the reference implementation; carrying it on the event keeps two journals legible when they are read together.",
+      "type": "string",
+      "minLength": 1
+    },
+    "removed_chars": {
+      "description": "How many characters the before-image below holds. It is the size of what was PRESERVED and therefore of what left -- line-granular, so a reworded line counts whole (see `removed`). It over-reports a removal and can never under-report one, which is the direction a budget over losses must err in. A positive count by construction: an event exists only where something was removed, and an event saying nothing left would be a record of a removal that never happened.",
+      "type": "integer"
+    },
+    "removed": {
+      "description": "The before-image: every contiguous run of lines that stood in the artifact and does not stand in what replaced it, in the order they stood. The TEXT, because recovery is the purpose -- a reader pastes a span back and has the prose again. Granularity is a LINE and not a character: a character-level image fragments a replaced paragraph into unreadable shreds around accidental common substrings, and a record nobody can read is a graveyard with better arithmetic.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "landed": {
+      "description": "Where the removed text was curated to, or `null`. A reference is a record KIND from the record-keeping vocabulary and the address it landed at, so a reader can go and find the text in its new home. `null` is legal and honest: it means the text is preserved in this log and was curated nowhere, and it is what the unlanded counter counts. Required, never omitted: an event that simply left the field out would be indistinguishable from one written by a writer that does not know about landing.",
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["kind", "at"],
+      "properties": {
+        "kind": {
+          "description": "The id of one `kinds` row of the record-keeping vocabulary -- what the destination IS. Never a free word: a landing nobody can class is a landing nobody can find.",
+          "type": "string",
+          "minLength": 1
+        },
+        "at": {
+          "description": "Where the text landed, as a host-relative path or the address the destination is cited by.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

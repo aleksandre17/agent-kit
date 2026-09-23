@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 202,
+  "count": 205,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "fd6aa502b5a75bb938a9136569b400f033f441853f75d96fc2fd02be4c8f70b4",
+      "digest": "3db4af43f6b7bc34922c4e287af179cd9d3cb85ad14d8773bdeb93dc154c20ee",
       "path": "MANIFEST.json"
     },
     {
@@ -203,7 +203,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "2c896b7196b3b9d4fba1a952570a476d0ec7e6edd59522a3442e5a78180440b3",
+      "digest": "5aec198a6691ac0b81975061611368b7bccdbba49e65a418b41a2d2b65b98ac3",
       "path": "capabilities/governance/record-keeping.json"
     },
     {
@@ -443,7 +443,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "c16c11cbf70ddb29d2b97ff014aea7040e0f548eacbcf33d3d23424936189728",
+      "digest": "d30328a873fa5b8252ff3b5eac0caec27237fbc9c200922d1d81720604402016",
       "path": "diagnostics.json"
     },
     {
@@ -527,6 +527,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "c33466cec4b90add80ca50a2dca7edcb48621afac5bf8baf6a66d695df1503cc",
+      "path": "interpreters/eviction.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "fc0d780ad0c73b0b59957ac0258430429c1ff0303e678fea48ab11d98e8ce23c",
       "path": "interpreters/gatekinds.py"
     },
@@ -589,6 +595,12 @@
       "class": "interpreter",
       "digest": "a21d5d3e35186f65031468cbf27edd272dfcc3e44ce41c60e9d54fe8c32d2c3a",
       "path": "interpreters/gates/pinned.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "ce5816b5623c416f0668bb5bd623d3abd51e15e536aeb7d8b063896e2dd65de3",
+      "path": "interpreters/gates/position.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1007,7 +1019,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "e58d588f6ec217704f85becc1b611db54e84735b5f6733871c6ad60571c17f68",
+      "digest": "c1ee1a59f160993624794cc51733f5e8f8f1994b5855d951899fab36c9886e78",
+      "path": "schemas/eviction.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "f015e39b84ff0682ce3fe6e3116a4b70da9bfc7c358bb8e1a8b5cee1818c3790",
       "path": "schemas/front-matter.schema.json"
     },
     {
@@ -1115,7 +1133,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "81223a87bf09216728e7dadb0042f1d7734a66de9c62fb875fba7e7efbebde11",
+      "digest": "8c8e9c53145632ee89b1b99857b4aa4f5375f22f03b76359084c5f3761d065a9",
       "path": "schemas/record-keeping.schema.json"
     },
     {
@@ -1218,5 +1236,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-23T18:26:37+00:00"
+  "taken_at": "2026-09-23T19:20:39+00:00"
 }

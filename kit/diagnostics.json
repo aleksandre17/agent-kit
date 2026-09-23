@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 55,
+  "issued": 57,
   "codes": [
     {
       "code": "KIT0001",
@@ -332,6 +332,18 @@
       "status": "active",
       "title": "a budget is declared over a measure nothing can take",
       "explanation": "A host caps a corpus-wide count by writing a budget row in its corpus map: the id of a MEASURE, the ceiling it undertakes to hold, and the date the number was taken. The measures are published by the modules of the kit that already perform those readings, and discovered exactly as gate kinds are. This refusal is raised when a row names a measure no module publishes -- almost always a spelling, occasionally a map written against a kit that does not carry that reading yet. It is refused rather than skipped because a ceiling over a count nobody can take would pass FF-CORPUS-RATCHET on every run for the rest of its life, and would read, to anyone auditing the map, exactly like a budget that was being honoured (Cardinal V). The published names are printed with the refusal: name one of them, or delete the row."
+    },
+    {
+      "code": "KIT0056",
+      "status": "active",
+      "title": "a write is refused because what it removed could not be written down first",
+      "explanation": "A bounded artifact carries the current POSITION and nothing else; what was true earlier is the RECORD, and the record is append-only (ADR-020 decision 2). So every accepted write journals the TEXT it removes -- the text, not a digest of it -- BEFORE the artifact is replaced, inside the lock the writer already holds. This refusal is raised when that append could not be made durable, or when the before-image could not be written as an event of the `eviction` schema. The artifact is UNCHANGED and the removed text is still in it: a removal that cannot be written down is not performed, which is what makes deletion a move by construction rather than a discipline anybody keeps. It is refused rather than deferred because the alternative is the measured failure this mechanism exists against -- true, dated history deleted under pressure to buy room in a bounded surface, leaving no trace anywhere. Repair the journal the writer appends to (an unwritable path, a parent that is not a directory, a full disk) and write again; nothing is retried silently, because a silent retry of a write whose record failed is the same loss with one more chance to happen."
+    },
+    {
+      "code": "KIT0057",
+      "status": "active",
+      "title": "an artifact declares a count of its own losses that is not a count",
+      "explanation": "A bounded artifact states, in its own front matter, how many of its removals were preserved in the record and curated nowhere -- the number a host may cap with a budget row over the measure of the same name. This refusal is raised when that field holds something other than digits. It is refused rather than read as zero: the field is the count of what this artifact has lost, and an interpreter that substituted a zero would report a corpus that has lost nothing in exactly the case where the count of its losses is unreadable (Cardinal V). Write digits, or remove the field entirely -- an artifact that says nothing has honestly said nothing, and is counted as such."
     }
   ]
 }

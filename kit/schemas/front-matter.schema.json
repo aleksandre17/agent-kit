@@ -46,6 +46,11 @@
       "type": "string",
       "minLength": 1
     },
+    "unlanded_removals": {
+      "description": "How many removals from THIS artifact were preserved in the record and curated nowhere (ADR-020 decision 2). A bounded artifact holds position only; what leaves it is journalled before it leaves, and a removal that states no landing is legal, honest and COUNTED -- so the count stands on the surface that shows position, where whoever is spending the record can see the bill. Written by the artifact's own writer as part of an accepted write, never by a gate and never by hand; capped, if a host chooses to cap it, by a budget row over the measure of the same name. A STRING of digits and not an integer: front matter interprets nothing by design -- the grammar reads one scalar per line and never types it -- so an `integer` here would be a contract the medium cannot satisfy, and the arithmetic belongs to the passage that owns the field.",
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
     "read_when": {
       "description": "The task triggers that pull this document into context, in the words a task actually arrives in. The same field, spelled the same way, as on a records-map and a corpus-map row -- one vocabulary for retrieval, never a second `answers` word. Declared here; projected by a later slice.",
       "type": "array",

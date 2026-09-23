@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "summary": "The words the records map and the corpus map are written in (ADR-015 amendment 8; ADR-019 decision 3). A place names one kind, one writer and one lifecycle from here, and may cap what its residents claim with one authority from here; a new word is a new row, never an edit to a schema or an interpreter. The specification of 2026-09-21 arrived with its own eleven-class taxonomy and its own authority states: where a word of ours already means one of theirs, OUR word stays and THEIRS is recorded as an alias in that row's summary -- one truth, one home, and a reader of either vocabulary lands on the same row. ONE WORD, TWO REFERENTS, STATED AT BOTH ENDS: the `planes` here are SEMANTIC -- what a record is ABOUT -- and they are not `MANIFEST.planes`, which are the kit's INSTALL planes: physical roots in a host tree, each with an install class and an unaccounted rule. Nothing derives one from the other and no interpreter reads these. The two are named alike because each is the right word where it stands, and a reader who meets the bare word without its document has met an ambiguity, not a fact (Cardinal III).",
+  "summary": "The words the records map, the corpus map and the work plane are written in (ADR-015 amendment 8; ADR-019 decision 3; ADR-020 decision 11, S0). A place names one kind, one writer and one lifecycle from here, and may cap what its residents claim with one authority from here; a new word is a new row, never an edit to a schema or an interpreter. The specification of 2026-09-21 arrived with its own eleven-class taxonomy and its own authority states: where a word of ours already means one of theirs, OUR word stays and THEIRS is recorded as an alias in that row's summary -- one truth, one home, and a reader of either vocabulary lands on the same row. ONE WORD, TWO REFERENTS, STATED AT BOTH ENDS: the `planes` here are SEMANTIC -- what a record is ABOUT -- and they are not `MANIFEST.planes`, which are the kit's INSTALL planes: physical roots in a host tree, each with an install class and an unaccounted rule. Nothing derives one from the other and no interpreter reads these. The two are named alike because each is the right word where it stands, and a reader who meets the bare word without its document has met an ambiguity, not a fact (Cardinal III).",
   "planes": [
     {
       "id": "intent",
@@ -142,6 +142,11 @@
       "id": "measurement-stream",
       "plane": "evidence",
       "summary": "Accumulating measurements of cost and usage, one row per event, read in aggregate."
+    },
+    {
+      "id": "eviction-record",
+      "plane": "evidence",
+      "summary": "What a bounded artifact held before an accepted write removed it: the TEXT that left, with the moment it left and where it landed, or that it landed nowhere (ADR-020 decision 2). Append-only and unbounded, because it is the RECORD and the artifact it came from is the POSITION -- one artifact may hold only one of those, or currency becomes purchasable with history at the moment of most pressure. It is read to RECOVER, which is why it preserves the prose and not a digest of it: a digest proves that something was lost and returns nothing. Neither of the two journals beside it: an `operation-journal` records the steps of one operation and is cleared when it ends, and a `measurement-stream` accumulates numbers -- this accumulates what was TRUE, and nothing in it is ever compacted while no retention passage is declared."
     },
     {
       "id": "dispatch-ground",
@@ -310,6 +315,10 @@
       "summary": "Appended while it is recent, kept for a declared retention window, then rotated out whole."
     },
     {
+      "id": "append-only",
+      "summary": "Only ever extended, never amended and never compacted: each line is true of the moment it was written and is not revisited when the world moves on. It differs from `rotated` in the one way that matters -- `rotated` declares a window after which content is dropped whole, and this declares that no such passage exists yet, so nothing may be dropped at all. A place whose content is the only surviving copy of something takes this and nothing weaker."
+    },
+    {
       "id": "per-operation",
       "summary": "Exists for one operation: made when it starts, cleared when it ends; its survival past the end is itself the signal of an interruption."
     },
@@ -320,6 +329,44 @@
     {
       "id": "archived",
       "summary": "Terminal. Frozen as it was transferred; read for history, never amended, never binding."
+    }
+  ],
+  "criterion_statuses": [
+    {
+      "id": "proved",
+      "summary": "The proof this criterion names was resolved and it held. The only status that may stand behind a claim that work is done, and no principal may write it: it is COMPUTED from a reading, because a status anybody can type is testimony wearing a machine's clothes (ADR-020 decisions 7 and 8)."
+    },
+    {
+      "id": "failed",
+      "summary": "The proof was resolved and it did NOT hold. A fact about the work, and the one status that is an instruction: something named is measurably not true."
+    },
+    {
+      "id": "unproven",
+      "summary": "The proof resolved to nothing -- it names nothing, or names something no resolver can read. A declared, counted, honest absence: never a failure, because a missing referent and a refuted criterion are different facts about the world, and never a pass, because nothing was observed. Collapsing it into either one trains the reader to ignore both."
+    }
+  ],
+  "appetite_units": [
+    {
+      "id": "call",
+      "summary": "One exchange with a principal doing the work. The unit an agent's own economy is already measured in, so consumption against it is read passively from records the system writes anyway -- nothing is run a second time to measure it."
+    },
+    {
+      "id": "session",
+      "summary": "One continuous stretch of work by one principal, from its first call to its close. Coarser than a call and the unit an owner usually bets in."
+    },
+    {
+      "id": "day",
+      "summary": "A calendar day of elapsed time, whatever was spent inside it. The unit for work whose cost is waiting rather than effort."
+    }
+  ],
+  "transition_modes": [
+    {
+      "id": "computed",
+      "summary": "The passage is decided by a machine from a stated condition, and no principal may declare it. What is machine-decidable is never set by hand: a state a human could type means only that somebody said so, and the evidence beside it becomes decoration (ADR-020 decision 8). The condition travels with the transition; this row is the word, and the transition declares the reading."
+    },
+    {
+      "id": "door",
+      "summary": "The passage is a judgement held by a named principal, and no computation may enter it. A door is unratchetable and unmaturable -- it never becomes computed at any budget, because automating it would remove the one decision the owner actually keeps. The principal travels with the transition (the `door` field the lifecycle grammar already carries); this row is the word it is spoken in."
     }
   ]
 }

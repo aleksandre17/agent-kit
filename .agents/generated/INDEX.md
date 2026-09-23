@@ -67,6 +67,7 @@ planes.
 | projection | A surface derived from declarations. It carries no truth of its own: delete it and it comes back byte-identical. |
 | run-evidence | What a run observably did: receipts and dispositions written as it happened. Evidence, never testimony. The specification's EVIDENCE class arrives here and at `work-evidence`: ours splits it by what produced the reading -- a run, or an agent doing a card. |
 | measurement-stream | Accumulating measurements of cost and usage, one row per event, read in aggregate. |
+| eviction-record | What a bounded artifact held before an accepted write removed it: the TEXT that left, with the moment it left and where it landed, or that it landed nowhere (ADR-020 decision 2). Append-only and unbounded, because it is the RECORD and the artifact it came from is the POSITION -- one artifact may hold only one of those, or currency becomes purchasable with history at the moment of most pressure. It is read to RECOVER, which is why it preserves the prose and not a digest of it: a digest proves that something was lost and returns nothing. Neither of the two journals beside it: an `operation-journal` records the steps of one operation and is cleared when it ends, and a `measurement-stream` accumulates numbers -- this accumulates what was TRUE, and nothing in it is ever compacted while no retention passage is declared. |
 | dispatch-ground | Facts already verified for a dispatch, each with the instrument and the moment of its reading, so the receiver builds on them instead of re-deriving them. |
 | guard-state | The live state an enforcement hook keeps between calls: counters, open holds, what it has already refused. |
 | operation-journal | The step-by-step record of one mutating operation: what was intended and what was done, so an interrupted operation is recoverable and never reads as success. |
@@ -113,6 +114,7 @@ planes.
 | permanent | Never edited once accepted; superseded only by a new record that names it, and kept forever. |
 | curated | Kept while it earns its place; reviewed, promoted or pruned by curation, never silently grown. |
 | rotated | Appended while it is recent, kept for a declared retention window, then rotated out whole. |
+| append-only | Only ever extended, never amended and never compacted: each line is true of the moment it was written and is not revisited when the world moves on. It differs from `rotated` in the one way that matters -- `rotated` declares a window after which content is dropped whole, and this declares that no such passage exists yet, so nothing may be dropped at all. A place whose content is the only surviving copy of something takes this and nothing weaker. |
 | per-operation | Exists for one operation: made when it starts, cleared when it ends; its survival past the end is itself the signal of an interruption. |
 | closed-then-archived | Active while its work is open; when the work closes it is transferred to the archive, never deleted. |
 | archived | Terminal. Frozen as it was transferred; read for history, never amended, never binding. |
