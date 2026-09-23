@@ -213,7 +213,7 @@ def test_the_reading_states_the_moment_it_was_taken(ctx):
 # == 7. the registry is open ===================================================================
 def test_every_unit_comes_from_a_module_in_the_directory_and_the_interpreter_spells_none():
     published: dict = {}
-    for path in sorted(appetite.RECEIPTS.glob("*.py")):
+    for path in sorted(appetite.SPEND.glob("*.py")):
         module = __import__(path.stem)
         published.update(getattr(module, appetite.ENTRY, {}))
     assert published, "no module publishes a unit of spend"

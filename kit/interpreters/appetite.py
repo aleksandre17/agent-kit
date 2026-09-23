@@ -7,7 +7,7 @@ an amount to be measured against -- a limit a framework chose is a limit nobody 
 is exactly the defect a framework that answers its host's questions keeps producing.
 
 What has been SPENT is never written down beside the limit. It is read, passively, from the
-receipts the system already writes, and nothing is run a second time to measure it. That is what
+records of spend the system already writes, and nothing is run a second time to measure it. That is what
 lets the grammar of a limit stay closed at two fields: there is nowhere to type a consumption,
 nowhere to record that a limit was raised, and no field a principal under pressure could edit into
 agreement with the work.
@@ -36,7 +36,7 @@ import kinds
 from errors import KitError
 
 #: Where a unit may be answered, and the entry a module publishes there. One home each.
-RECEIPTS = Path(__file__).resolve().parent / "receipts"
+SPEND = Path(__file__).resolve().parent / "spend"
 ENTRY = "READINGS"
 
 #: The field a record declares its limit in, and the two fields that limit carries. Read at both
@@ -56,8 +56,8 @@ class AppetiteError(KitError):
 
 
 def registry() -> dict:
-    """Every unit this host can read a receipt in, by the name each module declares."""
-    return kinds.registry(RECEIPTS, ENTRY, "unit of spend", AppetiteError)
+    """Every unit this host can read a spend in, by the name each module declares."""
+    return kinds.registry(SPEND, ENTRY, "unit of spend", AppetiteError)
 
 
 class Spend:
@@ -65,7 +65,7 @@ class Spend:
 
     `amount` is None where no reading was taken at all -- never 0. A world that could not be read
     has not spent nothing; it holds a question nobody asked, and a zero there would report a
-    receipt nobody looked at as a receipt saying the work has so far cost nothing. The reading is
+    record nobody looked at as a record saying the work has so far cost nothing. The reading is
     carried beside the number because a quantity a reader cannot audit is testimony again, and
     because a number that does not say when and from what it was taken cannot be contradicted.
     """
@@ -95,7 +95,7 @@ def spent(ctx, record: dict, unit: str) -> Spend:
     answering = registry()
     if unit not in answering:
         return Spend.unreadable(
-            f"nothing installed here reads a receipt counted in {unit!r}; this host can read "
+            f"nothing installed here reads a spend counted in {unit!r}; this host can read "
             f"{sorted(answering)}. Nothing was observed, so nothing is claimed in either direction"
         )
     return answering[unit](ctx, record)
