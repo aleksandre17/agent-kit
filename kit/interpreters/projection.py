@@ -12,6 +12,7 @@ from __future__ import annotations
 import collection
 import composition as composition_module
 import consumption as consumption_module
+import criteria as criteria_module
 import lifecycle as lifecycle_module
 import plan as plan_module
 import resolution
@@ -58,7 +59,8 @@ def view_model(ctx, capabilities=None) -> dict:
             _claim(view["documents"], identity, document, capability.id)
         governed = lifecycle_module.governed_of(capability, readings)
         if governed:
-            _claim(view, governed.spec["board"], lifecycle_module.columns(governed), capability.id)
+            _claim(view, governed.spec["board"],
+                   lifecycle_module.columns(governed, _counted(ctx, governed)), capability.id)
         # A COMPOSITION reaches the view by the same generic route as everything else: the
         # declaration names the readable holding the instances and the sources holding the bases,
         # and this line neither knows nor asks what is being composed. A second kind of composed
@@ -84,6 +86,22 @@ def view_model(ctx, capabilities=None) -> dict:
         for resolved in resolution.resolved_of(ctx, capability):
             _claim(view, resolved.spec[resolution.ID], resolved.value, capability.id)
     return view
+
+
+def _counted(ctx, governed):
+    """What a board may show about one record beyond the record's own fields, as a FUNCTION the
+    lifecycle is handed.
+
+    The field the numbers are counted over is named by the declaration that governs the
+    collection, never spelled here: a collection that declares none is counted about by nothing,
+    which is a complete state and not a missing feature. The numbers are computed at the moment
+    the projection is, from the records themselves, so the surface cannot carry a count that was
+    true when somebody last typed it.
+    """
+    field = governed.spec.get("criteria")
+    if field is None:
+        return None
+    return lambda record: criteria_module.tally(ctx, record, field)
 
 
 def _claim(where: dict, name: str, value, owner: str) -> None:

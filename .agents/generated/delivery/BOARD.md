@@ -4,6 +4,12 @@
 > `.agents/project/delivery/cards/` and the lifecycle those cards move through. Delete this file
 > and run `render`: it comes back byte-identical. Edit it and run `check`: the edit is caught,
 > because a projection that survives editing has become a second home for a state.
+>
+> The two numbers on each card are COMPUTED here and now, by resolving the reference each
+> criterion names: how many were proved, out of how many the card declares. Nothing is ticked and
+> nothing is typed. A card that declares no criterion reads `0/0`, which is the honest state of
+> work nobody has shaped yet, and a criterion whose reference could not be read at all is not
+> among the proved -- it is not claimed in either direction.
 
 kit 0.1.6
 

@@ -142,6 +142,29 @@ def read(ctx, record: dict, field: str) -> list:
     return [(item, resolve(ctx, item.get(PROOF), record)) for item in (record.get(field) or [])]
 
 
+#: What a surface may COUNT about the criteria a record declares, and the names it counts under.
+#: Two numbers and no word: the word for a reading belongs to the host's vocabulary, and a name
+#: spelled here would be a second home for it.
+HELD, DECLARED = "criteria_held", "criteria_declared"
+
+
+def tally(ctx, record: dict, field: str) -> dict:
+    """How many of a record's criteria were PROVED by the reference each names, out of how many
+    the record declares. Computed at the moment the surface is, from the records themselves --
+    never read off a field, because there is no field to read it off and there will not be one.
+
+    A record that declares nothing counts 0 of 0. That is the honest reading of a record nobody
+    has shaped: nothing was stated, so nothing is proved and nothing is unmet.
+
+    A criterion that could not be read at all is NOT among the held. It is not counted as refuted
+    either -- the count simply does not claim it -- because a tally that promoted an absence to a
+    proof would be lying in the one place this whole mechanism exists to stop it (Cardinal V).
+    """
+    readings = read(ctx, record, field)
+    return {HELD: sum(1 for _item, verdict in readings if verdict.holds is True),
+            DECLARED: len(readings)}
+
+
 def status_of(verdict: Verdict, rows: list) -> str:
     """The WORD for a reading, taken from the vocabulary handed in -- never spelled here.
 

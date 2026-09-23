@@ -1,4 +1,4 @@
-"""Gate kinds for a governed collection -- capacity, and staleness.
+"""Gate kinds for a governed collection -- capacity, staleness, and a limit declared on one record.
 
 Both read the SAME functions the `move` verb reads, so a host can never be refused a move it
 would afterwards pass a gate with, nor pass a gate on a state a move would have refused. Two
@@ -12,6 +12,7 @@ arrives through the port, so the reading states its moment and a test can hold i
 
 from __future__ import annotations
 
+import appetite as appetite_module
 import collection
 import lifecycle as lifecycle_module
 
@@ -32,7 +33,22 @@ def _state_age_within_limit(ctx, params):
     return lifecycle_module.age_failures(_governed(ctx), ctx.clock.now())
 
 
+def _appetite_within_limit(ctx, params):
+    """The third limit, and the first one declared on a single record rather than on a whole
+    state. What has been spent against it is READ from receipts the host already writes, so this
+    reading runs nothing and measures nothing twice.
+
+    It is REPORTED and never acted on. The exit from a limit that has been spent is a decision by
+    the record's owner, taken on the record, and this gate names that door instead of opening it:
+    a machine that extended the limit would have granted the extension the owner never gave, and a
+    machine that ended the work would have decided it was not worth finishing. A record that
+    declares no limit is passed over, which is every record in existence on the day this ships.
+    """
+    return appetite_module.unkept(ctx, _governed(ctx).members.value)
+
+
 KINDS = {
     "capacity-within-limit": _capacity_within_limit,
     "state-age-within-limit": _state_age_within_limit,
+    "appetite-within-limit": _appetite_within_limit,
 }

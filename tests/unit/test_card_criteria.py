@@ -228,3 +228,48 @@ def test_a_reference_that_stands_on_its_own_reading_is_not_followed(ctx):
     (_item, verdict), = criteria.read(ctx, circular, "criteria")
     assert verdict.holds is None
     assert "itself" in verdict.reading
+
+
+# == 8. what a surface may COUNT about a record, computed and never typed =======================
+def test_the_tally_counts_what_was_proved_out_of_what_was_declared(ctx):
+    """ADR-020 decision 11, the S3 row: N of M, computed from the records at the moment the
+    surface is. One of these three is proved, one is refuted and one cannot be read -- so the
+    count is one of three, and the two that are not proved are not claimed in either direction."""
+    card = _with(_criterion("holds", "declared-rule-holds", "a-rule-that-holds"),
+                 _criterion("does-not", "declared-rule-holds", "a-rule-that-does-not"),
+                 _criterion("unreadable", "artifact-present", NOWHERE))
+    assert {criteria.HELD: 1, criteria.DECLARED: 3} == criteria.tally(ctx, card, "criteria")
+
+
+def test_a_record_that_declares_no_criterion_counts_nothing_of_nothing(ctx):
+    assert {criteria.HELD: 0, criteria.DECLARED: 0} == criteria.tally(ctx, GOOD_CARD, "criteria")
+
+
+def test_an_unreadable_criterion_is_never_counted_as_proved(ctx):
+    for kind, ref in (("artifact-present", NOWHERE), ("a-kind-no-module-answers", "anything")):
+        card = _with(_criterion("unreadable", kind, ref))
+        assert 0 == criteria.tally(ctx, card, "criteria")[criteria.HELD], \
+            "an absence was promoted to a proof by the count"
+
+
+def test_the_board_carries_the_count_only_where_something_counts(ctx):
+    """The counter is HANDED to the lifecycle, and a collection whose declaration names no field
+    to count over is counted about by nothing -- a complete state, and not a missing column."""
+    plain = lifecycle_module.columns(_governed_over([GOOD_CARD]))
+    assert criteria.HELD not in _only_item(plain)
+    counted = lifecycle_module.columns(_governed_over([GOOD_CARD]),
+                                       lambda record: criteria.tally(ctx, record, "criteria"))
+    assert 0 == _only_item(counted)[criteria.DECLARED]
+
+
+def _governed_over(cards: list):
+    """A governed collection assembled from the shipped declaration, so this file states no
+    state, no title and no policy of its own."""
+    state = LIFECYCLE["states"][0]["id"]
+    members = type("R", (), {"value": [dict(card, state=state) for card in cards]})()
+    return lifecycle_module.Governed(
+        None, dict(GOVERNING.governs), LIFECYCLE, members, {})
+
+
+def _only_item(built: list) -> dict:
+    return next(item for column in built for item in column["items"])

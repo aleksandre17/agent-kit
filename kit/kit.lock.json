@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 216,
+  "count": 218,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -23,7 +23,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "ec3c202c79c17596665270b1dc4fa0da59332e6955b355f396ad1100bd84cf70",
+      "digest": "e941ae56e349ade70e505954e2501111290cdfb0a8579b0860ed1eccfa5da037",
       "path": "capabilities/delivery/capability.json"
     },
     {
@@ -35,7 +35,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "payload",
-      "digest": "14f53a8efceecad16f6e17e8a1c02e7cd9de50e50d1e9d60214197abc16fa7aa",
+      "digest": "2f8b6ae46e61fdd9a307bc05a1d439a37d7335c5f9e6fbeb4f83f60058dfb291",
       "path": "capabilities/delivery/payload/BOARD.md.mustache"
     },
     {
@@ -443,7 +443,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "4ad0e4bfc8cb428fd0067b24a329752321aba4e3f6113d2263da0a72cb2b4648",
+      "digest": "54858c6deef067f3321e960b8de25363a16703e726ed15a21791a2e9bcfeb032",
       "path": "diagnostics.json"
     },
     {
@@ -457,6 +457,12 @@
       "class": "interpreter",
       "digest": "e9349e7b2eeaa68f7fdf04c865599482ac1a69eeb1a091d61f92332d77ee58eb",
       "path": "interpreters/adoption.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "bc5149df3d66e51636fe2d9e71667bb539aeac0cb191c3ea8ffc7528bff4e740",
+      "path": "interpreters/appetite.py"
     },
     {
       "accounted_by": "interpreter",
@@ -503,7 +509,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1a5880fd487fa3d6d77908f3599e5f05f9e8ad8d6c34516d8ae1ae038c1e3b08",
+      "digest": "18bed66a1f693f57f1094f93783b6a8ee13b5cb670132932dbf2b24450267304",
       "path": "interpreters/criteria.py"
     },
     {
@@ -587,7 +593,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "c8c58c3d6b864341fceccb2e46baf7deccb566a6d4e6e032d42b0cec7f8a58a0",
+      "digest": "a24f3d7b910758e2addf5a472abe35264efa7e699f7a27b24c4e6f8795014994",
       "path": "interpreters/gates/delivery.py"
     },
     {
@@ -683,7 +689,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f1e2f25e6b2248bac04ae85dea3e88bfc5a8ae087138262d001cd39673b39282",
+      "digest": "14d01f3851dcbe2573abf9ab44f6a6a111f1399e18a5300a8928fa2c1ec0e8d9",
       "path": "interpreters/lifecycle.py"
     },
     {
@@ -779,7 +785,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7944424e97eef6cfd9b340f3e554bb769919dd0c8ab78ed2e965940f7e640ff4",
+      "digest": "1772f1b47c0bf52e3d2a4c8874ceb90dc631dde68fa507c9ec9b730a3e60cdb5",
       "path": "interpreters/projection.py"
     },
     {
@@ -811,6 +817,12 @@
       "class": "interpreter",
       "digest": "4faf222557f72c687e8530314c15f36544d49102fc6669b610b45af7aaa9bda0",
       "path": "interpreters/provenance.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "a5c594f68c6368a6ae49b3ab100bd90246094b3557ad88eb7f19eb5093b569d9",
+      "path": "interpreters/receipts/elapsed.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1001,13 +1013,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "e36627bb291afe0b3723593ef0cf226d3533b6f8cb6223a90d89841b0d0eb357",
+      "digest": "d2ff327ea8434cbbade3524dc9692167812fc5c56570d285566e8e01a7ab0c77",
       "path": "schemas/capability.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "c2e335ca6e950dbfc246941210f1ec1878cd78d65c8d36898079af19dbe43f80",
+      "digest": "6797e40dfbe18f19c6af2fa3a9f9851ca8ac207db970dfae3b7112219cf6d0e6",
       "path": "schemas/card.schema.json"
     },
     {
@@ -1302,5 +1314,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-23T21:21:38+00:00"
+  "taken_at": "2026-09-23T21:48:12+00:00"
 }

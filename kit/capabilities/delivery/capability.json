@@ -22,7 +22,8 @@
     "state_field": "state",
     "lifecycle": "lifecycle",
     "policy": "policy",
-    "board": "columns"
+    "board": "columns",
+    "criteria": "criteria"
   },
   "installs": [
     {
@@ -61,6 +62,11 @@
     {
       "id": "FF-DELIVERY-LINEAGE",
       "kind": "lineage-resolves",
+      "params": {}
+    },
+    {
+      "id": "FF-DELIVERY-APPETITE",
+      "kind": "appetite-within-limit",
       "params": {}
     }
   ]

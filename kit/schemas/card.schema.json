@@ -47,6 +47,23 @@
       "type": "array",
       "items": { "type": "object" }
     },
+    "appetite": {
+      "description": "How much this host is willing to spend on this work: an AMOUNT and the UNIT the amount is counted in (ADR-020 decision 9). The number is always the host's -- this kit ships the units as words and never a default, because an appetite a framework chose is a limit nobody undertook (ADR-001 point 4). The grammar is closed at two fields on purpose: what has been SPENT is read from the receipts the system already writes, so there is nowhere here to type a consumption, nowhere to record that a limit was raised, and no field a principal under pressure could edit into agreement with the work. Absent is a complete and legal state and stays one: every card in existence on the day this ships declares no appetite, and work whose cost nobody has bet is ordinary work rather than a defect. An appetite declared in a unit nothing installed here can read is REPORTED and never passed over, because a limit nobody can measure reads exactly like a limit that is being kept.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["amount", "unit"],
+      "properties": {
+        "amount": {
+          "description": "How much of the unit this host has undertaken to spend. A number, and the host's own: nothing in this kit compares it with a number of its own, and there is no ceiling here for it to be measured against.",
+          "type": "number"
+        },
+        "unit": {
+          "description": "What the amount counts, named in the vocabulary the words are declared in. Which units may be DECLARED and which units can be READ are two different truths with one home each -- the vocabulary, and the modules installed here that read a receipt -- and the gap between them is reported rather than hidden.",
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        }
+      }
+    },
     "criteria": {
       "description": "What this card is DONE BY, each criterion naming the reference that would prove it (ADR-020 decision 7). There is no status field on a criterion and there will not be one: a status is COMPUTED by resolving the reference, and a field a principal could type is testimony wearing a machine's clothes -- typed under pressure, and typed wrong exactly when it matters. An absent list is a complete and legal state: a card nobody has shaped yet has stated nothing, so nothing about it is unmet.",
       "type": "array",

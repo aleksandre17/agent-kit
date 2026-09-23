@@ -123,7 +123,16 @@ def days_between(earlier: str, later: str) -> float:
 
 
 # -- the board: a projection, and one that may never quietly drop a card -----------------------
-def columns(governed: Governed) -> list:
+def columns(governed: Governed, counted=None) -> list:
+    """The board, computed. `counted` is a function from one record to whatever NUMBERS a surface
+    may show about it beyond its own fields, or None where nothing counts anything.
+
+    It is handed in rather than reached for, like the clock and the workspace: a count that has to
+    read the host's tree is a reading, this module holds no ports, and a module that acquired one
+    to fill in a column would have made the board's honesty depend on what it could reach. What
+    the numbers MEAN is not known here either -- they are merged into the record and rendered by
+    whatever the surface declares about them.
+    """
     limits = governed.policy.get("wip_limit", {})
     field = governed.state_field
     declared = set(governed.state_ids)
@@ -142,7 +151,8 @@ def columns(governed: Governed) -> list:
                  owner=card.get("owner", "-"),
                  **{"class": card.get("class", "-")},
                  entered_at=entered_at(card),
-                 last_by=last_mover(card))
+                 last_by=last_mover(card),
+                 **(counted(card) if counted else {}))
             for card in governed.members.value if card[field] == state["id"]
         ]
         built.append(dict(state, items=items, count=len(items),

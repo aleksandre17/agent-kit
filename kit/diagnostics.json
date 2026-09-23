@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 61,
+  "issued": 62,
   "codes": [
     {
       "code": "KIT0001",
@@ -368,6 +368,12 @@
       "status": "active",
       "title": "a passage a machine decides was asked for, and the reference that decides it did not hold",
       "explanation": "Every passage between two work states is either a judgement a named principal holds or a computation a machine makes, and the two exclude each other (ADR-020 decision 8). This refusal is raised on the second kind: the passage was asked for, the reference the declaration names was resolved, and it did not come back true. The refusal says which of the two reasons it was, because the cure differs -- a reference that was read and did NOT hold is a fact about the work, and a reference that could not be read at all is a fact about the record, most often a referent that has moved or was never there. Neither one passes: nothing enters a computed state on an unobserved proof, and no principal may declare it instead, because a state anybody could type means only that somebody said so and turns every piece of evidence beside it into decoration. The card is unchanged and no passage was recorded. Make the reference hold, or fix what it points at."
+    },
+    {
+      "code": "KIT0062",
+      "status": "active",
+      "title": "a unit of spend is claimed by two readings",
+      "explanation": "A record may declare an APPETITE -- an amount and the unit it is counted in -- and what has been spent against it is READ from the receipts this system already writes, through an open registry: a module publishes the units it can read and the registry finds it because it is there (ADR-020 decision 9). This refusal is raised when two modules publish the same unit. A name that resolves to two readings is not a name, and ordering them by filename would make which number you get a property of the alphabet. Note the two things that are NOT this refusal, because neither is an error at all. An appetite declared in a unit nothing installed here reads is a reading nobody could take: it is REPORTED, in those words, and it never passes and never fails -- a limit nothing can measure reads exactly like a limit that is being kept, which is why it is said out loud. And a limit found SPENT is not a refusal of this kind either: it is the line stopping at a door, reported with the owner named, because whether work past its limit is worth finishing is the owner's judgement and no machine's. Publish the unit from one module."
     }
   ]
 }

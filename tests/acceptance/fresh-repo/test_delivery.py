@@ -26,6 +26,8 @@ from pathlib import Path
 
 from harness import KIT, Fixtures, sha
 from manifest import Manifest  # noqa: E402
+import appetite as appetite_module  # noqa: E402 -- the one home for a unit of spend
+import criteria as criteria_module  # noqa: E402 -- the one home for a kind of proof
 import space as space_module  # noqa: E402 -- the one home for a declared empty space
 
 #: The one place this suite learns what delivery declares. Read, never restated: a test carrying
@@ -329,3 +331,103 @@ class Delivery(Fixtures, unittest.TestCase):
         self.assertIn("reading at", result.stdout)
         self.assertEqual(state, self.read_card(host, "long-sat")["state"],
                          "the gate moved a card, which is a machine deciding")
+
+    def test_61_a_limit_the_host_declared_on_one_card_is_read_and_an_overrun_stops_at_a_door(self):
+        """ADR-020 decision 9, first part, walked end to end through the CLI.
+
+        The limit is the HOST's -- amount and unit authored on the card, because the kit ships the
+        words and never a number. What has been spent is READ from the receipt the record already
+        carries; nothing is run twice and nothing is written down beside the limit. An overrun is
+        REPORTED with the owner named, and that is all that happens: the card is not moved, the
+        limit is not raised, and the work is not ended. A card that declares no limit at all is
+        not mentioned, which is every card in existence on the day this ships.
+        """
+        unit = sorted(appetite_module.registry())[0]
+        state, began = state_ids()[0], datetime.now(timezone.utc) - timedelta(days=4)
+        host = self.installed()
+
+        self.card(host, "no-limit-at-all", state)
+        self.card(host, "well-within-it", state, created_at=began.isoformat(timespec="seconds"),
+                  appetite={"amount": 400, "unit": unit})
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+        self.assertEqual(0, self.run_kit(KIT, host, "check").returncode,
+                         "a limit nobody has spent, and a card that declared none, are green")
+
+        self.card(host, "spent-it", state, owner="the-owner",
+                  created_at=began.isoformat(timespec="seconds"),
+                  appetite={"amount": 1, "unit": unit})
+        before = self.read_card(host, "spent-it")
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+
+        result = self.run_kit(KIT, host, "check")
+        self.assertEqual(1, result.returncode)
+        self.assertIn("FAIL  FF-DELIVERY-APPETITE", result.stdout)
+        self.assertIn("'spent-it'", result.stdout)
+        self.assertIn("the-owner", result.stdout, "the report did not name the door it stops at")
+        self.assertIn("decision by", result.stdout)
+        self.assertNotIn("'no-limit-at-all'", result.stdout, "a card that bet nothing was judged")
+        self.assertNotIn("'well-within-it'", result.stdout)
+        self.assertEqual(before, self.read_card(host, "spent-it"),
+                         "the reading raised a limit, moved a card or wrote a spend")
+
+    def test_62_a_limit_in_a_unit_nothing_here_reads_is_said_out_loud_not_passed_over(self):
+        """The other half of the same honesty. A limit this host cannot measure reads exactly
+        like a limit that is being kept -- the one failure invisible from where the reader stands
+        -- so it is reported, and reported DIFFERENTLY from an overrun, because the cure is a
+        reading or another unit rather than an owner's decision."""
+        host = self.installed()
+        self.card(host, "unmeasurable", state_ids()[0],
+                  appetite={"amount": 3, "unit": "a-unit-no-module-answers"})
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+
+        result = self.run_kit(KIT, host, "check")
+        self.assertEqual(1, result.returncode)
+        self.assertIn("FAIL  FF-DELIVERY-APPETITE", result.stdout)
+        self.assertIn("'a-unit-no-module-answers'", result.stdout)
+        self.assertIn("Nothing was observed", result.stdout)
+        self.assertNotIn("decision by", result.stdout,
+                         "a limit nobody could read was reported as one that had been spent")
+        for unit in appetite_module.registry():
+            self.assertIn(unit, result.stdout, "the report did not say what this host CAN read")
+
+    def test_63_the_boards_counts_are_computed_from_the_cards_and_survive_no_hand_edit(self):
+        """The board's N/M. Every number on the board is resolved at the moment the surface is
+        written, from the cards and the tree they point at -- never read off a field, because
+        there is no field to read it off. Changing what a card points at changes the count with
+        no interpreter edit; changing the SURFACE is caught."""
+        before = interpreter_digest()
+        kind = next(k for k in criteria_module.registry() if k == "artifact-present")
+        here, nowhere = POLICY, "a/place/that/is/not/here.json"
+
+        host = self.installed()
+        self.card(host, "two-stated", state_ids()[0], criteria=[
+            {"id": "reachable", "statement": "given the host, when read, then it is there",
+             "proof": {"kind": kind, "ref": here}},
+            {"id": "not-yet", "statement": "given the host, when read, then it is there",
+             "proof": {"kind": kind, "ref": nowhere}}])
+        self.card(host, "none-stated", state_ids()[0])
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+
+        board = self.board(host)
+        self.assertIn("criteria 1/2 proved", board, "the count is not the one the tree supports")
+        self.assertIn("criteria 0/0 proved", board,
+                      "a card that stated nothing must count nothing of nothing, not vanish")
+        self.assertEqual(0, self.run_kit(KIT, host, "check").returncode)
+
+        # the host points the second criterion at something that IS there: the count follows the
+        # records, not a number anybody typed, and no interpreter byte moves
+        card = self.read_card(host, "two-stated")
+        card["criteria"][1]["proof"]["ref"] = here
+        (host / CARDS / "two-stated.json").write_text(
+            json.dumps(card, indent=2) + "\n", encoding="utf-8")
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+        self.assertIn("criteria 2/2 proved", self.board(host))
+        self.assertEqual(before, interpreter_digest(),
+                         "a change in what a card points at cost an interpreter edit")
+
+        # and the surface may not be argued with by hand
+        (host / BOARD).write_text(self.board(host).replace("2/2", "9/9"), encoding="utf-8")
+        edited = self.run_kit(KIT, host, "check")
+        self.assertEqual(1, edited.returncode)
+        self.assertIn("FF-KIT-PROJECTION", edited.stdout)
+        self.assertIn(BOARD, edited.stdout)

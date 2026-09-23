@@ -186,6 +186,11 @@
         "board": {
           "type": "string",
           "minLength": 1
+        },
+        "criteria": {
+          "description": "The field of a record that holds what it is DONE BY, where a record of this collection carries one. It is declared HERE so that a surface projecting this collection can COUNT what has been proved of a record without any interpreter spelling the field -- the same reason every other name in this block is declared rather than assumed. A collection that declares none is counted about by nothing, which is a complete state and not a missing feature.",
+          "type": "string",
+          "minLength": 1
         }
       }
     },

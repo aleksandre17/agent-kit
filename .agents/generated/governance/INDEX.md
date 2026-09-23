@@ -20,6 +20,7 @@ Gates declared by this capability:
 - **FF-DELIVERY-WIP** — `capacity-within-limit`
 - **FF-DELIVERY-AGE** — `state-age-within-limit`
 - **FF-DELIVERY-LINEAGE** — `lineage-resolves`
+- **FF-DELIVERY-APPETITE** — `appetite-within-limit`
 
 ### evaluation 0.1.0
 
