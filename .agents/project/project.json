@@ -11,15 +11,16 @@
     "github-actions",
     "governance",
     "hygiene",
+    "knowledge",
     "observability",
     "roles",
     "runtimes"
   ],
-  "drafted_at": "2026-09-13T13:47:42+00:00",
-  "kit_version": "0.1.5",
+  "drafted_at": "2026-09-23T18:45:00+00:00",
+  "kit_version": "0.1.6",
   "schema_version": 1,
-  "signed_at": "2026-09-13T13:47:43+00:00",
-  "signed_by": "agent-linkB(owner-delegated:ADR-015)",
+  "signed_at": "2026-09-23T18:45:00+00:00",
+  "signed_by": "agent-backend(owner-delegated:ADR-019-corpus-walk)",
   "status": "accepted",
   "unavailable": []
 }

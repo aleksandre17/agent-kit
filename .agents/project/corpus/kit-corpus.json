@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "id": "kit-corpus",
+  "summary": "What this repository's documents ARE, place by place. The kit is its own host, so this map is written over the kit's own tree: the decisions that bind it, the reference shelf that describes it, the proposals that preceded the decisions, the two generated agent surfaces, and the three files at the root a reader arrives at. Every row is a statement a human can check in one diff; no row was inferred from a filename. What is NOT mapped is deliberate and named: `.agents/` is already declared place-by-place by the records map (one truth, one home), and `tests/` holds executable specimens rather than documents -- the vocabulary declares no class for a fixture, and that absence is recorded in the canon ledger rather than papered over with a class that is almost right.",
+  "places": [
+    {
+      "path": "README.md",
+      "holds": "reference",
+      "writer": "owner",
+      "lifecycle": "living",
+      "entry": true,
+      "read_when": [
+        "what is this repository",
+        "how do I start with the kit",
+        "what does the kit install"
+      ]
+    },
+    {
+      "path": "AGENTS.md",
+      "holds": "projection",
+      "writer": "renderer",
+      "lifecycle": "regenerable",
+      "entry": true,
+      "read_when": [
+        "how do I work in this repository",
+        "what binds an agent here"
+      ]
+    },
+    {
+      "path": "CLAUDE.md",
+      "holds": "projection",
+      "writer": "renderer",
+      "lifecycle": "regenerable",
+      "entry": true,
+      "read_when": [
+        "how do I work in this repository",
+        "what binds a claude-code session here"
+      ]
+    },
+    {
+      "path": "CHANGELOG.md",
+      "holds": "register",
+      "writer": "owner",
+      "lifecycle": "living",
+      "read_when": [
+        "what changed",
+        "which release carried this",
+        "is this behaviour in the version I hold"
+      ]
+    },
+    {
+      "path": "docs/decisions/",
+      "holds": "decision",
+      "authority_ceiling": "canonical",
+      "writer": "decision-authority",
+      "lifecycle": "permanent",
+      "read_when": [
+        "what binds",
+        "why was this decided",
+        "which adr owns this question"
+      ]
+    },
+    {
+      "path": "docs/reference/",
+      "holds": "reference",
+      "writer": "owner",
+      "lifecycle": "living",
+      "indexed_by": "docs/reference/README.md",
+      "read_when": [
+        "what is true now",
+        "which standards have we met and how far",
+        "the canon ledger"
+      ]
+    },
+    {
+      "path": "docs/proposals/",
+      "holds": "intent",
+      "writer": "owner",
+      "lifecycle": "curated",
+      "read_when": [
+        "what was proposed",
+        "the design that preceded the decision"
+      ]
+    },
+    {
+      "path": "adapters/",
+      "holds": "reference",
+      "writer": "owner",
+      "lifecycle": "living",
+      "read_when": [
+        "how does a runtime adapter work",
+        "what lives outside the kit"
+      ]
+    }
+  ],
+  "budgets": [
+    {
+      "measures": "unclassified_documents",
+      "ceiling": 31,
+      "measured": "2026-09-23",
+      "note": "Every one of the 31 documents this map reaches is classed by its place and none has ever declared its own kind. 31 is therefore the whole corpus, and it is seeded at the whole corpus on purpose: ADR-019 forbids mass classification by script, so this number can only fall one human-authored front matter block at a time. An aspirational lower ceiling would have failed on the day it was written, which is not a promise -- it is a broken build wearing an ambition."
+    },
+    {
+      "measures": "unrouted_obligation_docs",
+      "ceiling": 1,
+      "measured": "2026-09-23",
+      "note": "One document carries a live obligation mark that no walk from a declared entry reaches: the canon ledger, whose TBD row nothing routes to. The ceiling is the measured one rather than zero, because zero here would refuse every commit until a document outside this walk's write set was linked -- and a budget that cannot be met on the day it is declared teaches the next reader to raise it."
+    }
+  ]
+}
