@@ -235,6 +235,20 @@ lacked, and F is not done without it:
 Built in F, after the rewrite (owner's ruling), measured against Stage-Gate and Shape Up at that time.
 Recorded as GAP-F1 in `docs/reference/STANDARDS-LEDGER.md`.
 
+**11. Link F's FORM is decided by ADR-020, and amendment 10's ladder was an illustration, not a
+schema.** *(Restated on record 2026-09-23, on ADR-020's acceptance. Nothing above is edited: an
+amendment that rewrote the sentence it amends would leave a doctrine whose clauses nobody can
+date.)* Three things are now settled that this section only required. **First**, F is DECIDED and
+not yet built: `ADR-020 — The management spine` holds its form, and what remains of F is its slice
+sequence S0–S5, in which S1 comes first because it is the one that stops a loss. **Second**,
+amendment 10's *"initiative → epic → story"* is ILLUSTRATION. The decided form is a recursive
+`parent` edge with computed parent state (ADR-020 decision 5) — a fixed ladder of named rungs is
+exactly the closed enumeration Cardinal II refuses, and the two readings would have drifted the
+moment a sixth rung was needed. GAP-F1 is answered there. **Third**, two obligations of this link
+are CARRIED FORWARD and not delivered by ADR-020, so they are named here rather than left to be
+discovered missing: the ONE REAL EVALUATION run required by amendment 4, and the blank intent
+documents. Both are declared absences in ADR-020, which is where their reasons live.
+
 ## Why this order, and not the audit's
 
 The audit ordered by RISK TO THE MIGRATION. The line orders by DEPENDENCY: the enforcement line (C) cannot
