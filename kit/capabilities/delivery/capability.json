@@ -57,6 +57,11 @@
       "id": "FF-DELIVERY-AGE",
       "kind": "state-age-within-limit",
       "params": {}
+    },
+    {
+      "id": "FF-DELIVERY-LINEAGE",
+      "kind": "lineage-resolves",
+      "params": {}
     }
   ]
 }

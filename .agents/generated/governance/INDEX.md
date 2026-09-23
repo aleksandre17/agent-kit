@@ -19,6 +19,7 @@ Gates declared by this capability:
 
 - **FF-DELIVERY-WIP** — `capacity-within-limit`
 - **FF-DELIVERY-AGE** — `state-age-within-limit`
+- **FF-DELIVERY-LINEAGE** — `lineage-resolves`
 
 ### evaluation 0.1.0
 
@@ -145,6 +146,7 @@ Gates declared by this capability:
 - **FF-CORPUS-DECLARED** — `artifact-classified`
 - **FF-AUTHORITY-DECLARED** — `authority-declared`
 - **FF-OBLIGATION-ROUTED** — `obligation-reachable`
+- **FF-CORPUS-OWNED** — `owned-places-resolve`
 - **FF-CORPUS-RATCHET** — `budget-ratchet`
 - **FF-INDEX-COMPLETE** — `index-complete`
 

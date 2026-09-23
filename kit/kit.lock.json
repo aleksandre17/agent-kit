@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 212,
+  "count": 216,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -23,13 +23,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "56aa0da9cc6006309e4413f4857c320e11bdbc887e41659b096a63a13abf41f7",
+      "digest": "ec3c202c79c17596665270b1dc4fa0da59332e6955b355f396ad1100bd84cf70",
       "path": "capabilities/delivery/capability.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "1cebf77ea7db015e6cf096828a1cbb83b8f4f93ab3d273081cfa5cfe13ee9a79",
+      "digest": "2f820f2fe7173c74627aafbedbdec41b9e2a66ada2ca47a5d7c2e52a68b300c6",
       "path": "capabilities/delivery/lifecycle.json"
     },
     {
@@ -257,7 +257,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "1e594a4e2e2ad38998af56ceb036ca87e65dd8d332e4cd03063804da375f2583",
+      "digest": "4c9fda9c6964e01b8ceb92175db3f70b5bf450f77eefbc506c5925c493640e2a",
       "path": "capabilities/knowledge/capability.json"
     },
     {
@@ -557,6 +557,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "ef9492ebc40399e350618d50af1707cc9399b95d318ec2f247ac2cbe756c7c96",
+      "path": "interpreters/gates/ancestry.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "f8c93f766eb400c275c56dc95d5d7b148b9a32b94468b3d1b9c614450fd47b94",
       "path": "interpreters/gates/arrow.py"
     },
@@ -601,6 +607,12 @@
       "class": "interpreter",
       "digest": "3c4188f292cb6fa2d5c4efad09bc4b9d1d601b639126611e5f8613c63670c181",
       "path": "interpreters/gates/hygiene.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "0584639ce285b37bf36de1ef6fad058c5fa134101539a164e7f95bc3756ab20c",
+      "path": "interpreters/gates/owners.py"
     },
     {
       "accounted_by": "interpreter",
@@ -673,6 +685,12 @@
       "class": "interpreter",
       "digest": "f1e2f25e6b2248bac04ae85dea3e88bfc5a8ae087138262d001cd39673b39282",
       "path": "interpreters/lifecycle.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "abfb27e0a7f2cfa232bd22a19ba45ce536263238a65b0f68c1bba4270bf2b34d",
+      "path": "interpreters/lineage.py"
     },
     {
       "accounted_by": "interpreter",
@@ -769,6 +787,12 @@
       "class": "interpreter",
       "digest": "937d3c3754fc4a0a8f8143ee62f662abfa221ff045b062c587b316146cd47254",
       "path": "interpreters/proofs/artifact_place.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "96142a2052abcd9c7d0acf5b798450b5a938d9d688eb98aa898bfd41433d9931",
+      "path": "interpreters/proofs/card_children.py"
     },
     {
       "accounted_by": "interpreter",
@@ -983,7 +1007,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "9a3cef9820739d5e1f82dbc130651e29ab034ff57825bbcbaf13139870ba41ac",
+      "digest": "c2e335ca6e950dbfc246941210f1ec1878cd78d65c8d36898079af19dbe43f80",
       "path": "schemas/card.schema.json"
     },
     {
@@ -1001,7 +1025,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "8de4cf3c2ae49d7dcbe30cd99689762634adc69b9e38523cd479acfa14b19c84",
+      "digest": "62ddc8febc0a64ccc54d139740b31e18b3878d57f7bc02f590f83b425fc7ca09",
       "path": "schemas/corpus-map.schema.json"
     },
     {
@@ -1278,5 +1302,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-23T20:32:00+00:00"
+  "taken_at": "2026-09-23T21:21:38+00:00"
 }

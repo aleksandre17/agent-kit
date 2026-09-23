@@ -74,7 +74,7 @@ _empty_
 - `in-flight` → `verified` · owner **verifier**
   - exit: evidence, not testimony: every criterion the card declares resolved to a proof that held, and the machine refuses the passage until they do
 - `verified` → `landed` · owner **doer**
-  - exit: the change is in the trunk and reachable by everyone
+  - exit: the change is in the trunk and reachable by everyone -- and so is everything decomposed out of it: every card hanging under this one, at any depth, has every criterion it declares resolved to a proof that held. A card that was broken into parts is read from its parts, so nothing lands by saying so while a piece of it is still open
 - `landed` → `learned` · owner **owner**
   - exit: what it taught is recorded where it will be read
 - `shaped` → `parked` · owner **owner**

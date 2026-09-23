@@ -198,6 +198,21 @@
       }
     },
     {
+      "id": "FF-CORPUS-OWNED",
+      "kind": "owned-places-resolve",
+      "params": {
+        "map": "corpus_maps",
+        "classes": {
+          "sources": { "validates": "record-keeping" },
+          "list": "kinds"
+        },
+        "authorities": {
+          "sources": { "validates": "record-keeping" },
+          "list": "authorities"
+        }
+      }
+    },
+    {
       "id": "FF-CORPUS-RATCHET",
       "kind": "budget-ratchet",
       "params": {

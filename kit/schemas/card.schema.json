@@ -33,6 +33,20 @@
         }
       }
     },
+    "parent": {
+      "description": "The id of the ONE card this card hangs under (ADR-020 decision 5). A recursive edge to the same kind of thing, and deliberately not a rung of a ladder: a fixed hierarchy of named levels is a closed enumeration, so work that needs a fifth level either lies about its depth or waits for a schema change, while three of the four levels sit empty on most work. Absent means this card hangs under nothing, which is a root and an ordinary state -- not an error and not a lesser card. Nothing points the other way: who hangs under a card is COMPUTED from this field, because a back-pointer would be a second home for one edge and the day the two disagreed each would go on reading as correct.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "origin": {
+      "description": "A TYPED REFERENCE to what justifies this card existing -- the idea, the proposal or the decision it realises. Its grammar is the one a criterion's `proof` declares and nothing here restates it: a shape declared twice drifts while both copies go on reading as correct. Absent is legal and is COUNTED rather than refused: every card in existence on the day this ships names no origin, so a gate that refused one would be switched off within a day, and what the count may reach is a ceiling the host declares in its own map.",
+      "type": "object"
+    },
+    "produced": {
+      "description": "The typed references to what this work PRODUCED -- a place of evidence, a decision, a ledger row. The same grammar as `origin`, and the other half of a lineage that can be read in both directions. Absent means nothing has been recorded as produced, which is the honest state of work that has not finished; a reference here that resolves to no reading at all is REPORTED, because a reference that points nowhere reads exactly like one that points home.",
+      "type": "array",
+      "items": { "type": "object" }
+    },
     "criteria": {
       "description": "What this card is DONE BY, each criterion naming the reference that would prove it (ADR-020 decision 7). There is no status field on a criterion and there will not be one: a status is COMPUTED by resolving the reference, and a field a principal could type is testimony wearing a machine's clothes -- typed under pressure, and typed wrong exactly when it matters. An absent list is a complete and legal state: a card nobody has shaped yet has stated nothing, so nothing about it is unmet.",
       "type": "array",
