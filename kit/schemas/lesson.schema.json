@@ -1,0 +1,39 @@
+{
+  "$id": "lesson",
+  "title": "The words a record may state how far what it taught holds -- and what each one costs before it may be carried",
+  "description": "A vocabulary, published so that a host and whoever published its framework mean the same thing by a mark. A record states what it learned and marks HOW FAR it claims that holds; this document is the one place a mark's meaning lives, and it is the only thing a machine reads about one. Nothing here is matched against prose: a reader looks up the word the record declared and finds a row or finds nothing, and finding nothing is reported rather than guessed at -- a mark in a word nobody published reads, to a machine that guessed, exactly like a mark it understood. The vocabulary is the PUBLISHER's and the verdict is the HOST's, for the same reason a stance vocabulary is shipped with no stance spoken in it: two hosts marking two records in private words produce two texts nobody can compare.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "extents"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "summary": { "type": "string" },
+    "extents": {
+      "description": "The words themselves. The set is OPEN -- a publisher that needs another word declares a row, and no interpreter is edited -- and it is closed to nothing else: a word absent from here is not a word, and the record that used it is named rather than silently passed over.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "means", "beyond"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "means": {
+            "description": "What a record is claiming when it marks itself with this word, in the publisher's own sentence and in no repository's vocabulary. It travels WITH every use of the word, so that a reader who has never seen this host can act on a text from it without learning how this host talks.",
+            "type": "string",
+            "minLength": 1
+          },
+          "beyond": {
+            "description": "True when a record carrying this word claims what it learned holds beyond the repository that learned it. This is the whole of what a machine reads here, and it is a PROPERTY of the word rather than a list of privileged words held somewhere in a machine: the day a publisher declares another word, it participates by being declared, and nothing is switched on for it anywhere. False is not a lesser state -- it is a host saying out loud that what it learned is its own, which silence could never say.",
+            "type": "boolean"
+          },
+          "seen_at_least": {
+            "description": "How many separate records must carry this claim, each of work that is over, before it may be carried to a publisher under this word. One occasion is an observation; the number at which an observation becomes something a project is already paying for is a judgement, and it is made HERE -- beside the word it qualifies, by whoever publishes that word -- because a framework holding the number in a machine would have decided how much evidence somebody else's proposal needs. A word that claims to hold beyond its host and declares no number is a claim nothing may carry, and the absence is reported rather than filled in with a default: a number a reader cannot find is not a bar anybody agreed to.",
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

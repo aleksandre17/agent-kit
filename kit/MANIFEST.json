@@ -165,6 +165,7 @@
     "dispatch-packet": "schemas/dispatch-packet.schema.json",
     "dispatch-adapter": "schemas/dispatch-adapter.schema.json",
     "workspace-provider": "schemas/workspace-provider.schema.json",
-    "task": "schemas/task.schema.json"
+    "task": "schemas/task.schema.json",
+    "lesson": "schemas/lesson.schema.json"
   }
 }

@@ -77,6 +77,9 @@ def main(argv=None) -> int:
                              "that the run holding it is dead. No machine may make it, and no "
                              "amount of elapsed time makes it for anyone")
     parser.add_argument("--card", default=None, help="the card a verb acts on, by id")
+    parser.add_argument("--lesson", default=None,
+                        help="the subject of a lesson a verb acts on, as the record that "
+                             "carries one declares it")
     parser.add_argument("--to", default=None, help="the state a card is being moved to")
     parser.add_argument("--by", default=None, help="who is making this move, recorded on the card")
     parser.add_argument("--path", type=_ids, default=None,

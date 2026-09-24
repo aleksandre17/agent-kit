@@ -64,6 +64,29 @@
         }
       }
     },
+    "lesson": {
+      "description": "What this work TAUGHT, where it taught anything: the subject the teaching is about, the teaching in the host's own sentence, and a WORD saying how far the host claims it holds. The word is the only part a machine reads, and it is read by looking it up in a vocabulary somebody published -- never by matching prose, because a reader that inferred a claim from wording would be inventing the claim it then carried on this host's behalf. Absent is a complete and legal state and the ordinary one: most work teaches nothing anybody else needs, and a record that said otherwise by default would be manufacturing findings. The shape is declared here rather than shared with another collection that might want it, and the reason is the recorded one: schemas here cannot compose, so a second collection carrying this would restate it -- named as the cost it is rather than smoothed over by widening something until it means two things.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject", "extent", "statement"],
+      "properties": {
+        "subject": {
+          "description": "What the teaching is ABOUT, as a name two separate pieces of work can both point at. This is what makes a second occasion countable: prose cannot be counted, because two sentences about one thing are two sentences, and a mechanism that decided they meant the same would be deciding the very thing the second occasion was supposed to prove.",
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "extent": {
+          "description": "How far the host claims this holds, as a word from a vocabulary an enabled capability publishes. A word nobody published is reported and never guessed at: a mark whose meaning cannot be found says nothing, and reading it as either answer would put words in the host's mouth.",
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "statement": {
+          "description": "What was learned, as a human states it. Prose, deliberately and finally: this sentence is written to be read by a person somewhere else, and the moment a machine had to parse it, the host would start writing for the parser instead of for that person.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "criteria": {
       "description": "What this card is DONE BY, each criterion naming the reference that would prove it (ADR-020 decision 7). There is no status field on a criterion and there will not be one: a status is COMPUTED by resolving the reference, and a field a principal could type is testimony wearing a machine's clothes -- typed under pressure, and typed wrong exactly when it matters. An absent list is a complete and legal state: a card nobody has shaped yet has stated nothing, so nothing about it is unmet.",
       "type": "array",

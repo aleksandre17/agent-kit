@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 223,
+  "count": 227,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "55e9ff81b8d247db1cf9f46508ddfb3106b0bb740e028f4fba0b4b1316a5169d",
+      "digest": "08f68b90ab759441812dba38ff90a514315da13e1429cd4ae58d89bbf5542769",
       "path": "MANIFEST.json"
     },
     {
@@ -23,8 +23,14 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "4593a5b3c0f51d51806770165d488b71cea4eb01bd9f477ab83635fd59f70962",
+      "digest": "4bc49068c4694c4d9ac5b999f0f7eb254a58f34e717c9db0f7a90c92890b221d",
       "path": "capabilities/delivery/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "62b30db04c891044ea30bd1a48d0a770bdef3c0921440959e52beb998e93956f",
+      "path": "capabilities/delivery/lesson.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -443,7 +449,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "7e1d1c0fdee5221d08dc4651d65f4e385e54b1660c0f8e50fc263ba235d991ee",
+      "digest": "5ff67599b223b18ec30e55cb0068b0823a3cd33bde1886515ef51b4df42c574f",
       "path": "diagnostics.json"
     },
     {
@@ -467,7 +473,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "765e03983dfb1fe38783c61ad36c6781a6aa5e1fa0cba66eb9458ccbfb9f459f",
+      "digest": "0d77e99dbe7eb9a2e36ea0b64295c1b35cff7656a4e0663d818f5b4487e94e04",
       "path": "interpreters/cli.py"
     },
     {
@@ -697,6 +703,12 @@
       "class": "interpreter",
       "digest": "cab54be5b7ba5192fe9c3b89c97691687de31c769c003fcb7bcafeb2a51b7d55",
       "path": "interpreters/kinds.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "b7140e5bcc789812a92fd384d4cc8317c52ca2578a88d72277ed5a0a543cc78f",
+      "path": "interpreters/lesson.py"
     },
     {
       "accounted_by": "interpreter",
@@ -977,6 +989,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "8e411143d506d1120bc84ba3ebe8783e6c87a09bfb4fd2c5bde86614fde74c9c",
+      "path": "interpreters/verbs/propose.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "1dd198c9c7f7c962f9df68194cf22f8ae89223f42ce7382b985662e30ff4e036",
       "path": "interpreters/verbs/release.py"
     },
@@ -1043,13 +1061,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d2ff327ea8434cbbade3524dc9692167812fc5c56570d285566e8e01a7ab0c77",
+      "digest": "1389924bc885c158602a5e290d15ca2f60de8c598516cb7304584ffc597faa8f",
       "path": "schemas/capability.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "6797e40dfbe18f19c6af2fa3a9f9851ca8ac207db970dfae3b7112219cf6d0e6",
+      "digest": "c1acc91b87ba44e6bf382be278c1443c4bbdc51c092f754d7a302b6fe388da29",
       "path": "schemas/card.schema.json"
     },
     {
@@ -1159,6 +1177,12 @@
       "class": "declaration",
       "digest": "58d9b30d617c7d0f8eca0cadac5320592018c919ff6e81defbda672aa8854598",
       "path": "schemas/layout.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "5386dab370abdfdf409027e7bc856a3ea8eda9a2116cddc1c185c5e246c14882",
+      "path": "schemas/lesson.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1344,5 +1368,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-23T23:39:20+00:00"
+  "taken_at": "2026-09-24T00:28:57+00:00"
 }

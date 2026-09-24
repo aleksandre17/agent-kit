@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 66,
+  "issued": 67,
   "codes": [
     {
       "code": "KIT0001",
@@ -398,6 +398,12 @@
       "status": "active",
       "title": "an undertaking that has run out points at something that cannot mature",
       "explanation": "A host caps a count in its corpus map and works it down; when the cap reaches the terminal value the host has undertaken that the count does not exist here at all, and the grace that undertaking bought the judgement reading it is spent -- the judgement then stands where an unanswered one stands, under ADR-006, out of the host's own two declarations and with no stance written anywhere by this kit. Which judgement a count is the reading of is published by the module that owns both words. This refusal is raised when an exhausted undertaking reaches a pairing whose target no module publishes as a judgement. It is refused rather than passed over because a cap that matured nothing reads, on every later run, exactly like a host still working its way down (Cardinal V). It is also the point at which this mechanism declines to reach past its own subject: what matures is the consequence a FAILURE carries, and only a judgement has one -- a passage a declaration puts in a party's hands carries that party and no consequence at all, so no cap at any value can mature it, and nothing here will invent the party it would have to stand in for. Pair the count with a judgement the kit publishes, or leave it unpaired and hold the cap."
+    },
+    {
+      "code": "KIT0067",
+      "status": "active",
+      "title": "what was asked to be carried to a publisher cannot be carried",
+      "explanation": "A record whose work is over may state what that work taught and mark how far it claims to hold; where a claim reaches beyond the repository that made it, a text addressed to whoever published the framework can be produced and handed to a person. This refusal is raised when such a text was asked for by name and may not be produced: nothing here says anything about that subject, or everything that does says it holds only where it was learned, or it has been said on fewer occasions than the word it is marked in requires -- one occasion being an observation rather than something a project has provably paid for twice. It is refused rather than answered with a weaker text, because a proposal that arrived upstream carrying less than its own declared bar would be asking a publisher to weigh evidence the host itself does not consider sufficient, and nobody reading it could tell. Nothing was written and nothing was sent. Say it on a second record, or carry it upstream in your own words, which nothing here forbids."
     }
   ]
 }

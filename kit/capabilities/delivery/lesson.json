@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "lesson",
+  "summary": "The words a record may say how far what it taught holds, published so a host and the party that published its framework mean the same thing by one of them. Two words and no verdict spoken in either: which word a record carries is the host's statement about its own work, and this kit ships neither a default nor a mark of its own.",
+  "extents": [
+    {
+      "id": "local",
+      "means": "What was learned is true of this repository and the circumstances it is in -- its stack, its people, its history. It is addressed to nobody else. A record says so rather than leaving it to silence, because a lesson nobody marked and a lesson deliberately kept at home look identical from outside.",
+      "beyond": false
+    },
+    {
+      "id": "universal",
+      "means": "What was learned is true of any repository run this way, not only of this one. A record marked so is making a claim about the framework rather than about its host -- which is the only kind of claim a publisher can be asked to answer, and the only kind worth anyone's time to carry.",
+      "beyond": true,
+      "seen_at_least": 2
+    }
+  ]
+}

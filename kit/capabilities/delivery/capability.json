@@ -8,13 +8,18 @@
   "provides": ["delivery"],
   "conflicts": [],
   "declares": {
-    "schemas": ["lifecycle", "card", "delivery-policy"]
+    "schemas": ["lifecycle", "card", "delivery-policy", "lesson"]
   },
   "documents": [
     {
       "id": "lifecycle",
       "source": "capabilities/delivery/lifecycle.json",
       "validates": "lifecycle"
+    },
+    {
+      "id": "lesson",
+      "source": "capabilities/delivery/lesson.json",
+      "validates": "lesson"
     }
   ],
   "governs": {
@@ -23,7 +28,8 @@
     "lifecycle": "lifecycle",
     "policy": "policy",
     "board": "columns",
-    "criteria": "criteria"
+    "criteria": "criteria",
+    "lesson": "lesson"
   },
   "installs": [
     {
