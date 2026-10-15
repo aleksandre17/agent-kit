@@ -73,5 +73,29 @@ class FreshClone(Fixtures, unittest.TestCase):
                     self.assertNotIn(FACT, facts, f"a file inside {ignored}/ became a fact about the host")
 
 
+    def test_352_a_space_opened_before_its_marker_is_completed_and_survives_the_clone(self):
+        # A host installed before spaces carried a marker holds the bare directory: committed, it is
+        # gone from the clone. The next init completes the space with its marker and nothing else.
+        import space as space_module
+
+        # Both doors that install complete it: `init` by its own foresight, `upgrade` by the
+        # reconciliation that answers before the installer is asked (one rule: space.carried).
+        target = next(i["target"] for c in CORE.capabilities for i in c.installs if i["mode"] in space_module.MODES)
+        for verb in (("init", "--approve", "acceptance-suite"), ("upgrade",)):
+            with self.subTest(verb=verb[0]):
+                host = self.installed()
+                marker = host / space_module.marker_in(CORE, target)
+                marker.unlink()
+                ran = self.run_kit(KIT, host, *verb)
+                self.assertEqual(0, ran.returncode, ran.stdout + ran.stderr)
+                self.assertTrue(marker.is_file(), f"{verb[0]} kept {target} without the marker that carries it")
+                _git(host, "add", "-A")
+                _git(host, "commit", "-qm", "the host as completed")
+                clone = self._temp("kit-clone-") / "host"
+                subprocess.run(["git", "clone", "-q", str(host), str(clone)], check=True, capture_output=True)
+                ran = self.run_kit(KIT, clone, "check")
+                self.assertEqual(0, ran.returncode, ran.stdout + ran.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

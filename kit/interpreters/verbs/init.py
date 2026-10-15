@@ -62,6 +62,14 @@ def _once(ws, item, state):
     return "keep" if ws.exists(item["target"]) else "create"
 
 
+def _space(ws, item, state):
+    """A space is its directory AND the marker that carries it through a clone. One opened before
+    the marker existed is completed -- the marker is the only write, and nothing the host put in
+    the space is touched -- because a directory held only by the working tree is missing from the
+    next clone, and the floor then reads a drawn place as broken when nothing is."""
+    return "keep" if space.carried(state["manifest"], ws, item["target"]) else "create"
+
+
 def _always(ws, item, state):
     """Framework payload: replaced wholesale, never edited downstream."""
     return "replace" if ws.exists(item["target"]) else "create"
@@ -153,13 +161,13 @@ INSTALL_MODES = {
     "declaration": ("answer", _answer, _mode_declaration),
     "seed": ("install", _once, _mode_seed),
     "vendor": ("install", _always, _mode_vendor),
-    "space": ("install", _once, _mode_space),
+    "space": ("install", _space, _mode_space),
     "pinned": ("install", _pinned, _mode_pinned),
     "pinned-lock": ("install", _pinned_lock, _mode_pinned_lock),
     # The take plane is OPENED as a space (every host has one, empty until it takes something) and
     # the take declaration is seeded once as a declared zero; the `take` verb writes both after
     # (ADR-018).
-    "taken": ("install", _once, _mode_space),
+    "taken": ("install", _space, _mode_space),
     "taken-declaration": ("install", _once, _mode_seed),
     "projection": ("render", None, None),
     "estate": ("record", None, None),

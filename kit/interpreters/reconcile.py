@@ -29,6 +29,7 @@ from __future__ import annotations
 import hashlib
 
 import estate as estate_module
+import space
 from errors import KitError
 
 #: The cells. Named here because this module COMPUTES them -- naming what you produce is a
@@ -159,7 +160,9 @@ def survey(ctx, capabilities, recorded, stewards, adoptions=None, moved=None) ->
         steward = stewards.answering(mode, None if home else shipped)
         taken = stewards.measures(steward) and not estate_module.is_root(path)
         read_at = moved.get(path, path)
-        present = ws.exists(read_at)
+        # A space is there when a clone would receive it, which is its marker (space.carried).
+        present = (space.carried(ctx.manifest, ws, read_at) if mode in space.MODES
+                   else ws.exists(read_at))
         here = hashlib.sha256(ws.read_bytes(read_at)).hexdigest() if (present and taken) else None
         found = cell(shipped is not None, shipped["digest"] if shipped else None,
                      present, here,

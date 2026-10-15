@@ -155,3 +155,23 @@ NONE"** while its owner's eight cardinals exist only in the prior system of host
   default would be the kit's opinion of every host's context, unanswerable by stance.
 - **Leave law in governance's places and relabel the doctrine row.** Keeps four places for one kind the
   records map already unifies, against the drawing, to avoid a one-time declared move.
+
+## Amendment 1 — a space is there when a clone receives it (2026-10-16, owner-delegated)
+
+S5 held the floor on a fresh clone of a host the kit had just installed. The second host, upgraded,
+still failed it on every clone: `.agents/project/roles/` was opened before spaces carried a marker, so
+the working tree held a bare directory and the clone held nothing. Both doors that install decided
+`keep` from the directory alone -- `init` because a space was install-once, `upgrade` because a
+directory has no digest and its reconciliation therefore reads UNCHANGED. Host #0 had two such
+spaces itself (`corpus/`, `doctrine/laws/`).
+
+**Decided:** a space is present when its directory and its marker are (`space.carried`), and that
+one rule is read by both doors: `init`'s foresight for the space modes (`space.MODES`), and the
+reconciliation's presence for them, so a marker-less space is RESTORED and its steward answers
+`create`. The marker is the only write; nothing the host put in the space is read or touched.
+
+*Rejected:* a check-time exemption for an empty space, which would make the floor accept a place
+no clone has; and a one-off repair per host, which the next host would need again.
+
+Proof: `test_fresh_clone` 352 (both doors, then clone and `check`), mutation-checked on each half.
+

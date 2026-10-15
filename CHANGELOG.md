@@ -7,6 +7,12 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Fixed — a space opened before its marker is completed (ADR-021 amendment 1)**
+- `space.carried`: a space is there when its directory AND marker are. `init` (space modes) and the
+  upgrade reconciliation both read it, so a bare directory left by an older install gets its marker
+  instead of vanishing from the next clone and failing `FF-HOST-FLOOR` there. Host #0 completed two.
+- `test_fresh_clone` 352.
+
 **Added — THE OPERATING PLANE, slice S8: the conduct, published (ADR-022 decision 11)**
 - `bundles/conduct/` 1.0.0 beside the kit: six chapters (protocol, economy, risk, delivery, verification,
   craft), the skill `architecture-standards`, the playbook `a-change-to-an-existing-system` — re-authored from

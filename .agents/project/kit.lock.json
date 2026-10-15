@@ -959,7 +959,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "18266cb989015e139b2a740aef80a44c0c1b0fb75d019eae1ebb19887bb4ee40",
+      "digest": "d285d0bb3a37efa6bb589cea3572bd1b9975277f9d5d0b4767b66b4c72304eee",
       "path": "interpreters/reconcile.py"
     },
     {
@@ -989,7 +989,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "6db29765210dc0b28acc546a4dc5199b043ca8bcfdd8e7b44e051cfe85c6d19a",
+      "digest": "0ad97ab68ddeb08b06b257637f1a5f07d0f240a1133b6d30bde90867f0adb161",
       "path": "interpreters/space.py"
     },
     {
@@ -1091,7 +1091,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "46a66251554b77963590e705349dd76ac60abd47c62de030f958a09159ce4f5b",
+      "digest": "c42d7d4ab619e83a73b96e03bae711dc241fc03cc765be44cdad0b77ad7dc5c0",
       "path": "interpreters/verbs/init.py"
     },
     {
@@ -1548,5 +1548,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T17:34:43+00:00"
+  "taken_at": "2026-10-15T23:48:45+00:00"
 }
