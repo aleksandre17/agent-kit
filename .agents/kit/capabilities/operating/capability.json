@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "id": "operating",
+  "version": "0.1.0",
+  "summary": "Declares the host's side of the dispatch port (ADR-017, ADR-022): the ROUTE TABLE a task is routed by, on two axes -- unmade judgement and reversibility -- and the verification profiles the port may run by name; and the RETURN a worker hands back, in one shape. The kit ships the grammar and an empty table; every cell, every role, every budget and every command is the host's.",
+  "doctrine": "capabilities/operating/payload/operating.md",
+  "requires": [],
+  "provides": [
+    "dispatch-routing"
+  ],
+  "conflicts": [],
+  "declares": {
+    "schemas": [
+      "route-table",
+      "dispatch-return",
+      "ground-reading",
+      "claim",
+      "arbitration",
+      "register",
+      "register-kind"
+    ]
+  },
+  "installs": [
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/operating/routes.json",
+      "source": "capabilities/operating/payload/routes.json",
+      "validates": "route-table",
+      "reads_as": "route_table"
+    },
+    {
+      "mode": "space",
+      "class": "ephemeral",
+      "target": ".agents/runtime/claims/",
+      "validates": "claim",
+      "reads_as": "claims"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/operating/arbitration.json",
+      "source": "capabilities/operating/payload/arbitration.json",
+      "validates": "arbitration",
+      "reads_as": "arbitration"
+    },
+    {
+      "mode": "space",
+      "class": "binding",
+      "target": "docs/work/registers/",
+      "validates": "register",
+      "reads_as": "registers"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": "docs/work/REGISTERS.md",
+      "source": "capabilities/operating/payload/REGISTERS.md.mustache"
+    }
+  ],
+  "gates": [
+    {
+      "id": "FF-REGISTERS-HELD",
+      "kind": "register-held",
+      "params": {
+        "sources": {
+          "validates": "register"
+        },
+        "kinds": {
+          "validates": "register-kind"
+        }
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "register_kinds",
+      "source": "capabilities/operating/register-kinds.json",
+      "validates": "register-kind"
+    }
+  ]
+}

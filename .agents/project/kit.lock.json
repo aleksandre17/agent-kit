@@ -1,17 +1,17 @@
 {
   "algorithm": "sha256",
-  "count": 202,
+  "count": 257,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "fd6aa502b5a75bb938a9136569b400f033f441853f75d96fc2fd02be4c8f70b4",
+      "digest": "8f696316ac9bf36263f88035f2cd1b39a7213e2bbcd4ad3d0271d72f1d3eb763",
       "path": "MANIFEST.json"
     },
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "5e66748281823bade96c9658f17ee6946c908f34487c0019f65b0f4c506ee727",
+      "digest": "77adf4bea1d076be6da0caeb4afc0782cd99bec5718adb3e408c9e07b87e615c",
       "path": "README.md"
     },
     {
@@ -23,25 +23,31 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "56aa0da9cc6006309e4413f4857c320e11bdbc887e41659b096a63a13abf41f7",
+      "digest": "f1e85f968030077960337f04e888ba5b1a6dcacc5010feaea75a28a65dc7ef19",
       "path": "capabilities/delivery/capability.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "fad3879bfb743f5dd4fb75ec0f5a470cd3cf608fed008ee3b018ab03676af5e7",
+      "digest": "62b30db04c891044ea30bd1a48d0a770bdef3c0921440959e52beb998e93956f",
+      "path": "capabilities/delivery/lesson.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "2f820f2fe7173c74627aafbedbdec41b9e2a66ada2ca47a5d7c2e52a68b300c6",
       "path": "capabilities/delivery/lifecycle.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "payload",
-      "digest": "14f53a8efceecad16f6e17e8a1c02e7cd9de50e50d1e9d60214197abc16fa7aa",
+      "digest": "3bc6c729b91834c0a7e533fc6dcc488489844bd5d06567cd53010664596f08fe",
       "path": "capabilities/delivery/payload/BOARD.md.mustache"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "payload",
-      "digest": "46f02ea4dae8c2e1c23f44a75567c5aaa474fc71326a057f5335f1ccb9fd6672",
+      "digest": "fb4b69620443b3e76a5b7759c4270066fbb954e8ecd40a26d7da150936360345",
       "path": "capabilities/delivery/payload/delivery.md"
     },
     {
@@ -59,7 +65,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "dde824af3cb4cafebc428db736d12ea9343dbe6b1dc1ee8e2e516687b1666da1",
+      "digest": "2ad29328817beb0fdd5a246b58c37cd55e5f1a071a6548782bca9c2725f638f3",
       "path": "capabilities/doctrine/grammar.json"
     },
     {
@@ -155,13 +161,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "1c52f8b7e4267477319a83b70f4e00f034a12ef46fec46c74a99c9998864835a",
+      "digest": "ca9159ae30d88cbc36ef73ce070b241ae8c3be8e49a91c30cd47142b5793b14d",
       "path": "capabilities/governance/capability.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d1deed2c324d88add47fff55eaa799ee29cba7ce579ba6fdc8006f6e699349e6",
+      "digest": "8c60d7b10185e91f1c4217cab7cc306091cae99824ef691b3fabde936623d45e",
       "path": "capabilities/governance/host-layout.json"
     },
     {
@@ -203,7 +209,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "2c896b7196b3b9d4fba1a952570a476d0ec7e6edd59522a3442e5a78180440b3",
+      "digest": "152de3be3c5495f4eec135541c9df97855944e753a3eef4bca104c11f691a8c2",
       "path": "capabilities/governance/record-keeping.json"
     },
     {
@@ -257,7 +263,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "1e594a4e2e2ad38998af56ceb036ca87e65dd8d332e4cd03063804da375f2583",
+      "digest": "4c9fda9c6964e01b8ceb92175db3f70b5bf450f77eefbc506c5925c493640e2a",
       "path": "capabilities/knowledge/capability.json"
     },
     {
@@ -323,6 +329,42 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "d2531f0fa5f89d2fd270cc6d2768760bfec4c6aa6027ee904a01ed110d2741bd",
+      "path": "capabilities/operating/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "e210219f87718a613cb78bcd6d1d008ed7933d5888b2bad5eadf9bba47f16f28",
+      "path": "capabilities/operating/payload/REGISTERS.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "bd0c1fd6a4db845a81b0fa96c3e1dadff103d9736a0b76753d8d91f388a990ca",
+      "path": "capabilities/operating/payload/arbitration.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "633bb611c4ed66664dcd86516ab2a199d39d5c8c3ea5c88f57919ee7d53cd25c",
+      "path": "capabilities/operating/payload/operating.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "8b0175613b28342e11c5dcfab3444bd671d30eeed4f0093cd8f8b2071e647017",
+      "path": "capabilities/operating/payload/routes.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "1719945c9be9596fda2aba5ca2659f6f404b7fd7dfc9cd02fc1a98c2c7509f4b",
+      "path": "capabilities/operating/register-kinds.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "ef4f541d5fbfa2c7615aad73f2d75c69da7994c13036f02fea591b8fd517e1e9",
       "path": "capabilities/roles/capability.json"
     },
@@ -353,7 +395,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "69e8915e17df4c29437fd11b2f95be8697fb557e93cb2e48af0ad6adfbc2ff91",
+      "digest": "19dd2e84218aa3062018b206455528e346a7904dd958a37e887a21198b0083a7",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -407,6 +449,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "a4beadfd226f1ae061889150a748ae68a8f068155e8c654bd9d80e9f1265d631",
+      "path": "detectors/dotnet-project.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "7df46798c4c626eba5a8c199d13df2a7bc504c47ce0f5392fbc0b9ce68e234b3",
       "path": "detectors/git-repository.json"
     },
@@ -443,8 +491,14 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "c16c11cbf70ddb29d2b97ff014aea7040e0f548eacbcf33d3d23424936189728",
+      "digest": "f030fff4f8d633dff724af49fd5fa7151f50640d854ccd403d73d6e2a20bb00e",
       "path": "diagnostics.json"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "2e3bb52969c95cd39a6519b60d2bd16b782ee0acd47b40e5a0005be3c331bbf3",
+      "path": "interpreters/accepted.py"
     },
     {
       "accounted_by": "interpreter",
@@ -461,13 +515,31 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "765e03983dfb1fe38783c61ad36c6781a6aa5e1fa0cba66eb9458ccbfb9f459f",
+      "digest": "301ab50f4e94d81e7b1c3cea1b03e9535b10329a4d634a87869b76ab6ccea56f",
+      "path": "interpreters/appetite.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "0434f4d0ed9a802437629b6f417f131e3f58fb471e578be12069650ac1c0db86",
+      "path": "interpreters/attestation.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "f69c88d01e4e31359fdecff7f5f6439ebc5ba07eb262f9ddca88e8503d560abe",
+      "path": "interpreters/claims.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "f1b760b3c7d2b27a19830c4e9997d0831550e158d93d9591ba0a5b85d4c337c7",
       "path": "interpreters/cli.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "6c45ac6b421049a550ca7919217511a7f544cdf1e7867e3814f7245213654854",
+      "digest": "1649e44f080229ba40c68d7f18bf60e25b5de270f7611eb1e9626c9c405ebb3a",
       "path": "interpreters/collection.py"
     },
     {
@@ -491,14 +563,32 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "bfc0e91fde846b416979ee98503bdb24fe8cb856cb365666f76d841a706a1cc7",
+      "path": "interpreters/cooling.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "f9f6b40a50347bd646c773bf35ff3ef043c814b9432cd40742974a925d6c64a9",
       "path": "interpreters/corpus.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "18bed66a1f693f57f1094f93783b6a8ee13b5cb670132932dbf2b24450267304",
+      "path": "interpreters/criteria.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "484a86ac4214100cd571b97ede31c1894c67cd4f2ba09e0c5ffbdd1272a95358",
       "path": "interpreters/declared.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "fb6e33ef02a36dd0cc587ad047676d36ecbf8f4fddc9c9b6c5db624abda35f04",
+      "path": "interpreters/derivation.py"
     },
     {
       "accounted_by": "interpreter",
@@ -521,13 +611,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "c8f4fb7fcbc730d4046fc396e74395cf5e531292e685c5be164ee62a3e31c109",
+      "digest": "71b90adb02e0675a31ebfc790b1e7042af58a27c2bc1f3ca8462a5990492a809",
       "path": "interpreters/estate.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "fc0d780ad0c73b0b59957ac0258430429c1ff0303e678fea48ab11d98e8ce23c",
+      "digest": "3c05e9b74a9a56278098c8c3564f03eee445abb12b6e09ce5a8595f6a54c0381",
+      "path": "interpreters/eviction.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "1bd9bc159e392d4dfedce33bd4ba409afed33676542ad7bfef4362b818a5e46a",
       "path": "interpreters/gatekinds.py"
     },
     {
@@ -539,14 +635,26 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "202dd3a30ad62f5f93f4ba1d6901ed2b55cf0d689a4f5f16ccd090ae93f51418",
+      "path": "interpreters/gates/ancestry.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "f8c93f766eb400c275c56dc95d5d7b148b9a32b94468b3d1b9c614450fd47b94",
       "path": "interpreters/gates/arrow.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0d9a18f7d3dff57f504e088e4ea197943ac23a1095a73ca39ae1d1a558aff820",
+      "digest": "74e56baf36b615a75a9ac3bd3c05c5ed27080bf4de1056f28dd726fcf8a93613",
       "path": "interpreters/gates/artifacts.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "e04df7a77456fbc4da4f4495e11fcc2e340f1ec2181519e0620d31360d33abac",
+      "path": "interpreters/gates/calibration.py"
     },
     {
       "accounted_by": "interpreter",
@@ -557,14 +665,20 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "31df0de432cf20f0854b8f658e725490c42d2891d7fd8199d1b93cea2fd6df00",
+      "digest": "1f0e82742988498078760649665d62603c1a8eea0f8ca9bcc12126741556aa1f",
       "path": "interpreters/gates/core.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "c8c58c3d6b864341fceccb2e46baf7deccb566a6d4e6e032d42b0cec7f8a58a0",
+      "digest": "a24f3d7b910758e2addf5a472abe35264efa7e699f7a27b24c4e6f8795014994",
       "path": "interpreters/gates/delivery.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "b92aa9406c2515221c254806580d08a0979e20e13eeaa53385c62cd60ed4369d",
+      "path": "interpreters/gates/economy.py"
     },
     {
       "accounted_by": "interpreter",
@@ -575,7 +689,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "20d3eebeed89f7e623a914772702a3107288aa04da9ff080b7e50dd2c7f307cf",
+      "digest": "daa1a4cdc78b3eefa522b3ea67d13fbcdc00d1d825bbffe956a3c1d7981b78e7",
       "path": "interpreters/gates/floor.py"
     },
     {
@@ -587,32 +701,62 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "0584639ce285b37bf36de1ef6fad058c5fa134101539a164e7f95bc3756ab20c",
+      "path": "interpreters/gates/owners.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "a21d5d3e35186f65031468cbf27edd272dfcc3e44ce41c60e9d54fe8c32d2c3a",
       "path": "interpreters/gates/pinned.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1aa75f1a64981697dc1801c89b31c3d36119ae5c637ae547e2dd108906d48adc",
+      "digest": "14c8f2943425c45d65b1dd50828c7dc6b5fd4f1e3c6dbadb923a65580602cca2",
+      "path": "interpreters/gates/position.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "867768f02b4ceb205330ec853ead1b6cba550c8f23e3b425845f94ba5737ce33",
       "path": "interpreters/gates/quality.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "117b8e680881c55553b20ee38eebcb349909afabdbea88270137f033e7ffd483",
+      "digest": "a033479292d3a37f6a8349db3c20e1eb7fcbc52cddc3dc187d783c74d95fcf36",
       "path": "interpreters/gates/ratchet.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "2b68286518d840b0bf61ad49239f041ed4f7339c26071fb20933eaf155d72328",
+      "digest": "aafc559a718e36a791c898df4327644c99f2ed6fc34299bfa033274c3731943f",
       "path": "interpreters/gates/records.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0ef62b30ce2f1536e585140cc94380faa2fd9d07d1922b116894683cbf11acfc",
+      "digest": "cb6d1294f0778dd20ec4dc3caa2fd06712b1fc0f5ca8324d30f140ca33e16766",
+      "path": "interpreters/gates/registers.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "ebd92bc86fe492c49be19fca0c3a8bb57d717d794ef91b44c166fc534b6eb11b",
+      "path": "interpreters/gates/restatement.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "bb54b5205f903ece6518cd25a1f85d1bfbe5ef356f2268777d87306a0a72abd5",
       "path": "interpreters/gates/routes.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "faa40187df0c05eab1fad69f2babe8f15237486837849bcd1fbb76e538f79252",
+      "path": "interpreters/gates/served.py"
     },
     {
       "accounted_by": "interpreter",
@@ -641,14 +785,38 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "bdd6c4d4d3db5f030846ff2648337d0c41bcff8e6b9e2e04ef4464eec0ce242b",
+      "digest": "cab54be5b7ba5192fe9c3b89c97691687de31c769c003fcb7bcafeb2a51b7d55",
+      "path": "interpreters/kinds.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "b7140e5bcc789812a92fd384d4cc8317c52ca2578a88d72277ed5a0a543cc78f",
+      "path": "interpreters/lesson.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "14d01f3851dcbe2573abf9ab44f6a6a111f1399e18a5300a8928fa2c1ec0e8d9",
       "path": "interpreters/lifecycle.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "abfb27e0a7f2cfa232bd22a19ba45ce536263238a65b0f68c1bba4270bf2b34d",
+      "path": "interpreters/lineage.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
       "digest": "189350188fc22b68656a1cf4f6c28c8028e06a8972740e42ce886c5e77e4c645",
       "path": "interpreters/lockfile.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "f7c83bae72913a538c0c2c1974a2b6a1e4e29b9d4183747406a79ca010ca6293",
+      "path": "interpreters/maturation.py"
     },
     {
       "accounted_by": "interpreter",
@@ -677,7 +845,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "bd2e971a712302bbfe99a5dac68ed26efe5538b18e6a2648c8c77d78dc8e5346",
+      "digest": "2ae748c43ac58464567c1507edf66a19f53e076dd27eeee5dca3300e82bd8144",
       "path": "interpreters/plan.py"
     },
     {
@@ -695,7 +863,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "04895b0ee65b86168f80a7c14205b9b575f56000115e0d8813be3cae0f863c39",
+      "digest": "491202eef0eb4394294bc61cd490f4976eeea1504f9b8269ef7f766edc77c81e",
       "path": "interpreters/ports/dispatch_port.py"
     },
     {
@@ -707,19 +875,25 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "343b237619aa024413cb7b3aeb4ca0f776e3ea29d55d9b54800b7ad3aa4edf10",
+      "digest": "9dd2be1beafca85de7dd0d43283589fd87f59f0e7212fbcde7be835fced0e6e6",
       "path": "interpreters/ports/probe.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "31a4ba26bb92e9fadf9a5ef60f4b9609c620e710f86a8e081f4aee412ada1a65",
+      "digest": "d1086f67d31f097eda043330d0c868aac0802b47aa2f6d91f0ff32137e5a48ce",
       "path": "interpreters/ports/runtime.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "93a908c65d227f72a8a957add33ff0222d93052504fa49966004645f130ee5eb",
+      "digest": "6214221e734f4f2d53e2c315918af98057cbcf684ee9529568bf2f8123023ee0",
+      "path": "interpreters/ports/vcs.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "b3242a25ccecdc2ec1dac13b3e5a11617d3fa52ea75a4a2515fbb69ffdbad586",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -731,8 +905,44 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7944424e97eef6cfd9b340f3e554bb769919dd0c8ab78ed2e965940f7e640ff4",
+      "digest": "14cd47473a5bca7aa5a460e984b57cf43d3e56f8b627cdd1874170f36aa7a28b",
       "path": "interpreters/projection.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "0393ad3cead53b6b31bde93211738e20cfa61555f0e6d4733da9cfd14c612117",
+      "path": "interpreters/proofs/appetite_spent.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "937d3c3754fc4a0a8f8143ee62f662abfa221ff045b062c587b316146cd47254",
+      "path": "interpreters/proofs/artifact_place.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "96142a2052abcd9c7d0acf5b798450b5a938d9d688eb98aa898bfd41433d9931",
+      "path": "interpreters/proofs/card_children.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "d1844de67bf082c6e01521d0889091e8108cbbb71ce9a31317da70f303dc21d3",
+      "path": "interpreters/proofs/card_criteria.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "b3175a01f7c9f9eb5a929181c1d330d11b481a8cebb73620ce25e605105a7d6e",
+      "path": "interpreters/proofs/rule_verdict.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "5686745c4ff6e702b443000cc965b3970698027a4670c64aff3a5163414135de",
+      "path": "interpreters/proofs/waited.py"
     },
     {
       "accounted_by": "interpreter",
@@ -743,8 +953,20 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "2d83784e5b4a520b785aa043a29bd55afae15b616cbb0c7be219133257931ca2",
+      "digest": "ed8d970b0ff84a06e1b3430c800af948298816fb087cd268514f16f41b4df682",
+      "path": "interpreters/readings.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "18266cb989015e139b2a740aef80a44c0c1b0fb75d019eae1ebb19887bb4ee40",
       "path": "interpreters/reconcile.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "1a71b5a6d6e1d75205775e8a2b2b04152cc511d310007ab4471deb581f3bb967",
+      "path": "interpreters/relocation.py"
     },
     {
       "accounted_by": "interpreter",
@@ -761,13 +983,31 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "b537cf259eff3061eddb58e747711e7c5fdbe7b866bdb03fa4106c1292bd9ca2",
+      "path": "interpreters/returns.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "6db29765210dc0b28acc546a4dc5199b043ca8bcfdd8e7b44e051cfe85c6d19a",
       "path": "interpreters/space.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "374edabede857512f5c22499645d21e4df1b2f6db67e4acfc0ec271e96927e5c",
+      "digest": "527ce5da17003d190d92ef51fb88ca669dc166ef640456a569cfa09d1a9c2500",
+      "path": "interpreters/spans.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "a5c594f68c6368a6ae49b3ab100bd90246094b3557ad88eb7f19eb5093b569d9",
+      "path": "interpreters/spend/elapsed.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "5ee41dfa888119d3da2c9bea331186b4962642799b43fb23ec2a3a8980b6b7c0",
       "path": "interpreters/stance.py"
     },
     {
@@ -791,7 +1031,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4fcdf099c3bf76b1f7660f1f8762995200874676d918647df94b1d9a079ea645",
+      "digest": "06f8f4e40d2eacd8d585a1edebcbf734733840bc494942c4aa5f1cfaf357a698",
       "path": "interpreters/validation.py"
     },
     {
@@ -809,8 +1049,14 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0e32b32c6e2463c4443593c36d6c0ee2f1bc98718d6e4ca078322de8485e5f45",
+      "digest": "8258b1dabf7c61895dfa97dfa2b42ee0fc5ffa981508d1d7c600ec0cf5a657a4",
       "path": "interpreters/verbs/check.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "6cb69311dd85d053fc511cdf8e0e79554a0bf8bb64e72a5ad0d151467d8220f0",
+      "path": "interpreters/verbs/claim.py"
     },
     {
       "accounted_by": "interpreter",
@@ -833,19 +1079,25 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "ce357c202364075528a1960f2a02d7f1daa9cf5b630cc92fea2d1b1369ce4bf2",
+      "path": "interpreters/verbs/ground.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "81ede2cb3818cbf47dd2455712fa1173722d4a4cfa2f3247f8f434832e56c3b4",
       "path": "interpreters/verbs/inherit.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1de31abb7f81fec718f3e5fd864c65232e63bcd55d2400c49d0fe740ccb0b350",
+      "digest": "46a66251554b77963590e705349dd76ac60abd47c62de030f958a09159ce4f5b",
       "path": "interpreters/verbs/init.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "614535d6833e16a4211f4fe96d528b18d11762758cf58487b18f9daf9b8e7b80",
+      "digest": "96797656d5c524c966d61adc37a83c75719ff47621456d86c2965e8bf9ce7560",
       "path": "interpreters/verbs/judge.py"
     },
     {
@@ -857,8 +1109,14 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7a2cbd05c3627563d788b3c6170cd74689e9ca2f9f0ceec47a4f019cc4302932",
+      "digest": "3c6161926469e6ff9ef7fd27945298dafe25b9532c8c810d804ebf0e3bcffc2e",
       "path": "interpreters/verbs/move.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "8e411143d506d1120bc84ba3ebe8783e6c87a09bfb4fd2c5bde86614fde74c9c",
+      "path": "interpreters/verbs/propose.py"
     },
     {
       "accounted_by": "interpreter",
@@ -869,7 +1127,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d5840082fe2593d59aa4ed10a63e99bde1d4dd1d44659872dcb10ceca32e76ad",
+      "digest": "ffd66b3f5a8bfc0e085423a445729ed653cc888c2fdc7f0ff8a54262b1f1ceb3",
       "path": "interpreters/verbs/render.py"
     },
     {
@@ -887,7 +1145,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1806f01be0a5ded86d155b5863af2ca07625250ad97987122a787af17ba8bfa9",
+      "digest": "37e9e4265d98930c833dac74d0efcc4a2c22e2b1e90dfd9460d7d9c98039d121",
       "path": "interpreters/verbs/upgrade.py"
     },
     {
@@ -905,8 +1163,14 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "193aaf91f44b6b232f34500a1ea9fe90e8b12016399e822abe51e0b1c33df1a3",
+      "digest": "7caff67e2d59020273feb53ff6f625d04dcfd2abe49afdda01d62fc7025907e8",
       "path": "runtimes/classes.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "d11948fe5e55054792bc282bbe948f650f2e4187209c31ce6e0c20e20cc7f227",
+      "path": "schemas/arbitration.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -929,13 +1193,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "e36627bb291afe0b3723593ef0cf226d3533b6f8cb6223a90d89841b0d0eb357",
+      "digest": "1f7529da62acf0be292feb4050e11771a1ff4c203577cb203f5f7385249a0d44",
       "path": "schemas/capability.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "295fe234ee2577b75ccebd8353593303e780c3829e4486813d37394664f8c7d0",
+      "digest": "c1acc91b87ba44e6bf382be278c1443c4bbdc51c092f754d7a302b6fe388da29",
       "path": "schemas/card.schema.json"
     },
     {
@@ -947,13 +1211,19 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "de3f0ae2e2b91b988be6c2873ab0d7d0f78cbdcc2214813520a5485fb4ca6153",
+      "path": "schemas/claim.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "3ab0bcdea3f2d479d4b6e61814670be3316cd57326b92fb00905327a4ac85a6d",
       "path": "schemas/consumption.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "8de4cf3c2ae49d7dcbe30cd99689762634adc69b9e38523cd479acfa14b19c84",
+      "digest": "62ddc8febc0a64ccc54d139740b31e18b3878d57f7bc02f590f83b425fc7ca09",
       "path": "schemas/corpus-map.schema.json"
     },
     {
@@ -977,14 +1247,20 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d06dca495deabab2a99da69142bb31fcbdd77e5d6e01f38602afd232d88ce01f",
+      "digest": "50c589ed3b352a3ad2ba91b02ad675ec06c51184cfc3965245a92e735d8571df",
       "path": "schemas/dispatch-adapter.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d5a535eb1b7279ce75cbb3db43d69881398de3afbd30d82cf0ca23d7025a6e7b",
+      "digest": "ae5292d161dd1a1594cea13d5577f447aea1d3b2de4ad189b0fbe55766c6865a",
       "path": "schemas/dispatch-packet.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "aa4c0cf4b9fad20eb0f2b9ef408077983b90494d4cf5f7bc37ed73af3ee3e03d",
+      "path": "schemas/dispatch-return.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1001,14 +1277,26 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "884aa7ab84422694bc51f4f8a4bb889b42a31b969b038b6ecb9b0f4c98a6028a",
+      "digest": "cdb2225bd341c96fe0262efd33d2a5082b330675a0b698e2325c98f476388829",
       "path": "schemas/estate.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "e58d588f6ec217704f85becc1b611db54e84735b5f6733871c6ad60571c17f68",
+      "digest": "3b4841aecd2835645e1a78c7a33beec400290d59b27872c76e6e28a6352d8a2d",
+      "path": "schemas/eviction.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "f015e39b84ff0682ce3fe6e3116a4b70da9bfc7c358bb8e1a8b5cee1818c3790",
       "path": "schemas/front-matter.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "e614fed246f60ff938ab1c73f6b30078bdfbb402ddccfdf36b1de5a746cb59a6",
+      "path": "schemas/ground-reading.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1037,13 +1325,19 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "58d9b30d617c7d0f8eca0cadac5320592018c919ff6e81defbda672aa8854598",
+      "digest": "b740e37a8d318d6a49712dfc96aaa00968a0cf73ecd52cb346922df6ba13aa83",
       "path": "schemas/layout.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "1eaea6f0d1793b5b72e76bec23d6e0e170c4b9f0c24710dec651dce419e800a1",
+      "digest": "5386dab370abdfdf409027e7bc856a3ea8eda9a2116cddc1c185c5e246c14882",
+      "path": "schemas/lesson.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "aad9b07d171d20b37718925c42122b8db13de6b1789c55c86a56171de2689669",
       "path": "schemas/lifecycle.schema.json"
     },
     {
@@ -1085,6 +1379,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "ed86189f32b1c13ec9a24f1d2cc4502a82128bf8c23f97e6dc44bfe20ce91901",
+      "path": "schemas/position-shape.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "75a81ab2700b85f492e8eb30b413fe6c8baad020443e6836ea86405d292f20a2",
       "path": "schemas/profile.schema.json"
     },
@@ -1115,8 +1415,20 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "81223a87bf09216728e7dadb0042f1d7734a66de9c62fb875fba7e7efbebde11",
+      "digest": "710663e76ef24de7464b029ad783db47d77350135e72ab1d844508ac9a0a4f83",
       "path": "schemas/record-keeping.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "2572d78cccdccfd75adf97a4354413998081761b10e6d9c4ce85afbbde7e811c",
+      "path": "schemas/register-kind.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "b9a0a959dac1c40b4ce2fd47e879d70a032e4be4813817e533a6ca1c8aa4ceba",
+      "path": "schemas/register.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1127,13 +1439,25 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "9a7ece54d1a6b321e4c60992a2530458a7ddf3a29927bfa9afdc5608e898083c",
+      "digest": "b2b58d44f8e963515719a0121649084eb83122f3ea9b2eabf6506a23a598e3ed",
+      "path": "schemas/route-table.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "d898150ef39a500a201e74291e69d16a5372b107c648cb5598ebe80d32b832ec",
       "path": "schemas/runtime-class.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "40c91adf1a0c2ec6498a63076c59e6660985c9d64ef959cdc5b1414ba23cde52",
+      "digest": "211165d04b3bbe7a5687488f6010b993c8b11a5faf6e3aff8e08776fdda2ee0a",
+      "path": "schemas/runtime-observation.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "55a35d20ad16a294db69faa5637e41da5b33874dba5dba2f915405c7f6dc2357",
       "path": "schemas/runtime-surface.schema.json"
     },
     {
@@ -1175,7 +1499,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "3bf4a4b8974f6d66de2d98b9d79de743992b9acf0e70e0ac6209475e6099620c",
+      "digest": "a9c6211f6014e9f55ff83de4db02267e47d8fbba45596a44bdf9fa714f193e6d",
       "path": "schemas/task.schema.json"
     },
     {
@@ -1183,6 +1507,12 @@
       "class": "declaration",
       "digest": "90b915105e41ec3a6ecdec3e7d3b402a9331592ba7837c797764dcd3eae5aa62",
       "path": "schemas/workspace-provider.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "d853a605dca326235ae795a7b48be52c55b161b57ea3d3654190903fbc9cad6a",
+      "path": "seeds/agents.gitattributes"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1218,5 +1548,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-23T18:26:37+00:00"
+  "taken_at": "2026-10-15T17:34:43+00:00"
 }

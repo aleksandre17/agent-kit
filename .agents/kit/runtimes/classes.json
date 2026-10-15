@@ -41,7 +41,8 @@
     {
       "id": "write-scope",
       "means": "The runtime can be confined to a stated part of the workspace, and a write outside it is refused rather than performed and reported.",
-      "observed_by": "a run that attempts a write outside the stated scope, is refused, and leaves the refusal on record; a run that was simply never asked proves nothing."
+      "observed_by": "a run that attempts a write outside the stated scope, is refused, and leaves the refusal on record; a run that was simply never asked proves nothing.",
+      "observed_on": "a-refused-write"
     },
     {
       "id": "delegation",

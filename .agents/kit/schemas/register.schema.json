@@ -1,0 +1,94 @@
+{
+  "$id": "register",
+  "title": "A REGISTER -- rows a host keeps about one subject, each in a status its kind declares",
+  "description": "ADR-022 decision 10, amendment 3. Findings, visions, the standards met, the questions the doctrine could not answer: each is a register of ROWS, and a row's status is a word its KIND declares -- with what that status requires the row to carry. A row is never deleted; it is re-statused, so the history of an understanding survives, and git dates every change. A row PROMOTED out of a register names where it went, and that place cites the row back (`<register>#<row>`): a promotion recorded at one end only is how a rule acquires clauses nobody can date.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "kind",
+    "title",
+    "rows"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "kind": {
+      "description": "The register kind whose statuses this register's rows are in.",
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "says": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "status",
+          "at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1
+          },
+          "at": {
+            "description": "When the row took its present status.",
+            "type": "string",
+            "minLength": 1
+          },
+          "by": {
+            "type": "string",
+            "minLength": 1
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1
+          },
+          "declared_at": {
+            "description": "The ONE place the subject is declared -- `—` would be the finding itself, so a row with no home leaves this out.",
+            "type": "string",
+            "minLength": 1
+          },
+          "promoted_to": {
+            "description": "Where this row went, a path that cites it back.",
+            "type": "string",
+            "minLength": 1
+          },
+          "refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

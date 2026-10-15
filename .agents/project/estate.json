@@ -4,6 +4,13 @@
     {
       "capability": "governance",
       "class": "binding",
+      "digest": "d853a605dca326235ae795a7b48be52c55b161b57ea3d3654190903fbc9cad6a",
+      "mode": "seed",
+      "path": ".agents/.gitattributes"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
       "digest": "d4d7a2ef5c4527b89290e315aafd4a8a81f973059d6d8a8cde4f623292bc9f7b",
       "mode": "seed",
       "path": ".agents/.gitignore"
@@ -58,13 +65,6 @@
       "path": ".agents/generated/corpus/ROUTES.md"
     },
     {
-      "capability": "delivery",
-      "class": "projection",
-      "digest": null,
-      "mode": "projection",
-      "path": ".agents/generated/delivery/BOARD.md"
-    },
-    {
       "capability": "evaluation",
       "class": "projection",
       "digest": null,
@@ -83,7 +83,7 @@
       "class": "projection",
       "digest": null,
       "mode": "projection",
-      "path": ".agents/generated/governance/INDEX.md"
+      "path": ".agents/generated/governance/CAPABILITIES.md"
     },
     {
       "capability": "hygiene",
@@ -137,13 +137,6 @@
     {
       "capability": "delivery",
       "class": "binding",
-      "digest": null,
-      "mode": "space",
-      "path": ".agents/project/delivery/cards/"
-    },
-    {
-      "capability": "delivery",
-      "class": "binding",
       "digest": "56cc6c4dd6fa60e51045c7c8bb0f81fe0498722b3251a143bc23967bdd22b0fa",
       "mode": "seed",
       "path": ".agents/project/delivery/policy.json"
@@ -154,6 +147,27 @@
       "digest": "97728928464b62510647cfce52cce01d085823ccd580c5bd2a996885fc001174",
       "mode": "seed",
       "path": ".agents/project/doctrine/doctrine.json"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": "7fe96f8647016b25d1eb2391277ae50584b04530bd614c3e619783cdc5494e07",
+      "mode": "seed",
+      "path": ".agents/project/doctrine/law-scopes.json"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": "d16941c0a2132c9baea6fe36ad1f748093f5e871966503f708a7bcdc573a29fb",
+      "mode": "seed",
+      "path": ".agents/project/doctrine/laws.md"
+    },
+    {
+      "capability": "governance",
+      "class": "binding",
+      "digest": null,
+      "mode": "space",
+      "path": ".agents/project/doctrine/laws/"
     },
     {
       "capability": "enforcement",
@@ -205,32 +219,18 @@
       "path": ".agents/project/kit.lock.json"
     },
     {
-      "capability": "governance",
+      "capability": "observability",
       "class": "binding",
-      "digest": "7fe96f8647016b25d1eb2391277ae50584b04530bd614c3e619783cdc5494e07",
+      "digest": "cfbb046379716f4ea73d42adf890b07e0452a3ee4c5960e1c02b763c4230f515",
       "mode": "seed",
-      "path": ".agents/project/law-scopes.json"
-    },
-    {
-      "capability": "governance",
-      "class": "binding",
-      "digest": "d16941c0a2132c9baea6fe36ad1f748093f5e871966503f708a7bcdc573a29fb",
-      "mode": "seed",
-      "path": ".agents/project/laws.md"
+      "path": ".agents/project/observability/observation.json"
     },
     {
       "capability": "governance",
       "class": "binding",
       "digest": null,
       "mode": "space",
-      "path": ".agents/project/laws/"
-    },
-    {
-      "capability": "observability",
-      "class": "binding",
-      "digest": "cfbb046379716f4ea73d42adf890b07e0452a3ee4c5960e1c02b763c4230f515",
-      "mode": "seed",
-      "path": ".agents/project/observability/observation.json"
+      "path": ".agents/project/position/"
     },
     {
       "capability": "governance",
@@ -296,6 +296,13 @@
       "path": ".agents/runtime/evaluation/judgements/"
     },
     {
+      "capability": "runtimes",
+      "class": "ephemeral",
+      "digest": null,
+      "mode": "space",
+      "path": ".agents/runtime/observations/"
+    },
+    {
       "capability": "observability",
       "class": "ephemeral",
       "digest": null,
@@ -322,10 +329,81 @@
       "digest": "f920a5735a787286599bcbbe235f19ecd04fdc98ce9f04d7c8cae85028fd6a1b",
       "mode": "seed",
       "path": "docs/reference/README.md"
+    },
+    {
+      "capability": "delivery",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": "docs/work/BOARD.md"
+    },
+    {
+      "capability": "delivery",
+      "class": "binding",
+      "digest": null,
+      "mode": "space",
+      "path": "docs/work/cards/"
+    },
+    {
+      "capability": "delivery",
+      "class": "binding",
+      "digest": null,
+      "mode": "space",
+      "path": "docs/work/evidence/"
     }
   ],
   "kit_version": "0.1.6",
   "newline": "lf",
+  "relocated": [
+    {
+      "at": "2026-10-15T17:31:09+00:00",
+      "capability": "delivery",
+      "decision": "ADR-021 decision 3",
+      "digest": "h1:t2LuSGl5QHfd21lkH5hbNZrPRB4NCRP5Hlz5VK1GxEk=",
+      "from": ".agents/project/delivery/cards/",
+      "to": "docs/work/cards/"
+    },
+    {
+      "at": "2026-10-15T17:31:09+00:00",
+      "capability": "delivery",
+      "decision": "ADR-021 decision 3",
+      "digest": "h1:3gEUB6ccvP8pR4aJ4IphgDqEMlhShUmO2bvX+s66w3Y=",
+      "from": ".agents/generated/delivery/BOARD.md",
+      "to": "docs/work/BOARD.md"
+    },
+    {
+      "at": "2026-10-15T17:31:09+00:00",
+      "capability": "governance",
+      "decision": "ADR-021 decision 4",
+      "digest": "h1:pg8bpxiEtZXSSPFlFJA4eYw7a4IG42or7zcMrpCvyBY=",
+      "from": ".agents/project/laws.md",
+      "to": ".agents/project/doctrine/laws.md"
+    },
+    {
+      "at": "2026-10-15T17:31:09+00:00",
+      "capability": "governance",
+      "decision": "ADR-021 decision 4",
+      "digest": "h1:C2Z4t1uGMV0VeHhUCQgoYGzGvAlWqfGhg9r2eaozsFc=",
+      "from": ".agents/project/law-scopes.json",
+      "to": ".agents/project/doctrine/law-scopes.json"
+    },
+    {
+      "at": "2026-10-15T17:31:09+00:00",
+      "capability": "governance",
+      "decision": "ADR-021 decision 4",
+      "digest": "h1:eDpjxJ4oPWDKyyLULjH89iUSRidlKNsyiqQ3XgDbAtE=",
+      "from": ".agents/project/laws/",
+      "to": ".agents/project/doctrine/laws/"
+    },
+    {
+      "at": "2026-10-15T17:31:09+00:00",
+      "capability": "governance",
+      "decision": "ADR-021 decision 6",
+      "digest": "h1:IGN4Fb2Mn7iBtrdXEqMjuyCLBVgBQpmya/VdeK5a4Ok=",
+      "from": ".agents/generated/governance/INDEX.md",
+      "to": ".agents/generated/governance/CAPABILITIES.md"
+    }
+  ],
   "schema_version": 1,
   "signed_by": "agent-backend(owner-delegated:ADR-019-corpus-walk)",
   "succession_acts": [],
@@ -403,5 +481,5 @@
       "version": "1.0.0"
     }
   ],
-  "taken_at": "2026-09-23T18:45:02+00:00"
+  "taken_at": "2026-10-15T17:31:09+00:00"
 }

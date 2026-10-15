@@ -1,0 +1,68 @@
+{
+  "$id": "register-kind",
+  "title": "REGISTER KINDS -- the statuses a register's rows may be in, and what each status requires",
+  "description": "ADR-022. The kit ships the vocabulary and never a row (ADR-001 point 4). A status names the fields a row in it must carry -- `note` for a row dropped, `promoted_to` for a row promoted -- so what a status MEANS is checked, not trusted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kinds"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "kinds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says",
+          "statuses"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          },
+          "statuses": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "means"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "means": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "requires": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

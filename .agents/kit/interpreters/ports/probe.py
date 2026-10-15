@@ -9,6 +9,12 @@ Capture semantics: an emitted value of the form "$N" is the value captured by th
 item (1-based). A capture that is absent emits NOTHING for that key -- an unmeasured fact is a
 declared absence, never a fabricated default.
 
+A file the repository does not carry is never evidence either (ADR-021 decision 8). A pattern is
+matched against what the repository carries -- tracked, and untracked but not ignored -- so a
+dependency directory or a build output can never become a fact about the host, and a reading taken
+on a working copy reads the same on a clean clone. Where no repository answers, the filesystem is
+read, and the reading says no more than either could.
+
 A path the kit SERVED is never evidence about the host. A detector reads what the host brings; a
 file the kit itself projected there is the kit's own output, and a measurement that observes its
 own output is a loop: the reading would change because a render ran, and a profile taken before
@@ -19,6 +25,7 @@ kit's is one reading, handed in by the context from the kit's own record -- neve
 from __future__ import annotations
 
 import json
+import re
 
 from errors import KitError
 
@@ -43,9 +50,32 @@ def _path_exists(ws, spec, ours):
     return spec["path"] not in ours and ws.path(spec["path"]).exists(), True
 
 
+def _pattern(pattern: str):
+    """A glob as a regular expression over `/`-separated paths: `**/` is any number of whole
+    directories (none included), `*` and `?` never cross a `/`."""
+    out, i = "", 0
+    while i < len(pattern):
+        if pattern.startswith("**/", i):
+            out, i = out + "(?:[^/]+/)*", i + 3
+        elif pattern.startswith("**", i):
+            out, i = out + ".*", i + 2
+        elif pattern[i] == "*":
+            out, i = out + "[^/]*", i + 1
+        elif pattern[i] == "?":
+            out, i = out + "[^/]", i + 1
+        else:
+            out, i = out + re.escape(pattern[i]), i + 1
+    return re.compile(out + r"\Z")
+
+
 def _glob_any(ws, spec, ours):
-    matches = sorted(p.name for p in ws.root.glob(spec["pattern"])
-                     if p.relative_to(ws.root).as_posix() not in ours)
+    carried = ws.carried()
+    if carried is None:
+        found = [p.relative_to(ws.root).as_posix() for p in ws.root.glob(spec["pattern"])]
+    else:
+        shape = _pattern(spec["pattern"])
+        found = [rel for rel in carried if shape.match(rel)]
+    matches = sorted(rel.rsplit("/", 1)[-1] for rel in found if rel not in ours)
     return bool(matches), matches or None
 
 

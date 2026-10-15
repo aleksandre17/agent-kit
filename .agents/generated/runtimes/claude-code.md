@@ -28,12 +28,9 @@ belonging to a tool that genuinely needs nothing.
 
 ### Proven — 0 of 7
 
-**Nothing here can prove one.** Not "none proven": *no source of proof is declared at all*. No
-record kept in this repository names a runtime and a capability together, so this group is empty
-for a reason that has nothing to do with this runtime — and a zero taken against no instrument is
-an attribution that cannot fail, which certifies rather than measures. What would have to HAPPEN
-for each capability below is stated beside it, and until one of those things happens and leaves a
-record, everything this host says here is testimony.
+Nothing has been observed of this runtime. The records that would say otherwise are read from
+`runtime_observations`, and none of them names this runtime and a declared capability. That is a
+measurement with an instrument behind it, and it says: nothing, yet.
 
 ### Claimed — 0 of 7
 

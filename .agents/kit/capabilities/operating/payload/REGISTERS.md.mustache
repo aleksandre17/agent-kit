@@ -1,0 +1,15 @@
+# Registers
+
+> **PROJECTION — do not edit.** Recomputed from every register in `docs/work/registers/`. A row is never
+> deleted: it is re-statused in its register, and git dates the change. Kit {{kit_version}}.
+
+{{#reads.registers}}
+## {{title}} (`{{id}}`, kind `{{kind}}`)
+
+| row | status | since | title |
+|---|---|---|---|
+{{#rows}}| `{{id}}` | **{{status}}** | {{at}} | {{title}} |
+{{/rows}}
+{{/reads.registers}}{{^reads.registers}}
+**This host keeps no register.** Not "none found": a register is a document this host authors in `docs/work/registers/`, and it has authored none.
+{{/reads.registers}}

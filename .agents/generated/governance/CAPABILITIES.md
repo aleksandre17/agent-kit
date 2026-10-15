@@ -12,8 +12,9 @@ Declares the task lifecycle as data: cards are BINDING and carry exactly one sta
 | path | class | mode |
 | --- | --- | --- |
 | `.agents/project/delivery/policy.json` | binding | seed |
-| `.agents/project/delivery/cards/` | binding | space |
-| `.agents/generated/delivery/BOARD.md` | projection | projection |
+| `docs/work/cards/` | binding | space |
+| `docs/work/evidence/` | binding | space |
+| `docs/work/BOARD.md` | projection | projection |
 
 Gates declared by this capability:
 
@@ -51,16 +52,17 @@ Declares the four-class seam for a host: the reading, the declaration, the seede
 | `.agents/project/project.json` | binding | declaration |
 | `.agents/project/estate.json` | binding | estate |
 | `.agents/project/allowed_signers` | binding | seed |
-| `.agents/project/laws.md` | binding | seed |
-| `.agents/project/law-scopes.json` | binding | seed |
-| `.agents/project/laws/` | binding | space |
+| `.agents/project/doctrine/laws.md` | binding | seed |
+| `.agents/project/doctrine/law-scopes.json` | binding | seed |
+| `.agents/project/doctrine/laws/` | binding | space |
 | `.agents/project/position/` | binding | space |
 | `.agents/.gitignore` | binding | seed |
+| `.agents/.gitattributes` | binding | seed |
 | `.agents/kit/` | vendor | pinned |
 | `.agents/project/kit.lock.json` | binding | pinned-lock |
 | `.agents/taken/` | vendor | taken |
 | `.agents/project/taken.json` | binding | taken-declaration |
-| `.agents/generated/governance/INDEX.md` | projection | projection |
+| `.agents/generated/governance/CAPABILITIES.md` | projection | projection |
 | `.agents/project/succession/migration-map.json` | binding | seed |
 | `.agents/generated/INDEX.md` | projection | projection |
 
@@ -178,6 +180,7 @@ Declares that a RUNTIME -- the tool a host actually executes its agents on -- is
 | `.agents/generated/RUNTIMES.md` | projection | projection |
 | `.agents/generated/runtimes/` | projection | projection |
 | `.agents/generated/SERVED.json` | projection | projection |
+| `.agents/runtime/observations/` | ephemeral | space |
 
 Gates declared by this capability:
 

@@ -39,7 +39,7 @@ declared, in `lifecycle.json`, as data.
 
 ```
 # author a card (it is data -- the kit interprets cards, it does not own your text)
-.agents/project/delivery/cards/<id>.json
+docs/work/cards/<id>.json
 
 # move it, and the move is recorded with who and when
 kit move --root . --card <id> --to shaped --by <who>

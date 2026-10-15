@@ -88,14 +88,9 @@ def _calibration(ctx, rules: list, reading_of) -> list:
 def _over(ctx, name: str):
     """The readable these dispositions are read over, resolved through the one door that turns an
     install into a value. A gate that opened the path itself would be deciding the shape of
-    somebody else's declaration."""
-    readings = collection.read_all(ctx, ctx.enabled_capabilities())
-    if name not in readings:
-        raise declared.DeclarationError(
-            f"this gate was declared over a readable named {name!r}, which no enabled capability "
-            f"declares; the names declared are {sorted(readings)}"
-        )
-    return readings[name]
+    somebody else's declaration. The resolution has one home and this is not it -- it stood here
+    and, character for character, beside another judge as well."""
+    return collection.named_reading(ctx, name, declared.DeclarationError)
 
 
 def _scan(ctx, params, reading_of) -> list:

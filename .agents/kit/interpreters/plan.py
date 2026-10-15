@@ -22,6 +22,12 @@ DISPOSITIONS = {
     "remove": "removed",
 }
 
+#: What only a PLAN may say about a path -- never an act, so never a word a steward names for a
+#: file. `unforeseen`: the reading this path's fate depends on does not exist yet (an owed relocation
+#: has not moved it into place). Said so, rather than guessed: an unreadable foresight shown as a
+#: removal is the plan lying in the one direction that costs most.
+FORESIGHT = {"unforeseen": "unforeseen"}
+
 
 class Write:
     """One planned effect on the host. Data only: it states what would happen, and cannot act."""
@@ -30,7 +36,7 @@ class Write:
 
     def __init__(self, disposition: str, klass: str, mode: str, capability: str,
                  target: str, item=None) -> None:
-        if disposition not in DISPOSITIONS:
+        if disposition not in DISPOSITIONS and disposition not in FORESIGHT:
             raise KeyError(f"undeclared disposition {disposition!r}")
         self.disposition = disposition
         self.klass = klass
@@ -41,7 +47,7 @@ class Write:
 
     @property
     def accomplished(self) -> str:
-        return DISPOSITIONS[self.disposition]
+        return {**DISPOSITIONS, **FORESIGHT}[self.disposition]
 
     def as_row(self) -> tuple:
         return (self.disposition, self.klass, self.mode, self.capability, self.target)

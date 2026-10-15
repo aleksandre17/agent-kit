@@ -30,14 +30,23 @@ one; a budget row that was accepted and is now gone, which is a raise to infinit
 deletion; and a measured count standing above the ceiling that was supposed to cap it. It refuses
 nothing else. A first-ever budget row is its own baseline and is PRINTED as one, because a host
 that has just begun measuring has done the thing this gate exists to encourage.
+
+**The terminal value, and why this module answers for it.** A ceiling can fall until it is nothing
+left to spend, and at that value the host has undertaken that the count it caps does not exist here
+at all. Which budgets stand there is a reading of the same rows, from the same map, located the
+same way -- so it is answered HERE, published for the one discovery that already finds everything
+else this module publishes, and never located a second time by whoever needs it. What that fact
+then COSTS is no business of this gate: this module reports an undertaking, and what a judgement's
+failure does to a run is settled where every other stance is (ADR-006), out of declarations this
+gate neither reads nor owns.
 """
 
 from __future__ import annotations
 
 import json
-import subprocess
 
 import corpus
+import accepted as accepted_state
 import gatekinds
 from errors import KitError
 
@@ -47,6 +56,12 @@ from errors import KitError
 #: the framework's permission to be judged.
 KIND = "budget-ratchet"
 BUDGETS, MEASURE, CEILING, MEASURED = "budgets", "measures", "ceiling", "measured"
+
+#: The value below which a ceiling cannot fall and at which it has nothing left to concede. It is
+#: arithmetic and not a threshold: the kit ships no number that decides anything (ADR-001 point 4),
+#: and this one is the end of the scale the host chose to count on, not an opinion about where a
+#: host should be.
+TERMINAL = 0
 
 #: The registry entry a gate module publishes its MEASURES under -- read by the one discovery that
 #: already finds gate kinds, so which module can measure what is answered in a single place.
@@ -61,25 +76,6 @@ class RatchetError(KitError):
 
 
 # -- the previous accepted state ----------------------------------------------------------------
-def _git(root, argv: list) -> tuple:
-    """`(what git said, None)` or `(None, why it could not say it)`.
-
-    Bytes are decoded here and nowhere else, as UTF-8 and never as the machine's locale: two sides
-    agreeing on a name and disagreeing on its encoding is the failure that reads as a thing simply
-    not being there (Cardinal VII). A missing git, a tree that is not a repository and a path that
-    is not in HEAD all arrive here as the same kind of answer -- a REASON, which the caller states
-    instead of guessing past it.
-    """
-    try:
-        done = subprocess.run(["git", "-C", str(root), *argv], capture_output=True)
-    except (OSError, ValueError) as exc:
-        return None, f"git could not be run over this tree -- {exc}"
-    if done.returncode != 0:
-        said = done.stderr.decode("utf-8", "replace").strip()
-        return None, said or f"git exited {done.returncode} and said nothing"
-    return done.stdout.decode("utf-8", "replace"), None
-
-
 def _accepted(ctx, space: str) -> tuple:
     """`(the budgets of the previous accepted state, None)` or `(None, the absence in its own
     words)`.
@@ -89,7 +85,7 @@ def _accepted(ctx, space: str) -> tuple:
     must still see, and enumerating the tree's own files would lose it in the one case that matters.
     """
     root = ctx.workspace.path(".")
-    listing, why = _git(root, ["ls-tree", "-r", "--name-only", "--full-tree", f"HEAD:./{space}"])
+    listing, why = accepted_state.listing(root, space)
     if listing is None:
         return None, (
             f"THERE IS NO PREVIOUS ACCEPTED STATE FOR {space!r}: {why}. Every budget below is read "
@@ -104,7 +100,7 @@ def _accepted(ctx, space: str) -> tuple:
         if not name.endswith(".json"):
             continue
         rel = f"{space}/{name}"
-        text, why = _git(root, ["show", f"HEAD:./{rel}"])
+        text, why = accepted_state.text(root, rel)
         if text is None:
             return None, (
                 f"THE PREVIOUS ACCEPTED STATE COULD NOT BE READ: {rel} is in HEAD and its content "
@@ -282,7 +278,33 @@ def _nothing_budgeted(space: str, records: list, gone: list) -> str:
     )
 
 
+def _exhausted(ctx, params) -> dict:
+    """Every measure this host has undertaken at the terminal value, and the file it wrote it in.
+
+    A DECLARATION is read and NO count is taken. The two are not interchangeable and the difference
+    is the whole safety of this answer: a ceiling is what the host undertook, a measurement is what
+    the world happens to hold this minute, and a measure that cannot be taken answers `None` rather
+    than nothing-is-wrong. An undertaking read from the world would therefore lapse on the day the
+    world became unreadable -- quietly, and on a green surface. Read from the row, it stands until
+    the host restates it, and the only restatement this gate will accept is a lowering.
+
+    The previous accepted state is not consulted either, and deliberately: what a host undertakes
+    TODAY is what binds it today. HEAD is this gate's answer to *which direction did this move*,
+    which is a different question and stays where it is asked.
+    """
+    _space, records = corpus.declaration(ctx, params)
+    rows, _findings = _declared(records)
+    return {name: rel for name, (rel, row) in rows.items() if row[CEILING] <= TERMINAL}
+
+
 #: What this module PROVIDES. One kind, and no measure of its own: what can be budgeted is
 #: published by the modules that already read it, and arrives here through the same discovery that
 #: finds a gate kind.
 KINDS = {KIND: _ratchet}
+
+#: What this module can tell a reader about the host's UNDERTAKINGS, keyed by the kind of declared
+#: row that says where they live -- so the answer is reached the way every gate is reached, from a
+#: declaration, and a host that has declared no such row is asked nothing. Published here because
+#: this is where those rows are already read; a second reader of them is the drift Cardinal III
+#: forbids, and it would go on agreeing with this one until the day one of the two was fixed.
+EXHAUSTED = {KIND: _exhausted}

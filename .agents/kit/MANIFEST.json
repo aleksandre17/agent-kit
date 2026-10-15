@@ -103,12 +103,17 @@
     {
       "id": "fitness",
       "declaration": "capabilities/fitness/capability.json"
+    },
+    {
+      "id": "operating",
+      "declaration": "capabilities/operating/capability.json"
     }
   ],
   "detectors": [
     "detectors/ci-workflows.json",
     "detectors/container-compose.json",
     "detectors/database-migrations.json",
+    "detectors/dotnet-project.json",
     "detectors/declared-test-runner.json",
     "detectors/git-repository.json",
     "detectors/go-module.json",
@@ -131,6 +136,8 @@
     "record-keeping": "schemas/record-keeping.schema.json",
     "corpus-map": "schemas/corpus-map.schema.json",
     "front-matter": "schemas/front-matter.schema.json",
+    "eviction": "schemas/eviction.schema.json",
+    "position-shape": "schemas/position-shape.schema.json",
     "obligation-markers": "schemas/obligation-markers.schema.json",
     "card": "schemas/card.schema.json",
     "delivery-policy": "schemas/delivery-policy.schema.json",
@@ -163,6 +170,15 @@
     "dispatch-packet": "schemas/dispatch-packet.schema.json",
     "dispatch-adapter": "schemas/dispatch-adapter.schema.json",
     "workspace-provider": "schemas/workspace-provider.schema.json",
-    "task": "schemas/task.schema.json"
+    "task": "schemas/task.schema.json",
+    "lesson": "schemas/lesson.schema.json",
+    "dispatch-return": "schemas/dispatch-return.schema.json",
+    "route-table": "schemas/route-table.schema.json",
+    "ground-reading": "schemas/ground-reading.schema.json",
+    "runtime-observation": "schemas/runtime-observation.schema.json",
+    "claim": "schemas/claim.schema.json",
+    "arbitration": "schemas/arbitration.schema.json",
+    "register": "schemas/register.schema.json",
+    "register-kind": "schemas/register-kind.schema.json"
   }
 }

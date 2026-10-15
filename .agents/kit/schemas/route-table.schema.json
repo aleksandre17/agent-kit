@@ -1,0 +1,114 @@
+{
+  "$id": "route-table",
+  "title": "A ROUTE TABLE -- how this host routes a task, on two axes, and which proofs it may run",
+  "description": "ADR-022 decision 3. Routing is chosen on two facts a packet states -- how much unmade judgement it holds, and what a wrong answer costs to undo -- and the ANSWER in each cell is the host's: two teams route differently and both are right, so the kit ships the grammar and nothing in any cell. A cell may name the role it is routed to, the adapter, whether a verification profile is required, a budget ceiling and a packet ceiling. A profile is a NAMED argv run in the worker's tree on return -- the only thing the port will ever execute on a task's behalf. No cell declared is the declared zero: packets are carried and nothing is judged by their routing facts, which the port says.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "cells",
+    "profiles"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "cells": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "decision_density",
+          "reversibility"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "decision_density": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reversibility": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "description": "The role a task in this cell is dispatched as.",
+            "type": "string",
+            "minLength": 1
+          },
+          "adapter": {
+            "description": "The adapter a task in this cell is routed to.",
+            "type": "string",
+            "minLength": 1
+          },
+          "requires_profile": {
+            "type": "boolean"
+          },
+          "budget": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "calls": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "peak_context": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "ceiling_chars": {
+            "description": "The longest instruction a packet in this cell may carry: an inlined wall is re-billed on every call of the run.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "argv",
+          "timeout_s"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "argv": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "timeout_s": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

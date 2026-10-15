@@ -12,6 +12,7 @@ never open (Cardinal II).
 
 from __future__ import annotations
 
+import json
 import re
 
 import projection
@@ -99,10 +100,34 @@ def _title_claim_within_authority(ctx, params):
     return failures
 
 
+def _calibrate_schema_valid(host):
+    """A binding file that does not honour its schema is flagged; one that does is admitted."""
+    params = {"file": "declared.json", "schema": "arbitration"}
+    stated = {"schema_version": host({}).manifest.version_of(params["schema"])}  # the schema's own
+    specimen = host({"declared.json": json.dumps(stated)})
+    lookalike = host({"declared.json": json.dumps(dict(stated, window_minutes=0))})
+    return _schema_valid(specimen, params), _schema_valid(lookalike, params)
+
+
+def _calibrate_path_class_total(host):
+    """A file no class declaration covers is flagged; one exactly one covers is admitted."""
+    declared = {"class_declarations": lambda: [("plane/kept/", "vendor")]}
+    params = {"root": "plane"}
+    specimen = host({"plane/kept/a.txt": "a", "plane/stray.txt": "b"}, **declared)
+    lookalike = host({"plane/kept/a.txt": "a"}, **declared)
+    return _path_class_total(specimen, params), _path_class_total(lookalike, params)
+
+
 KINDS = {
     "title-claim-within-authority": _title_claim_within_authority,
     "schema-valid": _schema_valid,
     "path-class-total": _path_class_total,
     "projection-reproducible": _projection_reproducible,
     "reading-current": _reading_current,
+}
+
+#: Each kind's calibration: the specimen it must flag and the lookalike it must admit.
+CALIBRATIONS = {
+    "schema-valid": _calibrate_schema_valid,
+    "path-class-total": _calibrate_path_class_total,
 }

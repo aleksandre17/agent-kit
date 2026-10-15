@@ -35,6 +35,7 @@ import estate as estate_module
 import hostlock
 import init as init_verb
 import reconcile
+import relocation
 from errors import KitError, PendingApproval
 
 SUMMARY = "reconcile what was shipped, what the host has, and what this kit ships -- then install"
@@ -97,7 +98,10 @@ def run(ctx, args) -> int:
 
     stewards = estate_module.stewardship(ctx)
     enabled = ctx.enabled_capabilities()
-    rows = reconcile.survey(ctx, enabled, recorded, stewards, ctx.adopted)
+    # The relocations this host owes are reconciled AS IF carried out (ADR-021): `init` carries
+    # them out first, so the verdict printed here is the verdict over the tree it will write.
+    moved = relocation.view(relocation.planned(ctx, enabled))
+    rows = reconcile.survey(ctx, enabled, recorded, stewards, ctx.adopted, moved)
     _report(ctx, recorded, rows, stewards)
 
     if args.approve:
@@ -107,7 +111,7 @@ def run(ctx, args) -> int:
             row["path"]: doors.record(args.approve, ctx.clock.now()) | {"superseded": row["here"]}
             for row in reconcile.refused(rows) if row["adoptable"] and row["here"]
         }
-        rows = reconcile.survey(ctx, enabled, recorded, stewards, ctx.adopted)
+        rows = reconcile.survey(ctx, enabled, recorded, stewards, ctx.adopted, moved)
 
     _refuse(rows)
 

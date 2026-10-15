@@ -91,13 +91,21 @@
       "from": "in-flight",
       "to": "verified",
       "owner": "verifier",
-      "exit": "evidence, not testimony: the exit criterion was observed to hold"
+      "computed": { "proof": { "kind": "criteria-all-hold", "ref": "criteria" } },
+      "exit": "evidence, not testimony: every criterion the card declares resolved to a proof that held, and the machine refuses the passage until they do"
     },
     {
       "from": "verified",
       "to": "landed",
       "owner": "doer",
-      "exit": "the change is in the trunk and reachable by everyone"
+      "computed": {
+        "proof": {
+          "kind": "descendants-all-hold",
+          "ref": "parent",
+          "params": { "each": { "kind": "criteria-all-hold", "ref": "criteria" } }
+        }
+      },
+      "exit": "the change is in the trunk and reachable by everyone -- and so is everything decomposed out of it: every card hanging under this one, at any depth, has every criterion it declares resolved to a proof that held. A card that was broken into parts is read from its parts, so nothing lands by saying so while a piece of it is still open"
     },
     {
       "from": "landed",

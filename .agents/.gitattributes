@@ -1,0 +1,3 @@
+# The pinned kit and every projection are judged byte for byte against their lock and records, so no
+# checkout may translate their line endings: what a clone receives is what was committed (ADR-021).
+* -text

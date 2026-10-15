@@ -47,6 +47,43 @@
       "minItems": 1,
       "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
         "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+    },
+    "criterion_statuses": {
+      "description": "What a card's acceptance criterion may be COMPUTED to be (ADR-020 decision 7). A vocabulary and never an enum in a schema: a new reading of a proof is a row, and no interpreter holds the set. None of these is writable by any principal -- the rows describe results of a resolution, not fields on a document. Every row carries one machine fact beside its prose, for the reason the authorities rows do: an interpreter must be able to turn a reading into the word for it WITHOUT holding any of these words in its code (Cardinal IV).",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary", "holds"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 },
+          "holds": { "description": "Which reading this word is the word for: true where the proof was taken and held, false where it was taken and did not hold, null where no reading could be taken at all. Three-valued on purpose and never flattened to a boolean -- a missing referent and a refuted claim are different facts about the world, and the null is what keeps them apart all the way to the surface. Exactly one row may carry each value.", "type": ["boolean", "null"] } } }
+    },
+    "appetite_units": {
+      "description": "The units a bet's APPETITE may be declared in (ADR-020 decision 9). The kit ships the words and never a number: how much is the host's, stated on its own card, and a unit is legitimate here only while consumption in it can be read passively from records the system already writes.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+    },
+    "section_sources": {
+      "description": "Where a declared section of a bounded artifact gets its content FROM (ADR-020 decisions 3 and 4). A vocabulary and never an enum in a schema, for the same reason every other list here is one: the day a third provenance exists it is a row, and no shape declaration, gate or passage is edited to admit it.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary", "derived"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 },
+          "derived": { "description": "The machine fact this word carries: whether a section of this provenance has its content COMPUTED from a declaration that lives elsewhere. It is here, on the row, for the same reason a criterion status carries its reading: the passage that fills a section and the gate that judges one must be able to tell the two apart, and an interpreter that recognised a particular word would have privileged a row of somebody else's vocabulary -- so the day a third provenance is declared, it says which of the two it behaves like and nothing is edited to admit it. `true` means a hand writing here is writing a second home for a fact it does not own, and what it wrote is replaced unread. `false` means this section IS the one home of what it says, so nothing may overwrite it and deleting it destroys something.", "type": "boolean" } } }
+    },
+    "audiences": {
+      "description": "Who a declared field or section is written FOR (ADR-020 decision 3). Named rather than assumed: content whose reader is unstated is addressed to whoever happens to open the artifact, and under a ceiling that reader is the one who decides what to cut. A new audience is a row here.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
+    },
+    "transition_modes": {
+      "description": "How a passage between two work states is decided (ADR-020 decision 8). Every transition is one of these or it is an unowned passage, which is how work silently advances; the words live here and the lifecycle grammar carries the parameter each of them needs.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "summary"],
+        "properties": { "id": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9-]*$" }, "summary": { "type": "string", "minLength": 1 } } }
     }
   }
 }

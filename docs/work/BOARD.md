@@ -1,7 +1,7 @@
 # Delivery board
 
 > **PROJECTION — do not edit.** Every column below is computed from the cards in
-> `.agents/project/delivery/cards/` and the lifecycle those cards move through. Delete this file
+> `docs/work/cards/` and the lifecycle those cards move through. Delete this file
 > and run `render`: it comes back byte-identical. Edit it and run `check`: the edit is caught,
 > because a projection that survives editing has become a second home for a state.
 >

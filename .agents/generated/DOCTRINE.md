@@ -41,6 +41,8 @@ bundles stay comparable — an answer in private words is legible to nobody but 
 
 - **cardinal** — a standing verdict about conduct, stated by its publisher in no repository's vocabulary, addressed so that it can be cited rather than quoted.
 - **chapter** — a body of conduct doctrine about one subject -- an economy, a risk posture, an environment -- distributed as one document and answered as one. A chapter that applies only in some environments is not gated by a condition inside itself: its bundle declares a `requires` on a profile fact, so the condition lives in the declaration and never in an interpreter.
+- **skill** — a body of method a runtime loads only when a task needs it -- a CATALOG that is always small and chapters read on demand, so carrying a skill costs its index and nothing else until it is used.
+- **playbook** — a named chain of steps for one recurring situation, naming what each step produces, so the situation is met the same way every time and a deviation is a decision.
 
 ## How this page cannot lie
 

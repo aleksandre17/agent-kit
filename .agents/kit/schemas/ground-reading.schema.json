@@ -1,0 +1,54 @@
+{
+  "$id": "ground-reading",
+  "title": "A GROUND READING -- one measured fact, dated to the evidence that produced it",
+  "description": "ADR-022 decision 4. A reading names the INSTRUMENT that produced it and the narrowest PATHS it depends on, and carries the digest of those paths' content at the moment it was taken. It is returned only while they still digest the same; otherwise it is a declared miss. Observed state: it lives in the observed plane and a clone that has none is correct.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "key",
+    "fact",
+    "instrument",
+    "paths",
+    "digest",
+    "at"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fact": {
+      "type": "string",
+      "minLength": 1
+    },
+    "instrument": {
+      "type": "string",
+      "minLength": 1
+    },
+    "paths": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "digest": {
+      "description": "{path: content digest} -- `absent` where the path held nothing.",
+      "type": "object"
+    },
+    "at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "by": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

@@ -4,13 +4,24 @@
   "description": "The blueprint (docs/proposals/PROPOSAL-agent-framework-blueprint.md, Part VI) draws two trees, UPSTREAM and HOST, as a fixed set of paths that must exist in their drawn place by their drawn name -- the FLOOR, never the ceiling (amendment 1). This is the ONE declaration of that floor for one side; a floor gate is a GENERIC projection of it, never a hand-written list of paths inside an interpreter. A path whose real content belongs to a later link is named `pending` with the link that carries it -- never a fabricated placeholder (Cardinal V).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "side", "source", "entries"],
+  "required": [
+    "schema_version",
+    "side",
+    "source",
+    "entries"
+  ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
     "side": {
       "description": "Which box of the Part VI drawing this reading is of.",
       "type": "string",
-      "enum": ["upstream", "host"]
+      "enum": [
+        "upstream",
+        "host"
+      ]
     },
     "source": {
       "description": "Where the drawing that this declaration transcribes lives -- file and line range.",
@@ -23,7 +34,10 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["path", "kind"],
+        "required": [
+          "path",
+          "kind"
+        ],
         "properties": {
           "path": {
             "description": "Root-relative, POSIX-formed. A directory path ends in '/'.",
@@ -32,7 +46,10 @@
           },
           "kind": {
             "type": "string",
-            "enum": ["dir", "file"]
+            "enum": [
+              "dir",
+              "file"
+            ]
           },
           "drawn_as": {
             "description": "The label the drawing itself uses for this path, for a reader comparing the two.",
@@ -57,10 +74,42 @@
             "description": "RECORDS MAP. The retrieval key: the task triggers, in the words a task actually arrives in, that pull this place into context. An agent consults the map by these instead of searching the tree.",
             "type": "array",
             "minItems": 1,
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           },
           "lifecycle": {
             "description": "RECORDS MAP. How this place's content ages and where it goes (its ISO 15489 disposition): the id of one `lifecycles` row of the record-keeping vocabulary.",
+            "type": "string",
+            "minLength": 1
+          },
+          "realised_as": {
+            "description": "ADR-021. The drawn path's truth lives at ANOTHER declared place, by a named decision that says why that form is better. The floor checks the realised path instead of the drawn one. A row is pending OR realised, never both: pending promises to build the drawn form, realised says a decision replaced it.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "decision"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "decision": {
+                "type": "string",
+                "minLength": 1
+              },
+              "pending": {
+                "description": "The link that will BUILD the realised form, where the decision is taken and its form not yet built. The drawn form is still never promised: what is pending is the replacement.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "declared_by": {
+            "description": "ADR-021. A path BEYOND the drawing, kept because the named decision says it improves the form. Checked like a drawn path; a path beyond the drawing with no row is undeclared.",
             "type": "string",
             "minLength": 1
           },
@@ -70,6 +119,14 @@
             "minLength": 1
           }
         }
+      }
+    },
+    "closed": {
+      "description": "ADR-021 decision 7. Directories this drawing is EXHAUSTIVE at (`.` is the root): every tracked child of one is covered by a row -- drawn, realised or `declared_by` -- or it is undeclared. A directory not named here may hold more than the drawing shows; the drawing is a floor there.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^(\\.|[^/].*/)$"
       }
     }
   }

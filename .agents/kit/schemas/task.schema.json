@@ -278,6 +278,18 @@
     "boundary": {
       "description": "The translation layer this dispatch crossed, measured once and carried with the record (Cardinal VII): two intelligences can agree on a path's NAME and disagree completely on what it points to.",
       "type": "object"
+    },
+    "return": {
+      "description": "The worker's structured return, as validated on arrival (ADR-022). Absent where the adapter declares no carrier -- a declared absence the port prints.",
+      "type": "object"
+    },
+    "verification": {
+      "description": "The verification profile run in the worker's tree on return: its id, exit, and the tail of what it said.",
+      "type": "object"
+    },
+    "route": {
+      "description": "The route-table cell this task was judged against, or the statement that the host declares none.",
+      "type": "object"
     }
   }
 }

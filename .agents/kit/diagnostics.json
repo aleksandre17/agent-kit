@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 55,
+  "issued": 71,
   "codes": [
     {
       "code": "KIT0001",
@@ -332,6 +332,102 @@
       "status": "active",
       "title": "a budget is declared over a measure nothing can take",
       "explanation": "A host caps a corpus-wide count by writing a budget row in its corpus map: the id of a MEASURE, the ceiling it undertakes to hold, and the date the number was taken. The measures are published by the modules of the kit that already perform those readings, and discovered exactly as gate kinds are. This refusal is raised when a row names a measure no module publishes -- almost always a spelling, occasionally a map written against a kit that does not carry that reading yet. It is refused rather than skipped because a ceiling over a count nobody can take would pass FF-CORPUS-RATCHET on every run for the rest of its life, and would read, to anyone auditing the map, exactly like a budget that was being honoured (Cardinal V). The published names are printed with the refusal: name one of them, or delete the row."
+    },
+    {
+      "code": "KIT0056",
+      "status": "active",
+      "title": "a write is refused because what it removed could not be written down first",
+      "explanation": "A bounded artifact carries the current POSITION and nothing else; what was true earlier is the RECORD, and the record is append-only (ADR-020 decision 2). So every accepted write journals the TEXT it removes -- the text, not a digest of it -- BEFORE the artifact is replaced, inside the lock the writer already holds. This refusal is raised when that append could not be made durable, or when the before-image could not be written as an event of the `eviction` schema. The artifact is UNCHANGED and the removed text is still in it: a removal that cannot be written down is not performed, which is what makes deletion a move by construction rather than a discipline anybody keeps. It is refused rather than deferred because the alternative is the measured failure this mechanism exists against -- true, dated history deleted under pressure to buy room in a bounded surface, leaving no trace anywhere. Repair the journal the writer appends to (an unwritable path, a parent that is not a directory, a full disk) and write again; nothing is retried silently, because a silent retry of a write whose record failed is the same loss with one more chance to happen."
+    },
+    {
+      "code": "KIT0057",
+      "status": "active",
+      "title": "an artifact declares a count of its own losses that is not a count",
+      "explanation": "A bounded artifact states, in its own front matter, how many of its removals were preserved in the record and curated nowhere -- the number a host may cap with a budget row over the measure of the same name. This refusal is raised when that field holds something other than digits. It is refused rather than read as zero: the field is the count of what this artifact has lost, and an interpreter that substituted a zero would report a corpus that has lost nothing in exactly the case where the count of its losses is unreadable (Cardinal V). Write digits, or remove the field entirely -- an artifact that says nothing has honestly said nothing, and is counted as such."
+    },
+    {
+      "code": "KIT0058",
+      "status": "active",
+      "title": "a span was told to cool and its section declares no destination",
+      "explanation": "The sections of a bounded position artifact are ROWS of a declaration, and each row states the record KIND a cold span of that section belongs to (ADR-020 decision 3). Cooling is one generic passage -- evict the span, land it at the destination its section declares, journal both halves -- and it knows no section name and no path. This refusal is raised when the shape declares no such section, or declares it without a `cools_to`. Both are LEGAL states of a declaration and neither is a defect in the artifact: the first says the section has not been described yet, the second says that nothing in this section cools. What is refused is the guess. A destination invented at the moment of pressure is how true, dated history ends up filed where nobody will look for it -- tidy, preserved, and lost. Nothing was moved and the artifact is unchanged. Declare `cools_to` on the section and cool again, or remove the text through the ordinary write, where it is journalled before it leaves and counted as an unlanded removal."
+    },
+    {
+      "code": "KIT0059",
+      "status": "active",
+      "title": "a span was carried somewhere no address came back from",
+      "explanation": "A landing is a reference a later reader FOLLOWS: the record kind the text went to, and the address it is now at. This refusal is raised when the port that carries a cooled span returns no usable address. It is refused rather than journalled with a blank, because an event that names a kind and no address claims the text is somewhere without saying where -- exactly as useful as a digest, and worse than useless in one way that matters: it would be counted as a MOVE, so the artifact's unlanded counter would fall while the span became unfindable. Nothing was journalled and the artifact is unchanged. Whether the carrying itself happened is the port's to report and is not assumed here in either direction; fix the port to return the address it landed at, and cool again."
+    },
+    {
+      "code": "KIT0060",
+      "status": "active",
+      "title": "a kind of proof is claimed by two resolvers, or a reading has no word",
+      "explanation": "A criterion names its proof as a TYPED REFERENCE, and the kinds of reference are an open registry: a module publishes the kinds it answers and the registry finds it because it is there (ADR-020 decision 7). This refusal is raised when two modules publish the same kind -- a name that resolves to two readings is not a name, and ordering them by filename would make which reading you get a property of the alphabet -- and when a reading comes back that the status vocabulary has no word for, which happens when a row is added to the registry's answers without a row being added to the words. Note what is NOT this refusal: a reference whose kind nothing installed here answers is not an error at all. It is a reading nobody could take, it is reported as such, and it never passes and never fails. Nothing was computed and no card was touched. Publish the kind from one module, or declare the missing word where the words are declared."
+    },
+    {
+      "code": "KIT0061",
+      "status": "active",
+      "title": "a passage a machine decides was asked for, and the reference that decides it did not hold",
+      "explanation": "Every passage between two work states is either a judgement a named principal holds or a computation a machine makes, and the two exclude each other (ADR-020 decision 8). This refusal is raised on the second kind: the passage was asked for, the reference the declaration names was resolved, and it did not come back true. The refusal says which of the two reasons it was, because the cure differs -- a reference that was read and did NOT hold is a fact about the work, and a reference that could not be read at all is a fact about the record, most often a referent that has moved or was never there. Neither one passes: nothing enters a computed state on an unobserved proof, and no principal may declare it instead, because a state anybody could type means only that somebody said so and turns every piece of evidence beside it into decoration. The card is unchanged and no passage was recorded. Make the reference hold, or fix what it points at."
+    },
+    {
+      "code": "KIT0062",
+      "status": "active",
+      "title": "a unit of spend is claimed by two readings",
+      "explanation": "A record may declare an APPETITE -- an amount and the unit it is counted in -- and what has been spent against it is READ from the receipts this system already writes, through an open registry: a module publishes the units it can read and the registry finds it because it is there (ADR-020 decision 9). This refusal is raised when two modules publish the same unit. A name that resolves to two readings is not a name, and ordering them by filename would make which number you get a property of the alphabet. Note the two things that are NOT this refusal, because neither is an error at all. An appetite declared in a unit nothing installed here reads is a reading nobody could take: it is REPORTED, in those words, and it never passes and never fails -- a limit nothing can measure reads exactly like a limit that is being kept, which is why it is said out loud. And a limit found SPENT is not a refusal of this kind either: it is the line stopping at a door, reported with the owner named, because whether work past its limit is worth finishing is the owner's judgement and no machine's. Publish the unit from one module."
+    },
+    {
+      "code": "KIT0063",
+      "status": "active",
+      "title": "a computation was asked for a section that has no span",
+      "explanation": "A section of a bounded artifact whose provenance carries the machine fact that its content is COMPUTED holds no truth of its own: it is filled from the records that own what it says, and anything a hand writes there is replaced unread (ADR-020 decision 4). This refusal is raised when there is no text the passage may address -- either the shape declares no such section as computed from anything, or the artifact does not mark out where the section stands. Both are one state and both have one cure. The place is never guessed: a computation appended wherever there happened to be room would be correct in its content and wrong in its position, which is the one kind of wrong a reader does not notice, because what it says is true. Nothing was written and the artifact is unchanged. Say which section is computed and from what, put the two marker lines the refusal prints where the section belongs, and run again. Note what is NOT this refusal: a section a principal owns is not refused here at all -- it is simply not something this passage can address, and nothing in it is ever touched."
+    },
+    {
+      "code": "KIT0064",
+      "status": "active",
+      "title": "one computed section is marked out in two places",
+      "explanation": "Where a computed section stands is said by a pair of marker lines carrying its name, and the pair is what the filling passage replaces between. This refusal is raised when a name is marked out more than once in one artifact. It is refused rather than resolved by picking the first: a name that resolves to two spans is not a name, and filling both would put one fact in two places inside the very file the mechanism exists to keep single -- after which the two would drift under editing while each went on being regenerated correctly. Ordering them by position would make which span is authoritative a property of where somebody happened to paste a marker. Nothing was written and the artifact is unchanged. Remove the span that is not the section's home, and run again."
+    },
+    {
+      "code": "KIT0065",
+      "status": "active",
+      "title": "a computed section names rows this host does not compute",
+      "explanation": "A computed section declares what it is one line per: a name in the view this host's own declarations already produce. This refusal is raised when that name resolves to nothing there, or to something that is not a set of rows. It is refused rather than rendered as empty, and the difference is the whole point of it -- a section that fell silent on a name nobody computes is indistinguishable from a section whose rows have all gone, so the surface would be stating an emptiness nobody declared and a reader could not tell the two apart by looking (Cardinal V). Nothing was rendered and the artifact is unchanged. Name a set this host computes, or declare the thing that would produce it."
+    },
+    {
+      "code": "KIT0066",
+      "status": "active",
+      "title": "an undertaking that has run out points at something that cannot mature",
+      "explanation": "A host caps a count in its corpus map and works it down; when the cap reaches the terminal value the host has undertaken that the count does not exist here at all, and the grace that undertaking bought the judgement reading it is spent -- the judgement then stands where an unanswered one stands, under ADR-006, out of the host's own two declarations and with no stance written anywhere by this kit. Which judgement a count is the reading of is published by the module that owns both words. This refusal is raised when an exhausted undertaking reaches a pairing whose target no module publishes as a judgement. It is refused rather than passed over because a cap that matured nothing reads, on every later run, exactly like a host still working its way down (Cardinal V). It is also the point at which this mechanism declines to reach past its own subject: what matures is the consequence a FAILURE carries, and only a judgement has one -- a passage a declaration puts in a party's hands carries that party and no consequence at all, so no cap at any value can mature it, and nothing here will invent the party it would have to stand in for. Pair the count with a judgement the kit publishes, or leave it unpaired and hold the cap."
+    },
+    {
+      "code": "KIT0067",
+      "status": "active",
+      "title": "what was asked to be carried to a publisher cannot be carried",
+      "explanation": "A record whose work is over may state what that work taught and mark how far it claims to hold; where a claim reaches beyond the repository that made it, a text addressed to whoever published the framework can be produced and handed to a person. This refusal is raised when such a text was asked for by name and may not be produced: nothing here says anything about that subject, or everything that does says it holds only where it was learned, or it has been said on fewer occasions than the word it is marked in requires -- one occasion being an observation rather than something a project has provably paid for twice. It is refused rather than answered with a weaker text, because a proposal that arrived upstream carrying less than its own declared bar would be asking a publisher to weigh evidence the host itself does not consider sufficient, and nobody reading it could tell. Nothing was written and nothing was sent. Say it on a second record, or carry it upstream in your own words, which nothing here forbids."
+    },
+    {
+      "code": "KIT0068",
+      "status": "active",
+      "title": "a declared relocation this host cannot take yet",
+      "explanation": "A capability moved one of its installs and declared where it used to live (ADR-021). This host still holds the old place, and the move cannot be carried out as a rename of the same bytes: the new place holds something too -- two homes, and nothing here can tell which is the truth -- or a document this host authored still names a path inside the old place, and the kit never writes the host's own words. Or the declaration itself relocates to a place its capability does not install. Nothing moved and nothing was written: every refusal is printed at once, with the exact restatement where one is owed. Restate the document, or decide which of the two places holds the truth and remove the other, then run again."
+    },
+    {
+      "code": "KIT0069",
+      "status": "active",
+      "title": "a ground reading that cannot be recorded as asked",
+      "explanation": "A measured fact is recorded with its key, the fact, the INSTRUMENT that produced it and the narrowest paths it depends on (ADR-022). One of them is missing. A fact without its instrument cannot be checked against the question it answers, and a fact that depends on no path never expires, so it is never true for long. Nothing was recorded."
+    },
+    {
+      "code": "KIT0070",
+      "status": "active",
+      "title": "a declared miss: the ground does not hold",
+      "explanation": "A reading was asked for that was never measured on this host, or whose paths have moved since it was measured. This is a VERDICT, not a failure: it names what moved and hands back the instrument, so re-measuring is one command. A dispatch whose packet cites such a ground is refused before a worker starts -- a brief built on a stale premise burns the whole run."
+    },
+    {
+      "code": "KIT0071",
+      "status": "active",
+      "title": "a claim asked for incompletely, or one that is not held",
+      "explanation": "A claim names its principal, the paths it takes and why (ADR-022). One of them is missing, or a release names a principal that holds no standing claim here. A claim whose reason nobody can read cannot be weighed by the writer it blocks. Nothing was written."
     }
   ]
 }

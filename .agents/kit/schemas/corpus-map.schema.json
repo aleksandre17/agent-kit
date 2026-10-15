@@ -41,6 +41,24 @@
             "type": "string",
             "minLength": 1
           },
+          "owned_by": {
+            "description": "The record this place BELONGS TO -- the collection it lives in, and its id. This is how a unit of work comes to own a place of its own (ADR-020 decision 6): the sentence lives on the ROW, where a place comes into existence at all, and never on the record. The other direction was available and is refused -- a path written on a record is a CLAIM about a file, unchecked where it is written, rotting silently, and reading afterwards exactly like a claim that is still true. Absent means this place belongs to the corpus at large, which is what almost every place is. No class of record and no collection is named by the kit: which collection owns which places is this host's statement about its own tree, and an owner nothing here can resolve is REFUSED rather than ignored, because a place whose owner does not exist outlives the work it was opened for.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["collection", "id"],
+            "properties": {
+              "collection": {
+                "description": "The name a capability declared this collection readable under (`reads_as`), resolved against what this host has enabled -- never a path.",
+                "type": "string",
+                "minLength": 1
+              },
+              "id": {
+                "description": "The id of the record in that collection. One record may own at most one place here, and one place has at most one owner.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
           "entry": {
             "description": "Whether this place is a ROOT of the route graph -- one of the few surfaces from which the work is actually steered, and therefore a place every live obligation must be reachable FROM. Absent means false: an entry root is claimed, never assumed, because a graph whose roots are everything has no unreachable nodes and measures nothing.",
             "type": "boolean"

@@ -234,6 +234,48 @@
       "items": {
         "type": "object"
       }
+    },
+    "relocated": {
+      "description": "ADR-021 decision 3. Every relocation carried out in this host: the capability and decision that declared it, both names, and the h1 of the bytes -- measured at the old name before the rename and at the new name after it, and equal, or the move is refused.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability",
+          "decision",
+          "from",
+          "to",
+          "digest",
+          "at"
+        ],
+        "properties": {
+          "capability": {
+            "type": "string",
+            "minLength": 1
+          },
+          "decision": {
+            "type": "string",
+            "minLength": 1
+          },
+          "from": {
+            "type": "string",
+            "minLength": 1
+          },
+          "to": {
+            "type": "string",
+            "minLength": 1
+          },
+          "digest": {
+            "type": "string",
+            "minLength": 1
+          },
+          "at": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     }
   }
 }

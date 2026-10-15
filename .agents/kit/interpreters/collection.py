@@ -117,6 +117,26 @@ def read(ctx, item, name=None) -> Reading:
     return READER_KINDS[kind_of(item)](ctx, item, name or item.get("reads_as") or item["target"])
 
 
+def named_reading(ctx, name: str, absent: type) -> Reading:
+    """The readable one declaration names, or that declaration's own refusal.
+
+    A declaration that says *read this over X* is answered in exactly one place. The loop was
+    written twice before this existed -- once per judge that needed it -- and two loops answering
+    *which value is X* is the drift that stays invisible, because each one goes on resolving
+    correctly from where it stands (Cardinal III). The refusal to RAISE is handed in, the way a
+    registry is handed the clash it should report: what a dangling name means belongs to the caller
+    that declared it, and a shared helper that chose the error would have decided how somebody
+    else's failure is spelled.
+    """
+    readings = read_all(ctx, ctx.enabled_capabilities())
+    if name not in readings:
+        raise absent(
+            f"this gate was declared over a readable named {name!r}, which no enabled capability "
+            f"declares; the names declared are {sorted(readings)}"
+        )
+    return readings[name]
+
+
 def read_all(ctx, capabilities) -> dict:
     """Every readable of every enabled capability, by name: what a HOST authored at a path a
     capability declared readable (`reads_as`), and what a capability SHIPS as a document (its id),

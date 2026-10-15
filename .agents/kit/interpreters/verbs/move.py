@@ -13,6 +13,7 @@ reality presented as the reality.
 from __future__ import annotations
 
 import collection
+import criteria
 import hostlock
 import lifecycle as lifecycle_module
 import plan as plan_module
@@ -58,6 +59,15 @@ def run(ctx, args) -> int:
         )
 
     edge = lifecycle_module.resolve(governed, card, target, approver)
+
+    # A passage the declaration hands to a machine is DECIDED here, by resolving the reference the
+    # declaration names -- before the byte, never reported after it. The verb knows no condition:
+    # it asks the lifecycle which reference decides this passage, has it resolved by the registry
+    # that answers every typed reference, and hands the reading back for judgement.
+    deciding = lifecycle_module.decided_by(edge)
+    if deciding is not None:
+        lifecycle_module.refuse_uncomputed(card, edge, criteria.resolve(ctx, deciding, card))
+
     when = ctx.clock.now()
     updated = lifecycle_module.moved(governed, card, edge, when, by, approver)
 

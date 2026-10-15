@@ -38,14 +38,10 @@ FIELD, AMONG, SOURCE, LIST = "field", "among", "source", "list"
 def _readable(ctx, name: str):
     """The readable a name resolves to, through the one door that turns an install into a value.
     A gate that opened the path itself would be deciding the shape of somebody else's
-    declaration."""
-    readings = collection.read_all(ctx, ctx.enabled_capabilities())
-    if name not in readings:
-        raise declared.DeclarationError(
-            f"this gate was declared over a readable named {name!r}, which no enabled capability "
-            f"declares; the names declared are {sorted(readings)}"
-        )
-    return readings[name]
+    declaration. The resolution itself is not written here -- it was written here AND beside
+    another judge, which is two answers to one question; it now has one home, and the refusal this
+    judge raises is still this judge's own."""
+    return collection.named_reading(ctx, name, declared.DeclarationError)
 
 
 def _referents(ctx, among: dict) -> set:

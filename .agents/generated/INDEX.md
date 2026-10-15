@@ -23,11 +23,11 @@ planes.
 | `.agents/project/project.json` | host-declaration | owner | which capabilities are enabled; what this project is; enable or disable a capability;  | living | always |
 | `.agents/project/profile.json` | environment-reading | kit-verb | what tooling this repository uses; a check reports the reading stale; why was the install adapted this way;  | current-only | always |
 | `.agents/project/kit.lock.json` | integrity-pin | kit-verb | which kit version is installed; verify the pinned copy; upgrade the kit;  | replaced-by-release | always |
-| `.agents/project/roster.json` | staffing | owner | who handles this kind of work; dispatch a task to an agent; add or retire a role;  | living | PENDING — link F |
+| `.agents/project/roster.json` | staffing | owner | who handles this kind of work; dispatch a task to an agent; add or retire a role;  | living | ONLY WITH roles |
 | `.agents/project/roles/` | role-definition | owner | define or change a role; why an agent behaves as it does; a role overlay names an unknown archetype;  | living | ONLY WITH roles |
 | `.agents/project/doctrine/` | host-law | owner | which laws bind this project; review a change against the rules; amend a law;  | living | ONLY WITH doctrine |
-| `.agents/project/law-scopes.json` | host-law | owner | which directories carry laws of their own; declare or remove a module's laws; a scoped law is refused;  | living | ONLY WITH governance |
-| `.agents/project/laws/` | host-law | owner | what a module's own laws say; amend a scoped law;  | living | ONLY WITH governance |
+| `.agents/project/doctrine/law-scopes.json` | host-law | owner | which directories carry laws of their own; declare or remove a module's laws; a scoped law is refused;  | living | ONLY WITH governance |
+| `.agents/project/doctrine/laws/` | host-law | owner | what a module's own laws say; amend a scoped law;  | living | ONLY WITH governance |
 | `.agents/knowledge/private/` | private-memory | owning-role | start a session as a role; the owner corrected this before; record a lesson learned;  | curated | PENDING — link E |
 | `.agents/knowledge/shared/` | shared-knowledge | curator | coordinate with another agent; a fact more than one role relies on; promote a lesson to the team;  | curated | PENDING — link E |
 | `.agents/generated/roles/` | projection | renderer | load a role's full brief; a role file looks out of date;  | regenerable | ONLY WITH roles |
@@ -36,7 +36,7 @@ planes.
 | `.agents/generated/runtimes/` | projection | renderer | how a runtime is wired; a runtime adapter file is stale;  | regenerable | ONLY WITH runtimes |
 | `.agents/runtime/receipts/` | run-evidence | runtime-observer | did the run actually do it; audit what an agent changed; a claim of green needs evidence;  | rotated | ONLY WITH observability |
 | `.agents/runtime/telemetry/` | measurement-stream | runtime-observer | how much did this cost; token usage per agent; which runs are wasteful;  | rotated | PENDING — link C |
-| `.agents/runtime/ground/` | dispatch-ground | dispatcher | receive a dispatch; what is already verified; brief an agent;  | current-only | PENDING — link C |
+| `.agents/runtime/ground/` | dispatch-ground | dispatcher | receive a dispatch; what is already verified; brief an agent;  | current-only | ONLY WITH operating |
 | `.agents/runtime/guards/` | guard-state | runtime-observer | a hook blocked an edit; why was this write refused;  | current-only | PENDING — link C |
 | `.agents/runtime/init.journal` | operation-journal | kit-verb | init was interrupted; resume or recover an install; what did the last install do;  | per-operation | always |
 | `.agents/runtime/init.lock` | exclusive-hold | kit-verb | a kit command says the host is held; clear a stale hold;  | per-operation | always |
@@ -45,9 +45,9 @@ planes.
 | `docs/reference/` | reference | curator | look up a register or ledger; which standards are adopted; what is the current drawing;  | living | ONLY WITH knowledge |
 | `docs/guides/` | guide | curator | how do I do this; set up the project; run a procedure step by step;  | living | PENDING — link F |
 | `docs/work/CONTINUE-HERE.md` | work-position | dispatcher | resume work; start a new session; what is next;  | current-only | PENDING — link F |
-| `docs/work/BOARD.md` | work-queue | dispatcher | what is in flight; pick the next task; plan the work;  | living | PENDING — link F |
-| `docs/work/cards/` | work-card | assigned-agent | take a task; what does done mean for this task; update a task's state;  | closed-then-archived | PENDING — link F |
-| `docs/work/evidence/` | work-evidence | assigned-agent | prove a card is done; record an audit or probe; what did the investigation find;  | closed-then-archived | PENDING — link F |
+| `docs/work/BOARD.md` | work-queue | dispatcher | what is in flight; pick the next task; plan the work;  | living | ONLY WITH delivery |
+| `docs/work/cards/` | work-card | assigned-agent | take a task; what does done mean for this task; update a task's state;  | closed-then-archived | ONLY WITH delivery |
+| `docs/work/evidence/` | work-evidence | assigned-agent | prove a card is done; record an audit or probe; what did the investigation find;  | closed-then-archived | ONLY WITH delivery |
 | `docs/archive/` | retired-record | archivist | what was decided before and retired; history of a closed piece of work;  | archived | PENDING — link F |
 
 ## What a place may hold

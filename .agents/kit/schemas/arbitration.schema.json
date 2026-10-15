@@ -1,0 +1,21 @@
+{
+  "$id": "arbitration",
+  "title": "ARBITRATION -- how long a peer's admitted write protects the path it wrote",
+  "description": "ADR-022 decision 7. A peer's admitted write to a path refuses mine for `window_minutes`, unless my own claim on that path predates the peer's write. 0 -- the seeded value -- is the declared zero: only claims arbitrate, and nothing is refused for a recent write. The number is the host's.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "window_minutes"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "window_minutes": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

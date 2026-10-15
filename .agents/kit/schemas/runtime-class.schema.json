@@ -4,19 +4,36 @@
   "description": "One document, three lists, and the same rule holds all three: nothing here may be written in any vendor's vocabulary. A CLASS states what is true of a runtime AS A KIND -- how an agent reaches it at all, and which translation sits in the gap -- so it can be shipped to a host running a tool that did not exist when this was written. A tool's proper name is never a class: the name of a product is the one thing about a runtime that is guaranteed not to be true of the kind, and a registry that carried one would have to be edited every time a vendor shipped.\n\nThe CAPABILITY vocabulary is the second list, and it is the one that makes an absence countable. A descriptor may only claim a capability this vocabulary declares, so the set of things a runtime has NOT claimed is enumerable -- which is the whole point: an unclaimed capability must be a gap with a NAME, and a name it can only have if somebody declared the word first. An empty list of claims reads as `none needed`; a vocabulary read against an empty list of claims reads as `six declared, none claimed`, and only the second is a measurement.\n\nThe PROTOCOL is the set of lines every descriptor carries whatever its class, declared once here so that they are RENDERED into each rather than restated in any. A host may add lines and may not edit these.\n\nThis shape is declared by the kit and authored by the host in exactly the same words: a class the kit never anticipated is declared by the host in a registry of its own rather than as a second kind of document. Two sources, one grammar.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "protocol", "capabilities", "classes"],
+  "required": [
+    "schema_version",
+    "protocol",
+    "capabilities",
+    "classes"
+  ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
     "protocol": {
       "description": "The binding lines every descriptor carries, whichever class it composes. Declared once, projected into all -- a line that is rendered cannot be restated, and a line that cannot be restated cannot drift. The word is the composer's, not this subject's: what binds every composition of a kind is called a protocol wherever this kit composes anything, and a second word for it here would be a second home for one idea.",
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "says"],
+        "required": [
+          "id",
+          "says"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "says": { "type": "string", "minLength": 1 }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -26,9 +43,16 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "means", "observed_by"],
+        "required": [
+          "id",
+          "means",
+          "observed_by"
+        ],
         "properties": {
-          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
           "means": {
             "description": "What is being claimed, in one sentence, in the field's vocabulary and no vendor's.",
             "type": "string",
@@ -38,6 +62,11 @@
             "description": "What would have to HAPPEN for this to stop being a claim. Declared beside the capability rather than left to whoever gets around to checking, because a capability whose proof nobody specified is proven by consensus -- which is testimony wearing a lab coat.",
             "type": "string",
             "minLength": 1
+          },
+          "observed_on": {
+            "description": "ADR-022: the EVENT an interpreter of this kit provides on which this capability is observed -- named by the event, so no interpreter spells a capability of this vocabulary. Absent where no provided event observes it yet: then it can only ever be claimed, and the page says so.",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
           }
         }
       }
@@ -47,9 +76,17 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "reach", "boundary", "reference_class"],
+        "required": [
+          "id",
+          "reach",
+          "boundary",
+          "reference_class"
+        ],
         "properties": {
-          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
           "reach": {
             "description": "How an agent reaches a runtime of this kind at all -- the one sentence that distinguishes it from every other kind. Not a feature list: features are claimed per instance and proven per instance.",
             "type": "string",
@@ -64,7 +101,10 @@
             "description": "The field's own proven exemplars of this kind of boundary, named so that a descriptor is benchmarked rather than merely described. Standards and mechanisms, never products.",
             "type": "array",
             "minItems": 1,
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         }
       }

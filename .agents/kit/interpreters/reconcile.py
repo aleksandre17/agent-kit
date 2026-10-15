@@ -109,12 +109,25 @@ def _covered(path: str, roots) -> bool:
                for root in roots)
 
 
-def survey(ctx, capabilities, recorded, stewards, adoptions=None) -> list:
+def survey(ctx, capabilities, recorded, stewards, adoptions=None, moved=None) -> list:
     """Every path any of the three readings knows about, with its cell and the verdict its
-    steward gives that cell. Sorted by path: a report is read by people, and by tests."""
+    steward gives that cell. Sorted by path: a report is read by people, and by tests.
+
+    `moved` is `{to: from}` for every relocation about to be carried out (ADR-021): the record is
+    read at the new names and the host's bytes at the old ones, so the reconciliation is the one
+    the tree will be in after the moves -- and a plan stays a plan."""
     adoptions = adoptions or {}
+    moved = moved or {}
     ws = ctx.workspace
-    was = {row["path"]: row for row in recorded["files"]}
+    back = {old: new for new, old in moved.items()}
+
+    def rename(path):
+        for old, new in back.items():
+            if path == old or (old.endswith("/") and path.startswith(old)):
+                return new + path[len(old):]
+        return path
+
+    was = {rename(row["path"]): {**row, "path": rename(row["path"])} for row in recorded["files"]}
     will = {item["target"]: (item, capability)
             for capability in capabilities for item in capability.installs}
 
@@ -145,8 +158,9 @@ def survey(ctx, capabilities, recorded, stewards, adoptions=None) -> list:
         # declaration; this module privileges no steward and no path (ADR-010).
         steward = stewards.answering(mode, None if home else shipped)
         taken = stewards.measures(steward) and not estate_module.is_root(path)
-        present = ws.exists(path)
-        here = hashlib.sha256(ws.read_bytes(path)).hexdigest() if (present and taken) else None
+        read_at = moved.get(path, path)
+        present = ws.exists(read_at)
+        here = hashlib.sha256(ws.read_bytes(read_at)).hexdigest() if (present and taken) else None
         found = cell(shipped is not None, shipped["digest"] if shipped else None,
                      present, here,
                      item is not None or home is not None,
@@ -176,7 +190,7 @@ def survey(ctx, capabilities, recorded, stewards, adoptions=None) -> list:
     # kit owns nothing in can obstruct a write the kit was never going to make (ADR-003 §6, met on
     # HOST #2, where 81 session receipts made a real repository unadoptable). The interpreter does
     # not know which plane is which and must not learn.
-    roots = set(will) | set(was)
+    roots = set(will) | set(was) | set(moved.values())
     for plane in ctx.manifest.planes:
         refuses = plane["unaccounted"] == "refuse"
         for path in ws.files_under(plane["root"]):

@@ -16,6 +16,8 @@ from __future__ import annotations
 import json
 import sys
 
+import attestation
+import claims
 import declared
 import edits as edits_module
 import judgement
@@ -81,6 +83,14 @@ def run(ctx, args) -> int:
                   f"outside this host.", file=sys.stderr)
             return no
         (within.append((rel, text)) if rel is not None else outside.append(path))
+    # Who is writing: the runtimes served through this surface. Another principal's standing claim,
+    # or a peer's admitted write inside the host's window, refuses before any gate is read (ADR-022).
+    principals = attestation.served_through(ctx, getattr(args, "surface", None))
+    contested = claims.refusals(ctx, principals, [rel for rel, _t in within], ctx.clock.now())
+    if contested:
+        for path, why in contested:
+            print(f"judge: REFUSED  {path}  -- {why}", file=sys.stderr)
+        return no
     # The gates are applied where that application has its one home, so this verb and the dispatch
     # port's admission on return cannot come to hold different rule sets (ADR-017 amendment 6).
     refused, unjudged = judgement.refusals(ctx, within)
@@ -92,6 +102,10 @@ def run(ctx, args) -> int:
     if refused:
         for path, rule_id, because, instead in refused:
             print(f"judge: REFUSED  {path}  {rule_id} -- {because} Instead: {instead}", file=sys.stderr)
+        # A refusal that happened is a record of what this runtime CAN be held to (ADR-022 decision 6).
+        attestation.observe(ctx, getattr(args, "surface", None), attestation.REFUSED_WRITE,
+                            [(p, r) for p, r, _b, _i in refused])
         return no
+    claims.recorded(ctx, principals, [rel for rel, _t in within], ctx.clock.now())
     print(f"judge: {len(within)} edited path(s) pass every edit judgement this host declares")
     return 0

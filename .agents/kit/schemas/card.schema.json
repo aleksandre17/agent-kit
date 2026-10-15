@@ -32,6 +32,88 @@
           "signed_at": { "type": "string", "minLength": 1 }
         }
       }
+    },
+    "parent": {
+      "description": "The id of the ONE card this card hangs under (ADR-020 decision 5). A recursive edge to the same kind of thing, and deliberately not a rung of a ladder: a fixed hierarchy of named levels is a closed enumeration, so work that needs a fifth level either lies about its depth or waits for a schema change, while three of the four levels sit empty on most work. Absent means this card hangs under nothing, which is a root and an ordinary state -- not an error and not a lesser card. Nothing points the other way: who hangs under a card is COMPUTED from this field, because a back-pointer would be a second home for one edge and the day the two disagreed each would go on reading as correct.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "origin": {
+      "description": "A TYPED REFERENCE to what justifies this card existing -- the idea, the proposal or the decision it realises. Its grammar is the one a criterion's `proof` declares and nothing here restates it: a shape declared twice drifts while both copies go on reading as correct. Absent is legal and is COUNTED rather than refused: every card in existence on the day this ships names no origin, so a gate that refused one would be switched off within a day, and what the count may reach is a ceiling the host declares in its own map.",
+      "type": "object"
+    },
+    "produced": {
+      "description": "The typed references to what this work PRODUCED -- a place of evidence, a decision, a ledger row. The same grammar as `origin`, and the other half of a lineage that can be read in both directions. Absent means nothing has been recorded as produced, which is the honest state of work that has not finished; a reference here that resolves to no reading at all is REPORTED, because a reference that points nowhere reads exactly like one that points home.",
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "appetite": {
+      "description": "How much this host is willing to spend on this work: an AMOUNT and the UNIT the amount is counted in (ADR-020 decision 9). The number is always the host's -- this kit ships the units as words and never a default, because an appetite a framework chose is a limit nobody undertook (ADR-001 point 4). The grammar is closed at two fields on purpose: what has been SPENT is read from the receipts the system already writes, so there is nowhere here to type a consumption, nowhere to record that a limit was raised, and no field a principal under pressure could edit into agreement with the work. Absent is a complete and legal state and stays one: every card in existence on the day this ships declares no appetite, and work whose cost nobody has bet is ordinary work rather than a defect. An appetite declared in a unit nothing installed here can read is REPORTED and never passed over, because a limit nobody can measure reads exactly like a limit that is being kept.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["amount", "unit"],
+      "properties": {
+        "amount": {
+          "description": "How much of the unit this host has undertaken to spend. A number, and the host's own: nothing in this kit compares it with a number of its own, and there is no ceiling here for it to be measured against.",
+          "type": "number"
+        },
+        "unit": {
+          "description": "What the amount counts, named in the vocabulary the words are declared in. Which units may be DECLARED and which units can be READ are two different truths with one home each -- the vocabulary, and the modules installed here that read a receipt -- and the gap between them is reported rather than hidden.",
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        }
+      }
+    },
+    "lesson": {
+      "description": "What this work TAUGHT, where it taught anything: the subject the teaching is about, the teaching in the host's own sentence, and a WORD saying how far the host claims it holds. The word is the only part a machine reads, and it is read by looking it up in a vocabulary somebody published -- never by matching prose, because a reader that inferred a claim from wording would be inventing the claim it then carried on this host's behalf. Absent is a complete and legal state and the ordinary one: most work teaches nothing anybody else needs, and a record that said otherwise by default would be manufacturing findings. The shape is declared here rather than shared with another collection that might want it, and the reason is the recorded one: schemas here cannot compose, so a second collection carrying this would restate it -- named as the cost it is rather than smoothed over by widening something until it means two things.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject", "extent", "statement"],
+      "properties": {
+        "subject": {
+          "description": "What the teaching is ABOUT, as a name two separate pieces of work can both point at. This is what makes a second occasion countable: prose cannot be counted, because two sentences about one thing are two sentences, and a mechanism that decided they meant the same would be deciding the very thing the second occasion was supposed to prove.",
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "extent": {
+          "description": "How far the host claims this holds, as a word from a vocabulary an enabled capability publishes. A word nobody published is reported and never guessed at: a mark whose meaning cannot be found says nothing, and reading it as either answer would put words in the host's mouth.",
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "statement": {
+          "description": "What was learned, as a human states it. Prose, deliberately and finally: this sentence is written to be read by a person somewhere else, and the moment a machine had to parse it, the host would start writing for the parser instead of for that person.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "criteria": {
+      "description": "What this card is DONE BY, each criterion naming the reference that would prove it (ADR-020 decision 7). There is no status field on a criterion and there will not be one: a status is COMPUTED by resolving the reference, and a field a principal could type is testimony wearing a machine's clothes -- typed under pressure, and typed wrong exactly when it matters. An absent list is a complete and legal state: a card nobody has shaped yet has stated nothing, so nothing about it is unmet.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement", "proof"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "statement": {
+            "description": "The criterion as a human states it -- given, when, then. Prose, deliberately: what would convince a reader is not the same question as what a machine can read, and pretending otherwise produces criteria written for the resolver instead of for the work.",
+            "type": "string",
+            "minLength": 1
+          },
+          "proof": {
+            "description": "A TYPED REFERENCE and nothing else. `kind` names the resolver that can read it, `ref` is the referent that resolver reads, `params` is whatever that kind needs beside it. It carries no behaviour -- no branch, no fetch, no closure -- so it can be stored, diffed, versioned and GENERATED by something that will never run it (Cardinal IV). The set of kinds is OPEN and lives in the resolver modules, never as a list here: a kind this host cannot read resolves to no reading at all, which is an honest absence and never a pass.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "ref"],
+            "properties": {
+              "kind": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+              "ref": { "type": "string", "minLength": 1 },
+              "params": { "type": "object" }
+            }
+          }
+        }
+      }
     }
   }
 }

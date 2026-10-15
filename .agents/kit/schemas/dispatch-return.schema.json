@@ -1,0 +1,199 @@
+{
+  "$id": "dispatch-return",
+  "title": "A DISPATCH RETURN -- what a worker hands back, in one shape every router reads",
+  "description": "ADR-022 decision 2. The other half of the packet. A worker returns WHAT it delivered (or that it refused, with the argument), WHAT it cost and what it chose not to read, WHAT it found beyond its scope, HOW GOOD the brief was, and what it LEARNED. Restraint must be legible to be imitable, so the economy record is required; a grade is honest only if a router can trend it, so the brief's quality is required. A refusal is a complete answer: an argument, at least one alternative, and who decides -- never a failure and never silent compliance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "deliverable",
+    "economy",
+    "brief_quality"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "description": "The DISPATCH-ID this answers.",
+      "type": "string",
+      "minLength": 1
+    },
+    "deliverable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "description": "`delivered`, `partial` (and what is missing, in `note`) or `refused` (and `refusal` says why).",
+          "type": "string",
+          "enum": [
+            "delivered",
+            "partial",
+            "refused"
+          ]
+        },
+        "at": {
+          "description": "Where the deliverable now is -- a path, a commit, a record.",
+          "type": "string",
+          "minLength": 1
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "economy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "not_read"
+      ],
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "peak_context": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "not_read": {
+          "description": "What this worker chose NOT to read, and why. An empty list is a claim that everything read was needed, and is legible as one.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "what",
+              "why"
+            ],
+            "properties": {
+              "what": {
+                "type": "string",
+                "minLength": 1
+              },
+              "why": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "findings": {
+      "description": "What this worker saw beyond its scope -- the observation duty. The router triages every one; a finding lost is the reins slipping.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "what"
+        ],
+        "properties": {
+          "what": {
+            "type": "string",
+            "minLength": 1
+          },
+          "where": {
+            "type": "string",
+            "minLength": 1
+          },
+          "relation": {
+            "description": "`blocks`, `connected` or `unrelated` to this task -- what decides its handling.",
+            "type": "string",
+            "enum": [
+              "blocks",
+              "connected",
+              "unrelated"
+            ]
+          }
+        }
+      }
+    },
+    "brief_quality": {
+      "description": "The recipient grades the brief it received, because its author cannot see its own blind spot. An empty `judgement` on a task routed for judgement is the BRIEF's defect.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grade",
+        "judgement"
+      ],
+      "properties": {
+        "grade": {
+          "type": "string",
+          "minLength": 1
+        },
+        "judgement": {
+          "description": "Where this worker exercised judgement.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "growth": {
+      "description": "What this run taught, at craft level, and how far up the ladder it is proposed to climb (`memory`, `role`, `kit`, `gate`). A `delta` to a role is a PROPOSAL: a worker never edits its own definition; the host ratifies.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lesson",
+        "evidence",
+        "ladder"
+      ],
+      "properties": {
+        "lesson": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ladder": {
+          "type": "string",
+          "minLength": 1
+        },
+        "delta": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "refusal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "argument",
+        "alternatives",
+        "escalate_to"
+      ],
+      "properties": {
+        "argument": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alternatives": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "escalate_to": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

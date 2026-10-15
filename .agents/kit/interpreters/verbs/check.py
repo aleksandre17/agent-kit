@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import declared
 import gatekinds
+import maturation
 import stance as stance_of
 from errors import KitError
 from gatekinds import GateError, registry  # noqa: F401  (this verb's long-published names)
@@ -57,7 +58,8 @@ def run(ctx, args) -> int:
     kinds = registry()
     ctx.through = _through(ctx, getattr(args, "surface", None))
     enabled = ctx.enabled_capabilities()
-    stances, unbound = stance_of.resolve(ctx.manifest, ctx.host_answers(), enabled)
+    matured, idle = maturation.spent(ctx, enabled)
+    stances, unbound = stance_of.resolve(ctx.manifest, ctx.host_answers(), enabled, matured)
     failed = 0
     observed, clean = [], []
     for capability in enabled:
@@ -69,7 +71,16 @@ def run(ctx, args) -> int:
                     f"registered kinds are {sorted(kinds)}"
                 )
             held = stances[(capability.id, gate["id"])]
-            failures = kinds[kind](ctx, gate.get("params", {}))
+            try:
+                failures = kinds[kind](ctx, gate.get("params", {}))
+            except KitError:
+                raise  # a refusal by name is the kit speaking, and it is reported as itself
+            except Exception as exc:  # noqa: BLE001 -- a gate that crashed decided nothing
+                # Fail-safe defaults (Saltzer & Schroeder): a gate exists to deny, so a gate whose
+                # decision is UNKNOWN denies. It fails under its own stance -- never a pass, and never
+                # a crash that takes every other gate's verdict down with it (ADR-022 decision 8).
+                failures = [f"the gate kind {kind!r} crashed ({type(exc).__name__}: {exc}) -- an "
+                            f"unjudged gate is not a passed one"]
             print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})  {held.label()}")
             for failure in failures:
                 print(f"        {failure}")
@@ -77,6 +88,8 @@ def run(ctx, args) -> int:
                 failed += 1 if failures else 0
             else:
                 (observed if failures else clean).append(f"{gate['id']} [{held.stance}]")
+    for sentence in idle:
+        print(f"  MATURED {sentence}")
     for entry in unbound:
         print(f"  STANCE  {entry['gate']}  [{entry['stance']}: declared by {entry['by']} at "
               f"{entry['at']}] names no gate an enabled capability declares -- it binds nothing")

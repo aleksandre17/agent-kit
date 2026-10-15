@@ -18,7 +18,8 @@
     "schemas": [
       "runtime-class",
       "runtime",
-      "runtime-surface"
+      "runtime-surface",
+      "runtime-observation"
     ]
   },
   "documents": [
@@ -58,6 +59,11 @@
       },
       "claimed": {
         "field": "claims",
+        "names": "capability"
+      },
+      "proven": {
+        "reading": "runtime_observations",
+        "of": "runtime",
         "names": "capability"
       }
     }
@@ -118,20 +124,22 @@
               {
                 "id": "project-laws",
                 "heading": "Project laws -- this host's numbered bindings",
-                "from": ".agents/project/laws.md",
+                "from": ".agents/project/doctrine/laws.md",
                 "absent": "This host declares no law page, so no runtime is told any project law -- a declared absence, and not a short list."
               },
               {
                 "id": "conduct-doctrine",
                 "heading": "Conduct doctrine -- as this host takes and qualifies it",
                 "from": ".agents/generated/DOCTRINE.md",
-                "absent": "This host takes no doctrine bundle, so no conduct doctrine reaches a runtime from here."
+                "absent": "This host takes no doctrine bundle, so no conduct doctrine reaches a runtime from here.",
+                "points": "which cardinals bind this host, and this host's stance on each -- before a change that a cardinal speaks to"
               },
               {
                 "id": "role-roll",
                 "heading": "Roles -- who this host has hired",
                 "from": ".agents/generated/ROLES.md",
-                "absent": "This host declares no roles, so no runtime is handed a role definition."
+                "absent": "This host declares no roles, so no runtime is handed a role definition.",
+                "points": "who this host has hired, before delegating work to a role"
               }
             ]
           },
@@ -165,6 +173,13 @@
           }
         ]
       }
+    },
+    {
+      "mode": "space",
+      "class": "ephemeral",
+      "target": ".agents/runtime/observations/",
+      "validates": "runtime-observation",
+      "reads_as": "runtime_observations"
     }
   ],
   "gates": [
