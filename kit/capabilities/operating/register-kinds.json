@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "kinds": [
+    {
+      "id": "standards",
+      "says": "Every concept of an external standard this host has met, statused the session it surfaced, with the ONE place it is declared.",
+      "statuses": [
+        {
+          "id": "adopted-whole",
+          "means": "the whole of the standard's benefit is taken",
+          "requires": [
+            "declared_at"
+          ]
+        },
+        {
+          "id": "partial",
+          "means": "taken in part; the note names the missing part",
+          "requires": [
+            "declared_at",
+            "note"
+          ]
+        },
+        {
+          "id": "not-built",
+          "means": "met and not yet taken"
+        },
+        {
+          "id": "non-goal",
+          "means": "deliberately not taken; the note says why",
+          "requires": [
+            "note"
+          ]
+        },
+        {
+          "id": "unverified",
+          "means": "believed taken, not yet measured in code"
+        },
+        {
+          "id": "promoted",
+          "means": "became a cardinal, a law or a card; the place cites this row back",
+          "requires": [
+            "promoted_to"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "findings",
+      "says": "What was seen beyond a task's scope, triaged so that nothing surfaced is lost.",
+      "statuses": [
+        {
+          "id": "surfaced",
+          "means": "seen, not yet triaged"
+        },
+        {
+          "id": "fix-now",
+          "means": "it blocks or contaminates the work in hand"
+        },
+        {
+          "id": "folded",
+          "means": "carried into a wave already planned; the note names it",
+          "requires": [
+            "note"
+          ]
+        },
+        {
+          "id": "debt",
+          "means": "registered to be paid later"
+        },
+        {
+          "id": "owner-door",
+          "means": "a decision only the owner makes"
+        },
+        {
+          "id": "resolved",
+          "means": "fixed; the note names the change",
+          "requires": [
+            "note"
+          ]
+        },
+        {
+          "id": "dropped",
+          "means": "judged not worth acting on; the note says why",
+          "requires": [
+            "note"
+          ]
+        },
+        {
+          "id": "promoted",
+          "means": "became a card or a guard; the place cites this row back",
+          "requires": [
+            "promoted_to"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "visions",
+      "says": "Every architecture this host has committed to, so a vision never evaporates when the team moves on.",
+      "statuses": [
+        {
+          "id": "vision",
+          "means": "raised, not yet designed"
+        },
+        {
+          "id": "designed",
+          "means": "a design exists; it is referenced",
+          "requires": [
+            "refs"
+          ]
+        },
+        {
+          "id": "building",
+          "means": "work on it is in flight"
+        },
+        {
+          "id": "built",
+          "means": "built and green"
+        },
+        {
+          "id": "verified",
+          "means": "proven on the real stack"
+        },
+        {
+          "id": "deferred",
+          "means": "held, by decision; the note says until when",
+          "requires": [
+            "note"
+          ]
+        },
+        {
+          "id": "superseded",
+          "means": "replaced; the note names by what",
+          "requires": [
+            "note"
+          ]
+        },
+        {
+          "id": "rejected",
+          "means": "decided against; the note says why",
+          "requires": [
+            "note"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gaps",
+      "says": "Questions the doctrine could not answer, declared where they were met instead of improvised around.",
+      "statuses": [
+        {
+          "id": "open",
+          "means": "met, unanswered"
+        },
+        {
+          "id": "answered",
+          "means": "answered; the place that answers it cites this row back",
+          "requires": [
+            "promoted_to"
+          ]
+        }
+      ]
+    }
+  ]
+}

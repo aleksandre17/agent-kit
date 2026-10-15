@@ -7,6 +7,16 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE OPERATING PLANE, slice S7: registers are documents (ADR-022 decision 10, amendment 3)**
+- Kinds `register` (rows: id, title, status, at; optional by, note, declared_at, promoted_to, refs) and
+  `register-kind`; shipped kinds `standards`, `findings`, `visions`, `gaps`, each status naming the fields it
+  requires.
+- Capability `operating`: space `docs/work/registers/`, projection `docs/work/REGISTERS.md`, gate
+  `FF-REGISTERS-HELD` (kind `register-held`, calibrated): undeclared status, missing required field, and a
+  promotion whose target does not cite `<register>#<row>` back each fail by the row's address.
+- Delivery's single governed collection is untouched (amendment 3). S7b (handoffs, knowledge planes) named.
+- `test_registers` 400–403.
+
 **Added — THE OPERATING PLANE, slice S6: a gate is trusted only after it bit (ADR-022 decision 8)**
 - `check`: a gate kind that raises (other than a refusal by name) FAILS under its own stance with the
   crash named; every other gate is still judged. Posture is the existing stance (ADR-022 amendment 2).

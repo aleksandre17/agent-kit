@@ -15,7 +15,9 @@
       "dispatch-return",
       "ground-reading",
       "claim",
-      "arbitration"
+      "arbitration",
+      "register",
+      "register-kind"
     ]
   },
   "installs": [
@@ -41,7 +43,40 @@
       "source": "capabilities/operating/payload/arbitration.json",
       "validates": "arbitration",
       "reads_as": "arbitration"
+    },
+    {
+      "mode": "space",
+      "class": "binding",
+      "target": "docs/work/registers/",
+      "validates": "register",
+      "reads_as": "registers"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": "docs/work/REGISTERS.md",
+      "source": "capabilities/operating/payload/REGISTERS.md.mustache"
     }
   ],
-  "gates": []
+  "gates": [
+    {
+      "id": "FF-REGISTERS-HELD",
+      "kind": "register-held",
+      "params": {
+        "sources": {
+          "validates": "register"
+        },
+        "kinds": {
+          "validates": "register-kind"
+        }
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "register_kinds",
+      "source": "capabilities/operating/register-kinds.json",
+      "validates": "register-kind"
+    }
+  ]
 }

@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 249,
+  "count": 254,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "18469403aaadce258cd3f6221eaeac96d37137505009d229912df4205f9f09a1",
+      "digest": "8f696316ac9bf36263f88035f2cd1b39a7213e2bbcd4ad3d0271d72f1d3eb763",
       "path": "MANIFEST.json"
     },
     {
@@ -329,8 +329,14 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "9de2f1172487cff8bca21c2bb87e24f476fbda2d2ac4cc37b81349b87175be45",
+      "digest": "d2531f0fa5f89d2fd270cc6d2768760bfec4c6aa6027ee904a01ed110d2741bd",
       "path": "capabilities/operating/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "e210219f87718a613cb78bcd6d1d008ed7933d5888b2bad5eadf9bba47f16f28",
+      "path": "capabilities/operating/payload/REGISTERS.md.mustache"
     },
     {
       "accounted_by": "declaration-closure",
@@ -349,6 +355,12 @@
       "class": "declaration",
       "digest": "8b0175613b28342e11c5dcfab3444bd671d30eeed4f0093cd8f8b2071e647017",
       "path": "capabilities/operating/payload/routes.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "1719945c9be9596fda2aba5ca2659f6f404b7fd7dfc9cd02fc1a98c2c7509f4b",
+      "path": "capabilities/operating/register-kinds.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -715,6 +727,12 @@
       "class": "interpreter",
       "digest": "aafc559a718e36a791c898df4327644c99f2ed6fc34299bfa033274c3731943f",
       "path": "interpreters/gates/records.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "cb6d1294f0778dd20ec4dc3caa2fd06712b1fc0f5ca8324d30f140ca33e16766",
+      "path": "interpreters/gates/registers.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1385,6 +1403,18 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "2572d78cccdccfd75adf97a4354413998081761b10e6d9c4ce85afbbde7e811c",
+      "path": "schemas/register-kind.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "b9a0a959dac1c40b4ce2fd47e879d70a032e4be4813817e533a6ca1c8aa4ceba",
+      "path": "schemas/register.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "320dc3f21ac693f275f468d133d0df94bd355926b0826e5477a904ea732d2381",
       "path": "schemas/residence.schema.json"
     },
@@ -1500,5 +1530,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T16:45:37+00:00"
+  "taken_at": "2026-10-15T16:56:51+00:00"
 }

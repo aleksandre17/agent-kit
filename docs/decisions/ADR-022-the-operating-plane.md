@@ -185,7 +185,8 @@ bundle, never in `kit/` · `host` = the host's own declaration or knowledge · `
 | S5 | module `claims`, verb `claim` (take, list, `--release`, break by name), kinds `claim` and `arbitration` (the window, seeded 0 = off), KIT0071; the judge refuses a path under another principal's standing claim or written by a peer inside the window unless my later claim supersedes it, and records each admitted write per principal | `test_claims` 390–394 |
 | S6 | a crashing gate kind FAILS under its own stance and `check` judges every other gate; `CALIBRATIONS` beside `KINDS` (specimen it must flag, lookalike it must admit), the unit meta-gate holding each, and the measure `uncalibrated_gate_kinds` a host budgets so the count only falls; first calibrations: `schema-valid`, `path-class-total` | `test_gate_calibration` (unit) and `test_gate_crash` 398 |
 | S6b | `exec` and session hands; the four-rings projection; the sunset reading of calibrated, quiet gates | named and NOT built: the rings belong to MECHANISMS (the judge, scoped writes, verified moves), which declare no ring yet, and a page drawn from gates alone would show almost only detection and read as a gap that is not there |
-| S7 | N collections; findings, vision registry, standards ledger; handoff record; knowledge planes | a register is a collection with its own lifecycle and no second engine; a promotion missing its far end fails |
+| S7 | kinds `register` and `register-kind`; the shipped kinds `standards`, `findings`, `visions`, `gaps` (each status names the fields it requires); the space `docs/work/registers/`, the page `docs/work/REGISTERS.md`, the gate `register-held` (calibrated) | `test_registers` 400–403: no register is said in words and green; declared rows are green and projected; an undeclared status or a missing required field fails by the row's address; a promotion is recorded at both ends |
+| S7b | the handoff record with its measurement point; the private and shared knowledge planes (the host floor's pending-E rows) | named and NOT built |
 | S8 | `bundles/conduct` chapters; skill and playbook genres | taken by a fresh host, its roll names every chapter UNANSWERED; a skill's catalog loads alone |
 
 Each slice is one card on the kit's own board and lands with its acceptance test, its CHANGELOG entry and
@@ -241,3 +242,14 @@ exactly that per gate, with its author and its moment: the gate's STANCE (ADR-00
 fails `check`. A second field would be a second home for one decision (Cardinal III), so none is added.
 What was missing was the CRASH: a kind that raised took `check` down whole. It now fails under its own
 stance — the fail-safe default — and every other gate is still judged.
+
+## Amendment 3 — a register is a document, not a second lifecycle engine (2026-10-15, found building S7)
+
+Decision 10 said the registers would be collections of delivery's lifecycle grammar, generalised from one
+governed collection to N. Measured before building: delivery's guarantees are written against ONE governed
+collection — `lineage.among()` answers `None` the moment there are two, so a second collection would have
+silently stopped the lineage gate reading delivery's own cards, and typed card references would have become
+ambiguous. That is a degradation of delivery bought to host the registers, and it is refused. The prior
+system's registers were LEDGERS — rows with a status vocabulary, history in git — and lost nothing that was
+registered. That is the better form: a register is a document of rows whose statuses its KIND declares, with
+what each status requires; one gate holds them; one page projects them; delivery is untouched.
