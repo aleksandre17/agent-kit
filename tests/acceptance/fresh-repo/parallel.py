@@ -35,7 +35,10 @@ def _one(module: Path, logs: Path) -> tuple:
     said = done.stdout + done.stderr
     (logs / f"{module.stem}.log").write_text(said, encoding="utf-8")
     ran = RAN.search(said)
-    return module.stem, done.returncode, int(ran.group(1)) if ran else 0, time.monotonic() - started
+    # A module that deliberately holds no test (a shim discovery imports) ends `NO TESTS RAN`, exit 5:
+    # an honest zero, not a failure -- and only when the output says exactly that.
+    code = 0 if done.returncode == 5 and "NO TESTS RAN" in said else done.returncode
+    return module.stem, code, int(ran.group(1)) if ran else 0, time.monotonic() - started
 
 
 def main(argv=None) -> int:
