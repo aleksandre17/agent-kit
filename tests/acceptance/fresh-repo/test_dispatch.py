@@ -40,13 +40,14 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from harness import Fixtures
+from harness import KIT, Fixtures
 
 import admission
 import dispatch_port
 import ephemeral
 import hostlock
 from context import Context
+from manifest import Manifest
 
 from test_adapters import ADAPTERS, adapted_kit
 from test_enforcement import GATES_FILE
@@ -182,10 +183,15 @@ def answer(identity: str, said: str, **fields) -> str:
                             dispatch_port.ANSWER: said}, **fields))
 
 
+#: The packet kind's version, read from its one home -- never spelled here (ADR-009).
+PACKET_VERSION = Manifest(KIT).version_of(dispatch_port.PACKET)
+
+
 def packet(identity: str, **fields) -> dict:
-    return dict({"schema_version": 1, "id": identity, "route": ADAPTER.name,
+    return dict({"schema_version": PACKET_VERSION, "id": identity, "route": ADAPTER.name,
                  "instruction": "write the file you were asked for", "branch": f"dispatch/{identity}",
-                 "role": "a-worker"}, **fields)
+                 "role": "a-worker", "deliverable": "the file the worker was asked for, in its tree",
+                 "decision_density": "low", "reversibility": "cheap"}, **fields)
 
 
 class Dispatch(Fixtures, unittest.TestCase):

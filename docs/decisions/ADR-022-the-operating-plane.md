@@ -99,12 +99,16 @@ bundle, never in `kit/` · `host` = the host's own declaration or knowledge · `
    and measures; it ships no price, no tier name, no threshold and no route — every number and every word
    a host would argue about is the host's declaration (ADR-001 point 4). A host that declares nothing
    gets the declared zero, stated as such, and `check` stays green.
-2. **A packet names what ends the run.** The dispatch packet (ADR-017) gains `artifact` (the one thing
-   that will exist), `ground[]` (each `{fact, instrument, paths?}` — a reading carries the instrument it
+2. **A packet names what ends the run.** The dispatch packet (ADR-017) gains `deliverable` (the one
+   thing that will exist — named so because the port already provides `artifact` for the worker's
+   answer file, and one word must not carry two referents), `ground[]` (each `{fact, instrument, paths?}` — a reading carries the instrument it
    came from, so the recipient can see whether it answers the question), `boundaries` (write set and
    one-way stops), `return` (the declared return shape), `budget` (`calls`, `peak`), and the two routing
-   facts `decision_density` and `reversibility`. A packet without an `artifact` is not dispatchable — the
-   port refuses it before a worker starts. The **return** is one schema: the artifact's referent, an
+   facts `decision_density` and `reversibility`. A packet without a `deliverable` is not dispatchable —
+   the port refuses it before a worker starts. Requiring it is a breaking change, so the packet kind
+   moves to version 2 (ADR-009); the kind is TRANSIENT — a caller hands it over and the task record
+   carries it opaquely — so no host stores one and a version-1 packet is refused by `KIT0034` and
+   re-authored, with no migration to declare. The **return** is one schema: the artifact's referent, an
    `economy` record (`calls`, `peak`, `not_read` with the reason), `findings[]` beyond scope, a
    `brief_quality` grade, an optional `growth` note `{lesson, evidence, ladder, delta?}`, and a `refusal`
    `{argument, alternatives[], escalate_to}` that is a complete answer, never a failure.
@@ -170,7 +174,7 @@ bundle, never in `kit/` · `host` = the host's own declaration or knowledge · `
 
 | Slice | Lands | Proof |
 |---|---|---|
-| S1 | packet and return grammar; the route table grammar; the spawn gate at the port | a packet with no artifact is refused before a worker starts; a return missing its economy record is refused; a profile not named in the host's declaration is never run |
+| S1 | packet v2 (`deliverable`, `decision_density`, `reversibility`, `ground`, `boundaries`, `budget`, `profile`); `dispatch-return`; `route-table` and the `operating` capability that seeds an empty one; the port's route judgement, the carried return, the named profile run with its timeout; `minimum` in the schema subset | `test_routing` 360–364: a v1 packet refused by the reader rule; no cell declared is carried and said so; a packet off its cell, past its ceiling or naming an undeclared profile is refused before a worker starts; a failing profile closes the task by name; a return missing its economy closes it by name |
 | S2 | the ground ledger through `ports/vcs.py` | a fact expires with its own paths and only those; a MISS names what moved and returns the instrument |
 | S3 | telemetry stream (OTel GenAI attributes); the four measures and the sunset measure; size per kind | a host budget below a measure fails `check`; a gate with no firing in the window is named |
 | S4 | attestation derived from receipts | a declared capability with no proving receipt prints UNPROVEN; routing ignores it |

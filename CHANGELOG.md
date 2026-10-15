@@ -7,6 +7,21 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE OPERATING PLANE, slice S1: a packet names what ends the run (ADR-022)**
+- `dispatch-packet` **version 2**: `deliverable` (required), `decision_density`, `reversibility` (required),
+  `ground[]` (each with its instrument), `boundaries`, `budget`, `profile`. A v1 packet is refused by
+  `KIT0034` (a transient kind; nothing to migrate). The port provides `{deliverable}` to an adapter.
+- New capability **`operating`** 0.1.0 (the operating plane's home): seeds an empty `.agents/project/operating/routes.json` (the declared
+  zero) and declares `route-table` (cells on the two axes; named verification profiles with a timeout) and
+  `dispatch-return` (deliverable status, economy with what was not read, findings, brief quality, growth,
+  refusal with argument, alternatives and who decides).
+- The port judges a packet against its cell (pair present, role, adapter, required profile, budget, packet
+  ceiling) before a worker starts; records the cell or that none was declared; parses and validates a return
+  from an artifact the adapter declares `carries` it; runs a named profile in the worker's tree on return,
+  bounded by its timeout. A failed return or profile closes the task FAILED, by name.
+- `minimum` joins the kit's JSON-Schema subset.
+- `test_routing` 360–364.
+
 **Added — THE TREE IS THE DRAWING, slice S5: the floor holds on a fresh clone (ADR-021 decision 8)**
 - `floor.observed()`: a drawn place in the observed plane is NOT MEASURED, never failed (generalises the
   ephemeral-clone rule). Unit host #0 floor green.

@@ -20,7 +20,7 @@ import re
 SUPPORTED = {
     "$id", "$schema", "title", "description",
     "type", "enum", "const", "required", "properties", "additionalProperties",
-    "items", "minItems", "minLength", "pattern",
+    "items", "minItems", "minLength", "pattern", "minimum",
 }
 
 _TYPES = {
@@ -66,6 +66,10 @@ def validate(instance, schema: dict, path: str = "$") -> list[str]:
 
     if "enum" in schema and instance not in schema["enum"]:
         errors.append(f"{path}: {instance!r} not one of {schema['enum']!r}")
+
+    numeric = isinstance(instance, (int, float)) and not isinstance(instance, bool)
+    if "minimum" in schema and numeric and instance < schema["minimum"]:
+        errors.append(f"{path}: {instance!r} is below minimum {schema['minimum']!r}")
 
     if isinstance(instance, str):
         if "minLength" in schema and len(instance) < schema["minLength"]:

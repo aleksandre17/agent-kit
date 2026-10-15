@@ -84,6 +84,11 @@
                 "media_type": {
                   "type": "string",
                   "minLength": 1
+                },
+                "carries": {
+                  "description": "ADR-022: the kit schema this artifact's text is a document of -- `dispatch-return` for the worker's structured return. The port parses and validates it on return; a declared carrier that is absent or invalid closes the task as failed, by name.",
+                  "type": "string",
+                  "minLength": 1
                 }
               }
             }

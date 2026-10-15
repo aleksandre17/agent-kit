@@ -103,6 +103,10 @@
     {
       "id": "fitness",
       "declaration": "capabilities/fitness/capability.json"
+    },
+    {
+      "id": "operating",
+      "declaration": "capabilities/operating/capability.json"
     }
   ],
   "detectors": [
@@ -167,6 +171,8 @@
     "dispatch-adapter": "schemas/dispatch-adapter.schema.json",
     "workspace-provider": "schemas/workspace-provider.schema.json",
     "task": "schemas/task.schema.json",
-    "lesson": "schemas/lesson.schema.json"
+    "lesson": "schemas/lesson.schema.json",
+    "dispatch-return": "schemas/dispatch-return.schema.json",
+    "route-table": "schemas/route-table.schema.json"
   }
 }

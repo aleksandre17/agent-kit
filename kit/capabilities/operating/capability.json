@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "operating",
+  "version": "0.1.0",
+  "summary": "Declares the host's side of the dispatch port (ADR-017, ADR-022): the ROUTE TABLE a task is routed by, on two axes -- unmade judgement and reversibility -- and the verification profiles the port may run by name; and the RETURN a worker hands back, in one shape. The kit ships the grammar and an empty table; every cell, every role, every budget and every command is the host's.",
+  "doctrine": "capabilities/operating/payload/operating.md",
+  "requires": [],
+  "provides": [
+    "dispatch-routing"
+  ],
+  "conflicts": [],
+  "declares": {
+    "schemas": [
+      "route-table",
+      "dispatch-return"
+    ]
+  },
+  "installs": [
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/operating/routes.json",
+      "source": "capabilities/operating/payload/routes.json",
+      "validates": "route-table",
+      "reads_as": "route_table"
+    }
+  ],
+  "gates": []
+}

@@ -76,6 +76,12 @@ ADAPTERS = {"validates": "dispatch-adapter"}
 ADAPTER_LIST = "adapters"
 PROVIDERS = {"validates": "workspace-provider"}
 PROVIDER_LIST = "providers"
+#: The host's route table (ADR-022 decision 3): its cells and its verification profiles, found by the
+#: contract their document keeps -- shipped or authored, never by a path spelled here.
+ROUTES = {"validates": "route-table"}
+CELL_LIST, PROFILE_LIST = "cells", "profiles"
+#: The kind a returned artifact may declare it CARRIES: the worker's structured return.
+RETURN = "dispatch-return"
 
 #: The two shapes this port reads and writes, by the name of the schema that is their one home.
 PACKET = "dispatch-packet"
@@ -129,7 +135,7 @@ TREE = "tree"
 #: refused by name; widening either is this interpreter providing one more, never an enum edited
 #: in a schema (Cardinal II).
 PROVIDED = ("id", "instruction", "branch", "role", "workspace", "task", "artifact",
-            ANSWER, REENTRY)
+            "deliverable", ANSWER, REENTRY)
 CHANNELS = ("stdout", "stderr", "file")
 
 #: The name of the file this port PROVIDES for a worker that answers in a file rather than on a
@@ -311,11 +317,61 @@ def judgeable(isolation: dict) -> dict:
     return isolation
 
 
+def route(ctx, packet: dict) -> dict:
+    """The packet judged against the host's route table (ADR-022 decision 3) -- the cell it falls in,
+    or the statement that the host declares none. Every mismatch is named at once: the cell a task
+    belongs to is the host's declaration, and a packet that disagrees with it is not routed by the
+    port choosing one side.
+
+    With no cell declared the port carries the packet and judges nothing by its routing facts, and
+    the record SAYS so: a route nobody declared is not a route that was checked."""
+    cells = declared.rules(ctx, ROUTES, CELL_LIST)
+    profiles = {row["id"]: row for row in declared.rules(ctx, ROUTES, PROFILE_LIST)}
+    named = packet.get("profile")
+    if named is not None and named not in profiles:
+        raise DispatchRefused(
+            f"dispatch {packet['id']!r} names the verification profile {named!r}, which this host's "
+            f"route table does not declare (declared: {sorted(profiles)}). A profile is the only thing "
+            f"this port runs on a task's behalf, and it runs only one the host named")
+    if not cells:
+        return {"cell": None, "says": "this host declares no route table cell, so no routing fact of "
+                                      "this packet was judged"}
+    cell = next((c for c in cells if c["decision_density"] == packet["decision_density"]
+                 and c["reversibility"] == packet["reversibility"]), None)
+    if cell is None:
+        raise DispatchRefused(
+            f"dispatch {packet['id']!r} states decision_density={packet['decision_density']!r} and "
+            f"reversibility={packet['reversibility']!r}, and no cell of this host's route table holds "
+            f"that pair (cells: {[(c['decision_density'], c['reversibility']) for c in cells]})")
+    wrong = []
+    if cell.get("role") and packet.get("role") != cell["role"]:
+        wrong.append(f"the cell routes to the role {cell['role']!r} and the packet names "
+                     f"{packet.get('role')!r}")
+    if cell.get("adapter") and packet["route"] != cell["adapter"]:
+        wrong.append(f"the cell routes to the adapter {cell['adapter']!r} and the packet to "
+                     f"{packet['route']!r}")
+    if cell.get("requires_profile") and named is None:
+        wrong.append("the cell requires a verification profile and the packet names none")
+    for limit, given in (cell.get("budget") or {}).items():
+        stated = (packet.get("budget") or {}).get(limit)
+        if stated is None or stated > given:
+            wrong.append(f"the cell caps {limit} at {given} and the packet states {stated!r}")
+    if cell.get("ceiling_chars") and len(packet["instruction"]) > cell["ceiling_chars"]:
+        wrong.append(f"the instruction is {len(packet['instruction'])} characters and the cell's "
+                     f"ceiling is {cell['ceiling_chars']} -- an inlined wall is re-billed on every call")
+    if wrong:
+        raise DispatchRefused(
+            f"dispatch {packet['id']!r} falls in the cell {cell['id']!r} of this host's route table, "
+            f"and does not honour it:\n  " + "\n  ".join(wrong))
+    return {"cell": cell["id"], "says": cell.get("says", "")}
+
+
 def accepted(ctx, raw) -> tuple:
     """Every refusal, taken together, on pure reads. Returns (packet, adapter, provider). A caller
     that wants to know whether a dispatch WOULD be accepted asks this and writes nothing."""
     vocabulary(ctx)
     packet = complete(ctx, packet_from(raw))
+    route(ctx, packet)
     return packet, coherent(routed(ctx, packet)), judgeable(provider(ctx))
 
 
@@ -400,6 +456,7 @@ def _started(ctx, args, handed, run) -> int:
                           now=now, break_by=getattr(args, "break_lock", None), registers=False)
     record = _Record.opened(ctx, task_rel, packet=packet, adapter=adapter["id"],
                             workspace=tree_rel, lease=lease_rel, now=now)
+    record.value["route"] = route(ctx, packet)
     return _held(lease, record, lambda: _isolated_then_started(
         ctx, packet, adapter, workspaces, record, tree_rel, run))
 
@@ -512,7 +569,8 @@ def _values(ctx, packet, record, tree_rel, **carried) -> dict:
     answer and the way back in."""
     return _provides(
         id=packet["id"], branch=packet["branch"], instruction=packet["instruction"],
-        role=packet.get("role"), workspace=ctx.workspace.path(tree_rel).as_posix(),
+        role=packet.get("role"), deliverable=packet.get("deliverable"),
+        workspace=ctx.workspace.path(tree_rel).as_posix(),
         task=ctx.workspace.path(record.rel).as_posix(),
         artifact=ctx.workspace.path(home(ctx, packet["id"], ARTIFACT)).as_posix(), **carried)
 
@@ -574,9 +632,22 @@ def _turn(ctx, packet, adapter, workspaces, record, tree_rel, block, values, run
         print(_asked(turn))
     else:
         ended = COMPLETED if worker.returncode == adapter["completed_on"]["exit"] else FAILED
-        record.close(ended, worker.returncode, artifacts=artifacts, admission=verdict)
-        code = 0 if ended == COMPLETED else 1
         message = None if ended == COMPLETED else f"worker exit {worker.returncode}"
+        stated = None
+        returned, why = _returned(ctx, packet, adapter, artifacts)
+        if returned is not None:
+            record.value["return"] = returned
+        if why and ended == COMPLETED:
+            ended, message, stated = FAILED, why, why
+        if ended == COMPLETED and packet.get("profile"):
+            checked = _verified(ctx, packet, tree, run)
+            record.value["verification"] = checked
+            if not checked["passed"]:
+                stated = (f"the deliverable did not pass the verification profile "
+                          f"{packet['profile']!r} (exit {checked['exit']})")
+                ended, message = FAILED, stated
+        record.close(ended, worker.returncode, stated, artifacts=artifacts, admission=verdict)
+        code = 0 if ended == COMPLETED else 1
         print(f"dispatch: {packet['id']} {ended} through {adapter['id']} in {tree_rel} "
               f"(exit {worker.returncode}); {len(artifacts)} artifact(s) recorded at {record.rel}")
     print(admission.said(verdict))
@@ -586,6 +657,42 @@ def _turn(ctx, packet, adapter, workspaces, record, tree_rel, block, values, run
             f"NOT ADMITTED to this host. The verdict, every path it judged and every refusal stand "
             f"at {record.rel}")
     return code, message
+
+
+def _returned(ctx, packet, adapter, artifacts) -> tuple:
+    """(the worker's structured return, why it is not acceptable) -- read from the artifact the
+    ADAPTER declared carries it, and from nothing else. An adapter that declares no carrier returns no
+    structure, and that is printed rather than read as an empty return. A declared carrier that is
+    absent, unreadable or does not honour the return schema closes the task as failed, by name: a
+    worker that promised to say what it cost and said nothing has not finished."""
+    carried = [part for part in adapter["returns"] if part.get("carries") == RETURN]
+    if not carried:
+        print(f"dispatch: {packet['id']} -- the adapter {adapter['id']!r} declares no artifact that "
+              f"carries a {RETURN!r}, so no economy, finding or brief grade comes back from it")
+        return None, None
+    read = next(a for a in artifacts if a["name"] == carried[0]["name"])
+    if read.get("absent"):
+        return None, f"the declared {RETURN!r} is absent -- {read['absent']}"
+    try:
+        value = json.loads(read.get("text") or "")
+    except ValueError as exc:
+        return None, f"the declared {RETURN!r} is not readable -- {exc}"
+    errors = ctx.manifest.validate(value, RETURN)
+    if errors:
+        return value, f"the declared {RETURN!r} does not honour its schema: " + "; ".join(errors)
+    if value.get("id") != packet["id"]:
+        return value, f"the {RETURN!r} answers {value.get('id')!r}, not this dispatch {packet['id']!r}"
+    return value, None
+
+
+def _verified(ctx, packet, tree, run) -> dict:
+    """The host's NAMED verification profile, run in the worker's tree on return. Its argv is the
+    host's declaration -- never text from the packet -- and its result is recorded whatever it was."""
+    profile = {row["id"]: row for row in declared.rules(ctx, ROUTES, PROFILE_LIST)}[packet["profile"]]
+    done = run(profile["argv"], cwd=tree, stdin=None, timeout=profile["timeout_s"])
+    said = ((done.stdout or "") + (done.stderr or "")).strip().splitlines()
+    return {"profile": profile["id"], "exit": done.returncode, "passed": done.returncode == 0,
+            "tail": said[-20:]}
 
 
 def _question(adapter: dict, asks: dict, artifacts: list, at: str) -> dict:
@@ -653,13 +760,16 @@ def _artifact(part: dict, worker, answer) -> dict:
     return dict(found, text=(worker.stdout if part["from"] == "stdout" else worker.stderr) or "")
 
 
-def _ran(argv, cwd, stdin):
+def _ran(argv, cwd, stdin, timeout=None):
     """The one boundary this port crosses to start anything. No shell: the declaration is a fixed
     argv and stays one. A program that is absent is a REFUSAL, never a worker that quietly did
     nothing -- what is not observed is declared, never fabricated."""
     try:
         return subprocess.run([str(part) for part in argv], cwd=str(cwd), input=stdin,
-                              capture_output=True, text=True)
+                              capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired as exc:
+        # A declared bound that passed is an ending, stated: never a hang, never a silent success.
+        return subprocess.CompletedProcess(exc.cmd, 124, exc.stdout or "", f"timed out after {timeout}s")
     except OSError as exc:
         raise DispatchUnserved(
             f"{argv[0]!r} could not be run on this machine -- {exc}. What a declaration names is a "

@@ -1,7 +1,7 @@
 {
   "$id": "dispatch-packet",
   "title": "A DISPATCH PACKET -- the complete statement of one task handed to the dispatch port, and the only thing the port accepts",
-  "description": "The orchestrator's half of a dispatch, and nothing else: WHICH task this is (a routed DISPATCH-ID), WHERE it was routed (an adapter id some taken capability declares), WHAT the worker is asked to do, and ON WHICH BRANCH its isolated workspace stands. A packet that cannot state all four is INCOMPLETE, and the port refuses it before a lease is taken, a workspace is made or a worker is started -- whatever runtime, hook or hand called it (ADR-017 decision 1: the gate has one home, independent of who calls it).\n\nWhat this document deliberately does NOT carry: a path. Where a worker's isolated tree lives is a property of the HOST's layout, not of the task, and a packet free to name any path would be a way to write anywhere in the host through the one door that exists to be passed. The port places every worker's tree inside the plane that holds what a run leaves behind, under the dispatch id, and the packet names only the branch.\n\nIt carries no behaviour: no command, no closure, no fetch (Cardinal IV). What a worker is STARTED with is the adapter's declaration; what it is ASKED is this packet's `instruction`, which is text and is never interpreted by the port.",
+  "description": "The orchestrator's half of a dispatch, and nothing else: WHICH task this is (a routed DISPATCH-ID), WHERE it was routed (an adapter id some taken capability declares), WHAT the worker is asked to do, and ON WHICH BRANCH its isolated workspace stands. A packet that cannot state all four is INCOMPLETE, and the port refuses it before a lease is taken, a workspace is made or a worker is started -- whatever runtime, hook or hand called it (ADR-017 decision 1: the gate has one home, independent of who calls it).\n\nWhat this document deliberately does NOT carry: a path. Where a worker's isolated tree lives is a property of the HOST's layout, not of the task, and a packet free to name any path would be a way to write anywhere in the host through the one door that exists to be passed. The port places every worker's tree inside the plane that holds what a run leaves behind, under the dispatch id, and the packet names only the branch.\n\nIt carries no behaviour: no command, no closure, no fetch (Cardinal IV). What a worker is STARTED with is the adapter's declaration; what it is ASKED is this packet's `instruction`, which is text and is never interpreted by the port.\n\nVersion 2 (ADR-022 decision 2): a packet also names what ENDS the run -- its `deliverable`, the one thing that will exist that does not now -- and the two facts a route is chosen on, `decision_density` and `reversibility`. A task with no nameable deliverable cannot terminate, so it is not dispatchable. The packet is a TRANSIENT kind: a caller hands it over and the task record carries it opaquely, so no host stores a document of this kind and a version-1 packet has nothing to migrate -- it is refused (KIT0034) and re-authored.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -9,12 +9,15 @@
     "id",
     "route",
     "instruction",
-    "branch"
+    "branch",
+    "deliverable",
+    "decision_density",
+    "reversibility"
   ],
   "properties": {
     "schema_version": {
       "type": "integer",
-      "const": 1
+      "const": 2
     },
     "id": {
       "description": "The DISPATCH-ID: this task's one name, in every record the dispatch leaves -- the lease, the workspace, the task record. A name is not a referent (Cardinal VII), so the form is constrained to what every boundary this id crosses reads the same way: a path segment, a branch component and a JSON key.",
@@ -64,6 +67,91 @@
           "minLength": 1
         }
       }
+    },
+    "deliverable": {
+      "description": "The ONE thing that will exist when this run ends and does not exist now -- an artifact or a decision, stated in a sentence. The worker is required to stop the moment it holds it. A deliverable is not an effort (\"investigate\"); it is what an investigation ends in.",
+      "type": "string",
+      "minLength": 1
+    },
+    "decision_density": {
+      "description": "How much UNMADE judgement this task holds -- a word of the host's route table (`cells[].decision_density`). With no route table, any word is carried and nothing is judged by it, which the port says.",
+      "type": "string",
+      "minLength": 1
+    },
+    "reversibility": {
+      "description": "What a wrong answer costs to undo -- a word of the host's route table (`cells[].reversibility`).",
+      "type": "string",
+      "minLength": 1
+    },
+    "ground": {
+      "description": "What is already established, so the worker cites it instead of re-deriving it. Each row is a READING, never a property of the world: it names the INSTRUMENT that produced it (the command or file), so the recipient can see whether that instrument answers the question its decision asks, and re-measure once the grounds its own decision rests on. A ground found wrong is a finding of the return, never silently corrected.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "fact",
+          "instrument"
+        ],
+        "properties": {
+          "fact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "instrument": {
+            "type": "string",
+            "minLength": 1
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "boundaries": {
+      "description": "What the worker may change and where it must stop. `writes` is the write set the router intends -- what a parallel dispatch is checked against; `stops` are the one-way doors the worker reports at instead of crossing.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "writes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "stops": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "budget": {
+      "description": "The spend this run is given: tool calls and peak context, in the units the host's telemetry measures. A run past its budget with no deliverable stops and reports.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "peak_context": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "profile": {
+      "description": "The verification profile the port runs in the worker's tree when the worker returns: an id of the host's route table (`profiles[].id`). Never a command -- no text from a packet is ever executed (Cardinal IV).",
+      "type": "string",
+      "minLength": 1
     }
   }
 }

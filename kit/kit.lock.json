@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 232,
+  "count": 237,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "f64eeac33644a626f18b663e25c4bdbb7129b5bbc572321d7d3a28199a1777c6",
+      "digest": "af41e8e1cfb2d1d134ec66a15ddab9096755f33cbb84f97857a231918ec973d8",
       "path": "MANIFEST.json"
     },
     {
@@ -325,6 +325,24 @@
       "class": "declaration",
       "digest": "cfbb046379716f4ea73d42adf890b07e0452a3ee4c5960e1c02b763c4230f515",
       "path": "capabilities/observability/payload/observation-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "9dc818efe2f31e362c51bff93854ccb4fc0fecd718e5940a0e65aff47acc15ff",
+      "path": "capabilities/operating/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "633bb611c4ed66664dcd86516ab2a199d39d5c8c3ea5c88f57919ee7d53cd25c",
+      "path": "capabilities/operating/payload/operating.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "8b0175613b28342e11c5dcfab3444bd671d30eeed4f0093cd8f8b2071e647017",
+      "path": "capabilities/operating/payload/routes.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -791,7 +809,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "04895b0ee65b86168f80a7c14205b9b575f56000115e0d8813be3cae0f863c39",
+      "digest": "35c635333201d6b0f70771f7e27bffd7cc7368c74ffbf9f546004aa374c73d28",
       "path": "interpreters/ports/dispatch_port.py"
     },
     {
@@ -941,7 +959,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4fcdf099c3bf76b1f7660f1f8762995200874676d918647df94b1d9a079ea645",
+      "digest": "06f8f4e40d2eacd8d585a1edebcbf734733840bc494942c4aa5f1cfaf357a698",
       "path": "interpreters/validation.py"
     },
     {
@@ -1133,14 +1151,20 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d06dca495deabab2a99da69142bb31fcbdd77e5d6e01f38602afd232d88ce01f",
+      "digest": "50c589ed3b352a3ad2ba91b02ad675ec06c51184cfc3965245a92e735d8571df",
       "path": "schemas/dispatch-adapter.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d5a535eb1b7279ce75cbb3db43d69881398de3afbd30d82cf0ca23d7025a6e7b",
+      "digest": "382125e0df62aee2ae3ef5d52cb8c8ee25be9c0306a1149a22ce08ee3ba28d00",
       "path": "schemas/dispatch-packet.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "aa4c0cf4b9fad20eb0f2b9ef408077983b90494d4cf5f7bc37ed73af3ee3e03d",
+      "path": "schemas/dispatch-return.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1301,6 +1325,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "b2b58d44f8e963515719a0121649084eb83122f3ea9b2eabf6506a23a598e3ed",
+      "path": "schemas/route-table.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "9a7ece54d1a6b321e4c60992a2530458a7ddf3a29927bfa9afdc5608e898083c",
       "path": "schemas/runtime-class.schema.json"
     },
@@ -1349,7 +1379,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "3bf4a4b8974f6d66de2d98b9d79de743992b9acf0e70e0ac6209475e6099620c",
+      "digest": "a9c6211f6014e9f55ff83de4db02267e47d8fbba45596a44bdf9fa714f193e6d",
       "path": "schemas/task.schema.json"
     },
     {
@@ -1398,5 +1428,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T13:43:56+00:00"
+  "taken_at": "2026-10-15T14:17:48+00:00"
 }
