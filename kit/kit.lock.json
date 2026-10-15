@@ -65,7 +65,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "dde824af3cb4cafebc428db736d12ea9343dbe6b1dc1ee8e2e516687b1666da1",
+      "digest": "2ad29328817beb0fdd5a246b58c37cd55e5f1a071a6548782bca9c2725f638f3",
       "path": "capabilities/doctrine/grammar.json"
     },
     {
@@ -1530,5 +1530,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T16:56:51+00:00"
+  "taken_at": "2026-10-15T17:05:32+00:00"
 }

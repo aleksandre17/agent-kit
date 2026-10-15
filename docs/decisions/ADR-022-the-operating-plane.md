@@ -187,7 +187,7 @@ bundle, never in `kit/` · `host` = the host's own declaration or knowledge · `
 | S6b | `exec` and session hands; the four-rings projection; the sunset reading of calibrated, quiet gates | named and NOT built: the rings belong to MECHANISMS (the judge, scoped writes, verified moves), which declare no ring yet, and a page drawn from gates alone would show almost only detection and read as a gap that is not there |
 | S7 | kinds `register` and `register-kind`; the shipped kinds `standards`, `findings`, `visions`, `gaps` (each status names the fields it requires); the space `docs/work/registers/`, the page `docs/work/REGISTERS.md`, the gate `register-held` (calibrated) | `test_registers` 400–403: no register is said in words and green; declared rows are green and projected; an undeclared status or a missing required field fails by the row's address; a promotion is recorded at both ends |
 | S7b | the handoff record with its measurement point; the private and shared knowledge planes (the host floor's pending-E rows) | named and NOT built |
-| S8 | `bundles/conduct` chapters; skill and playbook genres | taken by a fresh host, its roll names every chapter UNANSWERED; a skill's catalog loads alone |
+| S8 | `bundles/conduct/` 1.0.0: chapters protocol, economy, risk, delivery, verification, craft; the skill `architecture-standards`; the playbook `a-change-to-an-existing-system`; genres `skill` and `playbook` in the doctrine grammar; the upstream drawing's conduct, skills and playbooks rows built | `test_bundles` (every bundle beside the kit): taken by a fresh host, its roll names all eight addresses UNANSWERED and `check` is green. Serving a taken skill to a runtime (`generated/skills/`) stays pending C, named |
 
 Each slice is one card on the kit's own board and lands with its acceptance test, its CHANGELOG entry and
 a re-taken lock, as ADR-021's did.
@@ -253,3 +253,11 @@ ambiguous. That is a degradation of delivery bought to host the registers, and i
 system's registers were LEDGERS — rows with a status vocabulary, history in git — and lost nothing that was
 registered. That is the better form: a register is a document of rows whose statuses its KIND declares, with
 what each status requires; one gate holds them; one page projects them; delivery is untouched.
+
+## Where the line stands (2026-10-15)
+
+Built: S1 (packet, route, return), S2 (ground), S3 (economy measures), S4 (attestation), S5 (claims),
+S6 (crash is failure, calibration), S7 (registers), S8 (conduct). Named and not built, each with its reason
+on its row: S3b (transcript telemetry), S6b (exec and session hands, rings, sunset), S7b (handoffs,
+knowledge planes), routing on the attested set, serving skills. The upstream drawing reads 47 present,
+1 pending (`examples/`, link G), 0 missing, 0 undeclared.

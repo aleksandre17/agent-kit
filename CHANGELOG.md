@@ -7,6 +7,13 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE OPERATING PLANE, slice S8: the conduct, published (ADR-022 decision 11)**
+- `bundles/conduct/` 1.0.0 beside the kit: six chapters (protocol, economy, risk, delivery, verification,
+  craft), the skill `architecture-standards`, the playbook `a-change-to-an-existing-system` — re-authored from
+  the prior system's portable canon in no repository's vocabulary.
+- Doctrine grammar: genres `skill` and `playbook`.
+- `UPSTREAM-LAYOUT.json`: conduct, skills and playbooks rows built — 47 present, 1 pending, 0 missing.
+
 **Added — THE OPERATING PLANE, slice S7: registers are documents (ADR-022 decision 10, amendment 3)**
 - Kinds `register` (rows: id, title, status, at; optional by, note, declared_at, promoted_to, refs) and
   `register-kind`; shipped kinds `standards`, `findings`, `visions`, `gaps`, each status naming the fields it
