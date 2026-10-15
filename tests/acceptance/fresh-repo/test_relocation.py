@@ -111,6 +111,12 @@ class Relocation(Fixtures, unittest.TestCase):
         self.assertEqual(0, ran.returncode, ran.stderr)
         for move in MOVES:
             self.assertIn(f"{move['from']}  ->  {move['to']}", ran.stdout)
+        # A place about to move is shown by its move, never as a deletion -- and nothing the plan
+        # could not read is promised as removed (found by upgrading the kit's own repository).
+        removed = [line.split()[-1] for line in ran.stdout.splitlines() if line.strip().startswith("remove ")]
+        for move in MOVES:
+            self.assertFalse([r for r in removed if r == move["from"] or r.startswith(move["from"])],
+                             f"the plan shows {move['from']} as removed while it is being moved")
         self.assertEqual(before, tree(host), "a plan moved something")
 
     # == 2. the move ==============================================================================

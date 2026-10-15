@@ -450,7 +450,8 @@ def _phase_answer(ctx, args, state):
     state["writes"] = writes
     if getattr(args, "plan", False):
         if approved:
-            writes = writes + render_verb.plan_entries(ctx, enabled)
+            writes = writes + render_verb.plan_entries(
+                ctx, enabled, moving=[m["from"] for m in state.get("owed", [])])
             writes = writes + _record_plan(ctx, enabled, _signed(args, existing), writes,
                                            state.get("taken"))
         print(plan_module.report("init", writes))
