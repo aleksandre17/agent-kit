@@ -109,6 +109,7 @@
     "detectors/ci-workflows.json",
     "detectors/container-compose.json",
     "detectors/database-migrations.json",
+    "detectors/dotnet-project.json",
     "detectors/declared-test-runner.json",
     "detectors/git-repository.json",
     "detectors/go-module.json",
