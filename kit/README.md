@@ -1,9 +1,17 @@
-# `kit/` — the payload
+# The kit — the payload
 
 Exactly this directory is what lands in a host. Nothing above it travels: not the tests, not the
 CI, not this repository's history. That is the Helm-chart and Terraform-module convention — the
 unit of distribution is a directory with a manifest at its head — and it is what lets the
 acceptance test be honest, because the test may read only from here.
+
+**Where you are reading this decides what you may do here.** At the publisher, in `kit/`, this is
+the source: it is edited, locked (`lock`) and released. In a host, at `.agents/kit/`, it is the
+PINNED copy of a release, held byte for byte to `.agents/project/kit.lock.json` by
+`FF-KIT-PINNED`: it is never edited there — a change is made at the publisher and arrives by
+`upgrade`. The framework's own repository is both (ADR-016 decision 8, host #0): its `kit/` is the
+source and its `.agents/kit/` is the release it runs on, so a broken edit to the source can never
+switch off the gates that judge it.
 
 ## The one seam
 
