@@ -202,6 +202,38 @@ def marker_on(line: str) -> "tuple | None":
     return None if found is None else (found.group("edge"), found.group("id"))
 
 
+def span(text: str, identity: str) -> "str | None":
+    """The text between `identity`'s two markers, or `None` where the artifact marks out no span
+    for it. Two spans for one name are refused, exactly as `filled` refuses them."""
+    lines = text.split("\n")
+    if not any(marker_on(line) == ("begin", identity) for line in lines):
+        return None
+    first, last = _placed(lines, identity)
+    return "\n".join(lines[first + 1:last])
+
+
+def spliced(text: str, identity: str, content: str) -> str:
+    """`text` with `identity`'s span replaced by `content`, the markers rewritten canonically and
+    every byte outside them returned as it arrived. The one place a span is written, for every
+    writer of one -- a computed section of a bounded artifact, a runtime's served entry file."""
+    lines = text.split("\n")
+    first, last = _placed(lines, identity)
+    # One trailing newline is absorbed rather than rendered as a blank line: a declaration whose
+    # line ends in a break and one whose line does not must both produce a span that reads back
+    # identically, or the second run of this passage would differ from the first over a character
+    # nobody wrote.
+    content = content[:-1] if content.endswith("\n") else content
+    block = [OPENS.format(id=identity)] + content.split("\n") + [CLOSES.format(id=identity)]
+    return "\n".join(lines[:first] + block + lines[last + 1:])
+
+
+def withdrawn(text: str, identity: str) -> str:
+    """`text` with `identity`'s span and both its markers removed -- what is left is the host's."""
+    lines = text.split("\n")
+    first, last = _placed(lines, identity)
+    return "\n".join(lines[:first] + lines[last + 1:])
+
+
 def filled(text: str, *, shape: dict, sources: list, section: str, view: dict) -> str:
     """The artifact, with one computed section's span replaced by what the records say.
 
@@ -218,16 +250,7 @@ def filled(text: str, *, shape: dict, sources: list, section: str, view: dict) -
             f"section whose provenance says a principal owns it is not filled by refusal here -- "
             f"it is simply not something this passage can address, and nothing it holds is touched"
         )
-    lines = text.split("\n")
-    first, last = _placed(lines, section)
-    written = body(row, view)
-    # One trailing newline is absorbed rather than rendered as a blank line: a declaration whose
-    # line ends in a break and one whose line does not must both produce a span that reads back
-    # identically, or the second run of this passage would differ from the first over a character
-    # nobody wrote.
-    written = written[:-1] if written.endswith("\n") else written
-    block = [OPENS.format(id=section)] + written.split("\n") + [CLOSES.format(id=section)]
-    return "\n".join(lines[:first] + block + lines[last + 1:])
+    return spliced(text, section, body(row, view))
 
 
 def refresh(ctx, *, shape: dict, sources: list, section: str, view: dict, prior: str,

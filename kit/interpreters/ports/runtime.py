@@ -22,6 +22,12 @@ Three rules make a file outside the planes a PROJECTION rather than a fifth clas
     or exactly the bytes the kit's own record says it last wrote there. Anything else is somebody
     else's file, and the whole render is REFUSED before a byte moves -- Home-Manager's refusal to
     clobber a file it does not manage, not chezmoi's overwrite-on-apply.
+
+A render row that names a `span` serves less than a file (ADR-021 decision 5): the file is the
+HOST's, written once from the row's `seed`, and the kit owns only the text between its two
+markers. Every rule above then reads the SPAN: what is reproduced, what counts as the kit's bytes,
+what is withdrawn when the surface stops being served. A host writes its own instructions around
+the span, and nothing here reads them for writing.
 """
 
 from __future__ import annotations
@@ -31,6 +37,7 @@ import json
 
 import collection
 import declared
+import derivation
 import template
 from errors import KitError
 
@@ -120,6 +127,10 @@ def _sections(ctx, view_spec: dict, produced: dict, record: "dict | None" = None
             text, present = ctx.workspace.read_text(source), True
         else:
             text, present = "", False
+        if present and section.get("points"):
+            # A page a runtime reads WHEN a question arises is named, not inlined: the always-loaded
+            # text stays the size of what binds on every turn (ADR-021 decision 5).
+            text = f"Read `{source}` for {section['points']}."
         rows.append({**section, "from": source, "present": present, "text": text})
     return rows
 
@@ -188,17 +199,17 @@ def _targets(ctx, item: dict, view: dict, produced: dict, capabilities) -> list:
                 root = rendered["target"].rstrip("/")
                 for member in _members(view_spec, view, produced, capabilities):
                     found.append((f"{root}/{member['id']}{rendered.get('suffix', '')}",
-                                  rendered["template"], {**base, **member}))
+                                  rendered["template"], {**base, **member}, rendered))
             elif "scopes" in view_spec:
                 for rel, scope in _scopes(ctx, view_spec):
                     found.append((f"{rel}/{rendered['target']}", rendered["template"],
                                   {**base, "scope": rel, "scope_id": scope[collection.IDENTITY],
                                    "says": scope.get("says", ""),
-                                   "sections": _sections(ctx, view_spec, produced, scope)}))
+                                   "sections": _sections(ctx, view_spec, produced, scope)}, rendered))
             else:
                 found.append((rendered["target"], rendered["template"],
-                              {**base, "sections": _sections(ctx, view_spec, produced)}))
-    for path, _template, frame in found:
+                              {**base, "sections": _sections(ctx, view_spec, produced)}, rendered))
+    for path, _template, frame, _rendered in found:
         claimant = f"{frame['runtime']} through {frame['surface']}"
         if path in owner and owner[path] != claimant:
             raise ServeConflict(
@@ -212,14 +223,62 @@ def project(ctx, item: dict, view: dict, produced: dict, capabilities) -> dict:
     """Every served file and the record of them, as bytes in memory. Pure: VENDOR + BINDING and
     this render's own plane projections in, text out, nothing read from the wall clock."""
     out, record = {}, []
-    for path, source, frame in _targets(ctx, item, view, produced, capabilities):
+    last = prior_rows(ctx, capabilities)
+    for path, source, frame, rendered in _targets(ctx, item, view, produced, capabilities):
         text = template.render(ctx.manifest.payload_text(source), frame)
+        row = {"path": path, "runtime": frame["runtime"], "surface": frame["surface"]}
+        if rendered.get("span"):
+            seed = template.render(ctx.manifest.payload_text(rendered["seed"]), frame)
+            text = derivation.spliced(_host_file(ctx, path, rendered, seed), rendered["span"], text)
+            row.update({"span": rendered["span"],
+                        "span_sha256": _digest(derivation.span(text, rendered["span"])),
+                        "seed_sha256": _digest(derivation.withdrawn(seed, rendered["span"]))})
         out[path] = text
-        record.append({"path": path, "runtime": frame["runtime"], "surface": frame["surface"],
-                       "sha256": _digest(text)})
+        record.append({**row, "sha256": _digest(text)})
     out[item["target"]] = json.dumps(
         {"schema_version": RECORD_VERSION, "served": sorted(record, key=lambda r: r["path"])},
         indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    return out
+
+
+def _host_file(ctx, path: str, rendered: dict, seed: str) -> str:
+    """The text a span is placed into: the host's own file where it marks out the span; the seed
+    where there is no file, or where the file is still exactly what the kit last served WHOLE (a
+    file served before spans existed, the kit's own bytes to replace -- `admit` tells the two
+    apart by the record). Anything else is somebody else's file: the seed is returned, and
+    `admit` refuses the write by name."""
+    if ctx.workspace.exists(path):
+        existing = ctx.workspace.read_text(path)
+        if derivation.span(existing, rendered["span"]) is not None:
+            return existing
+    return seed
+
+
+def _spans(produced: dict, capabilities) -> dict:
+    """path -> (span id, span digest) for every spanned file this render serves, read from the
+    record this same render produced."""
+    found = {}
+    for item in _records(capabilities):
+        record = produced.get(item["target"])
+        for row in (json.loads(record).get("served", []) if record else []):
+            if row.get("span"):
+                found[row["path"]] = (row["span"], row["span_sha256"])
+    return found
+
+
+def withdrawals(ctx, capabilities, produced: dict) -> dict:
+    """path -> what is left of a spanned file whose surface is no longer served and whose span still
+    holds the kit's last bytes: the host's own text, without the span. A file whose remaining text
+    is still exactly the seed the kit wrote holds nobody's words, and is removed instead (None)."""
+    out = {}
+    for rel, row in prior_rows(ctx, capabilities).items():
+        if rel in produced or not row.get("span") or not ctx.workspace.exists(rel):
+            continue
+        text = ctx.workspace.read_text(rel)
+        held = derivation.span(text, row["span"])
+        if held is not None and _digest(held) == row.get("span_sha256"):
+            rest = derivation.withdrawn(text, row["span"])
+            out[rel] = None if _digest(rest) == row.get("seed_sha256") or not rest.strip() else rest
     return out
 
 
@@ -232,24 +291,29 @@ def foresee(ctx, item: dict, view: dict, capabilities) -> list:
             each = other.get("each")
             for record in (view.get(each["over"]) or []) if each else []:
                 produced[_plural_path([capability], each["over"], record[collection.IDENTITY])] = ""
-    return sorted({path for path, _s, _f in _targets(ctx, item, view, produced, capabilities)}
+    return sorted({path for path, _s, _f, _r in _targets(ctx, item, view, produced, capabilities)}
                   | {item["target"]})
 
 
 def _records(capabilities) -> list:
-    return [item for capability in capabilities
-            for item in capability.installs_of_class("projection") if item.get("shape") == SHAPE]
+    return [item for capability in capabilities for item in capability.installs
+            if item["class"] == "projection" and item.get("shape") == SHAPE]
+
+
+def prior_rows(ctx, capabilities) -> dict:
+    """path -> the row the kit's own record holds for it, span and all."""
+    rows = {}
+    for item in _records(capabilities):
+        if ctx.workspace.exists(item["target"]):
+            for row in ctx.workspace.read_json(item["target"]).get("served", []):
+                rows[row["path"]] = row
+    return rows
 
 
 def prior(ctx, capabilities) -> dict:
     """path -> digest the kit's own record says it last served. Read BEFORE the plane is rebuilt:
     the record is the only evidence of which bytes outside the planes are the kit's."""
-    last = {}
-    for item in _records(capabilities):
-        if ctx.workspace.exists(item["target"]):
-            for row in ctx.workspace.read_json(item["target"]).get("served", []):
-                last[row["path"]] = row["sha256"]
-    return last
+    return {path: row["sha256"] for path, row in prior_rows(ctx, capabilities).items()}
 
 
 def reach(ctx, capabilities) -> list:
@@ -300,6 +364,9 @@ def admit(ctx, capabilities, produced: dict) -> list:
     the caller can remove them. Refuses the whole render if any path outside the planes holds
     bytes the kit did not write, naming every one."""
     last = prior(ctx, capabilities)
+    rows = prior_rows(ctx, capabilities)
+    spans = _spans(produced, capabilities)
+    withdrawing = withdrawals(ctx, capabilities, produced)
     held, departing = [], []
     # A projection a capability DECLARES as an install target outside the planes is the kit's own
     # path from the moment it was installed -- first contact with a prior file there is judged by
@@ -309,11 +376,20 @@ def admit(ctx, capabilities, produced: dict) -> list:
     for rel, text in sorted(produced.items()):
         if _in_a_plane(ctx, rel) or not ctx.workspace.exists(rel) or rel in declared_targets:
             continue
+        if rel in spans:
+            # The host owns the file; the kit owns the span. Where the host's file marks the span
+            # out, only the span is judged: the kit's bytes are what it would serve now or what its
+            # record says it last served there, and the host's text around it is never in question.
+            on_disk = derivation.span(ctx.workspace.read_text(rel), spans[rel][0])
+            if on_disk is not None:
+                if _digest(on_disk) not in (spans[rel][1], rows.get(rel, {}).get("span_sha256")):
+                    held.append(rel)
+                continue
         found = _file_digest(ctx, rel)
         if found not in (_digest(text), last.get(rel)):
             held.append(rel)
     for rel, recorded in sorted(last.items()):
-        if rel in produced or not ctx.workspace.exists(rel):
+        if rel in produced or rel in withdrawing or not ctx.workspace.exists(rel):
             continue
         if _file_digest(ctx, rel) == recorded:
             departing.append(rel)

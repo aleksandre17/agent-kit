@@ -8,12 +8,16 @@
         {
           "view": "briefing",
           "target": "CLAUDE.md",
-          "template": "capabilities/claude-code/payload/entry.md.mustache"
+          "template": "capabilities/claude-code/payload/entry.md.mustache",
+          "span": "briefing",
+          "seed": "capabilities/claude-code/payload/entry-seed.md.mustache"
         },
         {
           "view": "scoped-briefing",
           "target": "CLAUDE.md",
-          "template": "capabilities/claude-code/payload/scoped.md.mustache"
+          "template": "capabilities/claude-code/payload/scoped.md.mustache",
+          "span": "scoped-briefing",
+          "seed": "capabilities/claude-code/payload/scoped-seed.md.mustache"
         },
         {
           "view": "role-definitions",

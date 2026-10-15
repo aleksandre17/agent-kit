@@ -31,6 +31,7 @@ from pathlib import Path
 from harness import KIT, Fixtures, host_digest
 
 import activation  # noqa: E402
+import derivation  # noqa: E402
 import runtime as runtime_port  # noqa: E402 -- reachable once the harness has placed the kit
 from manifest import Manifest  # noqa: E402
 
@@ -200,8 +201,15 @@ class Serving(Fixtures, unittest.TestCase):
         self.descriptor(host, "the-tool", **{ENABLING_FIELD: surface["id"]})
         self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
         rel = files_of(surface, AN_ARCHETYPE["id"])[0]
-        with open(host / rel, "a", encoding="utf-8", newline="\n") as f:
-            f.write("an edit somebody made by hand\n")
+        row = next(r for r in surface["renders"] if r["target"] == rel)
+        text = (host / rel).read_text(encoding="utf-8")
+        if row.get("span"):
+            # A spanned file is the host's: an edit is the kit's to refuse only INSIDE its span.
+            held = derivation.span(text, row["span"])
+            edited = derivation.spliced(text, row["span"], held + "\nan edit somebody made by hand\n")
+        else:
+            edited = text + "an edit somebody made by hand\n"
+        (host / rel).write_text(edited, encoding="utf-8", newline="\n")
         checked = self.run_kit(KIT, host, "check")
         self.assertNotEqual(0, checked.returncode)
         self.assertIn(rel, checked.stdout)

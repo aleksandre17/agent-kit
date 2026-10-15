@@ -86,11 +86,19 @@ NONE"** while its owner's eight cardinals exist only in the prior system of host
    same relocation, beside the doctrine stances; two capabilities write there, each its own files (the
    one-owner rule is per path, held by the resolver). `law-scopes.json` names its pages by path, so its
    relocation declares `referenced_by` and the owner restates them.
-5. **Entry files are binding with generated blocks, inside a budget.** `CLAUDE.md` and `AGENTS.md` are
-   host-owned; a runtime surface renders only the region between `BEGIN/END GENERATED` markers, and `check`
-   diffs only that region. The generated region carries the laws in force, the routes (records map
-   `read_when`) and pointers to the explanatory pages, which stay in `.agents/generated/`; its size is gated
-   against a host-declared budget (default 3 kB).
+5. **Entry files are binding with one kit span, inside a budget the host writes.** `CLAUDE.md` and
+   `AGENTS.md` (and every scoped one) are host-owned: a surface render row names a `span` and a `seed`; the
+   file is written once from the seed and the kit owns only the text between `kit:begin <span>` /
+   `kit:end <span>` — the one marker grammar the kit already had (`derivation`, ADR-020), now with a public
+   `span`/`spliced`/`withdrawn`, never a second one. Reproduction (`check`) and the anti-clobber rule judge
+   the span only: the serve record carries the span's digest and the seed's, so the host's text around the
+   span is never in question, a stale span beside host edits is still served, an edit inside the span is
+   refused, a file the kit last served whole is converted once, and a surface that stops being served
+   withdraws only its span (an untouched seed goes with it). The span carries what binds on every turn —
+   the laws — and POINTS to the pages a runtime reads when a question arises (doctrine, roles: section
+   field `points`) instead of inlining them. Its size is the published measure `served_span_bytes`, held
+   by the corpus plane's ordinary budget (ADR-019 decision 9): the host writes the number; the kit ships no
+   default ceiling, because a budget is a number a human writes about their own corpus.
 6. **The roster is the overlays.** `.agents/project/roster.json` is *realised* as `.agents/project/roles/`
    (the decision the roles capability already states). `.agents/generated/governance/INDEX.md` is renamed
    `CAPABILITIES.md`, so `INDEX.md` names one thing.
@@ -116,7 +124,7 @@ NONE"** while its owner's eight cardinals exist only in the prior system of host
 | S1 | `realised_as` (+ its `pending`), `declared_by` and `closed` in the layout grammar and the floor gate; every upstream row restated, the roster row realised | upstream floor green, 0 undeclared tracked children of `.` and `kit/`; a row both pending and realised is refused (negative test) |
 | S2 | `bundles/cardinals/`; take on both hosts | `test_bundles`: a fresh pinned host takes it, its roll names all eight cardinals UNANSWERED, `check` green |
 | S3 | capability `relocations` + the `relocations`/`relocate` init phases + the reconciliation's moved view; delivery, law and capability-index targets moved; KIT0068 | `test_relocation` 330–333: an ancestor host's `--plan` names every move and writes nothing; upgraded, each place is the same bytes at its new name, the estate re-keyed and recording each h1, `check` green; a scope page still named at the old place refuses until restated; two homes refused |
-| S4 | entry files with generated blocks and a budget | an edit outside the markers survives `render`; inside is caught; budget breach refused |
+| S4 | surface `span`/`seed`; span-aware serve record, admission, withdrawal; derivation's public span grammar; pointer sections; measure `served_span_bytes`; both adapters 1.1.0 | `test_entry_files` 340–346: seeded with the markers; host text outside survives render and `check`; an edit inside is reported and refused; a file served whole is converted through `upgrade`; doctrine and roles pointed to, not inlined; a withdrawn surface leaves only the host's text; a budget below the span fails `check` |
 | S5 | fresh-clone floor; ignore-aware probes | `check` green on a clean clone of each host (after `activate`) |
 
 ## Rejected alternatives
@@ -134,5 +142,9 @@ NONE"** while its owner's eight cardinals exist only in the prior system of host
   that does not own the place; the capability that moved an install is the one that can say where it was.
 - **Rewrite a host document's references during the move.** The document is binding — the host's words,
   which no upgrade reads for writing (ADR-002); a rewrite would be the kit authoring them.
+- **A second marker pair for entry files (`BEGIN/END GENERATED`).** Two grammars for one idea — where a
+  computed span stands — and the day one changed, the other would go on finding nothing.
+- **A kit default budget of 3 kB.** A ceiling is a number a human writes about their own corpus; a
+  default would be the kit's opinion of every host's context, unanswerable by stance.
 - **Leave law in governance's places and relabel the doctrine row.** Keeps four places for one kind the
   records map already unifies, against the drawing, to avoid a one-time declared move.

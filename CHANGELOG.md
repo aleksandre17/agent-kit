@@ -7,6 +7,18 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE TREE IS THE DRAWING, slice S4: entry files are the host's (ADR-021 decision 5)**
+- Surface render rows may name `span` + `seed`: the file is written once from the seed, the kit owns only
+  the span between `kit:begin`/`kit:end`. `derivation` gains public `span`, `spliced`, `withdrawn` (and
+  `filled` uses `spliced`) — one marker grammar for every writer of a span.
+- Runtime port: the serve record carries `span`, `span_sha256`, `seed_sha256`; `admit` judges a spanned
+  file by its span; `withdrawals` removes only the span of a surface no longer served (an untouched seed
+  is removed whole); a file the kit last served whole is converted. `render` writes withdrawals.
+- Briefing sections may `points` — doctrine and roles are now pointed to, not inlined.
+- Measure `served_span_bytes` (gate module `served`), budgeted by the host through its corpus map.
+- Adapters `claude-code`, `codex` 1.1.0: briefing and scoped briefing served as spans; seeds added.
+- `test_entry_files` 340–346; `test_serving` 262 edits inside the span; `test_adapters` 270 moves seeds.
+
 **Added — THE TREE IS THE DRAWING, slice S3: relocations (ADR-021 decisions 3, 4, 6)**
 - Capability `relocations: [{from, to, decision, referenced_by?}]` beside the install that moved; `to` must
   be one of that capability's own targets. New module `relocation.py`; `init` gains the phases

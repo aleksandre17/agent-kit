@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 229,
+  "count": 230,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -359,7 +359,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "0e846e4bff5838b7acc871816a7eb65730eef6a3cd175e749e770be7fc5496f8",
+      "digest": "60a640271a639893ce7df032f1aea2f4ee82ea7141498408c21e1dc2a8aa22a6",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -533,7 +533,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b6b6e2483f389cfc37169313c26aa88c8c6591bbc14f270256c5758538d73610",
+      "digest": "fb6e33ef02a36dd0cc587ad047676d36ecbf8f4fddc9c9b6c5db624abda35f04",
       "path": "interpreters/derivation.py"
     },
     {
@@ -683,6 +683,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "86e9c4813d945fcb2c47c9c3754d39ad5a7d09feef800a0ffee3b13de063f271",
+      "path": "interpreters/gates/served.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "2910b36d8240ccb592050797a639c1c6ee65fc76c1c94df6c6f9069fadcf1181",
       "path": "interpreters/gates/taken.py"
     },
@@ -803,7 +809,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0b56d6e69d881c34ce54e6899e3200599ef7a96d06b5069505398bd5e0d8e632",
+      "digest": "d1086f67d31f097eda043330d0c868aac0802b47aa2f6d91f0ff32137e5a48ce",
       "path": "interpreters/ports/runtime.py"
     },
     {
@@ -1013,7 +1019,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d5840082fe2593d59aa4ed10a63e99bde1d4dd1d44659872dcb10ceca32e76ad",
+      "digest": "ffd66b3f5a8bfc0e085423a445729ed653cc888c2fdc7f0ff8a54262b1f1ceb3",
       "path": "interpreters/verbs/render.py"
     },
     {
@@ -1295,7 +1301,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "40c91adf1a0c2ec6498a63076c59e6660985c9d64ef959cdc5b1414ba23cde52",
+      "digest": "55a35d20ad16a294db69faa5637e41da5b33874dba5dba2f915405c7f6dc2357",
       "path": "schemas/runtime-surface.schema.json"
     },
     {
@@ -1380,5 +1386,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T12:24:58+00:00"
+  "taken_at": "2026-10-15T12:42:28+00:00"
 }

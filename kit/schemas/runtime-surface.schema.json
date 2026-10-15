@@ -144,6 +144,16 @@
                 },
                 "suffix": {
                   "type": "string"
+                },
+                "span": {
+                  "description": "ADR-021 decision 5. The file is the HOST's; the kit serves only the span between the two `kit:begin <span>` / `kit:end <span>` markers (the one marker grammar, `derivation`). Written once from `seed` where the file is absent -- or where it still holds exactly the bytes the kit last served whole -- and never read for writing outside the span again. `check` and the anti-clobber rule judge the span only.",
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]*$"
+                },
+                "seed": {
+                  "description": "The template the host-owned file is written from ONCE, carrying the span's two markers. Required with `span`.",
+                  "type": "string",
+                  "minLength": 1
                 }
               }
             }

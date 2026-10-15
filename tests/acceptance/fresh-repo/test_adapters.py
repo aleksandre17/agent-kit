@@ -212,8 +212,12 @@ class Adapters(Fixtures, unittest.TestCase):
             for surface in value[LIST]:
                 surface["id"] = identity
                 for rendered in surface["renders"]:
-                    rendered["template"] = rendered["template"].replace(
-                        f"capabilities/{before['id']}/", f"capabilities/{identity}/")
+                    # Every payload a row names moves with the adapter -- its template, and the seed
+                    # of a host-owned file where the row serves a span.
+                    for field in ("template", "seed"):
+                        if field in rendered:
+                            rendered[field] = rendered[field].replace(
+                                f"capabilities/{before['id']}/", f"capabilities/{identity}/")
                     tail = "/" if rendered["target"].endswith("/") else ""
                     rendered["target"] = f".{identity}/{rendered['view']}{tail}"
             rel.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")

@@ -8,12 +8,16 @@
         {
           "view": "briefing",
           "target": "AGENTS.md",
-          "template": "capabilities/codex/payload/entry.md.mustache"
+          "template": "capabilities/codex/payload/entry.md.mustache",
+          "span": "briefing",
+          "seed": "capabilities/codex/payload/entry-seed.md.mustache"
         },
         {
           "view": "scoped-briefing",
           "target": "AGENTS.md",
-          "template": "capabilities/codex/payload/scoped.md.mustache"
+          "template": "capabilities/codex/payload/scoped.md.mustache",
+          "span": "scoped-briefing",
+          "seed": "capabilities/codex/payload/scoped-seed.md.mustache"
         },
         {
           "view": "role-definitions",

@@ -33,9 +33,16 @@ def run(ctx, args, capabilities=None) -> int:
         # moves: a refusal must leave the host exactly as it was found (ADR-013).
         produced = projections(ctx, capabilities)
         departing = runtime_port.admit(ctx, capabilities, produced)
+        withdrawn = runtime_port.withdrawals(ctx, capabilities, produced)
         ctx.workspace.unscoped().remove_tree(_plane(ctx))
         for rel in departing:
             ctx.workspace.scoped(departing).remove_file(rel)
+        # A spanned file whose surface left keeps the host's text; only the kit's span goes.
+        for rel, rest in withdrawn.items():
+            if rest is None:
+                ctx.workspace.scoped((rel,)).remove_file(rel)
+            else:
+                ctx.workspace.scoped((rel,)).write_text(rel, rest)
         # A capability writes only what it declared -- and a served path is declared by the plan
         # computed from that same capability's declaration, never by this function.
         scopes = {c.id: ctx.workspace.scoped(
