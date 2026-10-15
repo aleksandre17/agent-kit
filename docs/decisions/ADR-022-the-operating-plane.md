@@ -176,7 +176,8 @@ bundle, never in `kit/` · `host` = the host's own declaration or knowledge · `
 |---|---|---|
 | S1 | packet v2 (`deliverable`, `decision_density`, `reversibility`, `ground`, `boundaries`, `budget`, `profile`); `dispatch-return`; `route-table` and the `operating` capability that seeds an empty one; the port's route judgement, the carried return, the named profile run with its timeout; `minimum` in the schema subset | `test_routing` 360–364: a v1 packet refused by the reader rule; no cell declared is carried and said so; a packet off its cell, past its ceiling or naming an undeclared profile is refused before a worker starts; a failing profile closes the task by name; a return missing its economy closes it by name |
 | S2 | `readings` module + `ground` verb + `ground-reading` kind (KIT0069 refused, KIT0070 declared miss, exit 4); a packet's ground row may cite a ledger `key`, checked at acceptance; verbs declare their own `ARGUMENTS`, merged by the entry point | `test_ground` 370–373 and `test_routing` 365: a fact expires with its own paths and only those; a MISS names what moved and returns the instrument; an ignored file never moves a reading; a packet citing a moved ground is refused before a worker starts |
-| S3 | telemetry stream (OTel GenAI attributes); the four measures and the sunset measure; size per kind | a host budget below a measure fails `check`; a gate with no firing in the window is named |
+| S3 | measures `peak_context` and `calls_per_delivery`, read from the returns S1 records (gate module `economy`) | `test_routing` 366: a host budget below the reported peak fails `check`; no return is `None`, never 0 |
+| S3b | the telemetry stream from the served session hands, in OpenTelemetry GenAI attributes; `meta_ratio`, `input_output_ratio` | named and NOT built: reading usage out of a product's transcript is a claim about that product until an adapter declares where it lives and a run proves it — the measures it feeds wait for that declaration |
 | S4 | attestation derived from receipts | a declared capability with no proving receipt prints UNPROVEN; routing ignores it |
 | S5 | claims that bite; receipt-backed concurrency | a write under a peer's live claim is refused by the judge; an own lease supersedes an older foreign receipt |
 | S6 | gate posture, calibration meta-gate, rings projection; `exec` and session hands | a gate kind without calibration fails the suite; a crashed blocking gate denies; the rings page names the empty ring |
@@ -216,3 +217,15 @@ context (skills) · ADR (Nygard/MADR) and Diátaxis-style document kinds (alread
 - **Leave the operating plane as conduct.** The prior system learned the opposite at cost: *doctrine you
   might recall is not a gate*. Every part above that a machine can hold is held by a machine; only the
   judgement stays in prose.
+
+## Amendment 1 — what S3 measured on the way in (2026-10-15)
+
+Building S3 measured two things the decision text assumed. **(a)** The corpus ratchet hands every measure
+the gate's params, never the budget row — so a ceiling *per document kind* (the bloat ceiling as a
+property of the kind, which the prior system's capsule recommended) needs a budget row that names its
+subject. That is a grammar change of the corpus map and is recorded here as owed, not improvised.
+**(b)** The SUNSET measure only means something for a gate already proven to bite: "this gate never
+fired" reads the same for a guard with nothing to catch and a guard that cannot catch anything. It
+therefore moves to S6, behind the calibration meta-gate, where *quiet and calibrated* is a real reading.
+S3 ships the two economy measures a host can take today from the returns S1 records, and S3b names the
+transcript telemetry it does not yet build.

@@ -187,6 +187,31 @@ class Routing(Fixtures, unittest.TestCase):
         self.assertIn(f"[{dispatch_port.DispatchRefused.code}]", stale.stderr)
         self.assertIn("measured.txt", stale.stderr)
 
+    # == 7. what the work cost (S3) ==============================================================
+    def test_366_a_returned_economy_is_a_measure_a_host_budgets_and_a_breach_fails(self):
+        import economy
+        host = self.repository()
+        said = self.dispatched(host, packet("returns-its-cost", route=RETURNING.name, instruction="whole"))
+        self.assertEqual(0, said.returncode, said.stdout + said.stderr)
+        peak = self.record(host, "returns-its-cost")["return"]["economy"]["peak_context"]
+        maps = host / next(i["target"] for c in CORE.capabilities for i in c.installs
+                           if i.get("reads_as") == "corpus_maps")
+        maps.mkdir(parents=True, exist_ok=True)
+        for ceiling, code in ((peak, 0), (peak - 1, 1)):
+            with self.subTest(ceiling=ceiling):
+                (maps / "map.json").write_text(json.dumps({
+                    "schema_version": 1, "id": "economy-budget",
+                    "places": [{"path": "docs/decisions/", "holds": "decision"}],
+                    "budgets": [{"measures": economy.PEAK, "ceiling": ceiling, "measured": "2026-10-15"}]},
+                    indent=2) + "\n", encoding="utf-8", newline="\n")
+                cli = [sys.executable, str(Path(dispatch_port.__file__).parent.parent / "cli.py")]
+                subprocess.run([*cli, "render", "--root", str(host), "--kit", str(self.kit)], capture_output=True)
+                checked = subprocess.run([*cli, "check", "--root", str(host), "--kit", str(self.kit)],
+                                         capture_output=True, text=True)
+                self.assertEqual(code, checked.returncode, checked.stdout[-3000:])
+                if code:
+                    self.assertIn(economy.PEAK, checked.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

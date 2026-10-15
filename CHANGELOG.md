@@ -7,6 +7,14 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE OPERATING PLANE, slice S3: what the work cost, measured (ADR-022 decision 5)**
+- Gate module `economy` publishes `peak_context` (largest reported peak) and `calls_per_delivery` (median
+  calls of delivered tasks), read from the returns recorded on dispatched tasks; `None` where none returned.
+  A host budgets them through its corpus map.
+- ADR-022 amendment 1: per-kind ceilings need a budget row that names its subject (owed); the sunset
+  measure moves behind S6's calibration; transcript telemetry is S3b, named and not built.
+- `test_routing` 366.
+
 **Added — THE OPERATING PLANE, slice S2: a ground is a reading with an expiry (ADR-022 decision 4)**
 - Module `readings` + verb `ground`: record `--key --fact --instrument --path`, read `--key`. A reading's
   digest folds the working-tree content of only its declared paths, through what the repository carries;
