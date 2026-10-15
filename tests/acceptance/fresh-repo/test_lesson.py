@@ -29,12 +29,12 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-from harness import KIT, Fixtures, host_digest, sha
+from harness import KIT, Fixtures, host_digest, install_target, sha
 
 VOCABULARY = json.loads((KIT / "capabilities/delivery/lesson.json").read_text(encoding="utf-8"))
 LIFECYCLE = json.loads((KIT / "capabilities/delivery/lifecycle.json").read_text(encoding="utf-8"))
-CARDS = ".agents/project/delivery/cards"
-BOARD = ".agents/generated/delivery/BOARD.md"
+CARDS = install_target("delivery", reads_as="cards").rstrip("/")
+BOARD = install_target("delivery", mode="projection")
 INTERPRETERS = KIT / "interpreters"
 
 

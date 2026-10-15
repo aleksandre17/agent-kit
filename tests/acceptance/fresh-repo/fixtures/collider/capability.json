@@ -11,7 +11,7 @@
     {
       "mode": "seed",
       "class": "binding",
-      "target": ".agents/project/laws.md",
+      "target": ".agents/project/doctrine/laws.md",
       "source": "seeds/laws.md"
     }
   ],

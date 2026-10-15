@@ -67,11 +67,25 @@ NONE"** while its owner's eight cardinals exist only in the prior system of host
 3. **The work plane lives in `docs/work/`, as drawn.** `delivery` installs its cards space at
    `docs/work/cards/`, its board projection at `docs/work/BOARD.md` and its evidence space at
    `docs/work/evidence/`; `docs/work/CONTINUE-HERE.md` is the capsule's place (ADR-020). An existing host is
-   moved by `upgrade` as one planned act, read from a declared `relocations[]` list in the manifest (from,
-   to, class) — the generalisation of the act L3a decision 2 performed once by hand. A relocation moves
-   bytes verbatim and is recorded in the estate; it never rewrites content.
-4. **Host law has one home: `.agents/project/doctrine/`.** The law page, the law scopes, scoped law pages
-   and doctrine stances move under it by the same relocation; `host-layout.json` keeps one `host-law` row.
+   moved as one planned act — the generalisation of the act L3a decision 2 performed once by hand — read
+   from a `relocations` list **declared by the capability beside the install it moved** (`from`, `to`,
+   `decision`, optional `referenced_by`). Per capability rather than one manifest list: the capability owns
+   its write scope, so the old name of a place has its home with the place. `to` must be one of that
+   capability's own install targets — a relocation never declares a place. `upgrade` reconciles the host
+   *as if* the moves had happened (so `--plan` is the plan carried out and writes nothing); `init` carries
+   them out as its own phases (`relocations` reads and refuses, `relocate` renames) under the run's one hold
+   and journal, before the write set is foreseen — so even a plain `init` can never seed a blank at the new
+   name beside the host's bytes at the old one. A move is a rename, verified by an h1 measured at both
+   names; the estate's rows are carried to the new name and the move is appended to the estate's
+   `relocated` record. It never rewrites content: where a host document named in `referenced_by` still
+   points into `from`, the run is refused whole (KIT0068) with the exact restatement printed, the owner
+   edits their own file, and the move then proceeds. Both places holding something is two homes: refused.
+4. **Host law has one home: `.agents/project/doctrine/`.** The records map already names stances and
+   numbered laws as one kind, `host-law` (binding doctrine the host adds), so the drawing's single rule
+   directory is the better form. The law page, the law scopes and the scoped law pages move under it by the
+   same relocation, beside the doctrine stances; two capabilities write there, each its own files (the
+   one-owner rule is per path, held by the resolver). `law-scopes.json` names its pages by path, so its
+   relocation declares `referenced_by` and the owner restates them.
 5. **Entry files are binding with generated blocks, inside a budget.** `CLAUDE.md` and `AGENTS.md` are
    host-owned; a runtime surface renders only the region between `BEGIN/END GENERATED` markers, and `check`
    diffs only that region. The generated region carries the laws in force, the routes (records map
@@ -101,7 +115,7 @@ NONE"** while its owner's eight cardinals exist only in the prior system of host
 |---|---|---|
 | S1 | `realised_as` (+ its `pending`), `declared_by` and `closed` in the layout grammar and the floor gate; every upstream row restated, the roster row realised | upstream floor green, 0 undeclared tracked children of `.` and `kit/`; a row both pending and realised is refused (negative test) |
 | S2 | `bundles/cardinals/`; take on both hosts | `test_bundles`: a fresh pinned host takes it, its roll names all eight cardinals UNANSWERED, `check` green |
-| S3 | `relocations[]` + `upgrade` relocation; delivery and law targets moved | a 0.1.6 host upgrades with cards and laws moved byte-identical, `--plan` showing each move |
+| S3 | capability `relocations` + the `relocations`/`relocate` init phases + the reconciliation's moved view; delivery, law and capability-index targets moved; KIT0068 | `test_relocation` 330–333: an ancestor host's `--plan` names every move and writes nothing; upgraded, each place is the same bytes at its new name, the estate re-keyed and recording each h1, `check` green; a scope page still named at the old place refuses until restated; two homes refused |
 | S4 | entry files with generated blocks and a budget | an edit outside the markers survives `render`; inside is caught; budget breach refused |
 | S5 | fresh-clone floor; ignore-aware probes | `check` green on a clean clone of each host (after `activate`) |
 
@@ -116,3 +130,9 @@ NONE"** while its owner's eight cardinals exist only in the prior system of host
   in the binding plane is outside every reachability, index and evidence route that ADR-019 and ADR-020 built.
 - **Move binding files by a one-off script per host.** A migration nobody can replay; the relocation list is
   a declaration the next host gets for free.
+- **One `relocations[]` list in the manifest.** A second home for each install's old name, kept by a party
+  that does not own the place; the capability that moved an install is the one that can say where it was.
+- **Rewrite a host document's references during the move.** The document is binding — the host's words,
+  which no upgrade reads for writing (ADR-002); a rewrite would be the kit authoring them.
+- **Leave law in governance's places and relabel the doctrine row.** Keeps four places for one kind the
+  records map already unifies, against the drawing, to avoid a one-time declared move.

@@ -6,7 +6,7 @@ import json
 import unittest
 from pathlib import Path
 
-from harness import FIXTURES, KIT, Fixtures, install_order
+from harness import FIXTURES, KIT, Fixtures, install_order, install_target
 import space as space_module  # noqa: E402 -- the one home for a declared empty space
 from manifest import Manifest  # noqa: E402  -- the path is prepared by importing harness first
 
@@ -256,7 +256,7 @@ class Composition(Fixtures, unittest.TestCase):
         self.assertIn("shadowed path", result.stderr)
         self.assertIn("'collider'", result.stderr)
         self.assertIn("'governance'", result.stderr)
-        self.assertIn(".agents/project/laws.md", result.stderr)
+        self.assertIn(install_target("governance", source="seeds/laws.md"), result.stderr)
         self.assertFalse((host / ".agents").exists(), "the refusal must precede the first byte")
 
     # -- the Kind Law gate ------------------------------------------------------------------
@@ -298,7 +298,7 @@ class Composition(Fixtures, unittest.TestCase):
         change it -- and did, without a line of template or renderer changing. A model that
         reaches only one surface is incomplete, not done."""
         host = self.installed()
-        index = (host / ".agents/generated/governance/INDEX.md").read_text(encoding="utf-8")
+        index = (host / install_target("governance", source="capabilities/governance/payload/INDEX.md.mustache")).read_text(encoding="utf-8")
         self.assertIn("### knowledge 0.1.0", index)
         self.assertIn("FF-KIND-AUTHORITY", index)
         self.assertIn("docs/decisions/ADR-0001-a-documents-kind-decides-its-authority.md", index)

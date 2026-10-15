@@ -39,6 +39,7 @@ import plan as plan_module
 import predicate
 import provenance
 import reconcile
+import relocation
 import render as render_verb
 import space
 from errors import KitError, PendingApproval
@@ -188,11 +189,21 @@ def _install_plan(ctx, enabled, state) -> list:
     # A path the host took over through a signed door is answered by the steward it transferred
     # to, on THIS run too -- not only when `upgrade` has handed a verdict in (ADR-010).
     held = reconcile.taken_over(ctx, enabled) if state["approved"] else {}
+    # A plan does not move: a target an owed relocation will fill is foreseen by reading the bytes
+    # at the place they will come FROM -- the same bytes, so the same foresight (ADR-021).
+    owed = relocation.view(state.get("owed", []))
     for capability in enabled:
         scoped = state["scopes"][capability.id]
         for item in capability.installs:
             phase, foresee, _apply_fn = _mode_of(capability, item)
             if phase not in INSTALLED_PHASES or (phase != "answer" and not state["approved"]):
+                continue
+            if item["target"] in owed:
+                source = {"from": owed[item["target"]], "to": item["target"]}
+                writes.append(plan_module.Write(
+                    (ctx.decided.get(item["target"]) or {}).get("file")
+                    or foresee(relocation.scope(ctx, source), {**item, "target": source["from"]}, state),
+                    item["class"], item["mode"], capability.id, item["target"], item))
                 continue
             # A disposition this run has ALREADY DECIDED outranks the mode's own foresight, and
             # this is not a precedence ladder: the mode's rule is what a foresight can say with no
@@ -314,6 +325,10 @@ PHASES = (
     {"id": "adopt", "does": "at first contact, account for every path already in the tree"},
     {"id": "provenance", "does": "hold every capability this kit did not issue to the pin its "
                                  "host took, and stand a human at the door of any it has not"},
+    {"id": "relocations", "does": "read every declared relocation this host still owes, and refuse "
+                                  "the run whole before a byte is moved if one cannot be taken"},
+    {"id": "relocate", "does": "carry each owed relocation out, verbatim, before anything is foreseen",
+     "writes": {"approved": True, "relocating": True}},
     {"id": "answer", "does": "draft what this host chose, and foresee the write set"},
     {"id": "install", "does": "carry out the foreseen writes", "writes": {"approved": True}},
     {"id": "render", "does": "recompute every projection", "writes": {"approved": True}},
@@ -392,10 +407,36 @@ def _phase_provenance(ctx, args, state):
         at_door=status == doors.ACCEPTED and not getattr(args, "plan", False))
 
 
+def _approved(args, existing) -> bool:
+    return bool(args.approve) or (existing or {}).get("status") == "accepted"
+
+
+def _phase_relocations(ctx, args, state):
+    # ADR-021 decision 3. Read BEFORE the write set is foreseen, so every foresight below is a
+    # foresight of the tree after the moves -- a seed foreseen at a moved place would otherwise be
+    # foreseen as absent and written blank beside the host's own bytes at the old one.
+    owed = relocation.planned(ctx, state["enabled"])
+    relocation.report(owed)
+    relocation.refuse(owed)
+    state["owed"] = owed
+    state["planning"] = bool(getattr(args, "plan", False))
+    state["approved"] = _approved(args, state["existing"])
+
+
+def _phase_relocate(ctx, args, state):
+    if state["planning"] or not state["owed"]:
+        return
+    done = relocation.carry_out(ctx, state["owed"], state["enabled"], ctx.clock.now())
+    recorded = estate_module.read(ctx)
+    if recorded is not None:
+        estate_module.relocated(ctx, recorded, done)
+    state["owed"] = []
+
+
 def _phase_answer(ctx, args, state):
     enabled, existing = state["enabled"], state["existing"]
     status = (existing or {}).get("status")
-    approved = bool(args.approve) or status == "accepted"
+    approved = _approved(args, existing)
     state.update({
         "approver": args.approve,
         "approved": approved,
@@ -463,6 +504,8 @@ STEPS = {
     "choose": _phase_choose,
     "adopt": _phase_adopt,
     "provenance": _phase_provenance,
+    "relocations": _phase_relocations,
+    "relocate": _phase_relocate,
     "answer": _phase_answer,
     "install": _phase_install,
     "render": _phase_render,
@@ -475,7 +518,8 @@ def _so_far(state) -> dict:
     """What this run has turned out to BE, as a flat reading a phase's condition is matched
     against. Every field is something the run already knows about itself by the time the phase
     before it concluded -- never a guess about what is coming."""
-    return {"approved": bool(state.get("approved"))}
+    return {"approved": bool(state.get("approved")),
+            "relocating": bool(state.get("owed")) and not state.get("planning")}
 
 
 def _report_resumption(book) -> None:

@@ -24,7 +24,7 @@ import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from harness import KIT, Fixtures, sha
+from harness import KIT, Fixtures, install_target, sha
 from manifest import Manifest  # noqa: E402
 import appetite as appetite_module  # noqa: E402 -- the one home for a unit of spend
 import criteria as criteria_module  # noqa: E402 -- the one home for a kind of proof
@@ -34,9 +34,9 @@ import space as space_module  # noqa: E402 -- the one home for a declared empty 
 #: its own copy of a lifecycle is a second home for it, and goes on passing after the real one has
 #: moved -- both internally correct, and no longer describing the same system.
 LIFECYCLE = json.loads((KIT / "capabilities/delivery/lifecycle.json").read_text(encoding="utf-8"))
-CARDS = ".agents/project/delivery/cards"
-BOARD = ".agents/generated/delivery/BOARD.md"
-POLICY = ".agents/project/delivery/policy.json"
+CARDS = install_target("delivery", reads_as="cards").rstrip("/")
+BOARD = install_target("delivery", mode="projection")
+POLICY = install_target("delivery", reads_as="policy")
 
 INTERPRETERS = KIT / "interpreters"
 

@@ -43,15 +43,32 @@
     {
       "mode": "space",
       "class": "binding",
-      "target": ".agents/project/delivery/cards/",
+      "target": "docs/work/cards/",
       "validates": "card",
       "reads_as": "cards"
     },
     {
+      "mode": "space",
+      "class": "binding",
+      "target": "docs/work/evidence/"
+    },
+    {
       "mode": "projection",
       "class": "projection",
-      "target": ".agents/generated/delivery/BOARD.md",
+      "target": "docs/work/BOARD.md",
       "source": "capabilities/delivery/payload/BOARD.md.mustache"
+    }
+  ],
+  "relocations": [
+    {
+      "from": ".agents/project/delivery/cards/",
+      "to": "docs/work/cards/",
+      "decision": "ADR-021 decision 3"
+    },
+    {
+      "from": ".agents/generated/delivery/BOARD.md",
+      "to": "docs/work/BOARD.md",
+      "decision": "ADR-021 decision 3"
     }
   ],
   "gates": [

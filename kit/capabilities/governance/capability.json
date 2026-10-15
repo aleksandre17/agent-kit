@@ -106,13 +106,13 @@
     {
       "mode": "seed",
       "class": "binding",
-      "target": ".agents/project/laws.md",
+      "target": ".agents/project/doctrine/laws.md",
       "source": "seeds/laws.md"
     },
     {
       "mode": "seed",
       "class": "binding",
-      "target": ".agents/project/law-scopes.json",
+      "target": ".agents/project/doctrine/law-scopes.json",
       "source": "seeds/law-scopes.json",
       "validates": "law-scope",
       "reads_as": "law_scopes"
@@ -120,7 +120,7 @@
     {
       "mode": "space",
       "class": "binding",
-      "target": ".agents/project/laws/"
+      "target": ".agents/project/doctrine/laws/"
     },
     {
       "mode": "space",
@@ -163,7 +163,7 @@
     {
       "mode": "projection",
       "class": "projection",
-      "target": ".agents/generated/governance/INDEX.md",
+      "target": ".agents/generated/governance/CAPABILITIES.md",
       "source": "capabilities/governance/payload/INDEX.md.mustache"
     },
     {
@@ -178,6 +178,35 @@
       "class": "projection",
       "target": ".agents/generated/INDEX.md",
       "source": "capabilities/governance/payload/RECORDS-MAP.md.mustache"
+    }
+  ],
+  "relocations": [
+    {
+      "from": ".agents/project/laws.md",
+      "to": ".agents/project/doctrine/laws.md",
+      "decision": "ADR-021 decision 4"
+    },
+    {
+      "from": ".agents/project/law-scopes.json",
+      "to": ".agents/project/doctrine/law-scopes.json",
+      "decision": "ADR-021 decision 4"
+    },
+    {
+      "from": ".agents/project/laws/",
+      "to": ".agents/project/doctrine/laws/",
+      "decision": "ADR-021 decision 4",
+      "referenced_by": [
+        {
+          "document": "law_scopes",
+          "list": "scopes",
+          "field": "page"
+        }
+      ]
+    },
+    {
+      "from": ".agents/generated/governance/INDEX.md",
+      "to": ".agents/generated/governance/CAPABILITIES.md",
+      "decision": "ADR-021 decision 6"
     }
   ],
   "gates": [

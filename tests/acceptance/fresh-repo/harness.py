@@ -72,6 +72,15 @@ def host_digest(root: Path) -> dict:
 LOCK = Manifest(KIT).raw_ships()["lock"]
 
 
+def install_target(capability: str, **match) -> str:
+    """The target of the ONE install of `capability` whose fields equal `match` -- read from its
+    declaration, so a suite never spells a place the kit owns and goes on passing after it moved."""
+    found = [item["target"] for c in Manifest(KIT).capabilities if c.id == capability
+             for item in c.installs if all(item.get(k) == v for k, v in match.items())]
+    assert len(found) == 1, f"{capability} {match} names {len(found)} installs, not one"
+    return found[0]
+
+
 def shipped() -> list:
     """Every path the kit states it is made of, as recorded at the moment the lock was taken."""
     return json.loads((KIT / LOCK).read_text(encoding="utf-8"))["files"]

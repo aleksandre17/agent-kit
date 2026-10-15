@@ -65,6 +65,9 @@ CEDED = "ceded"
 #: declare, with a fresh moment on it, that nothing ever left this tree.
 SUCCESSION = "succession_acts"
 
+#: The field that accounts for every relocation carried out in this host (ADR-021 decision 3).
+RELOCATED = "relocated"
+
 
 class EstateError(KitError):
     """The host's record of what it received is absent, or cannot be honestly taken."""
@@ -263,7 +266,7 @@ def rows(ctx, capabilities, stewards: Stewardship, recorded=None, decided=None,
     return [found[path] for path in sorted(found)]
 
 
-def document(ctx, entries: list, moment: str, signed_by: str, taken=(), acts=()) -> dict:
+def document(ctx, entries: list, moment: str, signed_by: str, taken=(), acts=(), relocated=()) -> dict:
     """The reading, as it is stored. No count stands beside `files`: an empty list is already a
     declared zero, and a derived number is a thing no host was ever told -- the honest place for a
     count is the surface that prints it, in front of the reader who can see it computed."""
@@ -283,6 +286,8 @@ def document(ctx, entries: list, moment: str, signed_by: str, taken=(), acts=())
         # What this host GAVE UP at a succession door (ADR-012): every path an act moved or
         # removed, with its digest and where its bytes went. Built by `succession`; carried here.
         SUCCESSION: list(acts),
+        # What moved, by which declared relocation (ADR-021): the same bytes under a new name.
+        RELOCATED: list(relocated),
     }
 
 
@@ -330,10 +335,34 @@ def take(ctx, capabilities, moment: str, signed_by: str, entries=None, writes=()
         taken = (read(ctx) or {}).get("taken", [])
     if acts is None:
         acts = (read(ctx) or {}).get(SUCCESSION, [])
-    record = document(ctx, entries, moment, signed_by, taken, acts)
+    record = document(ctx, entries, moment, signed_by, taken, acts, (read(ctx) or {}).get(RELOCATED, []))
     errors = ctx.manifest.validate(record, ctx.install_of_mode(MODE)["validates"])
     if errors:
         raise EstateError("the estate reading does not honour its own schema:\n  "
                           + "\n  ".join(errors))
     ctx.workspace.scoped(owner.targets()).write_json(path, record)
+    return record
+
+
+def relocated(ctx, recorded, done) -> dict:
+    """The record carried across the moves just made: every row at a moved place re-keyed to its new
+    name -- same digest, same mode, same steward: the host was given these bytes and still holds
+    them -- and each move appended to `relocated`. The moment and the signature stay the record's
+    own; a rename delivered nothing new."""
+    carried = {m["from"]: m["to"] for m in done}
+    files = []
+    for row in recorded["files"]:
+        path = row["path"]
+        for old, new in carried.items():
+            if path == old or (old.endswith("/") and path.startswith(old)):
+                row = {**row, "path": new + path[len(old):]}
+                break
+        files.append(row)
+    record = {**recorded, "files": sorted(files, key=lambda r: r["path"]),
+              RELOCATED: list(recorded.get(RELOCATED, [])) + list(done)}
+    errors = ctx.manifest.validate(record, ctx.install_of_mode(MODE)["validates"])
+    if errors:
+        raise EstateError("the relocated estate does not honour its own schema:\n  " + "\n  ".join(errors))
+    owner = next(c for c in ctx.manifest.capabilities for i in c.installs if i["target"] == target(ctx))
+    ctx.workspace.scoped(owner.targets()).write_json(target(ctx), record)
     return record

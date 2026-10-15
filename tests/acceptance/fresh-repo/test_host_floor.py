@@ -22,7 +22,7 @@ import subprocess
 import sys
 import unittest
 
-from harness import KIT, LOCK, Fixtures, planned  # noqa: I001 -- sets the interpreter's path
+from harness import KIT, LOCK, Fixtures, install_target, planned  # noqa: I001 -- sets the interpreter's path
 import space  # noqa: E402 -- the one home for a declared empty space
 
 import pin  # noqa: E402
@@ -103,7 +103,7 @@ class HostFloor(Fixtures, unittest.TestCase):
                 self.assertIn(entry["holds"], row)
         self.assertIn("| decision-authority |", index)
         # The governance install index is a different document with a different job, untouched.
-        self.assertTrue((host / ".agents/generated/governance/INDEX.md").is_file())
+        self.assertTrue((host / install_target("governance", source="capabilities/governance/payload/INDEX.md.mustache")).is_file())
 
     def test_287_a_place_naming_a_writer_nobody_declares_is_refused_by_the_gate(self):
         def undeclared_writer(kit):

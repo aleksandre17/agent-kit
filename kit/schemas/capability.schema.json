@@ -611,6 +611,59 @@
         }
       }
     },
+    "relocations": {
+      "description": "ADR-021 decision 3. Where an install of THIS capability used to live. `to` is one of this capability's own install targets -- a relocation never declares a place. `upgrade` reconciles the host as if each move had happened and `init` carries it out as a phase: a rename of the bytes, verified by measuring them at both names, the estate's rows carried to the new name and the move recorded. `referenced_by` names the host documents whose field may still point into `from`; the kit never rewrites one -- the move is refused until the owner has restated it.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "from",
+          "to",
+          "decision"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "minLength": 1
+          },
+          "to": {
+            "type": "string",
+            "minLength": 1
+          },
+          "decision": {
+            "type": "string",
+            "minLength": 1
+          },
+          "referenced_by": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "document",
+                "list",
+                "field"
+              ],
+              "properties": {
+                "document": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "list": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "field": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "gates": {
       "type": "array",
       "items": {

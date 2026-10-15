@@ -7,6 +7,21 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE TREE IS THE DRAWING, slice S3: relocations (ADR-021 decisions 3, 4, 6)**
+- Capability `relocations: [{from, to, decision, referenced_by?}]` beside the install that moved; `to` must
+  be one of that capability's own targets. New module `relocation.py`; `init` gains the phases
+  `relocations` (read, refuse whole) and `relocate` (rename under the run's hold), before the write set is
+  foreseen; `upgrade` reconciles through the moved view, so `--plan` is the plan carried out and writes
+  nothing. Each move is verified by an h1 at both names; the estate's rows are re-keyed and the move is
+  appended to the new estate field `relocated`. **KIT0068** (both places hold something; a host document
+  still names the old place, with the exact restatement printed; a relocation to a place not installed).
+- Moved: delivery cards → `docs/work/cards/`, board → `docs/work/BOARD.md`, new space `docs/work/evidence/`;
+  host law (`laws.md`, `law-scopes.json`, `laws/`) → `.agents/project/doctrine/`, scope pages declared
+  `referenced_by` the scopes document; `governance/INDEX.md` → `governance/CAPABILITIES.md`.
+- The anti-clobber rule judges only SERVED paths outside the planes; a declared projection install there
+  (the board) is the kit's own path, held by `check`'s reproduction.
+- Suites read every moved path from its declaration (`harness.install_target`); `test_relocation` 330–333.
+
 **Added — THE TREE IS THE DRAWING, slices S1–S2 (ADR-021)**
 - Layout grammar (expand-only, schema v1): `realised_as {path, decision, pending?}` — a drawn path whose
   truth a named decision placed elsewhere; `declared_by` — a path beyond the drawing kept by a decision;

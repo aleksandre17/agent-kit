@@ -301,8 +301,13 @@ def admit(ctx, capabilities, produced: dict) -> list:
     bytes the kit did not write, naming every one."""
     last = prior(ctx, capabilities)
     held, departing = [], []
+    # A projection a capability DECLARES as an install target outside the planes is the kit's own
+    # path from the moment it was installed -- first contact with a prior file there is judged by
+    # adoption, and a hand edit since by `check`, which reproduces it -- so only a SERVED path, whose place a
+    # product chose, is judged here against the record.
+    declared_targets = {i["target"] for c in capabilities for i in c.installs_of_class("projection")}
     for rel, text in sorted(produced.items()):
-        if _in_a_plane(ctx, rel) or not ctx.workspace.exists(rel):
+        if _in_a_plane(ctx, rel) or not ctx.workspace.exists(rel) or rel in declared_targets:
             continue
         found = _file_digest(ctx, rel)
         if found not in (_digest(text), last.get(rel)):

@@ -6,7 +6,7 @@ import json
 import unittest
 from pathlib import Path
 
-from harness import KIT, Fixtures, Manifest, applied, host_digest, planned
+from harness import KIT, Fixtures, Manifest, applied, host_digest, install_target, planned
 
 
 # ==========================================================================================
@@ -135,7 +135,7 @@ class Selection(Fixtures, unittest.TestCase):
         self.assertEqual(0, second.returncode, second.stderr)
         foreseen = dict((path, word) for word, path in planned(second.stdout))
         self.assertEqual("kept", foreseen[".agents/project/project.json"])
-        self.assertEqual("kept", foreseen[".agents/project/laws.md"])
+        self.assertEqual("kept", foreseen[install_target("governance", source="seeds/laws.md")])
         # The kit a host was given is KEPT when the same release is delivered again -- the tree and
         # the lock at its seat, one act (the shipped kit vendors no page to replace since L3a).
         import pin  # noqa: E402
