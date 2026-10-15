@@ -2,8 +2,8 @@
 each other's unmerged work (ADR-022 decision 7).
 
     python .agents/kit/interpreters/cli.py claim --root . --by <principal> --path a,b --reason "..."
-    python .agents/kit/interpreters/cli.py claim --root . --by <principal> --relinquish
-    python .agents/kit/interpreters/cli.py claim --root . --by <principal> --relinquish --break-lock <who>
+    python .agents/kit/interpreters/cli.py claim --root . --by <principal> --release
+    python .agents/kit/interpreters/cli.py claim --root . --by <principal> --release --break-lock <who>
     python .agents/kit/interpreters/cli.py claim --root .
 
 A principal is the runtime a served surface names, by its descriptor id, or a person. A claim stands
@@ -20,14 +20,14 @@ MUTATES = False
 REQUIRES_APPROVED_HOST = True
 
 ARGUMENTS = [
-    ("--relinquish", {"action": "store_true", "help": "release this principal's standing claim"}),
+    ("--release", {"action": "store_true", "help": "release this principal's standing claim"}),
     ("--reason", {"default": None, "help": "why the paths are claimed -- read by whoever the claim blocks"}),
 ]
 
 
 def run(ctx, args) -> int:
     now = ctx.clock.now()
-    if getattr(args, "relinquish", False):
+    if getattr(args, "release", False):
         held = claims.release(ctx, args.by, now, broken_by=getattr(args, "break_lock", None))
         word = f"BROKEN by {held['broken_by']}" if held.get("broken_by") else "RELEASED"
         print(f"claim: {word}  {held['principal']}  {held['paths']}")

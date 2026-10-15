@@ -1013,7 +1013,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f9591d202bfe2de45c689006592da5e6f10eecc6e810509ccd5146f996bdad3f",
+      "digest": "6cb69311dd85d053fc511cdf8e0e79554a0bf8bb64e72a5ad0d151467d8220f0",
       "path": "interpreters/verbs/claim.py"
     },
     {
@@ -1494,5 +1494,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T15:29:56+00:00"
+  "taken_at": "2026-10-15T16:14:19+00:00"
 }

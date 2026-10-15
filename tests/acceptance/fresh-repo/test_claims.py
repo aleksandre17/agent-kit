@@ -77,13 +77,13 @@ class Claims(Fixtures, unittest.TestCase):
         self.assertIn(self.one["id"], blocked.stderr)
         self.assertIn("refactoring the module", blocked.stderr)
         self.assertEqual(0, self.writes(host, self.one).returncode, "the claimant's own write was refused")
-        self.assertEqual(0, self.claim(host, "--by", self.one["id"], "--relinquish").returncode)
+        self.assertEqual(0, self.claim(host, "--by", self.one["id"], "--release").returncode)
         self.assertEqual(0, self.writes(host, self.two).returncode, "a released claim still blocked")
 
     def test_391_a_claim_is_broken_only_by_name_and_the_break_is_recorded(self):
         host = self.two_principals()
         self.claim(host, "--by", self.one["id"], "--path", PATH, "--reason", "left standing")
-        broken = self.claim(host, "--by", self.one["id"], "--relinquish", "--break-lock", "the-owner")
+        broken = self.claim(host, "--by", self.one["id"], "--release", "--break-lock", "the-owner")
         self.assertEqual(0, broken.returncode, broken.stderr)
         self.assertIn("BROKEN by the-owner", broken.stdout)
         place = next(i["target"] for c in CORE.capabilities for i in c.installs if i.get("validates") == claims.CLAIM)

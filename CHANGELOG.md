@@ -8,8 +8,8 @@ moment of need by `upgrade`, which is not built yet.
 ## 0.1.6 — unreleased
 
 **Added — THE OPERATING PLANE, slice S5: two principals on one tree, arbitrated (ADR-022 decision 7)**
-- Module `claims` and verb `claim`: take (`--by --path --reason`), list, `--relinquish`, break by name
-  (`--relinquish --break-lock <who>`, recorded). Kinds `claim` (observed plane, one per principal, no TTL —
+- Module `claims` and verb `claim`: take (`--by --path --reason`), list, `--release`, break by name
+  (`--release --break-lock <who>`, recorded). Kinds `claim` (observed plane, one per principal, no TTL —
   ADR-007) and `arbitration` (`window_minutes`, seeded 0 = only claims arbitrate). KIT0071.
 - The judge, before any gate: refuses a path under another principal's standing claim (who, since when,
   why), or written by a peer inside the window unless this principal's claim postdates that write; records

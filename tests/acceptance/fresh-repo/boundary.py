@@ -145,6 +145,13 @@ def provided_terms() -> set:
     legitimately, and they remain the closest thing to policy inside the interpreter."""
     provided = set()
     for module in interpreter_modules() + [sys.modules[__name__]]:
+        # A verb's own words -- the flags it declares in `ARGUMENTS` -- are an extension point the
+        # verb PROVIDES: its command line, which an operator types and nobody's instance invented.
+        # Without this a verb must rename a plain word (`--release`) the moment some declaration
+        # elsewhere happens to use it too, which degrades the interface to satisfy the sensor.
+        for flag, _spec in getattr(module, "ARGUMENTS", None) or []:
+            word = flag.lstrip("-")
+            provided |= {word, word.replace("-", "_")}
         for name, value in vars(module).items():
             if name.isupper() and isinstance(value, dict) and value:
                 if any(_carries_behaviour(item) for item in value.values()):
