@@ -112,6 +112,15 @@ class Workspace:
     def read_json(self, rel: str):
         return json.loads(self.read_text(rel))
 
+    def carried(self) -> "list[str] | None":
+        """Every file the repository at this root carries or would carry -- tracked, plus untracked
+        and not ignored -- or `None` where no repository answers. Read once per workspace: a run
+        asks this many times and the answer cannot change under a reading."""
+        if not hasattr(self, "_carried"):
+            import vcs
+            self._carried = vcs.carried(self._root)
+        return self._carried
+
     def files_under(self, rel: str) -> list[str]:
         """Every file below `rel`, host-relative, POSIX-formed, sorted. Directories are not
         classified: a directory is the shape of the tree, a file is the thing that ships."""

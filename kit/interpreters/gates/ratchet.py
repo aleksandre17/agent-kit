@@ -44,9 +44,9 @@ gate neither reads nor owns.
 from __future__ import annotations
 
 import json
-import subprocess
 
 import corpus
+import vcs
 import gatekinds
 from errors import KitError
 
@@ -77,22 +77,9 @@ class RatchetError(KitError):
 
 # -- the previous accepted state ----------------------------------------------------------------
 def _git(root, argv: list) -> tuple:
-    """`(what git said, None)` or `(None, why it could not say it)`.
-
-    Bytes are decoded here and nowhere else, as UTF-8 and never as the machine's locale: two sides
-    agreeing on a name and disagreeing on its encoding is the failure that reads as a thing simply
-    not being there (Cardinal VII). A missing git, a tree that is not a repository and a path that
-    is not in HEAD all arrive here as the same kind of answer -- a REASON, which the caller states
-    instead of guessing past it.
-    """
-    try:
-        done = subprocess.run(["git", "-C", str(root), *argv], capture_output=True)
-    except (OSError, ValueError) as exc:
-        return None, f"git could not be run over this tree -- {exc}"
-    if done.returncode != 0:
-        said = done.stderr.decode("utf-8", "replace").strip()
-        return None, said or f"git exited {done.returncode} and said nothing"
-    return done.stdout.decode("utf-8", "replace"), None
+    """`(what git said, None)` or `(None, why it could not say it)` -- through the one port that
+    asks version control anything (ADR-021), so two readings of the repository cannot disagree."""
+    return vcs.run(root, argv)
 
 
 def _accepted(ctx, space: str) -> tuple:

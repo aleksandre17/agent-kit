@@ -136,6 +136,12 @@
       "source": "seeds/agents.gitignore"
     },
     {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/.gitattributes",
+      "source": "seeds/agents.gitattributes"
+    },
+    {
       "mode": "pinned",
       "class": "vendor",
       "target": ".agents/kit/"

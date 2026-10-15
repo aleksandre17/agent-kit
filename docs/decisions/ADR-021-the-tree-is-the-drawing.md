@@ -112,10 +112,17 @@ NONE"** while its owner's eight cardinals exist only in the prior system of host
    write scope, a better form than one undivided plane. They are **already declared, once**: by the
    capability's own `installs`, which `FF-KIT-CLASS` holds total over the tree. A host-layout row for each
    would be a second home for the same declaration (Cardinal III), so none is added.
-8. **The floor holds on a fresh clone.** Drawn ephemeral paths are judged only where the plane has been run
-   (a clone has no `init.journal` by the kit's own rule); a declared empty binding space carries a
-   `.gitkeep` its install declares; probes honour `.gitignore` and carry a traversal bound, so a reading
-   cannot depend on untracked files (measured: a third-party `.sln` under `node_modules` became a host fact).
+8. **The floor holds on a fresh clone.** A drawn place inside the OBSERVED plane is named and never
+   judged (`floor.observed`): it holds what a run left behind, which no version control carries — this
+   generalises the rule that applied only to a surface whose clone is declared ephemeral. An empty
+   declared space already carried its marker (`space`). Probes match their patterns against what the
+   repository CARRIES — tracked plus untracked-not-ignored, `Workspace.carried()` — never the raw
+   filesystem, so a reading cannot depend on a dependency directory and the match is bounded by the
+   repository rather than by a walk (measured: a third-party `.sln` under `node_modules` was a host fact).
+   One port asks version control anything (`ports/vcs.py`; the ratchet's reader moved into it). And a
+   clone must receive the bytes that were committed: governance seeds `.agents/.gitattributes` (`* -text`)
+   beside `.agents/.gitignore`, because a checkout translating line endings turned every pinned file into
+   a lock failure on a fresh Windows clone (measured by `test_350`).
 
 ## Order of slices
 
@@ -125,7 +132,7 @@ NONE"** while its owner's eight cardinals exist only in the prior system of host
 | S2 | `bundles/cardinals/`; take on both hosts | `test_bundles`: a fresh pinned host takes it, its roll names all eight cardinals UNANSWERED, `check` green |
 | S3 | capability `relocations` + the `relocations`/`relocate` init phases + the reconciliation's moved view; delivery, law and capability-index targets moved; KIT0068 | `test_relocation` 330–333: an ancestor host's `--plan` names every move and writes nothing; upgraded, each place is the same bytes at its new name, the estate re-keyed and recording each h1, `check` green; a scope page still named at the old place refuses until restated; two homes refused |
 | S4 | surface `span`/`seed`; span-aware serve record, admission, withdrawal; derivation's public span grammar; pointer sections; measure `served_span_bytes`; both adapters 1.1.0 | `test_entry_files` 340–346: seeded with the markers; host text outside survives render and `check`; an edit inside is reported and refused; a file served whole is converted through `upgrade`; doctrine and roles pointed to, not inlined; a withdrawn surface leaves only the host's text; a budget below the span fails `check` |
-| S5 | fresh-clone floor; ignore-aware probes | `check` green on a clean clone of each host (after `activate`) |
+| S5 | `floor.observed`; `ports/vcs.py` + `Workspace.carried()`; probes over what the repository carries; seed `.agents/.gitattributes` | `test_fresh_clone` 350–351: an installed host, committed and cloned, checks green on the clone; a project file in an ignored directory is never a fact, one the repository carries is; unit host #0 floor green |
 
 ## Rejected alternatives
 

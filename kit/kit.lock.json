@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 230,
+  "count": 232,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -161,7 +161,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "2bb6cd39dde5326cf16d317d22e9a0e57d37a8340eae69e5f8562e76fccde1aa",
+      "digest": "ca9159ae30d88cbc36ef73ce070b241ae8c3be8e49a91c30cd47142b5793b14d",
       "path": "capabilities/governance/capability.json"
     },
     {
@@ -623,7 +623,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "abd040d1047fcf728d0123130e5843862418242917543617df1ed5a8c4ceb61f",
+      "digest": "daa1a4cdc78b3eefa522b3ea67d13fbcdc00d1d825bbffe956a3c1d7981b78e7",
       "path": "interpreters/gates/floor.py"
     },
     {
@@ -659,7 +659,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "07c967303415e997053f9aa09a380af87b8a4b3ee2be01a1b5ece2d4f2dabc83",
+      "digest": "fef9e21698589ac1744059e9bc8b6b54d3a139c49b324863c8eb0251a213a889",
       "path": "interpreters/gates/ratchet.py"
     },
     {
@@ -803,7 +803,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "343b237619aa024413cb7b3aeb4ca0f776e3ea29d55d9b54800b7ad3aa4edf10",
+      "digest": "9dd2be1beafca85de7dd0d43283589fd87f59f0e7212fbcde7be835fced0e6e6",
       "path": "interpreters/ports/probe.py"
     },
     {
@@ -815,7 +815,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "93a908c65d227f72a8a957add33ff0222d93052504fa49966004645f130ee5eb",
+      "digest": "6214221e734f4f2d53e2c315918af98057cbcf684ee9529568bf2f8123023ee0",
+      "path": "interpreters/ports/vcs.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "b3242a25ccecdc2ec1dac13b3e5a11617d3fa52ea75a4a2515fbb69ffdbad586",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1355,6 +1361,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "payload",
+      "digest": "d853a605dca326235ae795a7b48be52c55b161b57ea3d3654190903fbc9cad6a",
+      "path": "seeds/agents.gitattributes"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
       "digest": "d4d7a2ef5c4527b89290e315aafd4a8a81f973059d6d8a8cde4f623292bc9f7b",
       "path": "seeds/agents.gitignore"
     },
@@ -1386,5 +1398,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T12:42:28+00:00"
+  "taken_at": "2026-10-15T13:11:46+00:00"
 }

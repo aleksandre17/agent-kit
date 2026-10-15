@@ -7,6 +7,15 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE TREE IS THE DRAWING, slice S5: the floor holds on a fresh clone (ADR-021 decision 8)**
+- `floor.observed()`: a drawn place in the observed plane is NOT MEASURED, never failed (generalises the
+  ephemeral-clone rule). Unit host #0 floor green.
+- `ports/vcs.py` — the one port that asks version control (`run`, `carried`); the ratchet reads through
+  it. `Workspace.carried()`; `glob_any` matches what the repository carries (ignore-aware, bounded).
+- Governance seed `.agents/.gitattributes` (`* -text`): a clone receives the committed bytes, so the
+  pinned kit and projections survive a translating checkout.
+- `test_fresh_clone` 350–351.
+
 **Added — THE TREE IS THE DRAWING, slice S4: entry files are the host's (ADR-021 decision 5)**
 - Surface render rows may name `span` + `seed`: the file is written once from the seed, the kit owns only
   the span between `kit:begin`/`kit:end`. `derivation` gains public `span`, `spliced`, `withdrawn` (and

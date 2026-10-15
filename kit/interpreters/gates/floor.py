@@ -147,22 +147,28 @@ def host_rows(capabilities, document: str, side: str | None = None) -> tuple:
     return rows, errors
 
 
+def observed(rows, roots) -> tuple:
+    """(rows the floor judges, rows inside the OBSERVED plane). A place in the observed plane holds
+    what a run left behind -- state no version control carries, so its absence on a clean clone or
+    between runs says nothing about the repository the drawing describes (ADR-021 decision 8). It is
+    named, never judged and never dropped."""
+    inside = [r for r in rows if any(r["path"].startswith(root.rstrip("/") + "/") for root in roots)]
+    return [r for r in rows if r not in inside], inside
+
+
 def _layout_floor_present(ctx, params):
     capabilities = ctx.enabled_capabilities()
     rows, errors = host_rows(ctx.manifest.capabilities, params["document"], params.get("side"))
     if not rows and not errors:
         return [f"no enabled capability ships a layout document named {params['document']!r}"]
     through = getattr(ctx, "through", None) or {}
-    if through.get(activated.CLONE) == activated.EPHEMERAL:
-        # DECLARED by the surface this check runs through: its clone was made for one run, and a
-        # place inside the OBSERVED plane holds what a run in a working clone left behind -- state
-        # no version control carries, so its absence there says nothing about the repository.
-        observed = [p["root"] for p in ctx.manifest.planes if p["class"] == ephemeral.OBSERVED]
-        unmeasured = [r for r in rows if any(r["path"].startswith(root) for root in observed)]
-        for entry in unmeasured:
-            print(f"        NOT MEASURED  {entry['path']}  (observed state; this check runs through "
-                  f"{through['id']}, whose clone is declared {activated.EPHEMERAL})")
-        rows = [r for r in rows if r not in unmeasured]
+    rows, unmeasured = observed(rows, [p["root"] for p in ctx.manifest.planes
+                                       if p["class"] == ephemeral.OBSERVED])
+    for entry in unmeasured:
+        print(f"        NOT MEASURED  {entry['path']}  (observed state, which no version control carries"
+              + (f"; this check runs through {through['id']}, whose clone is declared "
+                 f"{activated.EPHEMERAL}" if through.get(activated.CLONE) == activated.EPHEMERAL else "")
+              + ")")
     failures, pending, not_enabled = evaluate_rows(
         ctx.workspace, rows, enabled={c.id for c in capabilities})
     for entry in pending:

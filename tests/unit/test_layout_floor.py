@@ -75,7 +75,12 @@ def test_host_zero_meets_the_floor_or_declares_why_not(capsys):
     )
     workspace = Workspace(REPO)
     declaration_rel = HOST_DECLARATION.relative_to(REPO).as_posix()
-    failures, _pending = _report(HOST_DECLARATION, workspace, declaration_rel)
+    # The observed plane is named by the manifest and never judged by the floor (ADR-021 decision 8).
+    manifest = json.loads((REPO / ".agents" / "kit" / "MANIFEST.json").read_text(encoding="utf-8"))
+    roots = [p["root"] for p in manifest["planes"] if p["class"] == "ephemeral"]
+    judged = [f for f in _report(HOST_DECLARATION, workspace, declaration_rel)[0]
+              if not any(f.startswith(root.rstrip("/") + "/") for root in roots)]
+    failures = judged
 
     assert not failures, (
         "a drawn HOST path is neither present nor declared pending -- "
@@ -227,3 +232,10 @@ def test_upstream_tree_declares_every_tracked_child_of_its_closed_directories():
     tracked = [p for p in listed.stdout.decode("utf-8").split("\0") if p]
     failures = floor.unclosed(doc["entries"], doc.get("closed", []), tracked)
     assert not failures, failures
+
+
+def test_a_row_in_the_observed_plane_is_named_and_never_judged():
+    rows = [{"path": ".agents/runtime/init.journal", "kind": "file"}, {"path": "kit/", "kind": "dir"}]
+    judged, inside = floor.observed(rows, [".agents/runtime"])
+    assert [r["path"] for r in judged] == ["kit/"]
+    assert [r["path"] for r in inside] == [".agents/runtime/init.journal"]
