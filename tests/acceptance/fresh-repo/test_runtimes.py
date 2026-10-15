@@ -35,9 +35,9 @@ import json
 import unittest
 from pathlib import Path
 
-import composition
+from harness import KIT, Fixtures  # noqa: I001 -- first: it places the interpreter on the path
 
-from harness import KIT, Fixtures
+import composition  # noqa: E402
 from manifest import Manifest  # noqa: E402
 import space  # noqa: E402 -- the kit's one home for a declared empty space; harness sets the path
 

@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 248,
+  "count": 249,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -635,13 +635,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "e04df7a77456fbc4da4f4495e11fcc2e340f1ec2181519e0620d31360d33abac",
+      "path": "interpreters/gates/calibration.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "8e6b836af9080ec25d94471f902f9443558c06856e7b0aa93da477f07a20482c",
       "path": "interpreters/gates/consumed.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "31df0de432cf20f0854b8f658e725490c42d2891d7fd8199d1b93cea2fd6df00",
+      "digest": "1f0e82742988498078760649665d62603c1a8eea0f8ca9bcc12126741556aa1f",
       "path": "interpreters/gates/core.py"
     },
     {
@@ -1007,7 +1013,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3c0d5379304eac17f1c44349bde40b48724d386a87d43904fc4f92a5bac09cce",
+      "digest": "8258b1dabf7c61895dfa97dfa2b42ee0fc5ffa981508d1d7c600ec0cf5a657a4",
       "path": "interpreters/verbs/check.py"
     },
     {
@@ -1494,5 +1500,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T16:14:19+00:00"
+  "taken_at": "2026-10-15T16:45:37+00:00"
 }

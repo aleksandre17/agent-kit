@@ -183,7 +183,8 @@ bundle, never in `kit/` · `host` = the host's own declaration or knowledge · `
 | S3b | the telemetry stream from the served session hands, in OpenTelemetry GenAI attributes; `meta_ratio`, `input_output_ratio` | named and NOT built: reading usage out of a product's transcript is a claim about that product until an adapter declares where it lives and a run proves it — the measures it feeds wait for that declaration |
 | S4 | `runtime-observation` records in the observed plane, written by the interpreter on an event it PROVIDES (`attestation.EVENTS`); the class vocabulary names the event each capability is observed on (`observed_on`); the runtimes composition reads them as its `proven` source; the judge's refusal is the first event (`write-scope`) | `test_attestation` 380–382: a claim stays claimed until a refusal through that runtime proves it, then the runtime's page reads PROVEN; an admitted write proves nothing and leaves nothing; the capability is found by its event and never spelled. NOT built here, named: routing on the attested set, and events for the other capabilities (each needs an interpreter that provides its event) |
 | S5 | module `claims`, verb `claim` (take, list, `--release`, break by name), kinds `claim` and `arbitration` (the window, seeded 0 = off), KIT0071; the judge refuses a path under another principal's standing claim or written by a peer inside the window unless my later claim supersedes it, and records each admitted write per principal | `test_claims` 390–394 |
-| S6 | gate posture, calibration meta-gate, rings projection; `exec` and session hands | a gate kind without calibration fails the suite; a crashed blocking gate denies; the rings page names the empty ring |
+| S6 | a crashing gate kind FAILS under its own stance and `check` judges every other gate; `CALIBRATIONS` beside `KINDS` (specimen it must flag, lookalike it must admit), the unit meta-gate holding each, and the measure `uncalibrated_gate_kinds` a host budgets so the count only falls; first calibrations: `schema-valid`, `path-class-total` | `test_gate_calibration` (unit) and `test_gate_crash` 398 |
+| S6b | `exec` and session hands; the four-rings projection; the sunset reading of calibrated, quiet gates | named and NOT built: the rings belong to MECHANISMS (the judge, scoped writes, verified moves), which declare no ring yet, and a page drawn from gates alone would show almost only detection and read as a gap that is not there |
 | S7 | N collections; findings, vision registry, standards ledger; handoff record; knowledge planes | a register is a collection with its own lifecycle and no second engine; a promotion missing its far end fails |
 | S8 | `bundles/conduct` chapters; skill and playbook genres | taken by a fresh host, its roll names every chapter UNANSWERED; a skill's catalog loads alone |
 
@@ -232,3 +233,11 @@ fired" reads the same for a guard with nothing to catch and a guard that cannot 
 therefore moves to S6, behind the calibration meta-gate, where *quiet and calibrated* is a real reading.
 S3 ships the two economy measures a host can take today from the returns S1 records, and S3b names the
 transcript telemetry it does not yet build.
+
+## Amendment 2 — posture already had a home (2026-10-15, found building S6)
+
+Decision 8 asked every gate kind to declare a `posture` (blocking | advisory). The kit already decides
+exactly that per gate, with its author and its moment: the gate's STANCE (ADR-006) says whether a failure
+fails `check`. A second field would be a second home for one decision (Cardinal III), so none is added.
+What was missing was the CRASH: a kind that raised took `check` down whole. It now fails under its own
+stance — the fail-safe default — and every other gate is still judged.

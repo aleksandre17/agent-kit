@@ -7,6 +7,14 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE OPERATING PLANE, slice S6: a gate is trusted only after it bit (ADR-022 decision 8)**
+- `check`: a gate kind that raises (other than a refusal by name) FAILS under its own stance with the
+  crash named; every other gate is still judged. Posture is the existing stance (ADR-022 amendment 2).
+- `CALIBRATIONS` registry beside `KINDS`; gate module `calibration` publishes `uncalibrated_gate_kinds`
+  (None where no corpus is mapped). First calibrations: `schema-valid`, `path-class-total`.
+- Unit `test_gate_calibration`; acceptance `test_gate_crash` 398. S6b (exec/session hands, rings, sunset)
+  named, not built.
+
 **Added — THE OPERATING PLANE, slice S5: two principals on one tree, arbitrated (ADR-022 decision 7)**
 - Module `claims` and verb `claim`: take (`--by --path --reason`), list, `--release`, break by name
   (`--release --break-lock <who>`, recorded). Kinds `claim` (observed plane, one per principal, no TTL —

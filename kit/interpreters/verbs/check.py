@@ -71,7 +71,16 @@ def run(ctx, args) -> int:
                     f"registered kinds are {sorted(kinds)}"
                 )
             held = stances[(capability.id, gate["id"])]
-            failures = kinds[kind](ctx, gate.get("params", {}))
+            try:
+                failures = kinds[kind](ctx, gate.get("params", {}))
+            except KitError:
+                raise  # a refusal by name is the kit speaking, and it is reported as itself
+            except Exception as exc:  # noqa: BLE001 -- a gate that crashed decided nothing
+                # Fail-safe defaults (Saltzer & Schroeder): a gate exists to deny, so a gate whose
+                # decision is UNKNOWN denies. It fails under its own stance -- never a pass, and never
+                # a crash that takes every other gate's verdict down with it (ADR-022 decision 8).
+                failures = [f"the gate kind {kind!r} crashed ({type(exc).__name__}: {exc}) -- an "
+                            f"unjudged gate is not a passed one"]
             print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})  {held.label()}")
             for failure in failures:
                 print(f"        {failure}")
