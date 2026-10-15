@@ -46,7 +46,7 @@ def _report(declaration: Path, workspace: Workspace, declaration_rel: str) -> tu
     doc = json.loads(declaration.read_text(encoding="utf-8"))
     print(f"floor: {declaration_rel} ({doc['side']}), {len(doc['entries'])} drawn path(s)")
     for entry in pending:
-        print(f"  PENDING  {entry['path']}  (link {entry['pending']})  {entry.get('drawn_as', '')}")
+        print(f"  PENDING  {entry['path']}  (link {floor.link(entry)})  {entry.get('drawn_as', '')}")
     for failure in failures:
         print(f"  MISSING  {failure}")
     met = len(doc["entries"]) - len(pending) - len(failures)
@@ -150,3 +150,80 @@ def test_a_row_for_a_disabled_capability_is_skipped_and_printed_not_failed(tmp_p
     assert len(not_enabled) == 1
     assert not_enabled[0]["path"] == "roles/"
     assert not_enabled[0]["capability"] == "roles"
+
+
+def _host_fixture(tmp_path, entries):
+    root = tmp_path / "host"
+    root.mkdir()
+    (root / "layout.json").write_text(json.dumps(
+        {"schema_version": 1, "side": "host", "source": "fixture, for this test only", "entries": entries}),
+        encoding="utf-8")
+    return Workspace(root), root
+
+
+def test_a_realised_row_is_judged_at_its_realised_place(tmp_path):
+    """ADR-021: the drawn path may be absent when a decision realised it elsewhere -- and the
+    realised place must then exist, or the row fails naming both."""
+    workspace, root = _host_fixture(tmp_path, [
+        {"path": "roster.json", "kind": "file", "realised_as": {"path": "roles/", "decision": "ADR-021"}},
+    ])
+    failures, pending, _ = floor.evaluate(workspace, "layout.json")
+    assert pending == []
+    assert len(failures) == 1 and "roles/" in failures[0] and "ADR-021" in failures[0]
+
+    (root / "roles").mkdir()
+    failures, pending, _ = floor.evaluate(workspace, "layout.json")
+    assert failures == [] and pending == []
+
+
+def test_a_row_both_pending_and_realised_is_refused(tmp_path):
+    workspace, root = _host_fixture(tmp_path, [
+        {"path": "x/", "kind": "dir", "pending": "F", "realised_as": {"path": "y/", "decision": "ADR-021"}},
+    ])
+    (root / "y").mkdir()
+    failures, pending, _ = floor.evaluate(workspace, "layout.json")
+    assert pending == []
+    assert len(failures) == 1 and "both pending" in failures[0]
+
+
+def test_a_row_beyond_the_drawing_is_checked_like_a_drawn_one(tmp_path):
+    workspace, root = _host_fixture(tmp_path, [
+        {"path": "adapters/", "kind": "dir", "declared_by": "ADR-014"},
+    ])
+    failures, _, _ = floor.evaluate(workspace, "layout.json")
+    assert len(failures) == 1 and "adapters/" in failures[0]
+    (root / "adapters").mkdir()
+    failures, _, _ = floor.evaluate(workspace, "layout.json")
+    assert failures == []
+
+
+def test_a_realised_form_still_to_be_built_is_pending_on_its_own_link(tmp_path):
+    """ADR-021: the drawn form replaced by a decision whose form is not built yet waits on a link --
+    printed pending, never failed, never green as present."""
+    workspace, _root = _host_fixture(tmp_path, [
+        {"path": "kit/doctrine/economy.md", "kind": "file",
+         "realised_as": {"path": "bundles/conduct/", "decision": "ADR-021", "pending": "F"}},
+    ])
+    failures, pending, _ = floor.evaluate(workspace, "layout.json")
+    assert failures == [] and [floor.link(e) for e in pending] == ["F"]
+
+
+def test_a_closed_directory_names_every_tracked_child_no_row_covers():
+    rows = [{"path": "kit/schemas/", "kind": "dir"}, {"path": "README.md", "kind": "file"},
+            {"path": "x/doctrine/", "kind": "dir", "realised_as": {"path": "bundles/cardinals/", "decision": "d"}}]
+    tracked = ["README.md", "kit/schemas/a.json", "kit/stray.json", "bundles/cardinals/capability.json",
+               "loose/file.txt", "deep/under/open/dir.txt"]
+    failures = floor.unclosed(rows, [".", "kit/"], tracked)
+    named = sorted(f.split(":", 1)[0] for f in failures)
+    assert named == ["deep/", "kit/stray.json", "loose/"]
+
+
+def test_upstream_tree_declares_every_tracked_child_of_its_closed_directories():
+    """ADR-021 decision 7: what exists beyond the drawing is declared, or it is a defect. The reading
+    is what git TRACKS -- an untracked or ignored file is never a finding (decision 8)."""
+    import subprocess
+    doc = json.loads(DECLARATION.read_text(encoding="utf-8"))
+    listed = subprocess.run(["git", "-C", str(REPO), "ls-files", "-z"], capture_output=True, check=True)
+    tracked = [p for p in listed.stdout.decode("utf-8").split("\0") if p]
+    failures = floor.unclosed(doc["entries"], doc.get("closed", []), tracked)
+    assert not failures, failures

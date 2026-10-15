@@ -63,12 +63,50 @@ def evaluate_rows(workspace, rows, enabled=None):
         if enabled_ids is not None and entry.get("capability") and entry["capability"] not in enabled_ids:
             not_enabled.append(entry)
             continue
+        realised = entry.get("realised_as")
+        if realised and "pending" in entry:
+            failures.append(f"{entry['path']}: declared both pending (link {entry['pending']}) and realised by "
+                            f"{realised['decision']} -- a row promises the drawn form or says a decision replaced "
+                            f"it, never both (ADR-021)")
+            continue
         if "pending" in entry:
             pending.append(entry)
+            continue
+        if realised:
+            if realised.get("pending"):
+                pending.append(entry)
+                continue
+            if not workspace.exists(realised["path"]):
+                failures.append(f"{entry['path']}: realised as {realised['path']} by {realised['decision']}, "
+                                f"and that path is missing")
             continue
         if not workspace.exists(entry["path"]):
             failures.append(f"{entry['path']}: drawn path is missing ({entry.get('drawn_as', entry['path'])})")
     return failures, pending, not_enabled
+
+
+def link(entry) -> str:
+    """The link a pending row waits on -- its own, or its realised form's (ADR-021)."""
+    return entry.get("pending") or entry["realised_as"]["pending"]
+
+
+def unclosed(rows, closed, tracked) -> list:
+    """Pure: one failure per tracked child of a CLOSED directory that no row covers (ADR-021
+    decision 7). `tracked` is the caller's reading of what the repository carries -- paths relative
+    to its root, `/`-separated -- so an untracked or ignored file never becomes a finding. A child
+    is covered by a row at it, under it, or by a row whose `realised_as` names it."""
+    places = [r["path"] for r in rows] + [r["realised_as"]["path"] for r in rows if r.get("realised_as")]
+    failures = []
+    for directory in closed:
+        prefix = "" if directory == "." else directory
+        children = sorted({prefix + rest.split("/", 1)[0] + ("/" if "/" in rest else "")
+                           for rest in (p[len(prefix):] for p in tracked if p.startswith(prefix))})
+        for child in children:
+            if not any(p == child or p.startswith(child) or child.startswith(p) and p.endswith("/")
+                       and p != prefix for p in places):
+                failures.append(f"{child}: in {directory!r}, which the drawing declares closed, and no row "
+                                f"draws, realises or declares it (ADR-021 decision 7)")
+    return failures
 
 
 def evaluate(workspace, declaration_rel: str, side: str | None = None, enabled=None):
@@ -128,10 +166,16 @@ def _layout_floor_present(ctx, params):
     failures, pending, not_enabled = evaluate_rows(
         ctx.workspace, rows, enabled={c.id for c in capabilities})
     for entry in pending:
-        print(f"        PENDING  {entry['path']}  (link {entry['pending']}"
+        print(f"        PENDING  {entry['path']}  (link {link(entry)}"
+              + (f", realised as {entry['realised_as']['path']} by {entry['realised_as']['decision']}"
+                 if entry.get("realised_as") else "")
               + (f", {entry['capability']}" if entry.get("capability") else "") + ")")
     for entry in not_enabled:
         print(f"        NOT ENABLED  {entry['path']}  ({entry['capability']})")
+    for entry in rows:
+        if entry.get("realised_as") and "pending" not in entry and not entry["realised_as"].get("pending"):
+            print(f"        REALISED  {entry['path']}  -> {entry['realised_as']['path']}  "
+                  f"({entry['realised_as']['decision']})")
     return errors + failures
 
 

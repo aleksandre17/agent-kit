@@ -7,8 +7,9 @@ modes follow from that, and every test here is one of them:
 
   1. **The supplied default.** A framework that shipped a starter cardinal set would have
      installed an opinion on behalf of a party nobody asked, and a host would never afterwards be
-     able to tell its own norm from the vendor's. So the kit's own repository publishes NO bundle,
-     and that is asserted against the real manifest rather than trusted.
+     able to tell its own norm from the vendor's. So the ISSUED manifest publishes NO bundle, and
+     that is asserted against the real manifest rather than trusted. A bundle published BESIDE the
+     kit (`bundles/`, ADR-021) reaches a host only by an explicit take -- `test_bundles` holds it.
 
   2. **The silent zero.** A host that has taken no doctrine must SAY the doctrine in force is
      none, in those words, and `check` must be green on it. A page that simply ended would read

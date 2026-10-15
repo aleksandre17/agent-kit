@@ -21,7 +21,7 @@
     { "path": ".agents/project/kit.lock.json", "kind": "file", "drawn_as": "project/kit.lock.json",
       "holds": "integrity-pin", "writer": "kit-verb", "lifecycle": "replaced-by-release",
       "read_when": ["which kit version is installed", "verify the pinned copy", "upgrade the kit"] },
-    { "path": ".agents/project/roster.json", "kind": "file", "drawn_as": "project/roster.json", "pending": "F",
+    { "path": ".agents/project/roster.json", "kind": "file", "drawn_as": "project/roster.json", "capability": "roles", "realised_as": { "path": ".agents/project/roles/", "decision": "ADR-021 decision 6" },
       "holds": "staffing", "writer": "owner", "lifecycle": "living",
       "read_when": ["who handles this kind of work", "dispatch a task to an agent", "add or retire a role"] },
     { "path": ".agents/project/roles/", "kind": "dir", "drawn_as": "project/roles/", "capability": "roles",

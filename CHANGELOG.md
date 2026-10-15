@@ -7,6 +7,23 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE TREE IS THE DRAWING, slices S1–S2 (ADR-021)**
+- Layout grammar (expand-only, schema v1): `realised_as {path, decision, pending?}` — a drawn path whose
+  truth a named decision placed elsewhere; `declared_by` — a path beyond the drawing kept by a decision;
+  `closed` — the directories a drawing is exhaustive at. The floor gate judges a realised row at its
+  realised place, prints REALISED, refuses a row both pending and realised, and waits a realised form not
+  yet built on its own link. `floor.unclosed()` names every tracked child of a closed directory no row
+  covers (the caller supplies the tracked reading).
+- `UPSTREAM-LAYOUT.json` restated: `kit/doctrine/` realised in the capabilities (ADR-004 ②), `CARDINALS.md`
+  in `bundles/cardinals/`, protocol/economy/risk in `bundles/conduct/` (pending F), lifecycle and
+  verification in their capabilities, `interpreters/hooks/` as the one `judge` (ADR-017), skills and
+  playbooks as bundle genres (pending C); `fitness/` no longer pending (it exists); host #0's own tree,
+  `adapters/`, `bundles/`, `.github/`, `kit/{README.md,diagnostics.json,kit.lock.json}` declared. Upstream:
+  42 present, 6 pending, 0 missing, 0 undeclared. Host layout: `roster.json` realised as `roles/`.
+- **`bundles/cardinals/` 1.0.0** — the owner's eight cardinals as a doctrine bundle, published BESIDE the
+  kit; the issued manifest still ships no doctrine. Acceptance `test_bundles` (320–322): outside the
+  manifest, documents valid, a fresh pinned host takes it, its roll names all eight UNANSWERED, `check` green.
+
 **Added — the DISPATCH PORT: one place a worker is started (ADR-017 link C, slice C2)**
 - Port `interpreters/ports/dispatch_port.py` + verb `dispatch` (reads one packet on stdin; `--plan` writes
   nothing). The verb is a mouth, not a gate: refusing, leasing, isolating, starting and recording are all

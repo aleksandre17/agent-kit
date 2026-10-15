@@ -167,7 +167,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d1deed2c324d88add47fff55eaa799ee29cba7ce579ba6fdc8006f6e699349e6",
+      "digest": "614b4c702fa1c65da59fa7fedacc21e26bfeb2c5f0aec32f57619e85c28000a1",
       "path": "capabilities/governance/host-layout.json"
     },
     {
@@ -623,7 +623,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "20d3eebeed89f7e623a914772702a3107288aa04da9ff080b7e50dd2c7f307cf",
+      "digest": "abd040d1047fcf728d0123130e5843862418242917543617df1ed5a8c4ceb61f",
       "path": "interpreters/gates/floor.py"
     },
     {
@@ -1181,7 +1181,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "58d9b30d617c7d0f8eca0cadac5320592018c919ff6e81defbda672aa8854598",
+      "digest": "b740e37a8d318d6a49712dfc96aaa00968a0cf73ecd52cb346922df6ba13aa83",
       "path": "schemas/layout.schema.json"
     },
     {
@@ -1374,5 +1374,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T10:53:36+00:00"
+  "taken_at": "2026-10-15T11:08:21+00:00"
 }
