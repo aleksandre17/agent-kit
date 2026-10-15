@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 70,
+  "issued": 71,
   "codes": [
     {
       "code": "KIT0001",
@@ -422,6 +422,12 @@
       "status": "active",
       "title": "a declared miss: the ground does not hold",
       "explanation": "A reading was asked for that was never measured on this host, or whose paths have moved since it was measured. This is a VERDICT, not a failure: it names what moved and hands back the instrument, so re-measuring is one command. A dispatch whose packet cites such a ground is refused before a worker starts -- a brief built on a stale premise burns the whole run."
+    },
+    {
+      "code": "KIT0071",
+      "status": "active",
+      "title": "a claim asked for incompletely, or one that is not held",
+      "explanation": "A claim names its principal, the paths it takes and why (ADR-022). One of them is missing, or a release names a principal that holds no standing claim here. A claim whose reason nobody can read cannot be weighed by the writer it blocks. Nothing was written."
     }
   ]
 }

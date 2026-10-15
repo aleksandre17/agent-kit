@@ -38,6 +38,16 @@ def _install(ctx, kind: str):
                  if i.get("validates") == kind), (None, None))
 
 
+def served_through(ctx, surface_id: str) -> list:
+    """The runtime descriptor ids a surface serves -- the principals a hook's event came from."""
+    _owner, descriptors = _install(ctx, DESCRIPTOR)
+    if descriptors is None or not surface_id:
+        return []
+    return [record[collection.IDENTITY]
+            for _rel, record in collection.read(ctx, descriptors, descriptors["reads_as"]).records
+            if isinstance(record, dict) and record.get("surface") == surface_id]
+
+
 def observe(ctx, surface_id: str, event: str, detail) -> list:
     """Record `event` for every runtime served through `surface_id`, against every capability whose
     `observed_on` is that event. Returns what was written; never raises."""
@@ -49,15 +59,13 @@ def observe(ctx, surface_id: str, event: str, detail) -> list:
             return []
         capabilities = [row[collection.IDENTITY] for row in declared.rules(ctx, VOCABULARY, "capabilities")
                         if row.get("observed_on") == event]
-        served = [record for _rel, record in collection.read(ctx, descriptors, descriptors["reads_as"]).records
-                  if isinstance(record, dict) and record.get("surface") == surface_id]
         written = []
         scope = ctx.workspace.scoped((place["target"],))
-        for runtime in served:
+        for runtime in served_through(ctx, surface_id):
             for capability in capabilities:
-                rel = f"{place['target'].rstrip('/')}/{runtime[collection.IDENTITY]}.{capability}.json"
+                rel = f"{place['target'].rstrip('/')}/{runtime}.{capability}.json"
                 scope.write_json(rel, {"schema_version": ctx.manifest.version_of(OBSERVATIONS),
-                                       "runtime": runtime[collection.IDENTITY], "capability": capability,
+                                       "runtime": runtime, "capability": capability,
                                        "event": event, "observed_at": ctx.clock.now(), "evidence": evidence})
                 written.append(rel)
         return written

@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 243,
+  "count": 248,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "182147b43bbd2882afb71e3294530089a6ad575e3e9c9f5f04e0b9a838cc2817",
+      "digest": "18469403aaadce258cd3f6221eaeac96d37137505009d229912df4205f9f09a1",
       "path": "MANIFEST.json"
     },
     {
@@ -329,8 +329,14 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "421fd929c1a859eb9635d01c4ba90e2580a247701c5e93d1e8a98fd36ab02490",
+      "digest": "9de2f1172487cff8bca21c2bb87e24f476fbda2d2ac4cc37b81349b87175be45",
       "path": "capabilities/operating/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "bd0c1fd6a4db845a81b0fa96c3e1dadff103d9736a0b76753d8d91f388a990ca",
+      "path": "capabilities/operating/payload/arbitration.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -473,7 +479,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "9d1412f5a31710b4756681e4dc7fe53b8ed85bbd5ade234164c6c1951dacbb00",
+      "digest": "f030fff4f8d633dff724af49fd5fa7151f50640d854ccd403d73d6e2a20bb00e",
       "path": "diagnostics.json"
     },
     {
@@ -497,8 +503,14 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4eb96afc484cc8d89e1eedec26720202b292150976968d2a118141431315ab17",
+      "digest": "0434f4d0ed9a802437629b6f417f131e3f58fb471e578be12069650ac1c0db86",
       "path": "interpreters/attestation.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "f69c88d01e4e31359fdecff7f5f6439ebc5ba07eb262f9ddca88e8503d560abe",
+      "path": "interpreters/claims.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1001,6 +1013,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "f9591d202bfe2de45c689006592da5e6f10eecc6e810509ccd5146f996bdad3f",
+      "path": "interpreters/verbs/claim.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "f79889d2236422caae9f5ed5f5233c05a3441c89a6e5a8cd91bafb86b71ed31c",
       "path": "interpreters/verbs/dispatch.py"
     },
@@ -1037,7 +1055,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "6a11660fe6c77e727b857b08e9fd807facdc4a74e8c0381d929f79ddffad28e7",
+      "digest": "96797656d5c524c966d61adc37a83c75719ff47621456d86c2965e8bf9ce7560",
       "path": "interpreters/verbs/judge.py"
     },
     {
@@ -1109,6 +1127,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "d11948fe5e55054792bc282bbe948f650f2e4187209c31ce6e0c20e20cc7f227",
+      "path": "schemas/arbitration.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "74117c359e044fabdcb135d2787de89e1ef34ba000b999dfd036605f52b37a5c",
       "path": "schemas/archetype.schema.json"
     },
@@ -1141,6 +1165,12 @@
       "class": "declaration",
       "digest": "fa1f0f14bea8a9f311061941cb585869d787040f47f458398059c389f213ad27",
       "path": "schemas/cardinal.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "de3f0ae2e2b91b988be6c2873ab0d7d0f78cbdcc2214813520a5485fb4ca6153",
+      "path": "schemas/claim.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1464,5 +1494,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T14:57:16+00:00"
+  "taken_at": "2026-10-15T15:29:56+00:00"
 }

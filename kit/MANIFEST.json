@@ -175,6 +175,8 @@
     "dispatch-return": "schemas/dispatch-return.schema.json",
     "route-table": "schemas/route-table.schema.json",
     "ground-reading": "schemas/ground-reading.schema.json",
-    "runtime-observation": "schemas/runtime-observation.schema.json"
+    "runtime-observation": "schemas/runtime-observation.schema.json",
+    "claim": "schemas/claim.schema.json",
+    "arbitration": "schemas/arbitration.schema.json"
   }
 }

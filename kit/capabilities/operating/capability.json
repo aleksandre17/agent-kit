@@ -13,7 +13,9 @@
     "schemas": [
       "route-table",
       "dispatch-return",
-      "ground-reading"
+      "ground-reading",
+      "claim",
+      "arbitration"
     ]
   },
   "installs": [
@@ -24,6 +26,21 @@
       "source": "capabilities/operating/payload/routes.json",
       "validates": "route-table",
       "reads_as": "route_table"
+    },
+    {
+      "mode": "space",
+      "class": "ephemeral",
+      "target": ".agents/runtime/claims/",
+      "validates": "claim",
+      "reads_as": "claims"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/operating/arbitration.json",
+      "source": "capabilities/operating/payload/arbitration.json",
+      "validates": "arbitration",
+      "reads_as": "arbitration"
     }
   ],
   "gates": []

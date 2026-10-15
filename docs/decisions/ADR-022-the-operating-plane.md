@@ -135,8 +135,11 @@ bundle, never in `kit/` · `host` = the host's own declaration or knowledge · `
    that capability, attributable to that runtime. Declared-but-unproven is printed as an UNPROVEN GAP;
    proven-but-undeclared is printed too. Routing may honour only the attested set. This is the in-toto
    attestation shape (a statement about a subject, by evidence), applied to the kit's own seams.
-7. **Two principals on one tree are arbitrated by a claim that bites.** A claim `{paths, owner, reason,
-   ttl}` lives in the host's shared plane; the one judge refuses a write under another principal's live
+7. **Two principals on one tree are arbitrated by a claim that bites.** A claim `{principal, paths,
+   reason, taken_at}` lives in the observed plane of the one working tree the principals share. It has
+   NO time-to-live: ADR-007 holds that no amount of elapsed time breaks a hold, only a person by name,
+   and a claim is a hold — so it stands until released or broken by name, the break recorded on it,
+   and its age is printed with every refusal it causes; the one judge refuses a write under another principal's live
    claim, and a receipt of a peer's successful write to the same path inside a declared window refuses
    too — unless my own lease on that path predates it (optimistic concurrency, the etcd/HTTP `If-Match`
    form). The host lock (ADR-007) stays the hold on the HOST; this is the hold on a PATH, and it reuses
@@ -179,7 +182,7 @@ bundle, never in `kit/` · `host` = the host's own declaration or knowledge · `
 | S3 | measures `peak_context` and `calls_per_delivery`, read from the returns S1 records (gate module `economy`) | `test_routing` 366: a host budget below the reported peak fails `check`; no return is `None`, never 0 |
 | S3b | the telemetry stream from the served session hands, in OpenTelemetry GenAI attributes; `meta_ratio`, `input_output_ratio` | named and NOT built: reading usage out of a product's transcript is a claim about that product until an adapter declares where it lives and a run proves it — the measures it feeds wait for that declaration |
 | S4 | `runtime-observation` records in the observed plane, written by the interpreter on an event it PROVIDES (`attestation.EVENTS`); the class vocabulary names the event each capability is observed on (`observed_on`); the runtimes composition reads them as its `proven` source; the judge's refusal is the first event (`write-scope`) | `test_attestation` 380–382: a claim stays claimed until a refusal through that runtime proves it, then the runtime's page reads PROVEN; an admitted write proves nothing and leaves nothing; the capability is found by its event and never spelled. NOT built here, named: routing on the attested set, and events for the other capabilities (each needs an interpreter that provides its event) |
-| S5 | claims that bite; receipt-backed concurrency | a write under a peer's live claim is refused by the judge; an own lease supersedes an older foreign receipt |
+| S5 | module `claims`, verb `claim` (take, list, `--relinquish`, break by name), kinds `claim` and `arbitration` (the window, seeded 0 = off), KIT0071; the judge refuses a path under another principal's standing claim or written by a peer inside the window unless my later claim supersedes it, and records each admitted write per principal | `test_claims` 390–394 |
 | S6 | gate posture, calibration meta-gate, rings projection; `exec` and session hands | a gate kind without calibration fails the suite; a crashed blocking gate denies; the rings page names the empty ring |
 | S7 | N collections; findings, vision registry, standards ledger; handoff record; knowledge planes | a register is a collection with its own lifecycle and no second engine; a promotion missing its far end fails |
 | S8 | `bundles/conduct` chapters; skill and playbook genres | taken by a fresh host, its roll names every chapter UNANSWERED; a skill's catalog loads alone |
