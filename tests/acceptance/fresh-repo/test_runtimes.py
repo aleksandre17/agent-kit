@@ -193,9 +193,9 @@ class Runtimes(Fixtures, unittest.TestCase):
         field in which an observation could be written and refuses what it did not declare, so
         the strongest thing an authored file can say is that somebody believes it.
 
-        And the zero that follows is not printed as a measurement: with no record anywhere naming
-        a runtime and a capability together, the page says that no source of proof exists at all.
-        A count taken where there is no instrument is an attribution that cannot fail.
+        And the zero that follows names its instrument: the records the interpreter writes when it
+        observes an event (ADR-022 S4), none of which a host can author. A count taken where there
+        is no instrument is an attribution that cannot fail, so the page says which one it read.
         """
         writable = set(RUNTIME_SCHEMA["properties"])
         for word in ("proven", "verified", "observed", "tested_at", "status", "proof"):
@@ -217,7 +217,13 @@ class Runtimes(Fixtures, unittest.TestCase):
         self.assertIn(f"{composition.CLAIMED.capitalize()} — {len(declared)} of {len(declared)}",
                       page)
         self.assertIn(f"{composition.PROVEN.capitalize()} — 0 of {len(declared)}", page)
-        self.assertIn("no source of proof is declared at all", page)
+        # Since ADR-022 S4 a source of proof IS declared -- records the interpreter writes when it
+        # observes an event -- so the zero is a MEASUREMENT and the page names its instrument. What
+        # this test holds is unchanged: a claim written with total confidence proves nothing.
+        proof = next(c for c in Manifest(KIT).capabilities if c.raw.get("composes", {}).get("accounts"))
+        source = proof.raw["composes"]["accounts"][composition.PROVEN]["reading"]
+        self.assertIn(f"`{source}`", page)
+        self.assertIn("Nothing has been observed of this runtime", page)
         self.assertEqual(0, self.run_kit(KIT, host, "check").returncode)
 
     # -- 5. a word nobody declared -----------------------------------------------------------

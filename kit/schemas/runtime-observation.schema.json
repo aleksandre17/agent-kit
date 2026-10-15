@@ -1,0 +1,45 @@
+{
+  "$id": "runtime-observation",
+  "title": "A RUNTIME OBSERVATION -- a record that something a runtime claims was seen to happen",
+  "description": "ADR-022 decision 6. Written by the interpreter at the moment it observes an event it PROVIDES -- never authored by a host, because a claim and its proof would then have one author. A capability is PROVEN for a runtime only while such a record names both; everything else a host says about the runtime stays testimony. Observed state: it lives in the observed plane.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "runtime",
+    "capability",
+    "event",
+    "observed_at",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "runtime": {
+      "description": "The runtime descriptor the event was observed through.",
+      "type": "string",
+      "minLength": 1
+    },
+    "capability": {
+      "description": "The capability of the class vocabulary this event observes.",
+      "type": "string",
+      "minLength": 1
+    },
+    "event": {
+      "description": "The event the interpreter provides that observed it.",
+      "type": "string",
+      "minLength": 1
+    },
+    "observed_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence": {
+      "description": "What happened, in a sentence a later reader can check.",
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

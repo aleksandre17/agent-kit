@@ -7,6 +7,15 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE OPERATING PLANE, slice S4: a capability is believed once it is proven (ADR-022 decision 6)**
+- Schema `runtime-observation`; module `attestation` with the provided-event registry `EVENTS`
+  (`a-refused-write`). The runtimes capability installs `.agents/runtime/observations/` and declares it the
+  composition's `proven` source, so a runtime's page moves a claim to PROVEN only on a record.
+- Class vocabulary: `observed_on` names the provided event a capability is observed on; `write-scope` is
+  observed on the judge's refusal. The judge records it after refusing — never changing the verdict.
+- Not built, named: routing on the attested set; events for the other capabilities.
+- `test_attestation` 380–382.
+
 **Added — THE OPERATING PLANE, slice S3: what the work cost, measured (ADR-022 decision 5)**
 - Gate module `economy` publishes `peak_context` (largest reported peak) and `calls_per_delivery` (median
   calls of delivered tasks), read from the returns recorded on dispatched tasks; `None` where none returned.

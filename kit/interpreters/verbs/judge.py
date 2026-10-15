@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import sys
 
+import attestation
 import declared
 import edits as edits_module
 import judgement
@@ -92,6 +93,9 @@ def run(ctx, args) -> int:
     if refused:
         for path, rule_id, because, instead in refused:
             print(f"judge: REFUSED  {path}  {rule_id} -- {because} Instead: {instead}", file=sys.stderr)
+        # A refusal that happened is a record of what this runtime CAN be held to (ADR-022 decision 6).
+        attestation.observe(ctx, getattr(args, "surface", None), attestation.REFUSED_WRITE,
+                            [(p, r) for p, r, _b, _i in refused])
         return no
     print(f"judge: {len(within)} edited path(s) pass every edit judgement this host declares")
     return 0

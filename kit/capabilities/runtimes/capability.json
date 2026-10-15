@@ -18,7 +18,8 @@
     "schemas": [
       "runtime-class",
       "runtime",
-      "runtime-surface"
+      "runtime-surface",
+      "runtime-observation"
     ]
   },
   "documents": [
@@ -58,6 +59,11 @@
       },
       "claimed": {
         "field": "claims",
+        "names": "capability"
+      },
+      "proven": {
+        "reading": "runtime_observations",
+        "of": "runtime",
         "names": "capability"
       }
     }
@@ -167,6 +173,13 @@
           }
         ]
       }
+    },
+    {
+      "mode": "space",
+      "class": "ephemeral",
+      "target": ".agents/runtime/observations/",
+      "validates": "runtime-observation",
+      "reads_as": "runtime_observations"
     }
   ],
   "gates": [
