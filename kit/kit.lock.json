@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 176,
+  "count": 177,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "25d1eeb02ecac9b3886a9508c178a312e5523eb7fcf9e1e2862c2135d2674dcb",
+      "digest": "212c2fc4eb2d4775bb4e2b49e88ae6c0cc22ce3f7b778cb1794fbb4f6dbf8bae",
       "path": "MANIFEST.json"
     },
     {
@@ -373,6 +373,12 @@
       "class": "declaration",
       "digest": "15fce4925fd8203391eb52a95532612b6da526c7b50300158d6145cae49cd231",
       "path": "detectors/declared-test-runner.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "a4beadfd226f1ae061889150a748ae68a8f068155e8c654bd9d80e9f1265d631",
+      "path": "detectors/dotnet-project.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1062,5 +1068,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-09-17T14:58:41+00:00"
+  "taken_at": "2026-10-15T10:12:03+00:00"
 }
