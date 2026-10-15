@@ -46,7 +46,7 @@ from __future__ import annotations
 import json
 
 import corpus
-import vcs
+import accepted as accepted_state
 import gatekinds
 from errors import KitError
 
@@ -76,12 +76,6 @@ class RatchetError(KitError):
 
 
 # -- the previous accepted state ----------------------------------------------------------------
-def _git(root, argv: list) -> tuple:
-    """`(what git said, None)` or `(None, why it could not say it)` -- through the one port that
-    asks version control anything (ADR-021), so two readings of the repository cannot disagree."""
-    return vcs.run(root, argv)
-
-
 def _accepted(ctx, space: str) -> tuple:
     """`(the budgets of the previous accepted state, None)` or `(None, the absence in its own
     words)`.
@@ -91,7 +85,7 @@ def _accepted(ctx, space: str) -> tuple:
     must still see, and enumerating the tree's own files would lose it in the one case that matters.
     """
     root = ctx.workspace.path(".")
-    listing, why = _git(root, ["ls-tree", "-r", "--name-only", "--full-tree", f"HEAD:./{space}"])
+    listing, why = accepted_state.listing(root, space)
     if listing is None:
         return None, (
             f"THERE IS NO PREVIOUS ACCEPTED STATE FOR {space!r}: {why}. Every budget below is read "
@@ -106,7 +100,7 @@ def _accepted(ctx, space: str) -> tuple:
         if not name.endswith(".json"):
             continue
         rel = f"{space}/{name}"
-        text, why = _git(root, ["show", f"HEAD:./{rel}"])
+        text, why = accepted_state.text(root, rel)
         if text is None:
             return None, (
                 f"THE PREVIOUS ACCEPTED STATE COULD NOT BE READ: {rel} is in HEAD and its content "

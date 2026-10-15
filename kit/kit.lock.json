@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 254,
+  "count": 257,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -497,6 +497,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "2e3bb52969c95cd39a6519b60d2bd16b782ee0acd47b40e5a0005be3c331bbf3",
+      "path": "interpreters/accepted.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "971201e0c9e919a496fefe3acecc73b1b1fd4e20ce71f829d7e47ddff5df0e6e",
       "path": "interpreters/activation.py"
     },
@@ -671,7 +677,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7443a62bacb0a2be34cfbd1f1900bb91b8765fa908230639e8178cc19046ef97",
+      "digest": "b92aa9406c2515221c254806580d08a0979e20e13eeaa53385c62cd60ed4369d",
       "path": "interpreters/gates/economy.py"
     },
     {
@@ -719,7 +725,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "fef9e21698589ac1744059e9bc8b6b54d3a139c49b324863c8eb0251a213a889",
+      "digest": "a033479292d3a37f6a8349db3c20e1eb7fcbc52cddc3dc187d783c74d95fcf36",
       "path": "interpreters/gates/ratchet.py"
     },
     {
@@ -749,7 +755,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "86e9c4813d945fcb2c47c9c3754d39ad5a7d09feef800a0ffee3b13de063f271",
+      "digest": "faa40187df0c05eab1fad69f2babe8f15237486837849bcd1fbb76e538f79252",
       "path": "interpreters/gates/served.py"
     },
     {
@@ -977,8 +983,20 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "b537cf259eff3061eddb58e747711e7c5fdbe7b866bdb03fa4106c1292bd9ca2",
+      "path": "interpreters/returns.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "6db29765210dc0b28acc546a4dc5199b043ca8bcfdd8e7b44e051cfe85c6d19a",
       "path": "interpreters/space.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "527ce5da17003d190d92ef51fb88ca669dc166ef640456a569cfa09d1a9c2500",
+      "path": "interpreters/spans.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1530,5 +1548,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T17:24:09+00:00"
+  "taken_at": "2026-10-15T17:34:43+00:00"
 }

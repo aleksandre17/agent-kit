@@ -15,39 +15,21 @@ economy, the answer is `None` -- nothing was measured, which is not the same as 
 
 from __future__ import annotations
 
-import json
 import statistics
 
-import dispatch_port
-import ephemeral
+import returns
 
 PEAK, CALLS = "peak_context", "calls_per_delivery"
 
 
-def _returns(ctx) -> list:
-    """Every structured return this host's dispatches recorded, read from their task records."""
-    home = ephemeral.place(ctx, dispatch_port.HOME)
-    found = []
-    for rel in ctx.workspace.files_under(home):
-        if not rel.endswith("/task.json"):
-            continue
-        try:
-            record = json.loads(ctx.workspace.read_text(rel))
-        except (OSError, ValueError):
-            continue
-        if isinstance(record.get("return"), dict):
-            found.append(record["return"])
-    return found
-
-
 def _peak(ctx, params) -> "int | None":
-    peaks = [r["economy"]["peak_context"] for r in _returns(ctx)
+    peaks = [r["economy"]["peak_context"] for r in returns.recorded(ctx)
              if isinstance(r.get("economy"), dict) and isinstance(r["economy"].get("peak_context"), int)]
     return max(peaks) if peaks else None
 
 
 def _calls(ctx, params) -> "int | None":
-    calls = [r["economy"]["calls"] for r in _returns(ctx)
+    calls = [r["economy"]["calls"] for r in returns.recorded(ctx)
              if (r.get("deliverable") or {}).get("status") == "delivered"
              and isinstance((r.get("economy") or {}).get("calls"), int)]
     return int(statistics.median(calls)) if calls else None
