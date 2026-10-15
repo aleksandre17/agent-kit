@@ -173,6 +173,7 @@
     "task": "schemas/task.schema.json",
     "lesson": "schemas/lesson.schema.json",
     "dispatch-return": "schemas/dispatch-return.schema.json",
-    "route-table": "schemas/route-table.schema.json"
+    "route-table": "schemas/route-table.schema.json",
+    "ground-reading": "schemas/ground-reading.schema.json"
   }
 }

@@ -7,6 +7,17 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — THE OPERATING PLANE, slice S2: a ground is a reading with an expiry (ADR-022 decision 4)**
+- Module `readings` + verb `ground`: record `--key --fact --instrument --path`, read `--key`. A reading's
+  digest folds the working-tree content of only its declared paths, through what the repository carries;
+  it lives in the observed plane (`ground/ledger.jsonl`, append-only, last write per key wins).
+  KIT0069 (no instrument / no path), KIT0070 declared miss (exit 4) naming what moved and the instrument.
+- A packet's `ground[]` row may cite a ledger `key`; the port refuses a dispatch whose cited ground no
+  longer holds, before a worker starts.
+- The entry point merges each verb's declared `ARGUMENTS`: a verb with new words is still a file.
+- Host floor: `.agents/runtime/ground/` built (capability `operating`).
+- `test_ground` 370–373, `test_routing` 365.
+
 **Added — THE OPERATING PLANE, slice S1: a packet names what ends the run (ADR-022)**
 - `dispatch-packet` **version 2**: `deliverable` (required), `decision_density`, `reversibility` (required),
   `ground[]` (each with its instrument), `boundaries`, `budget`, `profile`. A v1 packet is refused by

@@ -168,6 +168,25 @@ class Routing(Fixtures, unittest.TestCase):
         self.assertIn(dispatch_port.RETURN, task["status_message"])
         self.assertIn("economy", task["status_message"])
 
+    # == 6. the ground the packet cites (S2) =====================================================
+    def test_365_a_packet_citing_a_ground_that_moved_is_refused_before_a_worker_starts(self):
+        host = self.repository()
+        (host / "measured.txt").write_text("as it was\n", encoding="utf-8", newline="\n")
+        ground = [sys.executable, str(Path(dispatch_port.__file__).parent.parent / "cli.py"), "ground",
+                  "--root", str(host), "--kit", str(self.kit)]
+        recorded = subprocess.run([*ground, "--key", "the-measured-file", "--fact", "one line",
+                                   "--instrument", "read measured.txt", "--path", "measured.txt"],
+                                  capture_output=True, text=True)
+        self.assertEqual(0, recorded.returncode, recorded.stdout + recorded.stderr)
+        cited = [{"fact": "one line", "instrument": "read measured.txt", "key": "the-measured-file"}]
+        fresh = self.dispatched(host, packet("grounded-fresh", ground=cited))
+        self.assertEqual(0, fresh.returncode, fresh.stdout + fresh.stderr)
+        (host / "measured.txt").write_text("moved since\n", encoding="utf-8")
+        stale = self.dispatched(host, packet("grounded-stale", ground=cited))
+        self.assertEqual(1, stale.returncode, stale.stdout + stale.stderr)
+        self.assertIn(f"[{dispatch_port.DispatchRefused.code}]", stale.stderr)
+        self.assertIn("measured.txt", stale.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

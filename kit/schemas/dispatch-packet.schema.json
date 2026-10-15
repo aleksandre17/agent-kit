@@ -108,6 +108,11 @@
               "type": "string",
               "minLength": 1
             }
+          },
+          "key": {
+            "description": "The ground ledger key this reading was recorded under. A keyed ground is CHECKED when the packet is accepted: one that no longer holds refuses the dispatch, naming what moved.",
+            "type": "string",
+            "minLength": 1
           }
         }
       }

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 68,
+  "issued": 70,
   "codes": [
     {
       "code": "KIT0001",
@@ -410,6 +410,18 @@
       "status": "active",
       "title": "a declared relocation this host cannot take yet",
       "explanation": "A capability moved one of its installs and declared where it used to live (ADR-021). This host still holds the old place, and the move cannot be carried out as a rename of the same bytes: the new place holds something too -- two homes, and nothing here can tell which is the truth -- or a document this host authored still names a path inside the old place, and the kit never writes the host's own words. Or the declaration itself relocates to a place its capability does not install. Nothing moved and nothing was written: every refusal is printed at once, with the exact restatement where one is owed. Restate the document, or decide which of the two places holds the truth and remove the other, then run again."
+    },
+    {
+      "code": "KIT0069",
+      "status": "active",
+      "title": "a ground reading that cannot be recorded as asked",
+      "explanation": "A measured fact is recorded with its key, the fact, the INSTRUMENT that produced it and the narrowest paths it depends on (ADR-022). One of them is missing. A fact without its instrument cannot be checked against the question it answers, and a fact that depends on no path never expires, so it is never true for long. Nothing was recorded."
+    },
+    {
+      "code": "KIT0070",
+      "status": "active",
+      "title": "a declared miss: the ground does not hold",
+      "explanation": "A reading was asked for that was never measured on this host, or whose paths have moved since it was measured. This is a VERDICT, not a failure: it names what moved and hands back the instrument, so re-measuring is one command. A dispatch whose packet cites such a ground is refused before a worker starts -- a brief built on a stale premise burns the whole run."
     }
   ]
 }

@@ -93,6 +93,12 @@ def main(argv=None) -> int:
     parser.add_argument("--roster", default=None, metavar="DIGEST",
                         help="the digest of the succession roster a door accepts, as --plan printed "
                              "it: the act refuses if the roster it reads now is not this one (ADR-012)")
+    # A verb's OWN words are declared beside the verb (`ARGUMENTS`) and joined here once the verb is
+    # known -- so a new verb with new words is still a file and never an edit to this one, and a word
+    # a verb claims that is already taken is refused by the parser itself rather than shadowed.
+    known, _rest = parser.parse_known_args(argv)
+    for flag, spec in getattr(importlib.import_module(known.verb), "ARGUMENTS", []):
+        parser.add_argument(flag, **spec)
     args = parser.parse_args(argv)
 
     host = Path(args.root).resolve()

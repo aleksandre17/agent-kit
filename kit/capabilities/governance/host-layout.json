@@ -60,7 +60,7 @@
     { "path": ".agents/runtime/telemetry/", "kind": "dir", "drawn_as": "runtime/telemetry", "pending": "C",
       "holds": "measurement-stream", "writer": "runtime-observer", "lifecycle": "rotated",
       "read_when": ["how much did this cost", "token usage per agent", "which runs are wasteful"] },
-    { "path": ".agents/runtime/ground/", "kind": "dir", "drawn_as": "runtime/ground", "pending": "C",
+    { "path": ".agents/runtime/ground/", "kind": "dir", "drawn_as": "runtime/ground", "capability": "operating",
       "holds": "dispatch-ground", "writer": "dispatcher", "lifecycle": "current-only",
       "read_when": ["receive a dispatch", "what is already verified", "brief an agent"] },
     { "path": ".agents/runtime/guards/", "kind": "dir", "drawn_as": "runtime/guards", "pending": "C",

@@ -12,7 +12,8 @@
   "declares": {
     "schemas": [
       "route-table",
-      "dispatch-return"
+      "dispatch-return",
+      "ground-reading"
     ]
   },
   "installs": [

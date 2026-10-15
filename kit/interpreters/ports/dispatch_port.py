@@ -67,6 +67,7 @@ import admission
 import declared
 import ephemeral
 import hostlock
+import readings
 from errors import KitError
 
 #: The contracts this port selects on -- schema names, which are this kit's own vocabulary and
@@ -366,11 +367,28 @@ def route(ctx, packet: dict) -> dict:
     return {"cell": cell["id"], "says": cell.get("says", "")}
 
 
+def grounded(ctx, packet: dict) -> None:
+    """Every ground the packet cites BY KEY, read back from the ledger before a worker starts. A ground
+    that no longer holds refuses the dispatch: a brief built on a stale premise burns the whole run,
+    and the worker that would correctly refuse it has already been paid for (ADR-022 decision 4)."""
+    stale = []
+    for row in packet.get("ground", []):
+        if "key" in row:
+            try:
+                readings.get(ctx, row["key"])
+            except readings.GroundMiss as miss:
+                stale.append(str(miss))
+    if stale:
+        raise DispatchRefused(f"dispatch {packet['id']!r} cites ground that does not hold:\n  "
+                              + "\n  ".join(stale))
+
+
 def accepted(ctx, raw) -> tuple:
     """Every refusal, taken together, on pure reads. Returns (packet, adapter, provider). A caller
     that wants to know whether a dispatch WOULD be accepted asks this and writes nothing."""
     vocabulary(ctx)
     packet = complete(ctx, packet_from(raw))
+    grounded(ctx, packet)
     route(ctx, packet)
     return packet, coherent(routed(ctx, packet)), judgeable(provider(ctx))
 
