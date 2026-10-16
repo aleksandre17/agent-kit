@@ -227,7 +227,9 @@ def _values(ctx, packet, record, tree_rel, **carried) -> dict:
     """What this port provides to a declaration for one turn of one worker. The task's own words
     are the same on every turn -- it is the same task -- and what a resume adds is exactly the
     answer and the way back in."""
+    routed = record.value.get("route") or {}
     return dispatching.provides(
+        **{k: routed[k] for k in ("model", "effort", "budget_usd", "max_turns") if k in routed},
         id=packet["id"], branch=packet["branch"], instruction=packet["instruction"],
         role=packet.get("role"), deliverable=packet.get("deliverable"),
         workspace=ctx.workspace.path(tree_rel).as_posix(),
@@ -261,11 +263,18 @@ def _turn(ctx, packet, adapter, workspaces, record, tree_rel, block, values, run
     tree = ctx.workspace.path(tree_rel)
     where = f"adapter {adapter['id']!r} ({block})"
     declaration = adapter[block]
-    argv = dispatching.argv(declaration["argv"], values, where=where)
+    # An option enters the argv only when the route gave its value: the route decides the model, the
+    # effort and the caps, the adapter says how its product is told (ADR-024).
+    parts = declaration["argv"] + [p for option in declaration.get("options", [])
+                                   if values.get(option["when"]) is not None for p in option["argv"]]
+    argv = dispatching.argv(parts, values, where=where)
     stdin = dispatching.argv([declaration["stdin"]], values, where=where)[0] \
         if "stdin" in declaration else None
     record.move(dispatching.WORKING, **{moment: ctx.clock.now()})
-    worker = run(argv, cwd=tree, stdin=stdin)
+    # The STOP CONDITION every product honours: a run past its declared wall time ends as a recorded
+    # failure (exit 124), never a silent retry.
+    stop = (record.value.get("route") or {}).get("timeout_s")
+    worker = run(argv, cwd=tree, stdin=stdin, **({"timeout": stop} if stop else {}))
 
     artifacts = [_artifact(part, worker, ctx.workspace.path(dispatching.home(ctx, packet["id"], dispatching.ARTIFACT)))
                  for part in adapter["returns"]]
@@ -306,6 +315,12 @@ def _turn(ctx, packet, adapter, workspaces, record, tree_rel, block, values, run
                 stated = (f"the deliverable did not pass the verification profile "
                           f"{packet['profile']!r} (exit {checked['exit']})")
                 ended, message = dispatching.FAILED, stated
+        escalates = (record.value.get("route") or {}).get("escalates_to")
+        if escalates and (ended != dispatching.COMPLETED or verdict["verdict"] != admission.ADMITTED):
+            # A declared signal fired: the record names where the next run belongs. Nothing is started
+            # here -- an escalation is a new decision, never a silent retry on a stronger mind.
+            record.value["escalate"] = {"to": escalates, "because": message or "its return was not admitted"}
+            print(f"dispatch: {packet['id']} escalates to the route cell {escalates!r} -- run it there")
         record.close(ended, worker.returncode, stated, artifacts=artifacts, admission=verdict)
         code = 0 if ended == dispatching.COMPLETED else 1
         print(f"dispatch: {packet['id']} {ended} through {adapter['id']} in {tree_rel} "

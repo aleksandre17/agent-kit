@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "summary": "The kit's three classes of work. A host's route cells name one each.",
+  "classes": [
+    {
+      "id": "mechanical",
+      "actor": "script",
+      "says": "Deterministic: render, check, lint, format, migrate, a plan. Run the verb or the script; never reason it out. Zero tokens."
+    },
+    {
+      "id": "assisted",
+      "actor": "model",
+      "says": "Crystallized judgement over a known procedure (a skill): the cheapest model and effort that keeps the gates green; escalated on a declared signal."
+    },
+    {
+      "id": "judgement",
+      "actor": "model",
+      "says": "Design, ambiguity, a high undo cost: a strong model at high effort, and a human at an irreversible door."
+    }
+  ]
+}

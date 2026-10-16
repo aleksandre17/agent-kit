@@ -57,6 +57,31 @@
                 "description": "What is written to the worker's standard input, with the same placeholders. Absent means nothing is written and the stream is closed -- never an empty line that a prompt-reading process would take as an answer.",
                 "type": "string",
                 "minLength": 1
+              },
+              "options": {
+                "description": "Parts appended to the argv only when the route gives the value they name (`when`): how this product is told the model, effort, spend cap or turn cap a route row declares. A value the route does not give adds nothing; a value the product cannot be told has no option here, and the adapter says so.",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "when",
+                    "argv"
+                  ],
+                  "properties": {
+                    "when": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "argv": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
               }
             }
           },
@@ -152,6 +177,31 @@
                 "description": "What is written to the resumed worker's standard input, with the same placeholders. Absent means nothing is written and the stream is closed.",
                 "type": "string",
                 "minLength": 1
+              },
+              "options": {
+                "description": "Parts appended to the argv only when the route gives the value they name (`when`): how this product is told the model, effort, spend cap or turn cap a route row declares. A value the route does not give adds nothing; a value the product cannot be told has no option here, and the adapter says so.",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "when",
+                    "argv"
+                  ],
+                  "properties": {
+                    "when": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "argv": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
               }
             }
           }

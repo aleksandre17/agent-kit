@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "claude-subagent",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "A DISPATCH adapter: the one published declaration that says how this product is started as a WORKER for a task another intelligence routed to it (ADR-017 decision 2). It is deliberately separate from the runtime adapter of the same product, which says where that product reads its instructions: being served by a runtime and being startable as a worker are two different things about it, and a host may legitimately want one without the other -- one reason to change each (Cardinal VIII). An ordinary capability, taken through the provenance door exactly as any adapter is; the dispatch port finds it by the contract its document keeps and never by this id, so a second intelligence is a second directory and no interpreter in the kit is edited. Remove it and this host can route nothing here -- and says so.",
   "requires": [],
   "provides": [],

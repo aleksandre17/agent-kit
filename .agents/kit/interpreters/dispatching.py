@@ -93,7 +93,13 @@ TREE = "tree"
 #: refused by name; widening either is this interpreter providing one more, never an enum edited
 #: in a schema (Cardinal II).
 PROVIDED = ("id", "instruction", "branch", "role", "workspace", "task", "artifact",
-            "deliverable", ANSWER, REENTRY)
+            "deliverable", ANSWER, REENTRY, "model", "effort", "budget_usd", "max_turns")
+#: What a route cell decides for the worker it routes (ADR-024): the model, effort and caps an adapter's
+#: `options` tell its product, the stop condition the port enforces, and where a failure escalates.
+ROUTED = ("task_class", "actor", "model", "effort", "budget_usd", "max_turns", "timeout_s", "escalates_to")
+#: The actor a route dispatches. `script` work is a verb, `human` work a door: neither starts a worker.
+DISPATCHED = "model"
+CLASSES = ({"validates": "task-classes"}, "classes")
 CHANNELS = ("stdout", "stderr", "file")
 
 #: The name of the file this port PROVIDES for a worker that answers in a file rather than on a
@@ -228,6 +234,11 @@ def coherent(adapter: dict) -> dict:
     where = f"adapter {adapter['id']!r}"
     blank = {name: "" for name in PROVIDED}
     argv(adapter["starts"]["argv"], blank, where=where)
+    for option in adapter["starts"].get("options", []) + (adapter.get(RESUMES) or {}).get("options", []):
+        if option["when"] not in PROVIDED:
+            raise DispatchUnserved(f"{where} declares an option for {option['when']!r}, which this port "
+                                   f"does not provide (it provides {list(PROVIDED)})")
+        argv(option["argv"], blank, where=f"{where} (option {option['when']})")
     returns = {part["name"]: part for part in adapter["returns"]}
     for part in adapter["returns"]:
         if part["from"] not in CHANNELS:
@@ -295,7 +306,8 @@ def route(ctx, packet: dict) -> dict:
         return {"cell": None, "says": "this host declares no route table cell, so no routing fact of "
                                       "this packet was judged"}
     cell = next((c for c in cells if c["decision_density"] == packet["decision_density"]
-                 and c["reversibility"] == packet["reversibility"]), None)
+                 and c["reversibility"] == packet["reversibility"]
+                 and (not packet.get("task_class") or c.get("task_class") in (None, packet["task_class"]))), None)
     if cell is None:
         raise DispatchRefused(
             f"dispatch {packet['id']!r} states decision_density={packet['decision_density']!r} and "
@@ -317,11 +329,21 @@ def route(ctx, packet: dict) -> dict:
     if cell.get("ceiling_chars") and len(packet["instruction"]) > cell["ceiling_chars"]:
         wrong.append(f"the instruction is {len(packet['instruction'])} characters and the cell's "
                      f"ceiling is {cell['ceiling_chars']} -- an inlined wall is re-billed on every call")
+    classes = {row["id"]: row for row in declared.rules(ctx, *CLASSES)}
+    named_class = cell.get("task_class") or packet.get("task_class")
+    if named_class and named_class not in classes:
+        wrong.append(f"the task class {named_class!r} is declared by no task-class vocabulary "
+                     f"(declared: {sorted(classes)})")
+    actor = cell.get("actor") or (classes.get(named_class) or {}).get("actor", DISPATCHED)
+    if actor != DISPATCHED:
+        wrong.append(f"the cell's work is carried out by a {actor}, never a dispatched model: run the "
+                     f"verb or script, or walk the owner's door -- a token spent on it buys nothing")
     if wrong:
         raise DispatchRefused(
             f"dispatch {packet['id']!r} falls in the cell {cell['id']!r} of this host's route table, "
             f"and does not honour it:\n  " + "\n  ".join(wrong))
-    return {"cell": cell["id"], "says": cell.get("says", "")}
+    return {"cell": cell["id"], "says": cell.get("says", ""),
+            **{k: cell[k] for k in ROUTED if k in cell}, "actor": actor}
 
 
 def grounded(ctx, packet: dict) -> None:

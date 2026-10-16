@@ -290,6 +290,25 @@
     "route": {
       "description": "The route-table cell this task was judged against, or the statement that the host declares none.",
       "type": "object"
+    },
+    "escalate": {
+      "description": "Where a failed run in an escalating route cell belongs next, and why -- recorded, never acted on by the port.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "to",
+        "because"
+      ],
+      "properties": {
+        "to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "because": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   }
 }

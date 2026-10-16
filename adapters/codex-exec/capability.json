@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "codex-exec",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "A DISPATCH adapter: the one published declaration that says how this product is started as a WORKER for a task another intelligence routed to it (ADR-017 decision 2). It is deliberately separate from the runtime adapter of the same product, which says where that product reads its instructions: being served by a runtime and being startable as a worker are two different things about it, and a host may legitimately want one without the other (Cardinal VIII). This adapter is the proof of decision 2's whole claim -- a second intelligence joined this kit as a directory and a document, and not one interpreter, port or schema enum was edited to admit it. Its sibling `codex-mcp`, named in decision 2, is NOT published: the boundary was measured on 2026-09-18 and this version of the product is not an MCP server (ADR-017 amendment 5), which is exactly an adapter failing to be viable while the port stands untouched. Taken through the provenance door exactly as any adapter is; remove it and this host can route nothing here -- and says so.",
   "requires": [],
   "provides": [],

@@ -62,12 +62,27 @@ RETURNING = fixture_adapter(
              {"name": DIAGNOSTIC, "from": "stderr"}],
 )
 
+#: A worker that records the argv it was started with, and sleeps when its instruction says so -- so
+#: the route's model and effort, and the port's stop condition, are measured on a declaration.
+ECHO = (
+    "import json, pathlib, sys, time" "\n"
+    f"pathlib.Path({WROTE!r}).write_text(json.dumps(sys.argv[1:]), encoding='utf-8')" "\n"
+    "if sys.argv[1] == 'sleep': time.sleep(30)" "\n"
+)
+ECHOING = fixture_adapter(
+    "an-intelligence-told-its-model",
+    starts={"argv": [sys.executable, "-c", ECHO, "{instruction}"],
+            "options": [{"when": "model", "argv": ["--model", "{model}"]},
+                        {"when": "effort", "argv": ["--effort", "{effort}"]}]},
+    returns=[{"name": DIAGNOSTIC, "from": "stderr"}],
+)
+
 
 class Routing(Fixtures, unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.kit = adapted_kit(adapters=[*ADAPTERS, ADAPTER, RETURNING])
+        cls.kit = adapted_kit(adapters=[*ADAPTERS, ADAPTER, RETURNING, ECHOING])
         cls.verb = next(p.stem for p in Path(dispatch_port.__file__).parent.parent.joinpath("verbs").glob("*.py")
                         if "dispatch" in p.stem)
 
@@ -212,6 +227,42 @@ class Routing(Fixtures, unittest.TestCase):
                 self.assertEqual(code, checked.returncode, checked.stdout[-3000:])
                 if code:
                     self.assertIn(economy.PEAK, checked.stdout)
+
+
+    # == 6. the route decides who acts, on what, and when it stops (ADR-024) =====================
+    def test_367_the_cell_tells_the_worker_its_model_and_effort_and_a_script_class_is_never_dispatched(self):
+        host = self.repository()
+        classes = {r["id"]: r for c in CORE.capabilities for d in c.raw.get("documents", [])
+                   if d["validates"] == dispatching.CLASSES[0]["validates"] for r in c.documents[d["id"]][dispatching.CLASSES[1]]}
+        mechanical = next(i for i, r in classes.items() if r["actor"] != dispatching.DISPATCHED)
+        modelled = next(i for i, r in classes.items() if r["actor"] == dispatching.DISPATCHED)
+        self.routes(host, cells=[
+            {"id": "cheap", "decision_density": "low", "reversibility": "cheap", "task_class": modelled,
+             "model": "a-small-model", "effort": "low"},
+            {"id": "scripted", "decision_density": "low", "reversibility": "cheap", "task_class": mechanical}])
+        said = self.dispatched(host, packet("told", route=ECHOING.name, task_class=modelled, instruction="go"))
+        self.assertEqual(0, said.returncode, said.stdout + said.stderr)
+        task = self.record(host, "told")
+        self.assertEqual(("a-small-model", "low"), (task["route"]["model"], task["route"]["effort"]))
+        ctx = Context(kit_root=self.kit, host_root=host)
+        started = json.loads((host / dispatching.home(ctx, "told", dispatching.TREE) / WROTE).read_text(encoding="utf-8"))
+        self.assertEqual(["go", "--model", "a-small-model", "--effort", "low"], started)
+        refused = self.dispatched(host, packet("scripted-work", route=ECHOING.name, task_class=mechanical,
+                                               instruction="go"))
+        self.assertEqual(1, refused.returncode)
+        self.assertIn(f"[{dispatching.DispatchRefused.code}]", refused.stderr)
+
+    def test_368_a_run_past_its_stop_condition_fails_on_the_record_and_escalates_without_a_retry(self):
+        host = self.repository()
+        self.routes(host, cells=[
+            {"id": "quick", "decision_density": "low", "reversibility": "cheap", "timeout_s": 2,
+             "escalates_to": "careful"},
+            {"id": "careful", "decision_density": "high", "reversibility": "cheap"}])
+        said = self.dispatched(host, packet("stopped", route=ECHOING.name, instruction="sleep"))
+        self.assertNotEqual(0, said.returncode)
+        task = self.record(host, "stopped")
+        self.assertEqual(dispatching.FAILED, task["state"])
+        self.assertEqual("careful", task["escalate"]["to"])
 
 
 if __name__ == "__main__":

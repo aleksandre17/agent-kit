@@ -72,6 +72,50 @@
           "says": {
             "type": "string",
             "minLength": 1
+          },
+          "task_class": {
+            "description": "The class of work this cell routes, from the declared task-class vocabulary (`task-classes`): mechanical work is a verb or a script and is never dispatched to a model.",
+            "type": "string",
+            "minLength": 1
+          },
+          "actor": {
+            "description": "Who carries out work in this cell: `script` (a verb or a script -- zero tokens), `model`, or `human` (an owner's door). Only `model` is dispatched.",
+            "type": "string",
+            "enum": [
+              "script",
+              "model",
+              "human"
+            ]
+          },
+          "model": {
+            "description": "The model a worker in this cell runs on, in the product's own spelling -- declared here, never hardcoded in a kit or an adapter. The cheapest that keeps quality.",
+            "type": "string",
+            "minLength": 1
+          },
+          "effort": {
+            "description": "The reasoning effort, in the product's own spelling.",
+            "type": "string",
+            "minLength": 1
+          },
+          "budget_usd": {
+            "description": "A hard spend cap per run, where the product can be told one.",
+            "type": "number",
+            "minimum": 0
+          },
+          "max_turns": {
+            "description": "A hard turn cap per run, where the product can be told one.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "timeout_s": {
+            "description": "A STOP CONDITION every product honours: the run is ended at this wall time and recorded as failed -- never retried silently.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "escalates_to": {
+            "description": "The cell a failed run in this cell is escalated to (a declared signal: the run failed or a gate refused its return). The port records the escalation and starts nothing: the next run is a new decision.",
+            "type": "string",
+            "minLength": 1
           }
         }
       }

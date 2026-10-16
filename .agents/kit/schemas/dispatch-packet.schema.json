@@ -157,6 +157,11 @@
       "description": "The verification profile the port runs in the worker's tree when the worker returns: an id of the host's route table (`profiles[].id`). Never a command -- no text from a packet is ever executed (Cardinal IV).",
       "type": "string",
       "minLength": 1
+    },
+    "task_class": {
+      "description": "The class of work this task is, matched against the route cell that declares one.",
+      "type": "string",
+      "minLength": 1
     }
   }
 }
