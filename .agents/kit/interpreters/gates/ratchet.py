@@ -306,3 +306,15 @@ KINDS = {KIND: _ratchet}
 #: this is where those rows are already read; a second reader of them is the drift Cardinal III
 #: forbids, and it would go on agreeing with this one until the day one of the two was fixed.
 EXHAUSTED = {KIND: _exhausted}
+
+
+def _ceilings(ctx, params) -> dict:
+    """measure -> the ceiling this host undertook for it, read from the rows (never a count)."""
+    _space, records = corpus.declaration(ctx, params)
+    rows, _findings = _declared(records)
+    return {name: row[CEILING] for name, (rel, row) in rows.items()}
+
+
+#: What this host has BUDGETED, for a gate that holds a measure to a default only where the host
+#: undertook nothing (the context gate, ADR-024): the host's row is the one home of its number.
+CEILINGS = {KIND: _ceilings}

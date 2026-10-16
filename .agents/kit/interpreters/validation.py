@@ -21,6 +21,7 @@ SUPPORTED = {
     "$id", "$schema", "title", "description",
     "type", "enum", "const", "required", "properties", "additionalProperties",
     "items", "minItems", "minLength", "pattern", "minimum",
+    "maxItems", "maxLength", "maximum", "oneOf",
 }
 
 _TYPES = {
@@ -70,16 +71,28 @@ def validate(instance, schema: dict, path: str = "$") -> list[str]:
     numeric = isinstance(instance, (int, float)) and not isinstance(instance, bool)
     if "minimum" in schema and numeric and instance < schema["minimum"]:
         errors.append(f"{path}: {instance!r} is below minimum {schema['minimum']!r}")
+    if "maximum" in schema and numeric and instance > schema["maximum"]:
+        errors.append(f"{path}: {instance!r} is above maximum {schema['maximum']!r}")
+
+    if "oneOf" in schema:
+        passing = sum(1 for branch in schema["oneOf"] if not validate(instance, branch, path))
+        if passing != 1:
+            errors.append(f"{path}: matches {passing} of the {len(schema['oneOf'])} declared shapes; "
+                          f"exactly one is required")
 
     if isinstance(instance, str):
         if "minLength" in schema and len(instance) < schema["minLength"]:
             errors.append(f"{path}: shorter than minLength {schema['minLength']}")
+        if "maxLength" in schema and len(instance) > schema["maxLength"]:
+            errors.append(f"{path}: longer than maxLength {schema['maxLength']}")
         if "pattern" in schema and not re.search(schema["pattern"], instance):
             errors.append(f"{path}: {instance!r} does not match {schema['pattern']!r}")
 
     if isinstance(instance, list):
         if "minItems" in schema and len(instance) < schema["minItems"]:
             errors.append(f"{path}: fewer than minItems {schema['minItems']}")
+        if "maxItems" in schema and len(instance) > schema["maxItems"]:
+            errors.append(f"{path}: more than maxItems {schema['maxItems']}")
         if "items" in schema:
             for i, item in enumerate(instance):
                 errors += validate(item, schema["items"], f"{path}[{i}]")
@@ -97,7 +110,11 @@ def validate(instance, schema: dict, path: str = "$") -> list[str]:
             for key in instance:
                 if key not in properties:
                     errors.append(f"{path}: property {key!r} is not declared")
+        elif isinstance(extra, dict):
+            for key in instance:
+                if key not in properties:
+                    errors += validate(instance[key], extra, f"{path}.{key}")
         elif extra is not True:
-            raise UnsupportedSchema(f"{path}: additionalProperties must be a boolean here")
+            raise UnsupportedSchema(f"{path}: additionalProperties must be a boolean or a schema")
 
     return errors

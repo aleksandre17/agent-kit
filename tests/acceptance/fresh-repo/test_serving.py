@@ -75,12 +75,15 @@ def durable(host: Path) -> dict:
 
 #: Views that place one file per declared SCOPE -- a host that declares no scope is served none.
 SCOPED_VIEWS = {v["id"] for v in SPEC["views"] if "scopes" in v}
+#: Views whose members a RESOLVER produces (skills): a host that declares none is served none, and
+#: what each one serves is held by the module about that subject (`test_skills`).
+RESOLVED_VIEWS = {v["id"] for v in SPEC["views"] if "members_from" in v}
 
 
 def files_of(surface: dict, role: str) -> list:
     """Every path a surface declares, for a host with exactly one role and no law scope."""
     return [f"{r['target'].rstrip('/')}/{role}{r.get('suffix', '')}" if r["target"].endswith("/")
-            else r["target"] for r in surface["renders"] if r["view"] not in SCOPED_VIEWS]
+            else r["target"] for r in surface["renders"] if r["view"] not in SCOPED_VIEWS | RESOLVED_VIEWS]
 
 
 def front_matter(text: str) -> dict:
@@ -163,8 +166,8 @@ class Serving(Fixtures, unittest.TestCase):
                 role_projection = next(p for p in (host / ".agents").rglob(f"{AN_ARCHETYPE['id']}.md")
                                        if "generated" in p.parts).read_text(encoding="utf-8")
                 for rendered in surface["renders"]:
-                    if rendered["view"] in SCOPED_VIEWS:
-                        continue  # placed per declared scope; held by test_scoped_law
+                    if rendered["view"] in SCOPED_VIEWS | RESOLVED_VIEWS:
+                        continue  # placed per declared scope or resolved member; held by their own modules
                     if not rendered["target"].endswith("/"):
                         # Only a document whose VIEW declares a section reading the host's law page
                         # carries that law; a view of other sections (a settings file) does not.

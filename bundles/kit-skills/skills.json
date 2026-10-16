@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "summary": "Three procedures every host walks. Bodies are prose for judgement; the steps are verbs to RUN.",
+  "skills": [
+    {
+      "id": "walk-a-door",
+      "task_class": "assisted",
+      "description": "Use when a kit verb stops at a DOOR (exit 3, 'this is a DOOR'): an approval only the host's owner may give. Shows what the door decides, runs the plan, and asks the owner -- never approves on their behalf.",
+      "body": "skills/walk-a-door/body.md",
+      "files": [
+        "skills/walk-a-door/scripts/plan.py"
+      ]
+    },
+    {
+      "id": "propose-a-law",
+      "task_class": "judgement",
+      "description": "Use when a rule of this repository should bind every agent and every commit: adds a numbered law and, where text can show the violation, a calibrated edit gate. Not for preferences or one-off instructions.",
+      "body": "skills/propose-a-law/body.md",
+      "files": [
+        "skills/propose-a-law/scripts/gate.py"
+      ]
+    },
+    {
+      "id": "take-a-capability",
+      "task_class": "mechanical",
+      "description": "Use when this host should take a published adapter, bundle or policy (a new product, toolchain, doctrine or rule set): plans the take, then hands the approval to the owner.",
+      "body": "skills/take-a-capability/body.md"
+    }
+  ]
+}

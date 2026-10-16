@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "summary": "This host's own skills. Each row names a body under .agents/project/skills/<id>/ (relative to this file); a published bundle's skills arrive with the bundle and are not repeated here.",
+  "skills": []
+}

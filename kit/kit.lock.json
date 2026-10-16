@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 275,
+  "count": 278,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d7b1f1fd0c5176fb4064b20a885de241e2bb8795d8ba637b3fa6875e52b20ecf",
+      "digest": "69429ac9073ade045ea66bc548d85908e6c4a7863924d12bd9d29a8ab4f705a1",
       "path": "MANIFEST.json"
     },
     {
@@ -401,7 +401,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "2075a0b790b00ae5c91a3625fcb817eabb86e3a952a647375a9f0bd908896c4e",
+      "digest": "0a391a946d502468b969fb06f6ffdc02030d893f787483228ac1b3271fb608d6",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -427,6 +427,12 @@
       "class": "payload",
       "digest": "ef55f0958ba6fec8f614301bf06f68dad81b4a578fcbf2c9fe8a9d1c91322165",
       "path": "capabilities/runtimes/payload/runtimes.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "e7d2458ed7c82c1e62adca0755e12a6b41c77522c562f8ff65d332b2e2c9d3d9",
+      "path": "capabilities/runtimes/payload/skills-local.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -539,7 +545,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "5129a272dcb37f180ba7b16f1bd12b3f3af50de7c8545dfcaaef9e67d58a8ee5",
+      "digest": "3518b4c206d64f6ab1a5dc81e53fc0037841432cb2b0f2488797609d391d3707",
       "path": "interpreters/context.py"
     },
     {
@@ -569,7 +575,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "fb6e33ef02a36dd0cc587ad047676d36ecbf8f4fddc9c9b6c5db624abda35f04",
+      "digest": "df7745eb8020401f776a1770f2d0d9d1e2155549b68f21929d804e6c8049fd51",
       "path": "interpreters/derivation.py"
     },
     {
@@ -731,7 +737,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7a093b961148d3db953184d2e66bdca5eed8862531bc0715dec7208de50c24fb",
+      "digest": "794653f1bf6d3d49c2dc96a367e2e321293f55046dd47893a688e0799ab57410",
       "path": "interpreters/gates/ratchet.py"
     },
     {
@@ -1031,6 +1037,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "5ea3d67aba7cd39b1ce88b89976c661f44d9bed949a59eba5ddc82c255f8f07a",
+      "path": "interpreters/resolvers/skills.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "ac5858b0e219113051eda342bb4dc120db0f78b7ccedf14aafbb22850405b413",
       "path": "interpreters/returns.py"
     },
@@ -1043,7 +1055,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7c26f651e590cd160243054b0462adb766663aca8f1ee22500e89d1d90336a4f",
+      "digest": "5e789907b3d6957da2ab580b7addddd51174d009ea186f7c3db3b9a9df18b6a2",
       "path": "interpreters/serving.py"
     },
     {
@@ -1055,7 +1067,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "530c9d43e4524c444f76d11c8601eed6d2bd0ecd02466609212d0c0ecdd55e07",
+      "digest": "e6a91c6a40b709e4b776ec3f830d064e025ce13a9e843e698bae4733a647fab0",
       "path": "interpreters/shapes/serve.py"
     },
     {
@@ -1079,7 +1091,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "82415920e6f53ad17c1fe813df162f0c4fc640d1d7b9c9ada132ed3dfe3f5015",
+      "digest": "438e047ee7f4b80a7bf16df914bf9a2df0c836807089cdd8ce4a72e904e0f11d",
       "path": "interpreters/spans.py"
     },
     {
@@ -1121,7 +1133,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "06f8f4e40d2eacd8d585a1edebcbf734733840bc494942c4aa5f1cfaf357a698",
+      "digest": "bfa5128028825b70fc4a9781bca2c75f18f48d7dbafeee01f3f86ddd403044a3",
       "path": "interpreters/validation.py"
     },
     {
@@ -1559,7 +1571,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "bdd08ea0c3b8060fcb82e72f702e8add519bfac4f7ffdbc16b8ce40fef06c4e2",
+      "digest": "c56757fafbdd42fe8039f7df436130ea3a5929f840ec705d9ad953afaa675fd9",
       "path": "schemas/runtime-surface.schema.json"
     },
     {
@@ -1567,6 +1579,12 @@
       "class": "declaration",
       "digest": "30adeb6096995a5592f4126e703975e93504c3b7afbf089d45c6edf27a6dd398",
       "path": "schemas/runtime.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "5a3b85046f87db245cfbd2e6cac0e784fbdbaf7082e8624fd4f6fd923aa6497f",
+      "path": "schemas/skills.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1656,5 +1674,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T11:49:23+00:00"
+  "taken_at": "2026-10-16T12:05:16+00:00"
 }

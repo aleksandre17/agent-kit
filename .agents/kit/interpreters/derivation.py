@@ -73,6 +73,11 @@ OPENS = ("<!-- kit:begin {id} -- computed from this host's declaration; anything
          "these two lines is replaced unread -->")
 CLOSES = "<!-- kit:end {id} -->"
 
+#: The comment a marker is written in, as its (opening, closing) pair. A markup file takes the
+#: default; a file in another grammar (a TOML or YAML setting) declares its own pair on the render
+#: row that spans it, so one marker grammar serves every file a host owns (`comment` arguments).
+HTML = ("<!--", "-->")
+
 #: How a marker is RECOGNISED, as opposed to how it is written. Deliberately looser than what is
 #: emitted: a host writes the pair by hand the first time, the identifier is what carries meaning,
 #: and a passage that demanded its own punctuation back would refuse a correct declaration over a
@@ -164,11 +169,29 @@ def body(row: dict, view: dict) -> str:
     return template.render("{{#" + name + "}}" + spec[LINE] + "{{/" + name + "}}", {name: rows})
 
 
-def _placed(lines: list, identity: str) -> tuple:
+def _written(identity: str, comment) -> tuple:
+    """The canonical (opening, closing) marker lines for `identity` in `comment`'s grammar."""
+    if tuple(comment or HTML) == HTML:
+        return OPENS.format(id=identity), CLOSES.format(id=identity)
+    left, right = comment
+    tail = f" {right}" if right else ""
+    return (f"{left} kit:begin {identity} -- computed from this host's declaration; anything written "
+            f"between these two lines is replaced unread{tail}", f"{left} kit:end {identity}{tail}")
+
+
+def _recogniser(comment):
+    if tuple(comment or HTML) == HTML:
+        return _MARKER
+    left, right = comment
+    return re.compile(r"^\s*" + re.escape(left) + r"\s*kit:(?P<edge>begin|end)\s+(?P<id>\S+)(?P<rest>.*?)"
+                      + (re.escape(right) if right else "") + r"\s*$")
+
+
+def _placed(lines: list, identity: str, comment=None) -> tuple:
     """Where this section's markers stand, as the two line numbers between which its content is
     this passage's to replace. Neither number is guessed and neither is defaulted."""
-    opens = [i for i, line in enumerate(lines) if marker_on(line) == ("begin", identity)]
-    closes = [i for i, line in enumerate(lines) if marker_on(line) == ("end", identity)]
+    opens = [i for i, line in enumerate(lines) if marker_on(line, comment) == ("begin", identity)]
+    closes = [i for i, line in enumerate(lines) if marker_on(line, comment) == ("end", identity)]
     if len(opens) > 1 or len(closes) > 1:
         raise SectionPlacedTwice(
             f"section {identity!r} is marked out {max(len(opens), len(closes))} times in this "
@@ -185,12 +208,12 @@ def _placed(lines: list, identity: str) -> tuple:
             + ". The place is not guessed: a computation appended wherever there was room would be "
               "correct in its content and wrong in its position, which is the one kind of wrong a "
               "reader does not notice. Put these two lines where the section belongs and run "
-              f"again:\n  {OPENS.format(id=identity)}\n  {CLOSES.format(id=identity)}"
+              "again:\n  " + "\n  ".join(_written(identity, comment))
         )
     return opens[0], closes[0]
 
 
-def marker_on(line: str) -> "tuple | None":
+def marker_on(line: str, comment=None) -> "tuple | None":
     """Which edge of which section's span this line is, or `None` where it is ordinary text.
 
     Public, and it is the only way anything learns that a line is a marker. A second reader of
@@ -198,39 +221,40 @@ def marker_on(line: str) -> "tuple | None":
     to *where does a computed span begin*, and the day the marker changed, one of the two would go
     on finding nothing and calling the artifact clean (Cardinal III).
     """
-    found = _MARKER.match(line)
+    found = _recogniser(comment).match(line)
     return None if found is None else (found.group("edge"), found.group("id"))
 
 
-def span(text: str, identity: str) -> "str | None":
+def span(text: str, identity: str, comment=None) -> "str | None":
     """The text between `identity`'s two markers, or `None` where the artifact marks out no span
     for it. Two spans for one name are refused, exactly as `filled` refuses them."""
     lines = text.split("\n")
-    if not any(marker_on(line) == ("begin", identity) for line in lines):
+    if not any(marker_on(line, comment) == ("begin", identity) for line in lines):
         return None
-    first, last = _placed(lines, identity)
+    first, last = _placed(lines, identity, comment)
     return "\n".join(lines[first + 1:last])
 
 
-def spliced(text: str, identity: str, content: str) -> str:
+def spliced(text: str, identity: str, content: str, comment=None) -> str:
     """`text` with `identity`'s span replaced by `content`, the markers rewritten canonically and
     every byte outside them returned as it arrived. The one place a span is written, for every
     writer of one -- a computed section of a bounded artifact, a runtime's served entry file."""
     lines = text.split("\n")
-    first, last = _placed(lines, identity)
+    first, last = _placed(lines, identity, comment)
     # One trailing newline is absorbed rather than rendered as a blank line: a declaration whose
     # line ends in a break and one whose line does not must both produce a span that reads back
     # identically, or the second run of this passage would differ from the first over a character
     # nobody wrote.
     content = content[:-1] if content.endswith("\n") else content
-    block = [OPENS.format(id=identity)] + content.split("\n") + [CLOSES.format(id=identity)]
+    opening, closing = _written(identity, comment)
+    block = [opening] + content.split("\n") + [closing]
     return "\n".join(lines[:first] + block + lines[last + 1:])
 
 
-def withdrawn(text: str, identity: str) -> str:
+def withdrawn(text: str, identity: str, comment=None) -> str:
     """`text` with `identity`'s span and both its markers removed -- what is left is the host's."""
     lines = text.split("\n")
-    first, last = _placed(lines, identity)
+    first, last = _placed(lines, identity, comment)
     return "\n".join(lines[:first] + lines[last + 1:])
 
 

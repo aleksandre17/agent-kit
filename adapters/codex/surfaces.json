@@ -3,7 +3,7 @@
   "surfaces": [
     {
       "id": "codex",
-      "says": "Codex reads AGENTS.md at the repository root as project instructions, and one agent definition per TOML file under .codex/agents/ -- name, description and developer_instructions as strings. Taken from the product's documentation; a claim until a run of the product is observed reading what was served. It reads hooks at .codex/hooks.json (events pre_tool_use / post_tool_use, matcher apply_patch); the event names are measured by inspection of codex-cli 0.153.2 and post_write_block is proven by receipt on a prior hand-built system, but every tool_input.* key and the patch grammar in `hands` are UNVERIFIED -- ordered so a wrong guess misses (and the judge then refuses as unjudged) rather than mis-binds. Codex has NOT proven pre_exec_block, so the judge is wired AFTER the write: a refusal there flags the change to the model, it does not prevent it (ADR-017 decision 5). Scoped law: it builds its instruction chain by reading AGENTS.md from the project root down to the working directory, one file per directory, later (deeper) files appearing after and overriding earlier ones -- taken from the product's AGENTS.md documentation; UNVERIFIED on this machine, and a scope only binds when the session's working directory lies at or below it (a file edited below it from a root session is not claimed to see it).",
+      "says": "Codex reads AGENTS.md at the repository root as project instructions, and one agent definition per TOML file under .codex/agents/ -- name, description and developer_instructions as strings. Taken from the product's documentation; a claim until a run of the product is observed reading what was served. It reads hooks at .codex/hooks.json (events pre_tool_use / post_tool_use, matcher apply_patch); the event names are measured by inspection of codex-cli 0.153.2 and post_write_block is proven by receipt on a prior hand-built system, but every tool_input.* key and the patch grammar in `hands` are UNVERIFIED -- ordered so a wrong guess misses (and the judge then refuses as unjudged) rather than mis-binds. Codex has NOT proven pre_exec_block, so the judge is wired AFTER the write: a refusal there flags the change to the model, it does not prevent it (ADR-017 decision 5). Scoped law: it builds its instruction chain by reading AGENTS.md from the project root down to the working directory, one file per directory, later (deeper) files appearing after and overriding earlier ones -- taken from the product's AGENTS.md documentation; UNVERIFIED on this machine, and a scope only binds when the session's working directory lies at or below it (a file edited below it from a root session is not claimed to see it). Skills: one directory per skill under .agents/skills/ holding SKILL.md (front matter `name`, `description`, optional `allowed-tools`) and its supporting files -- taken from the product's skills documentation (fetched 2026-10-16); a claim until a run is observed loading a served skill.",
       "renders": [
         {
           "view": "briefing",
@@ -29,6 +29,13 @@
           "view": "enforcement",
           "target": ".codex/hooks.json",
           "template": "capabilities/codex/payload/hooks.json.mustache"
+        },
+        {
+          "view": "skills",
+          "target": ".agents/skills/",
+          "suffix": "/SKILL.md",
+          "template": "capabilities/codex/payload/skill.md.mustache",
+          "layer": "indexed"
         }
       ],
       "hands": {

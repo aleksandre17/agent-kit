@@ -176,6 +176,7 @@
     "claim": "schemas/claim.schema.json",
     "arbitration": "schemas/arbitration.schema.json",
     "register": "schemas/register.schema.json",
-    "register-kind": "schemas/register-kind.schema.json"
+    "register-kind": "schemas/register-kind.schema.json",
+    "skills": "schemas/skills.schema.json"
   }
 }

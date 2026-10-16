@@ -172,4 +172,8 @@ class Context:
         for capability in self.manifest.capabilities:
             for item in capability.installs:
                 declared.append((item["target"], item["class"]))
+        # A path the kit SERVED is a projection, and the kit's own record is its class declaration
+        # (`serving`) -- a product's home that happens to lie under the kit's root (a skill home)
+        # included.
+        declared += [(rel, "projection") for rel in sorted(self._served_paths())]
         return declared

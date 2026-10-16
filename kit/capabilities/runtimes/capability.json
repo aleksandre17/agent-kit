@@ -19,7 +19,8 @@
       "runtime-class",
       "runtime",
       "runtime-surface",
-      "runtime-observation"
+      "runtime-observation",
+      "skills"
     ]
   },
   "documents": [
@@ -69,6 +70,19 @@
     }
   },
   "installs": [
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/skills.json",
+      "source": "capabilities/runtimes/payload/skills-local.json",
+      "validates": "skills",
+      "reads_as": "host_skills"
+    },
+    {
+      "mode": "space",
+      "class": "binding",
+      "target": ".agents/project/skills/"
+    },
     {
       "mode": "seed",
       "class": "binding",
@@ -176,6 +190,13 @@
             "over": "definitions",
             "describes": "seam",
             "undescribed": "A role whose archetype nobody declares -- UNBOUND. Read its definition before delegating to it."
+          },
+          {
+            "id": "skills",
+            "members_from": {
+              "kind": "skills",
+              "params": {}
+            }
           }
         ]
       }

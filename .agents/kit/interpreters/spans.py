@@ -15,7 +15,7 @@ def sizes(ctx) -> list:
     found = []
     for rel, row in serving.prior_rows(ctx, ctx.enabled_capabilities()).items():
         if row.get("span") and ctx.workspace.exists(rel):
-            held = derivation.span(ctx.workspace.read_text(rel), row["span"])
+            held = derivation.span(ctx.workspace.read_text(rel), row["span"], row.get("comment"))
             if held is not None:
                 found.append(len(held.encode("utf-8")))
     return found

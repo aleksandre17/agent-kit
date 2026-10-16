@@ -1,0 +1,72 @@
+{
+  "$id": "skills",
+  "title": "SKILLS -- reusable procedures an agent loads by their description (the Agent Skills unit)",
+  "description": "A skill is the Agent Skills unit (agentskills.io): a NAME and a DESCRIPTION loaded on every turn, a BODY loaded only when the skill is activated, and supporting FILES read or run only when the body says so. Declared once here; the front matter every product parses is a projection of this row, so the body file carries prose only. Every path is relative to this document and may not leave its directory; a skill's files lie inside the directory of its body. Deterministic steps belong in `files` as scripts the body tells the agent to RUN -- prose is for what needs judgement (ADR-024, every token serves the result).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "skills"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "description",
+          "body"
+        ],
+        "properties": {
+          "id": {
+            "description": "The skill's name: 1-64 lowercase letters, digits and single hyphens, neither first nor last (the Agent Skills name rule); it is also the directory a product reads it from.",
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "description": {
+            "description": "What the skill does AND when to use it, in the words a model decides on: loaded on every turn, so it is the skill's whole cost until activated. 1-1024 characters (the Agent Skills limit).",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "body": {
+            "description": "The Markdown body, relative to this document, with no front matter.",
+            "type": "string",
+            "minLength": 1
+          },
+          "files": {
+            "description": "Supporting files (scripts/, references/, assets/), relative to this document, inside the body's directory, served beside SKILL.md verbatim.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "allowed_tools": {
+            "description": "Tools pre-approved while the skill runs, in the product's own spelling (the Agent Skills `allowed-tools`, experimental).",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "task_class": {
+            "description": "The class of work the skill carries out, from the declared task-class vocabulary (ADR-024).",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -282,6 +282,20 @@
       "path": ".agents/project/runtimes/"
     },
     {
+      "capability": "runtimes",
+      "class": "binding",
+      "digest": "e7d2458ed7c82c1e62adca0755e12a6b41c77522c562f8ff65d332b2e2c9d3d9",
+      "mode": "seed",
+      "path": ".agents/project/skills.json"
+    },
+    {
+      "capability": "runtimes",
+      "class": "binding",
+      "digest": null,
+      "mode": "space",
+      "path": ".agents/project/skills/"
+    },
+    {
       "capability": "governance",
       "class": "binding",
       "digest": "2656118e2d7bc2678290b99cd6f4ceb6f98958fafb1ea34df1c4b996f91f79b8",
@@ -496,5 +510,5 @@
       "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-10-16T06:39:27+00:00"
+  "taken_at": "2026-10-16T12:05:16+00:00"
 }

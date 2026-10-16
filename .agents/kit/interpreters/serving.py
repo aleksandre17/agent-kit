@@ -78,7 +78,7 @@ def _spans(produced: dict, capabilities) -> dict:
         record = produced.get(item["target"])
         for row in (json.loads(record).get("served", []) if record else []):
             if row.get("span"):
-                found[row["path"]] = (row["span"], row["span_sha256"])
+                found[row["path"]] = (row["span"], row["span_sha256"], row.get("comment"))
     return found
 
 
@@ -91,9 +91,9 @@ def withdrawals(ctx, capabilities, produced: dict) -> dict:
         if rel in produced or not row.get("span") or not ctx.workspace.exists(rel):
             continue
         text = ctx.workspace.read_text(rel)
-        held = derivation.span(text, row["span"])
+        held = derivation.span(text, row["span"], row.get("comment"))
         if held is not None and digest(held) == row.get("span_sha256"):
-            rest = derivation.withdrawn(text, row["span"])
+            rest = derivation.withdrawn(text, row["span"], row.get("comment"))
             out[rel] = None if digest(rest) == row.get("seed_sha256") or not rest.strip() else rest
     return out
 
@@ -183,7 +183,7 @@ def admit(ctx, capabilities, produced: dict) -> list:
             # The host owns the file; the kit owns the span. Where the host's file marks the span
             # out, only the span is judged: the kit's bytes are what it would serve now or what its
             # record says it last served there, and the host's text around it is never in question.
-            on_disk = derivation.span(ctx.workspace.read_text(rel), spans[rel][0])
+            on_disk = derivation.span(ctx.workspace.read_text(rel), spans[rel][0], spans[rel][2])
             if on_disk is not None:
                 if digest(on_disk) not in (spans[rel][1], rows.get(rel, {}).get("span_sha256")):
                     held.append(rel)

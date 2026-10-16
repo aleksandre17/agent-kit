@@ -173,6 +173,20 @@
                   "description": "The template the host-owned file is written from ONCE, carrying the span's two markers. Required with `span`.",
                   "type": "string",
                   "minLength": 1
+                },
+                "layer": {
+                  "description": "The CONTEXT LAYER the product loads this file into, from the declared context vocabulary (the `context` document): `always` (every turn), `indexed` (its name and description every turn, its body when activated), `on-demand` (when something points at it). A file with no layer is a setting, not context. Measured on every `check` (ADR-024).",
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]*$"
+                },
+                "comment": {
+                  "description": "The comment grammar a SPAN's two markers are written in, as [opening, closing] -- for a file that is not markup (`[\"#\", \"\"]` in TOML). Absent: an HTML comment.",
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
