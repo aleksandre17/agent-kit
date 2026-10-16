@@ -28,7 +28,7 @@ from pathlib import Path
 from harness import Fixtures
 
 import derivation  # noqa: E402
-import runtime as runtime_port  # noqa: E402
+import serving  # noqa: E402
 from manifest import Manifest  # noqa: E402
 
 from test_adapters import adapted_kit  # noqa: E402
@@ -129,7 +129,7 @@ class EntryFiles(Fixtures, unittest.TestCase):
         self.assertNotEqual(0, checked.returncode)
         self.assertIn(ENTRY, checked.stdout)
         refused = self.run_kit(KIT, host, "render")
-        self.assertIn(runtime_port.ServeCollision.code, refused.stderr + refused.stdout)
+        self.assertIn(serving.ServeCollision.code, refused.stderr + refused.stdout)
         self.assertIn("an edit inside the span", self.entry(host))
 
     def test_343_a_file_the_kit_last_served_whole_is_converted(self):

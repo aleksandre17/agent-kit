@@ -32,7 +32,7 @@ from harness import KIT, Fixtures, host_digest
 
 import activation  # noqa: E402
 import derivation  # noqa: E402
-import runtime as runtime_port  # noqa: E402 -- reachable once the harness has placed the kit
+import serving  # noqa: E402 -- reachable once the harness has placed the kit
 from manifest import Manifest  # noqa: E402
 
 from test_adapters import adapted_kit, surface_documents  # noqa: E402
@@ -45,7 +45,7 @@ MANIFEST = Manifest(KIT)
 CAPABILITY = json.loads((KIT / "capabilities/runtimes/capability.json").read_text(encoding="utf-8"))
 ROLES_CAPABILITY = json.loads((KIT / "capabilities/roles/capability.json").read_text(encoding="utf-8"))
 
-SERVED = [item for item in CAPABILITY["installs"] if item.get("shape") == runtime_port.SHAPE]
+SERVED = [item for item in CAPABILITY["installs"] if item.get("shape") == serving.SHAPE]
 assert len(SERVED) == 1, SERVED
 SERVED = SERVED[0]
 RECORD = SERVED["target"]
@@ -122,7 +122,7 @@ class Serving(Fixtures, unittest.TestCase):
                     if "span" in record[rel]:  # the host's file: only the kit's span is recorded
                         self.assertNotIn("sha256", record[rel])
                     else:
-                        self.assertEqual(runtime_port._file_digest(self._ctx(host), rel), record[rel]["sha256"])
+                        self.assertEqual(serving._file_digest(self._ctx(host), rel), record[rel]["sha256"])
                 self.assertEqual(sorted(expected), sorted(record))
                 if activation.FIELD in surface:
                     # served is not yet run: a surface that declares activation walks its own door
@@ -194,7 +194,7 @@ class Serving(Fixtures, unittest.TestCase):
         before = durable(host)
         refused = self.run_kit(KIT, host, "render")
         self.assertNotEqual(0, refused.returncode)
-        self.assertIn(runtime_port.ServeCollision.code, refused.stderr + refused.stdout)
+        self.assertIn(serving.ServeCollision.code, refused.stderr + refused.stdout)
         self.assertIn(rel, refused.stderr + refused.stdout)
         self.assertEqual(before, durable(host), "a refusal must leave the host as it was found")
 
@@ -217,7 +217,7 @@ class Serving(Fixtures, unittest.TestCase):
         self.assertNotEqual(0, checked.returncode)
         self.assertIn(rel, checked.stdout)
         refused = self.run_kit(KIT, host, "render")
-        self.assertIn(runtime_port.ServeCollision.code, refused.stderr + refused.stdout)
+        self.assertIn(serving.ServeCollision.code, refused.stderr + refused.stdout)
         self.assertIn("an edit somebody made by hand", (host / rel).read_text(encoding="utf-8"))
 
     def test_263_a_runtime_no_longer_served_loses_its_files_and_only_its_files(self):
@@ -273,7 +273,7 @@ class Serving(Fixtures, unittest.TestCase):
         before = durable(host)
         refused = self.run_kit(KIT, host, "render")
         self.assertNotEqual(0, refused.returncode)
-        self.assertIn(runtime_port.ServeConflict.code, refused.stderr + refused.stdout)
+        self.assertIn(serving.ServeConflict.code, refused.stderr + refused.stdout)
         self.assertEqual(before, durable(host))
 
     def test_266_a_descriptor_serving_a_surface_nobody_declares_fails_its_gate_and_is_served_nothing(self):

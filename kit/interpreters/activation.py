@@ -20,7 +20,7 @@ import subprocess
 from pathlib import Path
 
 import declared
-import runtime as runtime_port
+import serving
 from errors import KitError
 
 #: The contract a surface document keeps, and the field that declares a setting -- schema words.
@@ -42,7 +42,7 @@ class ActivationRefused(KitError):
 def served(ctx) -> dict:
     """surface id -> its activation block, for every surface the kit's own record says this host
     is served AND that declares a setting. A surface declared but never served activates nothing."""
-    on_record = runtime_port.served_surfaces(ctx, ctx.enabled_capabilities())
+    on_record = serving.served_surfaces(ctx, ctx.enabled_capabilities())
     return {row["id"]: row[FIELD] for row in declared.rules(ctx, SURFACES, LIST)
             if FIELD in row and row["id"] in on_record}
 

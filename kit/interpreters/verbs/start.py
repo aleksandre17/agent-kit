@@ -28,7 +28,7 @@ from pathlib import Path
 import doors
 import hostlock
 import take as take_verb
-import runtime as runtime_port
+import serving
 from context import Context
 from errors import KitError
 
@@ -150,10 +150,10 @@ def _runtimes(kit: Path, host: Path, clock, runtimes: list) -> None:
     """Each runtime instance, in the declaration the SERVING capability composes its instances from
     -- found by the shape it serves, never by a name -- and validated by that declaration's schema."""
     ctx = Context(kit_root=kit, host_root=host, clock=clock)
-    serving = next(c for c in ctx.manifest.capabilities
-                   if any(i.get("shape") == runtime_port.SHAPE for i in c.installs))
-    item = next(i for i in serving.installs if i.get("reads_as") == serving.raw["composes"]["instances"])
-    ws = ctx.workspace.scoped(serving.targets())
+    server = next(c for c in ctx.manifest.capabilities
+                  if any(i.get("shape") == serving.SHAPE for i in c.installs))
+    item = next(i for i in server.installs if i.get("reads_as") == server.raw["composes"]["instances"])
+    ws = ctx.workspace.scoped(server.targets())
     for row in runtimes:
         rel = f"{item['target'].rstrip('/')}/{row['id']}.json"
         if ctx.workspace.exists(rel):

@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import lockfile
 from errors import KitError
-from workspace import Workspace
 
 SUMMARY = "enumerate what the kit is, measure it, and record the reading"
 MUTATES = True
@@ -39,7 +38,7 @@ class LockRefused(KitError):
 
 
 def run(ctx, args) -> int:
-    kit = Workspace(ctx.manifest.root)
+    kit = ctx.manifest.files()
     lock_path = ctx.manifest.raw_ships()["lock"]
     rows = lockfile.survey(ctx.manifest, kit)
     moment = ctx.clock.now()
@@ -73,6 +72,6 @@ def run(ctx, args) -> int:
         print(f"lock: no reading has been recorded yet; {len(rows)} path(s) would be")
         return 1
 
-    Workspace(ctx.manifest.root).scoped([lock_path]).write_json(lock_path, fresh)
+    ctx.manifest.files().scoped([lock_path]).write_json(lock_path, fresh)
     print(f"  recorded  {lock_path}  ({fresh['count']} path(s), read at {moment})")
     return 0

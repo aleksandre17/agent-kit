@@ -210,3 +210,39 @@ bundles with a reading migration; skills (amendment 2).
 Proof: acceptance `test_commands` 412b (a taken adapter's detector is read and served; none of its ids is
 in the core), unit `test_judge_decision`, `test_one_name_one_module`; mutation-checked (composition
 removed, stdout routing removed). `test_detectors` covers the discovered evidence kinds.
+
+## Amendment 5 — every dispatch table is a discovered registry; the core reaches ports only through the root (2026-10-16, owner-delegated)
+
+The owner: finish the kit to the standard it claims -- open by declaration, no closed sets, one source
+of truth. Amendment 4 measured what was still owed; this amendment pays it.
+
+**Decided:**
+- **Registries, discovered** (`kinds.registry` over a family directory, the mechanism gates, proofs and
+  units of spend already used): install modes (`installmodes` over `modes/`; `space.MODES`, the second
+  home, removed), projection shapes (`shaping` over `shapes/`), reader kinds (`collection.readers` over
+  `readers/`), resolved views (`resolution.registry` over `resolvers/`). A new kind of each is a module.
+- **Events are declared by their provider.** `attestation` holds no event table; the verb that observes
+  an event publishes `EVENTS` (the judge: `a-refused-write`) and passes its evidence in.
+  `test_events_are_provided` holds every `observed_on` to a provider.
+- **The core reaches a port only through the composition root** (`cli`, `context`). The served projection
+  was a port in name only: its rendering is the `served` shape (`shapes/serve.py`) and its record a core
+  module (`serving`); `admission` (pure judgement) moved into the core; HEAD readings are methods of the
+  workspace port (`accepted` removed); the release source -- git, archive, scratch -- is a port
+  (`ports/sources.py`); the kit's own tree is reached through `manifest.files()` / `manifest.kit_at()`.
+  Host #0's arrow declares the `root` and `plugins` layers, and `test_kit_holds_its_arrow` refuses a core
+  module that imports a port (mutation-checked).
+- **One accessor for a plane:** `manifest.plane(class)`, five copies removed (KIT0006 moved with it).
+- **Large modules split by responsibility:** `dispatch_port` (896) into `dispatching` (what a dispatch is,
+  read without starting one), `taskrecord` (the record) and the port (the acts); `corpus` (755) into the
+  reading, `routegraph` and the `corpus-reading` resolver; `init` (620 -> 487) by moving its modes out.
+- **The core reads no ecosystem.** The dotnet, node, pnpm, go and python detectors are published adapters
+  (`adapters/<toolchain>/`, 1.0.0), taken by the standard starter. *Reading migration:* a host's reading
+  drops those facts at the next `retake` unless it takes the adapters; `start` takes and retakes in one
+  walk, and nothing in the kit consumes the facts.
+- The boundary sensor reads a discovered registry's keys as provided terms (a deferred mode has no
+  behaviour and is still the machine's own row).
+
+*Rejected:* one `registry.py` with every table in it (a second home for each subject, and one module edited
+for every new kind); keeping `ports/runtime.py` and allowing base->ports (the arrow would certify the
+coupling it exists to refuse); one `ecosystems` adapter for five toolchains (five reasons to change in one
+declaration).

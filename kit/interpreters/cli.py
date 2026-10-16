@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import importlib
 import os
-import shutil
 import sys
 from pathlib import Path
 
@@ -34,7 +33,7 @@ for extra in [HERE, *sorted(p for p in HERE.iterdir()
 
 import clock as clock_port  # noqa: E402
 import observation  # noqa: E402
-import pin  # noqa: E402
+import sources  # noqa: E402
 from context import Context  # noqa: E402
 from errors import KitError  # noqa: E402
 
@@ -110,13 +109,13 @@ def main(argv=None) -> int:
     # revision -- and refused if that revision is not a release. The scratch it lands in is outside
     # every host and is removed however the run ends (ADR-016).
     kit_root, scratch = Path(args.kit), None
-    if pin.is_source(args.kit):
-        kit_root, scratch = pin.fetched(args.kit)
+    if sources.is_source(args.kit):
+        kit_root, scratch = sources.fetched(args.kit)
     try:
         return _run(args, host, kit_root)
     finally:
         if scratch is not None:
-            pin.remove_tree(scratch)
+            sources.remove_tree(scratch)
 
 
 def _run(args, host: Path, kit_root: Path) -> int:

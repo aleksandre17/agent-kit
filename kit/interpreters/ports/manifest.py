@@ -20,6 +20,13 @@ class ManifestError(KitError):
     code = "KIT0015"
 
 
+class PlaneError(KitError):
+    """No plane of a class is declared, or more than one is -- and a name that resolves to two
+    places is not a name."""
+
+    code = "KIT0006"
+
+
 #: The one property through which EVERY document the kit reads or writes states its shape
 #: version (ADR-009). Its value is declared once, as the `const` of that property in the kind's
 #: own schema; nothing else in the kit may hold a document's version.
@@ -303,6 +310,18 @@ class Manifest:
     def root(self) -> Path:
         return self._root
 
+    def files(self):
+        """The kit's own tree, as a workspace over its root -- the one way the core reads the bytes
+        of the kit it was handed (a release's digests, a delivery's source), so no core module
+        constructs a filesystem port of its own."""
+        from workspace import Workspace
+        return Workspace(self._root)
+
+    def kit_at(self, root: Path) -> "Manifest":
+        """Another kit's declarations, read the way this one's are -- a pinned copy inside a host,
+        held to its own lock (`pin.verify`)."""
+        return Manifest(root)
+
     @property
     def version(self) -> str:
         return self._raw["kit"]["version"]
@@ -310,6 +329,18 @@ class Manifest:
     @property
     def planes(self) -> list:
         return self._raw["planes"]
+
+    def plane(self, class_name: str) -> str:
+        """The root of THE plane of a class, without its trailing separator -- the one answer to
+        *where does class X live*, which five callers once each looked up for themselves. Exactly
+        one plane per class is required: a record with two places to be put has none."""
+        found = [p["root"].rstrip("/") for p in self._raw["planes"] if p["class"] == class_name]
+        if len(found) != 1:
+            raise PlaneError(
+                f"this kit declares {len(found)} plane(s) of class {class_name!r}; exactly one is "
+                f"required, because a thing of one class has exactly one place to be put"
+            )
+        return found[0]
 
     @property
     def capabilities(self) -> list:

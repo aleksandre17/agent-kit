@@ -21,16 +21,25 @@ import subprocess
 import unittest
 from pathlib import Path
 
-from harness import KIT, Fixtures
+from harness import Fixtures
+from test_adapters import ADAPTERS, adapted_kit, documents_of as _documents
 
 from manifest import Manifest  # noqa: E402
 
+
+def _nested(detector) -> bool:
+    return any(e["kind"] == "glob_any" and e.get("pattern", "").startswith("**/") and not e.get("optional")
+               for e in detector["evidence"])
+
+
+#: The core reads no ecosystem (ADR-023 amendment 5): a detector that reads at ANY depth is brought by
+#: a published adapter, so the kit these tests install is the real kit with the first such adapter
+#: taken -- chosen by what its detector declares, never by a name.
+KIT = adapted_kit(adapters=[next(a for a in ADAPTERS for d in _documents(a, "detector") if _nested(d))])
 CORE = Manifest(KIT)
 #: A detector whose evidence is a pattern anywhere in the tree, and the fact it emits -- read from
 #: the kit's own detector declarations, never named here.
-DETECTOR = next(json.loads(p.read_text(encoding="utf-8")) for p in sorted((KIT / "detectors").glob("*.json"))
-                if any(e["kind"] == "glob_any" and e["pattern"].startswith("**/") and not e.get("optional")
-                       for e in json.loads(p.read_text(encoding="utf-8"))["evidence"]))
+DETECTOR = next(d for d in sorted(CORE.detectors, key=lambda d: d["id"]) if _nested(d))
 PATTERN = next(e["pattern"] for e in DETECTOR["evidence"] if e["kind"] == "glob_any" and not e.get("optional"))
 FACT = next(k for k, v in DETECTOR["emits"].items() if v is True)
 PROFILE = next(i["target"] for c in CORE.capabilities for i in c.installs if i.get("validates") == "profile")
@@ -76,11 +85,12 @@ class FreshClone(Fixtures, unittest.TestCase):
     def test_352_a_space_opened_before_its_marker_is_completed_and_survives_the_clone(self):
         # A host installed before spaces carried a marker holds the bare directory: committed, it is
         # gone from the clone. The next init completes the space with its marker and nothing else.
+        import installmodes
         import space as space_module
 
         # Both doors that install complete it: `init` by its own foresight, `upgrade` by the
         # reconciliation that answers before the installer is asked (one rule: space.carried).
-        target = next(i["target"] for c in CORE.capabilities for i in c.installs if i["mode"] in space_module.MODES)
+        target = next(i["target"] for c in CORE.capabilities for i in c.installs if installmodes.opens_space(i["mode"]))
         for verb in (("init", "--approve", "acceptance-suite"), ("upgrade",)):
             with self.subTest(verb=verb[0]):
                 host = self.installed()

@@ -16,10 +16,11 @@ Everything written was declared by a capability, and it is written through a wor
 exactly that capability's declared targets. Re-running is not a re-generation -- BINDING is
 created only if absent -- so a second `init` on an approved host is, by construction, render+check.
 
-Install modes are an OPEN registry keyed by the mode a declaration states, and each mode has TWO
-halves: FORESEE, which says what would happen, and APPLY, which does it. The apply never decides;
-it is handed the foreseen disposition. That is what makes a plan incapable of drifting from its
-own application -- not care and not review, but the fact that there is only one decision.
+Install modes are an OPEN registry keyed by the mode a declaration states (`installmodes`, filled
+by the modules in `modes/`), and each mode has TWO halves: FORESEE, which says what would happen,
+and APPLY, which does it. The apply never decides; it is handed the foreseen disposition. That is
+what makes a plan incapable of drifting from its own application -- not care and not review, but
+the fact that there is only one decision.
 """
 
 from __future__ import annotations
@@ -33,161 +34,25 @@ import doors
 import ephemeral
 import estate as estate_module
 import hostlock
+import installmodes
 import journal
-import pin
 import plan as plan_module
 import predicate
 import provenance
 import reconcile
 import relocation
 import render as render_verb
-import space
 from errors import KitError, PendingApproval
+from installmodes import InstallError
 
 SUMMARY = "measure, choose, draft the answer, seed, vendor, render, check"
 MUTATES = True
 REQUIRES_APPROVED_HOST = False
 
 
-class InstallError(KitError):
-    """A declaration named an install mode this interpreter does not know, a selection that
-    contradicts host truth, or a written file that does not honour its own schema."""
-
-    code = "KIT0025"
-
-
-# -- foresee: what WOULD happen, decided exactly once -----------------------------------------
-def _once(ws, item, state):
-    """Created if absent, never re-applied. The host owns it from then on."""
-    return "keep" if ws.exists(item["target"]) else "create"
-
-
-def _space(ws, item, state):
-    """A space is its directory AND the marker that carries it through a clone. One opened before
-    the marker existed is completed -- the marker is the only write, and nothing the host put in
-    the space is touched -- because a directory held only by the working tree is missing from the
-    next clone, and the floor then reads a drawn place as broken when nothing is."""
-    return "keep" if space.carried(state["manifest"], ws, item["target"]) else "create"
-
-
-def _always(ws, item, state):
-    """Framework payload: replaced wholesale, never edited downstream."""
-    return "replace" if ws.exists(item["target"]) else "create"
-
-
-def _pinned(ws, item, state):
-    """The kit itself: created where nothing is pinned, KEPT where the host already holds exactly
-    this kit intact, replaced otherwise -- and refused here, in the plan, where it cannot be done
-    honestly (ADR-016). Decided by `pin`, which owns what a release is."""
-    tree, lock = pin.seats(state["manifest"])
-    return pin.foresee(state["manifest"], ws, tree, lock)
-
-
-def _pinned_lock(ws, item, state):
-    """The seat of the lock the host was given: one act with the tree, so one decision."""
-    tree, lock = pin.seats(state["manifest"])
-    return pin.foresee_lock(state["manifest"], ws, tree, lock)
-
-
-def _answer(ws, item, state):
-    """The answers file is create-once like any host truth -- except for the approval, which is
-    the owner's own act passing through the kit, and is therefore a PLANNED replace rather than
-    an edit nobody saw coming."""
-    if not ws.exists(item["target"]):
-        return "create"
-    return "replace" if state["approving_draft"] else "keep"
-
-
-# -- apply: the foreseen disposition, carried out ---------------------------------------------
-def _mode_reading(ctx, ws, item, state):
-    """The measured environment. Written once; a later reading is compared, never imposed."""
-    ws.write_json(item["target"], state["reading"])
-
-
-def _mode_declaration(ctx, ws, item, state):
-    """What this host has decided: its set, its status, and who accepted it. A prior answer is
-    carried forward field by field -- approving a draft must not silently re-answer it."""
-    prior = state["existing"] or {}
-    answer = {
-        "schema_version": ctx.manifest.version_of(item["validates"]),
-        "status": "accepted" if state["approver"] else "draft",
-        "kit_version": ctx.manifest.version,
-        "capabilities": prior.get("capabilities") or sorted(c.id for c in state["enabled"]),
-        "unavailable": prior.get("unavailable", state["unavailable"]),
-        "drafted_at": prior.get("drafted_at", state["reading"]["taken_at"]),
-    }
-    if state["approver"]:
-        answer["signed_by"] = state["approver"]
-        answer["signed_at"] = state["reading"]["taken_at"]
-    ws.write_json(item["target"], answer)
-
-
-def _mode_seed(ctx, ws, item, state):
-    """Created once if absent, never re-applied, never diffed."""
-    ws.write_text(item["target"], ctx.manifest.payload_text(item["source"]))
-
-
-def _mode_vendor(ctx, ws, item, state):
-    ws.write_text(item["target"], ctx.manifest.payload_text(item["source"]))
-
-
-def _mode_pinned(ctx, ws, item, state):
-    """The WHOLE kit, verbatim, beside the lock it is judged against: from now on this host can
-    run every verb by itself, from its own copy (ADR-016)."""
-    given = pin.deliver(ctx.manifest, ws, item["target"], state["reading"]["taken_at"])
-    what = "a release" if given["released"] else f"a working tree (+{pin.UNRELEASED})"
-    print(f"  pinned     {given['count']} path(s) of {what}, lock sha256:{given['lock'][:16]} -- "
-          f"this host now runs: python {item['target']}interpreters/cli.py <verb> --root .")
-
-
-def _mode_pinned_lock(ctx, ws, item, state):
-    """The lock the host was given, at its declared seat -- the other half of the pinned act."""
-    tree, _lock = pin.seats(ctx.manifest)
-    pin.deliver_lock(ctx.manifest, ws, tree, item["target"], state["reading"]["taken_at"])
-
-
-def _mode_space(ctx, ws, item, state):
-    """A place the HOST authors into, owned by the capability that declared it. The kit opens it
-    and puts no content in it: seeding an example would be the kit authoring the host's content,
-    and an empty space is an honest declared state, not a missing one -- carried, by `space`, in
-    the one form that survives a clone."""
-    space.declare(ctx.manifest, ws, item["target"])
-
-
-#: mode -> (phase, foresee, apply). The `answer` phase is the ONLY thing an unapproved host may
-#: write: it is the draft the owner is being asked to accept, and nothing moves until they do.
-INSTALL_MODES = {
-    "reading": ("install", _once, _mode_reading),
-    "declaration": ("answer", _answer, _mode_declaration),
-    "seed": ("install", _once, _mode_seed),
-    "vendor": ("install", _always, _mode_vendor),
-    "space": ("install", _space, _mode_space),
-    "pinned": ("install", _pinned, _mode_pinned),
-    "pinned-lock": ("install", _pinned_lock, _mode_pinned_lock),
-    # The take plane is OPENED as a space (every host has one, empty until it takes something) and
-    # the take declaration is seeded once as a declared zero; the `take` verb writes both after
-    # (ADR-018).
-    "taken": ("install", _space, _mode_space),
-    "taken-declaration": ("install", _once, _mode_seed),
-    "projection": ("render", None, None),
-    "estate": ("record", None, None),
-}
-
 #: The phases the install loop itself carries out. A phase named here and nowhere else belongs to
-#: a LATER step of the run: `render` recomputes the projections, `record` measures what this host
-#: was given once everything else has landed. A record taken in the middle of the writes would be
-#: a reading of a half-installed host, stating a moment that described nothing.
+#: a LATER step of the run (`modes/deferred.py`).
 INSTALLED_PHASES = ("answer", "install")
-
-
-def _mode_of(capability, item):
-    mode = item["mode"]
-    if mode not in INSTALL_MODES:
-        raise InstallError(
-            f"capability {capability.id!r} declares install mode {mode!r}; "
-            f"registered modes are {sorted(INSTALL_MODES)}"
-        )
-    return INSTALL_MODES[mode]
 
 
 def _install_plan(ctx, enabled, state) -> list:
@@ -203,7 +68,8 @@ def _install_plan(ctx, enabled, state) -> list:
     for capability in enabled:
         scoped = state["scopes"][capability.id]
         for item in capability.installs:
-            phase, foresee, _apply_fn = _mode_of(capability, item)
+            mode = installmodes.mode_of(capability, item)
+            phase, foresee = mode.phase, mode.foresee
             if phase not in INSTALLED_PHASES or (phase != "answer" and not state["approved"]):
                 continue
             if item["target"] in owed:
@@ -269,7 +135,8 @@ def _apply(ctx, state, writes) -> None:
     for write in writes:
         scoped = state["scopes"][write.capability]
         if write.disposition != "keep":
-            _mode_of(state["by_id"][write.capability], write.item)[2](ctx, scoped, write.item, state)
+            installmodes.mode_of(state["by_id"][write.capability], write.item).apply(
+                ctx, scoped, write.item, state)
         print(f"  {write.accomplished:<9}  {write.target}")
         _validate(ctx, write.item)
 

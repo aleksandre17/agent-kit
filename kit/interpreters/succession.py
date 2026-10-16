@@ -33,7 +33,7 @@ import json
 import os
 from pathlib import Path, PurePosixPath
 
-import runtime as runtime_port
+import serving
 from errors import KitError
 
 #: The schema kinds this module reads. Named once, as kinds -- where a document of each kind lives
@@ -224,7 +224,7 @@ def boundary(ctx, mapped) -> list:
                 roots.append((target, f"the kit (installed by {capability.id})"))
     # A path a runtime reads is the kit's surface as surely as an install target: the kit will
     # write there on the next render (ADR-013/014). Asked of the port that owns the answer.
-    for target, who in runtime_port.reach(ctx, ctx.manifest.capabilities):
+    for target, who in serving.reach(ctx, ctx.manifest.capabilities):
         if not any(target == r or target.startswith(r + "/") for r, _ in roots):
             roots.append((target, f"the kit ({who})"))
     for root in (mapped or {}).get("prior", []):

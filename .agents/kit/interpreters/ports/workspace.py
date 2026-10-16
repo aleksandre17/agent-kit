@@ -121,6 +121,17 @@ class Workspace:
             self._carried = vcs.carried(self._root)
         return self._carried
 
+    def accepted_listing(self, space: str) -> tuple:
+        """(the file names under `space` at HEAD, None) or (None, why) -- the previous ACCEPTED state
+        of a place, what HEAD holds and never what the tree holds now (ADR-019)."""
+        import vcs
+        return vcs.run(self._root, ["ls-tree", "-r", "--name-only", "--full-tree", f"HEAD:./{space}"])
+
+    def accepted_text(self, rel: str) -> tuple:
+        """(the text of `rel` at HEAD, None) or (None, why)."""
+        import vcs
+        return vcs.run(self._root, ["show", f"HEAD:./{rel}"])
+
     def files_under(self, rel: str) -> list[str]:
         """Every file below `rel`, host-relative, POSIX-formed, sorted. Directories are not
         classified: a directory is the shape of the tree, a file is the thing that ships."""

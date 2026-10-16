@@ -48,7 +48,7 @@ def _projection_reproducible(ctx, params):
             failures.append(f"{rel}: projected path is missing")
         elif ctx.workspace.read_text(rel) != body:
             failures.append(f"{rel}: on disk differs from what the declaration renders")
-    plane = next(p["root"] for p in ctx.manifest.planes if p["class"] == "projection")
+    plane = ctx.manifest.plane("projection")
     for rel in ctx.workspace.files_under(plane):
         if rel not in expected:
             failures.append(f"{rel}: present in the projection plane but nothing renders it")

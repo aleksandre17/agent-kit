@@ -15,27 +15,12 @@ design exists to prevent.
 
 from __future__ import annotations
 
-from errors import KitError
-
 #: The class, in the manifest's own vocabulary, of the plane that holds what a run leaves behind.
 OBSERVED = "ephemeral"
 
 
-class PlaneError(KitError):
-    """No plane is declared for observed state, or more than one is -- and a name that resolves
-    to two places is not a name."""
-
-    code = "KIT0006"
-
-
 def root(ctx) -> str:
-    found = [p["root"].rstrip("/") for p in ctx.manifest.planes if p["class"] == OBSERVED]
-    if len(found) != 1:
-        raise PlaneError(
-            f"this kit declares {len(found)} plane(s) of class {OBSERVED!r}; exactly one is "
-            f"required, because a run's own record has exactly one place to be put"
-        )
-    return found[0]
+    return ctx.manifest.plane(OBSERVED)
 
 
 def place(ctx, name: str) -> str:

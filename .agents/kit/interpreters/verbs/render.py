@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import hostlock
 import plan as plan_module
-import runtime as runtime_port
+import serving
 from projection import RenderError, _plane, _shape_of, plan_entries, projections  # noqa: F401 -- the verb's surface
 
 SUMMARY = "recompute every projection from VENDOR + BINDING"
@@ -32,8 +32,8 @@ def run(ctx, args, capabilities=None) -> int:
         # Everything is computed, and every path outside the planes is judged, BEFORE a byte
         # moves: a refusal must leave the host exactly as it was found (ADR-013).
         produced = projections(ctx, capabilities)
-        departing = runtime_port.admit(ctx, capabilities, produced)
-        withdrawn = runtime_port.withdrawals(ctx, capabilities, produced)
+        departing = serving.admit(ctx, capabilities, produced)
+        withdrawn = serving.withdrawals(ctx, capabilities, produced)
         ctx.workspace.unscoped().remove_tree(_plane(ctx))
         for rel in departing:
             ctx.workspace.scoped(departing).remove_file(rel)

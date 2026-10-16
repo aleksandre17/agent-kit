@@ -30,6 +30,7 @@ from pathlib import Path
 from harness import KIT, Fixtures
 
 import dispatch_port
+import dispatching
 from context import Context
 from manifest import Manifest, OlderDocument
 
@@ -38,7 +39,7 @@ from test_dispatch import ADAPTER, DIAGNOSTIC, WROTE, fixture_adapter, packet
 
 CORE = Manifest(KIT)
 ROUTES = next(i["target"] for c in CORE.capabilities for i in c.installs
-              if i.get("validates") == dispatch_port.ROUTES["validates"])
+              if i.get("validates") == dispatching.ROUTES["validates"])
 RESULT = "result"
 
 #: A worker that hands back a STRUCTURED return on stdout. Its first argument is its dispatch id; its
@@ -57,7 +58,7 @@ RETURNING = fixture_adapter(
     "an-intelligence-that-returns",
     starts={"argv": [sys.executable, "-c", RETURNER, "{id}", "{instruction}"]},
     returns=[{"name": RESULT, "from": "stdout", "media_type": "application/json",
-              "carries": dispatch_port.RETURN},
+              "carries": dispatching.RETURN},
              {"name": DIAGNOSTIC, "from": "stderr"}],
 )
 
@@ -94,11 +95,11 @@ class Routing(Fixtures, unittest.TestCase):
 
     def record(self, host: Path, identity: str) -> dict:
         ctx = Context(kit_root=self.kit, host_root=host)
-        return json.loads((host / dispatch_port.home(ctx, identity, "task.json")).read_text(encoding="utf-8"))
+        return json.loads((host / dispatching.home(ctx, identity, "task.json")).read_text(encoding="utf-8"))
 
     # == 1. the version ==========================================================================
     def test_360_a_version_1_packet_is_refused_by_the_reader_rule(self):
-        self.assertGreater(CORE.version_of(dispatch_port.PACKET), 1)
+        self.assertGreater(CORE.version_of(dispatching.PACKET), 1)
         host = self.repository()
         said = self.dispatched(host, packet("an-old-packet", schema_version=1))
         self.assertNotEqual(0, said.returncode)
@@ -129,7 +130,7 @@ class Routing(Fixtures, unittest.TestCase):
             with self.subTest(refusal=why):
                 said = self.dispatched(host, handed)
                 self.assertEqual(1, said.returncode, said.stdout + said.stderr)
-                self.assertIn(f"[{dispatch_port.DispatchRefused.code}]", said.stderr)
+                self.assertIn(f"[{dispatching.DispatchRefused.code}]", said.stderr)
         accepted = self.dispatched(host, packet("fits-its-cell", instruction="short"))
         self.assertEqual(0, accepted.returncode, accepted.stdout + accepted.stderr)
         self.assertEqual("low-cheap", self.record(host, "fits-its-cell")["route"]["cell"])
@@ -144,12 +145,12 @@ class Routing(Fixtures, unittest.TestCase):
         said = self.dispatched(host, packet("verified", profile="finds-the-file"))
         self.assertEqual(0, said.returncode, said.stdout + said.stderr)
         task = self.record(host, "verified")
-        self.assertEqual(dispatch_port.COMPLETED, task["state"])
+        self.assertEqual(dispatching.COMPLETED, task["state"])
         self.assertTrue(task["verification"]["passed"])
         said = self.dispatched(host, packet("unverified", profile="always-fails"))
         self.assertNotEqual(0, said.returncode)
         task = self.record(host, "unverified")
-        self.assertEqual(dispatch_port.FAILED, task["state"])
+        self.assertEqual(dispatching.FAILED, task["state"])
         self.assertIn("always-fails", task["status_message"])
 
     # == 5. the return ===========================================================================
@@ -158,14 +159,14 @@ class Routing(Fixtures, unittest.TestCase):
         said = self.dispatched(host, packet("returns-whole", route=RETURNING.name, instruction="whole"))
         self.assertEqual(0, said.returncode, said.stdout + said.stderr)
         task = self.record(host, "returns-whole")
-        self.assertEqual(dispatch_port.COMPLETED, task["state"])
+        self.assertEqual(dispatching.COMPLETED, task["state"])
         self.assertEqual("delivered", task["return"]["deliverable"]["status"])
         self.assertEqual("the archive", task["return"]["economy"]["not_read"][0]["what"])
         said = self.dispatched(host, packet("returns-short", route=RETURNING.name, instruction="incomplete"))
         self.assertNotEqual(0, said.returncode)
         task = self.record(host, "returns-short")
-        self.assertEqual(dispatch_port.FAILED, task["state"])
-        self.assertIn(dispatch_port.RETURN, task["status_message"])
+        self.assertEqual(dispatching.FAILED, task["state"])
+        self.assertIn(dispatching.RETURN, task["status_message"])
         self.assertIn("economy", task["status_message"])
 
     # == 6. the ground the packet cites (S2) =====================================================
@@ -184,7 +185,7 @@ class Routing(Fixtures, unittest.TestCase):
         (host / "measured.txt").write_text("moved since\n", encoding="utf-8")
         stale = self.dispatched(host, packet("grounded-stale", ground=cited))
         self.assertEqual(1, stale.returncode, stale.stdout + stale.stderr)
-        self.assertIn(f"[{dispatch_port.DispatchRefused.code}]", stale.stderr)
+        self.assertIn(f"[{dispatching.DispatchRefused.code}]", stale.stderr)
         self.assertIn("measured.txt", stale.stderr)
 
     # == 7. what the work cost (S3) ==============================================================

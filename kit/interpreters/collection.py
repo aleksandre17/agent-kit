@@ -13,6 +13,10 @@ drifts exactly as fast as one stated twice across two.
 
 from __future__ import annotations
 
+import functools
+from pathlib import Path
+
+import kinds
 from errors import KitError
 
 #: The field by which a member of a collection identifies itself. One home for the identity rule.
@@ -52,7 +56,7 @@ class Reading:
         return sorted(value.get(IDENTITY, "?") for _rel, value in self.records)
 
 
-def _validated(ctx, rel: str, schema: str):
+def validated(ctx, rel: str, schema: str):
     try:
         value = ctx.workspace.read_json(rel)
     except ValueError as exc:
@@ -63,47 +67,15 @@ def _validated(ctx, rel: str, schema: str):
     return value
 
 
-def _document(ctx, item, name: str) -> Reading:
-    rel = item["target"]
-    if not ctx.workspace.exists(rel):
-        raise CollectionError(
-            f"{rel}: declared readable as {name!r} and absent; run `init` first"
-        )
-    value = _validated(ctx, rel, item.get("validates"))
-    return Reading(name, "document", value, [(rel, value)], item.get("validates"))
+#: Where a reader kind may be declared -- keyed by the SHAPE OF THE DECLARED PATH (`kind_of`). A new
+#: reader kind is a module in `readers/`, never an edit here.
+READERS = Path(__file__).resolve().parent / "readers"
 
 
-def _collection(ctx, item, name: str) -> Reading:
-    root = item["target"].rstrip("/")
-    records = []
-    for rel in ctx.workspace.files_under(root):
-        if not rel.endswith(".json"):
-            continue
-        records.append((rel, _validated(ctx, rel, item.get("validates"))))
-
-    # A record names itself by its `id`; a kind whose schema declares none (an observation) is named
-    # by its file, which its directory already makes unique -- never by an absent value shared by all.
-    def named(rel, value):
-        return value.get(IDENTITY) if isinstance(value, dict) and IDENTITY in value else rel
-
-    seen: dict = {}
-    for rel, value in records:
-        identity = named(rel, value)
-        if identity in seen:
-            raise CollectionError(
-                f"{root}: {IDENTITY} {identity!r} is declared by two files -- {seen[identity]} and "
-                f"{rel}. One thing with two declarations has two homes for every truth it carries, "
-                f"and both will go on reading as correct while they disagree. Delete one."
-            )
-        seen[identity] = rel
-    records.sort(key=lambda pair: str(named(*pair)))
-    return Reading(name, "collection", [value for _rel, value in records], records,
-                   item.get("validates"))
-
-
-#: An open registry, keyed by the SHAPE OF THE DECLARED PATH: a target ending in `/` is a
-#: directory of records, anything else is one document. A new reader kind is a registration.
-READER_KINDS = {"document": _document, "collection": _collection}
+@functools.lru_cache(maxsize=None)
+def readers() -> dict:
+    """Every reader kind, by the name each `readers/` module declares it under."""
+    return kinds.registry(READERS, "READERS", "reader kind", CollectionError)
 
 
 def kind_of(item: dict) -> str:
@@ -119,7 +91,12 @@ def read(ctx, item, name=None) -> Reading:
     declaration -- and would meet a DIRECTORY the first time a capability declared a space, which
     is precisely the failure this function exists to make impossible.
     """
-    return READER_KINDS[kind_of(item)](ctx, item, name or item.get("reads_as") or item["target"])
+    kind = kind_of(item)
+    reader = readers().get(kind)
+    if reader is None:
+        raise CollectionError(f"{item['target']}: no reader answers for the kind {kind!r}; the kinds "
+                              f"declared are {sorted(readers())}")
+    return reader(ctx, item, name or item.get("reads_as") or item["target"])
 
 
 def named_reading(ctx, name: str, absent: type) -> Reading:

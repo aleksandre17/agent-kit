@@ -16,17 +16,10 @@ import criteria as criteria_module
 import lifecycle as lifecycle_module
 import plan as plan_module
 import resolution
-import runtime as runtime_port
 import space
-import template
+import shaping
 from errors import KitError
-
-class RenderError(KitError):
-    """A projection cannot be rendered without a name resolving to two things, or a plural
-    projection does not declare soundly what it iterates and how each file is named."""
-
-    code = "KIT0028"
-
+from shaping import RenderError  # noqa: F401 -- raised here, declared with the shapes
 
 def view_model(ctx, capabilities=None) -> dict:
     capabilities = ctx.enabled_capabilities() if capabilities is None else capabilities
@@ -117,100 +110,16 @@ def _claim(where: dict, name: str, value, owner: str) -> None:
 
 
 def _plane(ctx) -> str:
-    return next(p["root"] for p in ctx.manifest.planes if p["class"] == "projection")
-
-
-def _project_one(ctx, item, view) -> dict:
-    """One template, one file. The ordinary projection: a surface ABOUT a set."""
-    return {item["target"]: template.render(ctx.manifest.payload_text(item["source"]), view)}
-
-
-def _project_each(ctx, item, view) -> dict:
-    """One template, one file PER RECORD -- a surface FOR each member of a set.
-
-    The two are told apart by the shape of the declared target, which is the same rule
-    `collection` already uses to decide whether a readable is one document or many: a target
-    ending in `/` is a plural. Declared once, read here, and never a second convention.
-
-    The record is pushed as the innermost frame, so a template reaches the record's own fields
-    directly and still sees everything the whole view carries -- which is what lets a line
-    declared ONCE, for every record, be RENDERED INTO each of them rather than referenced from
-    them. A reference can be left unfollowed. A rendered line cannot.
-    """
-    body = ctx.manifest.payload_text(item["source"])
-    produced: dict[str, str] = {}
-    for target, record in _each_targets(ctx, item, view):
-        shadowed = sorted(set(record) & set(view))
-        if shadowed:
-            raise RenderError(
-                f"a record of {item['each']['over']!r} carries {shadowed}, which the view "
-                f"already means something else by. A name that resolves to two things is not a "
-                f"name, and the "
-                f"record would silently win -- refused rather than ordered."
-            )
-        produced[target] = template.render(body, {**view, **record})
-    # A collection HAS a home whether or not the host has filled it, and that home must survive a
-    # clone -- a repository carries files, so a directory holding no record simply is not there
-    # after the next checkout. The home is therefore projected as one declared marker (`space`),
-    # UNCONDITIONALLY: written for a full collection exactly as for an empty one. Making it
-    # conditional was tried and the two-host boundary test refused it within the hour -- a file
-    # that appears in one host and not another is a VARIATION, and its cause was readable only by
-    # knowing what each host happened to have authored. It is a projection like any other, planned
-    # before it is written, because a path the plan did not promise is a path nothing renders.
-    produced[space.marker_in(ctx.manifest, item["target"])] = space.TEXT
-    return produced
-
-
-def _each_targets(ctx, item, view) -> list:
-    """(path, record) for every file a plural projection would write. Computed WITHOUT rendering
-    a byte, so a plan can state the write set without producing the content of it."""
-    each = item.get("each")
-    if not each:
-        raise RenderError(
-            f"{item['target']!r} is declared as a plural projection -- its target names a "
-            f"collection -- but it says nothing about what it is one of. A projection per record "
-            f"needs `each`, naming the view it iterates and the field that names each file."
-        )
-    rows = view.get(each["over"])
-    if rows is None:
-        raise RenderError(
-            f"{item['target']!r} projects one file for each {each['over']!r}, which this view "
-            f"does not carry; it carries {sorted(view)}"
-        )
-    root = item["target"].rstrip("/")
-    found = []
-    for record in rows:
-        name = record.get(each["named"])
-        if not isinstance(name, str) or not name or "/" in name or name in (".", ".."):
-            raise RenderError(
-                f"{item['target']!r} names each file by {each['named']!r}, and one record "
-                f"answers {name!r} -- which is not a single path segment. A name that is not a "
-                f"referent is how a write lands somewhere nobody chose."
-            )
-        found.append((f"{root}/{name}{each.get('suffix', '')}", record))
-    return found
-
-
-#: How a projection is SHAPED, keyed by the shape its install declares -- or, when it declares
-#: none, by the shape its own target states. An open registry: a new shape is a row here and a
-#: function beside these, and nothing that dispatches to it is ever edited. Each row carries its
-#: STAGE: a shape that projects FROM this render's own projections (a runtime's served files are
-#: assembled from the plane) runs after every shape that does not, whatever order the
-#: capabilities arrive in.
-PROJECTION_SHAPES = {
-    "document": (0, lambda ctx, item, view, produced, capabilities: _project_one(ctx, item, view)),
-    "collection": (0, lambda ctx, item, view, produced, capabilities: _project_each(ctx, item, view)),
-    runtime_port.SHAPE: (1, runtime_port.project),
-}
+    return ctx.manifest.plane("projection")
 
 
 def _shape_of(item) -> str:
-    return item.get("shape") or collection.kind_of(item)
+    return shaping.name_of(item)
 
 
 def _staged(capabilities) -> list:
     items = [item for capability in capabilities for item in capability.installs_of_class("projection")]
-    return sorted(items, key=lambda item: PROJECTION_SHAPES[_shape_of(item)][0])
+    return sorted(items, key=lambda item: shaping.shape_of(item).stage)
 
 
 def projections(ctx, capabilities=None) -> dict:
@@ -221,7 +130,7 @@ def projections(ctx, capabilities=None) -> dict:
     view = view_model(ctx, capabilities)
     produced: dict[str, str] = {}
     for item in _staged(capabilities):
-        produced.update(PROJECTION_SHAPES[_shape_of(item)][1](ctx, item, view, produced, capabilities))
+        produced.update(shaping.shape_of(item).project(ctx, item, view, produced, capabilities))
     return produced
 
 
@@ -248,15 +157,11 @@ def _foresight(ctx, item, capabilities) -> tuple:
     a host with no records genuinely gets no files, so the empty plan is not a gap in the reading
     but the reading itself.
     """
-    shape = _shape_of(item)
-    if shape == "document":
-        return [item["target"]], True
+    shape = shaping.shape_of(item)
+    if not shape.reads_view:
+        return shape.foresee(ctx, item, None, capabilities), True
     try:
-        view = view_model(ctx, capabilities)
-        if shape == "collection":
-            return sorted([space.marker_in(ctx.manifest, item["target"])]
-                          + [target for target, _record in _each_targets(ctx, item, view)]), True
-        return runtime_port.foresee(ctx, item, view, capabilities), True
+        return shape.foresee(ctx, item, view_model(ctx, capabilities), capabilities), True
     except KitError:
         # A shape whose own target names ONE file writes that file whatever the bindings say --
         # a served projection always writes its record, and the record of nothing is still
@@ -293,7 +198,7 @@ def plan_entries(ctx, capabilities=None, moving=()) -> list:
         # projection whose foresight could not be read may still write is UNFORESEEN.
         if any(rel == m or (m.endswith("/") and rel.startswith(m)) for m in moving):
             return None
-        if any(_shape_of(i) == runtime_port.SHAPE or rel.startswith(i["target"]) for i in unread):
+        if any(shaping.shape_of(i).unforeseeable or rel.startswith(i["target"]) for i in unread):
             return "unforeseen"
         return "remove"
     # The plane is rebuilt wholesale, so anything in it that nothing renders is REMOVED. A plan
@@ -308,6 +213,7 @@ def plan_entries(ctx, capabilities=None, moving=()) -> list:
     # record, because deletion is still the effect an operator most needs to see coming.
     orphans += [
         plan_module.Write(fate(rel), "projection", "projection", "-", rel)
-        for rel in runtime_port.departing_planned(ctx, capabilities, targets) if fate(rel)
+        for shape in shaping.registry().values() if shape.departing
+        for rel in shape.departing(ctx, capabilities, targets) if fate(rel)
     ]
     return orphans + writes

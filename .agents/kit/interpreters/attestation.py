@@ -18,17 +18,10 @@ import sys
 import collection
 import declared
 
-def _refused_write(refused) -> str:
-    """The judge refused these writes: `[(path, gate), ...]`."""
-    return "the judge refused " + ", ".join(f"{path} by {gate}" for path, gate in refused)
-
-
-#: The events this kit's interpreters PROVIDE, each with how its evidence is stated -- an extension
-#: point: a new observed event is a row here and an `observed_on` in the vocabulary, never a word an
-#: interpreter consumes. Naming what you provide is a promise.
-EVENTS = {"a-refused-write": _refused_write}
-REFUSED_WRITE = next(iter(EVENTS))
-
+#: An event is PROVIDED by the interpreter that observes it, and declared there: a module publishes
+#: `EVENTS` (event -> what it observes), and the vocabulary row that is observed by it names it in
+#: `observed_on`. This module holds no event of its own -- a new observed event is a constant in its
+#: provider and a word in the vocabulary, never an edit here (ADR-023 amendment 5).
 VOCABULARY = {"validates": "runtime-class"}
 OBSERVATIONS, DESCRIPTOR = "runtime-observation", "runtime"
 
@@ -58,11 +51,11 @@ def classes_through(ctx, surface_id: str) -> list:
                    if isinstance(record, dict) and record.get("surface") == surface_id})
 
 
-def observe(ctx, surface_id: str, event: str, detail) -> list:
-    """Record `event` for every runtime served through `surface_id`, against every capability whose
-    `observed_on` is that event. Returns what was written; never raises."""
+def observe(ctx, surface_id: str, event: str, evidence: str) -> list:
+    """Record `event`, with the provider's own statement of its `evidence`, for every runtime served
+    through `surface_id`, against every capability whose `observed_on` is that event. Returns what
+    was written; never raises."""
     try:
-        evidence = EVENTS[event](detail)
         owner, place = _install(ctx, OBSERVATIONS)
         _d_owner, descriptors = _install(ctx, DESCRIPTOR)
         if place is None or descriptors is None:

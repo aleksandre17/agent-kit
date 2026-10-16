@@ -26,13 +26,14 @@ from harness import KIT, Fixtures
 from manifest import Manifest
 
 import attestation
+from verbs.judge import REFUSED_WRITE
 
 from test_adapters import A_CLASS, DESCRIPTORS, ENABLING_FIELD, adapted_kit, surface_documents
 from test_enforcement import GATES_FILE, HOST_GATE, VENDOR, _event
 
 CORE = Manifest(KIT)
 CLASSES = json.loads((KIT / "runtimes/classes.json").read_text(encoding="utf-8"))
-OBSERVED = next(c["id"] for c in CLASSES["capabilities"] if c.get("observed_on") == attestation.REFUSED_WRITE)
+OBSERVED = next(c["id"] for c in CLASSES["capabilities"] if c.get("observed_on") == REFUSED_WRITE)
 OBSERVATIONS = next(i["target"] for c in CORE.capabilities for i in c.installs
                     if i.get("validates") == attestation.OBSERVATIONS)
 PAGES = next(i["target"] for c in CORE.capabilities for i in c.installs
@@ -82,7 +83,7 @@ class Attestation(Fixtures, unittest.TestCase):
         records = list((host / OBSERVATIONS).glob("*.json"))
         self.assertEqual(1, len(records), "the refusal left no record, or more than one")
         record = json.loads(records[0].read_text(encoding="utf-8"))
-        self.assertEqual((self.surface["id"], OBSERVED, attestation.REFUSED_WRITE),
+        self.assertEqual((self.surface["id"], OBSERVED, REFUSED_WRITE),
                          (record["runtime"], record["capability"], record["event"]))
         self.assertIn(OBSERVED, self.proven_section(self.page(host)))
 

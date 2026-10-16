@@ -133,7 +133,7 @@ def _published_roots(ctx) -> list:
     held by their digests (`pinned-kit-intact`, `taken-intact`), not by the host's text policy -- and
     a published policy carries, as each gate's `proves`, the very text it refuses, so judging those
     planes would refuse the commit that takes it."""
-    roots = [p["root"].rstrip("/") + "/" for p in ctx.manifest.planes if p["class"] == "vendor"]
+    roots = [ctx.manifest.plane("vendor") + "/"]
     roots += [i["target"] for c in ctx.manifest.capabilities for i in c.installs
               if i["mode"] == "taken"]
     return roots

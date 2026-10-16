@@ -59,12 +59,6 @@ TEXT = (
 )
 
 
-#: The install modes that OPEN a space -- `init` carries each out with `declare`. Named here, with
-#: the rule below, so that the installer's foresight and the upgrade's reconciliation read one
-#: definition of when a space is there.
-MODES = frozenset({"space", "taken"})
-
-
 class SpaceError(KitError):
     """No capability in this kit declares how a directory is carried, so a space cannot be opened
     without the interpreter inventing a filename -- which is the one thing it may not do."""

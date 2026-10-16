@@ -44,6 +44,7 @@ from harness import KIT, Fixtures
 
 import admission
 import dispatch_port
+import dispatching
 import ephemeral
 import hostlock
 from context import Context
@@ -112,7 +113,7 @@ def _declares_provider(path: Path) -> bool:
         document = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError, UnicodeDecodeError):
         return False
-    return isinstance(document, dict) and bool(document.get(dispatch_port.PROVIDER_LIST))
+    return isinstance(document, dict) and bool(document.get(dispatching.PROVIDER_LIST))
 
 
 def fixture_adapter(name: str = "an-intelligence", **declared) -> Path:
@@ -136,12 +137,12 @@ def fixture_adapter(name: str = "an-intelligence", **declared) -> Path:
         # and a document id they shared would resolve to two things.
         "documents": [{"id": f"{home.name.replace('-', '_')}_dispatch",
                        "source": f"{seat}/dispatch.json",
-                       "validates": dispatch_port.ADAPTERS["validates"]}],
+                       "validates": dispatching.ADAPTERS["validates"]}],
         "floor": [], "installs": [], "gates": [],
     }, indent=2) + "\n", encoding="utf-8", newline="\n")
     (home / "dispatch.json").write_text(json.dumps({
         "schema_version": 1,
-        dispatch_port.ADAPTER_LIST: [dict({
+        dispatching.ADAPTER_LIST: [dict({
             "id": home.name,
             "says": "A fixture. It is this repository's own interpreter, run on a program written "
                     "here, so nothing in this row is a claim about anybody else's software.",
@@ -179,12 +180,12 @@ UNANSWERABLE = fixture_adapter(
 def answer(identity: str, said: str, **fields) -> str:
     """The other act this port serves, as an operator hands it over: the task it answers, and the
     answer. No flag says which act this is -- the document does."""
-    return json.dumps(dict({"schema_version": 1, dispatch_port.RESUME: identity,
-                            dispatch_port.ANSWER: said}, **fields))
+    return json.dumps(dict({"schema_version": 1, dispatching.RESUME: identity,
+                            dispatching.ANSWER: said}, **fields))
 
 
 #: The packet kind's version, read from its one home -- never spelled here (ADR-009).
-PACKET_VERSION = Manifest(KIT).version_of(dispatch_port.PACKET)
+PACKET_VERSION = Manifest(KIT).version_of(dispatching.PACKET)
 
 
 def packet(identity: str, **fields) -> dict:
@@ -229,13 +230,13 @@ class Dispatch(Fixtures, unittest.TestCase):
 
     def record(self, host: Path, identity: str) -> dict:
         ctx = self.context(host)
-        return json.loads((host / dispatch_port.home(ctx, identity, "task.json")).read_text(encoding="utf-8"))
+        return json.loads((host / dispatching.home(ctx, identity, "task.json")).read_text(encoding="utf-8"))
 
     # == 1. refused by the port, whatever the caller ============================================
     def test_313_a_malformed_dispatch_is_refused_by_the_port_through_every_caller(self):
         host = self.repository()
         ctx = self.context(host)
-        home = Path(ephemeral.root(ctx)) / dispatch_port.HOME
+        home = Path(ephemeral.root(ctx)) / dispatching.HOME
         malformed = {
             "unreadable": "this is not a packet at all",
             "incomplete": json.dumps({k: v for k, v in packet("incomplete-task").items()
@@ -247,10 +248,10 @@ class Dispatch(Fixtures, unittest.TestCase):
                 # (a) the caller every runtime is served: the verb, through the entry point.
                 said = self.through_the_verb(host, handed)
                 self.assertEqual(1, said.returncode, said.stdout + said.stderr)
-                self.assertIn(f"[{dispatch_port.DispatchRefused.code}]", said.stderr)
+                self.assertIn(f"[{dispatching.DispatchRefused.code}]", said.stderr)
                 # (b) the caller that bypasses every verb, hook and runtime -- the same gate.
-                with self.assertRaises(dispatch_port.DispatchRefused) as direct:
-                    dispatch_port.accepted(ctx, handed)
+                with self.assertRaises(dispatching.DispatchRefused) as direct:
+                    dispatching.accepted(ctx, handed)
                 self.assertTrue(str(direct.exception))
                 # Nothing was leased, made or started by either caller.
                 self.assertFalse((host / home).exists(), f"a refused dispatch wrote into {home}")
@@ -270,10 +271,10 @@ class Dispatch(Fixtures, unittest.TestCase):
         # than overwriting the only account of what the first worker did.
         again = self.through_the_verb(host, handed)
         self.assertEqual(1, again.returncode, again.stdout + again.stderr)
-        self.assertIn(f"[{dispatch_port.DispatchRefused.code}]", again.stderr)
+        self.assertIn(f"[{dispatching.DispatchRefused.code}]", again.stderr)
 
         task = self.record(host, identity)
-        self.assertEqual(dispatch_port.COMPLETED, task["state"], task.get("status_message"))
+        self.assertEqual(dispatching.COMPLETED, task["state"], task.get("status_message"))
         self.assertEqual(identity, task["id"])
         self.assertEqual(ADAPTER.name, task["adapter"])
         self.assertEqual(0, task["exit_code"])
@@ -336,7 +337,7 @@ class Dispatch(Fixtures, unittest.TestCase):
         # The worker FINISHED and what it wrote is NOT ADMITTED -- two propositions, two fields.
         # A single word doing both jobs would have had to hide one of them.
         task = self.record(host, "c3-refused")
-        self.assertEqual(dispatch_port.COMPLETED, task["state"])
+        self.assertEqual(dispatching.COMPLETED, task["state"])
         self.assertEqual(0, task["exit_code"])
         verdict = task["admission"]
         self.assertEqual(admission.REFUSED, verdict["verdict"])
@@ -353,7 +354,7 @@ class Dispatch(Fixtures, unittest.TestCase):
     def test_316_a_host_whose_provider_cannot_report_a_return_starts_no_worker_at_all(self):
         """Refused at the DOOR, before anything is leased: a worker whose change could never be
         judged is not a worker this port starts and reports on afterwards."""
-        self.assertTrue(admission.declares(dispatch_port.provider(self.context(self.repository()))),
+        self.assertTrue(admission.declares(dispatching.provider(self.context(self.repository()))),
                         "the taken provider cannot report a return, so the refusal below would "
                         "pass on nothing")
         blinded = []
@@ -364,7 +365,7 @@ class Dispatch(Fixtures, unittest.TestCase):
             isolation and no way to judge what came back out of it."""
             for document in [p for p in kit.rglob("*.json") if _declares_provider(p)]:
                 declaration = json.loads(document.read_text(encoding="utf-8"))
-                for row in declaration[dispatch_port.PROVIDER_LIST]:
+                for row in declaration[dispatching.PROVIDER_LIST]:
                     blinded.append(row.pop(admission.RETURNED, None) and row["id"])
                 document.write_text(json.dumps(declaration, indent=2) + "\n", encoding="utf-8",
                                     newline="\n")
@@ -374,9 +375,9 @@ class Dispatch(Fixtures, unittest.TestCase):
         host = self.repository(kit)
         said = self.through_the_verb(host, json.dumps(packet("c3-unjudgeable")), kit=kit)
         self.assertEqual(1, said.returncode, said.stdout + said.stderr)
-        self.assertIn(f"[{dispatch_port.DispatchUnserved.code}]", said.stderr)
+        self.assertIn(f"[{dispatching.DispatchUnserved.code}]", said.stderr)
         # Nothing was leased, made or started: the refusal is at the door, before the writing.
-        home = Path(ephemeral.root(self.context(host))) / dispatch_port.HOME
+        home = Path(ephemeral.root(self.context(host))) / dispatching.HOME
         self.assertFalse((host / home / "c3-unjudgeable").exists())
 
 
@@ -394,17 +395,17 @@ class Dispatch(Fixtures, unittest.TestCase):
         identity = "c4-round-trip"
 
         asked = self.through_the_verb(host, json.dumps(packet(identity, route=ASKING.name)))
-        self.assertEqual(dispatch_port.WAITING, asked.returncode, asked.stdout + asked.stderr)
+        self.assertEqual(dispatching.WAITING, asked.returncode, asked.stdout + asked.stderr)
         self.assertIn(QUESTION, asked.stdout)
 
         standing = self.record(host, identity)
-        self.assertEqual(dispatch_port.INPUT_REQUIRED, standing["state"])
+        self.assertEqual(dispatching.INPUT_REQUIRED, standing["state"])
         self.assertNotIn("ended_at", standing, "a worker that is standing was recorded as ended")
         self.assertEqual(ASKS_ON, standing["exit_code"])
-        turn = standing[dispatch_port.HISTORY][-1]
-        self.assertEqual(dispatch_port.AGENT, turn["role"])
+        turn = standing[dispatching.HISTORY][-1]
+        self.assertEqual(dispatching.AGENT, turn["role"])
         self.assertEqual(QUESTION, turn["text"])
-        self.assertEqual(REENTRY, turn[dispatch_port.REENTRY])
+        self.assertEqual(REENTRY, turn[dispatching.REENTRY])
         self.assertTrue(turn["at"])
         self.assertNotIn("unresumable", turn)
         # It asked, and it also WROTE: the return is judged whatever the ending was.
@@ -416,10 +417,10 @@ class Dispatch(Fixtures, unittest.TestCase):
         self.assertEqual(0, walked.returncode, walked.stdout + walked.stderr)
 
         closed = self.record(host, identity)
-        self.assertEqual(dispatch_port.COMPLETED, closed["state"])
-        self.assertEqual([dispatch_port.AGENT, dispatch_port.OPERATOR],
-                         [t["role"] for t in closed[dispatch_port.HISTORY]])
-        answered = closed[dispatch_port.HISTORY][-1]
+        self.assertEqual(dispatching.COMPLETED, closed["state"])
+        self.assertEqual([dispatching.AGENT, dispatching.OPERATOR],
+                         [t["role"] for t in closed[dispatching.HISTORY]])
+        answered = closed[dispatching.HISTORY][-1]
         self.assertEqual(said, answered["text"])
         self.assertEqual("an-operator", answered["by"])
         self.assertTrue(closed["resumed_at"] and closed["ended_at"])
@@ -438,8 +439,8 @@ class Dispatch(Fixtures, unittest.TestCase):
         # stands in and the moment that reading was taken.
         over = self.through_the_verb(host, answer(identity, said))
         self.assertEqual(1, over.returncode, over.stdout + over.stderr)
-        self.assertIn(f"[{dispatch_port.DispatchRefused.code}]", over.stderr)
-        self.assertIn(dispatch_port.COMPLETED, over.stderr)
+        self.assertIn(f"[{dispatching.DispatchRefused.code}]", over.stderr)
+        self.assertIn(dispatching.COMPLETED, over.stderr)
 
     def test_318_a_question_no_adapter_can_answer_says_so_and_the_resume_refuses_by_name(self):
         """An adapter that declares how its worker asks and not how one is re-entered.
@@ -454,38 +455,38 @@ class Dispatch(Fixtures, unittest.TestCase):
         identity = "c4-unanswerable"
 
         asked = self.through_the_verb(host, json.dumps(packet(identity, route=UNANSWERABLE.name)))
-        self.assertEqual(dispatch_port.WAITING, asked.returncode, asked.stdout + asked.stderr)
-        turn = self.record(host, identity)[dispatch_port.HISTORY][-1]
+        self.assertEqual(dispatching.WAITING, asked.returncode, asked.stdout + asked.stderr)
+        turn = self.record(host, identity)[dispatching.HISTORY][-1]
         self.assertEqual(QUESTION, turn["text"])
         self.assertIn(UNANSWERABLE.name, turn["unresumable"])
         self.assertIn(UNANSWERABLE.name, asked.stdout)
 
         refused = self.through_the_verb(host, answer(identity, "an answer nobody can deliver"))
         self.assertEqual(1, refused.returncode, refused.stdout + refused.stderr)
-        self.assertIn(f"[{dispatch_port.DispatchUnserved.code}]", refused.stderr)
+        self.assertIn(f"[{dispatching.DispatchUnserved.code}]", refused.stderr)
         self.assertIn(UNANSWERABLE.name, refused.stderr)
 
         # Nothing was re-entered and nothing was rewritten: the task stands where it was, with the
         # one account of what its worker asked.
         stands = self.record(host, identity)
-        self.assertEqual(dispatch_port.INPUT_REQUIRED, stands["state"])
-        self.assertEqual(1, len(stands[dispatch_port.HISTORY]))
+        self.assertEqual(dispatching.INPUT_REQUIRED, stands["state"])
+        self.assertEqual(1, len(stands[dispatching.HISTORY]))
 
     def test_319_an_answer_to_a_task_this_host_never_dispatched_is_refused_before_any_write(self):
         """The resume act's own refusals, which are the port's like every other: an act naming no
         task, an act carrying no answer, and an answer to an id this host has never seen."""
         host = self.repository()
         for why, handed in {
-            "no task named": json.dumps({"schema_version": 1, dispatch_port.RESUME: "",
-                                         dispatch_port.ANSWER: "an answer"}),
+            "no task named": json.dumps({"schema_version": 1, dispatching.RESUME: "",
+                                         dispatching.ANSWER: "an answer"}),
             "no answer carried": json.dumps({"schema_version": 1,
-                                             dispatch_port.RESUME: "c4-round-trip"}),
+                                             dispatching.RESUME: "c4-round-trip"}),
             "a task nobody dispatched": answer("c4-a-task-nobody-dispatched", "an answer"),
         }.items():
             with self.subTest(refusal=why):
                 said = self.through_the_verb(host, handed)
                 self.assertEqual(1, said.returncode, said.stdout + said.stderr)
-                self.assertIn(f"[{dispatch_port.DispatchRefused.code}]", said.stderr)
+                self.assertIn(f"[{dispatching.DispatchRefused.code}]", said.stderr)
 
 
 if __name__ == "__main__":

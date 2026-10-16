@@ -21,15 +21,25 @@ import shutil
 import unittest
 from pathlib import Path
 
-from harness import KIT, Fixtures
+from harness import Fixtures
 
 import manifest as manifest_port
 from errors import PendingApproval
 from manifest import Manifest
-from test_adapters import UNACTIVATED
+from test_adapters import ADAPTERS, UNACTIVATED, adapted_kit, documents_of as _documents
 from test_detectors import concrete
 from test_pinned_kit import pinned_cli, said
 
+
+def _nested(detector) -> bool:
+    return any(e["kind"] == "glob_any" and e.get("pattern", "").startswith("**/") and not e.get("optional")
+               for e in detector["evidence"])
+
+
+#: The core reads no ecosystem (ADR-023 amendment 5): a detector that reads at ANY depth is brought by
+#: a published adapter, so the kit these tests install is the real kit with the first such adapter
+#: taken -- chosen by what its detector declares, never by a name.
+KIT = adapted_kit(adapters=[next(a for a in ADAPTERS for d in _documents(a, "detector") if _nested(d))])
 CORE = Manifest(KIT)
 _INSTALLS = {i["mode"]: i for c in CORE.capabilities for i in c.installs}
 READING = _INSTALLS["reading"]["target"]

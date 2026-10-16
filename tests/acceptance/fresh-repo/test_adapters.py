@@ -37,7 +37,7 @@ import boundary
 import declared
 import provenance
 from manifest import Manifest
-import runtime as runtime_port
+import serving
 import activation
 from verbs.eject import EjectRefused
 
@@ -47,8 +47,8 @@ ADAPTERS = sorted(p.parent for p in ADAPTERS_HOME.glob("*/capability.json"))
 
 CORE = Manifest(KIT)
 RUNTIMES = next(c for c in CORE.capabilities
-                if any(i.get("shape") == runtime_port.SHAPE for i in c.installs))
-SERVED_INSTALL = next(i for i in RUNTIMES.installs if i.get("shape") == runtime_port.SHAPE)
+                if any(i.get("shape") == serving.SHAPE for i in c.installs))
+SERVED_INSTALL = next(i for i in RUNTIMES.installs if i.get("shape") == serving.SHAPE)
 SPEC = SERVED_INSTALL["serves"]
 SELECTOR = SPEC["surfaces"]["sources"]
 LIST = SPEC["surfaces"]["list"]
@@ -84,6 +84,15 @@ def surfaces_of(adapter: Path) -> list:
 # surfaces declares an activation block, so taking and serving them is the whole of their door.
 # Selected by declaration (the field the activation interpreter reads), never by a product's id.
 UNACTIVATED = [a for a in ADAPTERS if not any(activation.FIELD in s for s in surfaces_of(a))]
+
+
+def documents_of(adapter: Path, contract: str) -> list:
+    """Every document a published adapter directory ships under `contract`, read from its own
+    declaration (a source `capabilities/<id>/<file>` is `<file>` in the directory)."""
+    value = _declaration(adapter)
+    seat = f"capabilities/{value['id']}/"
+    return [json.loads((adapter / d["source"][len(seat):]).read_text(encoding="utf-8"))
+            for d in value.get("documents", []) if d["validates"] == contract]
 
 
 def take(kit: Path, adapter: Path) -> None:

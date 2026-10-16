@@ -21,7 +21,7 @@ def _pinned_kit_intact(ctx, params):
     if item is None:
         return []
     seat = ctx.install_of_mode(params["lock_mode"])
-    failures, _pinned = pin.verify(ctx.workspace, item["target"], seat["target"])
+    failures, _pinned = pin.verify(ctx.manifest, ctx.workspace, item["target"], seat["target"])
     return failures
 
 

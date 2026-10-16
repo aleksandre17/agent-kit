@@ -36,7 +36,7 @@ import activated  # noqa: E402
 import activation  # noqa: E402
 import check as check_verb  # noqa: E402
 import judge  # noqa: E402
-import runtime as runtime_port  # noqa: E402
+import serving  # noqa: E402
 
 enforcement = commit_gate.enforcement
 HOST_GATE = enforcement.HOST_GATE
@@ -124,7 +124,7 @@ class CiProjection(enforcement.Enforcement):
                 beside.write_bytes(theirs)
                 refused = self.served_host_on(host)
                 self.assertNotEqual(0, refused.returncode)
-                self.assertIn(f"[{runtime_port.ServeCollision.code}]", refused.stderr)
+                self.assertIn(f"[{serving.ServeCollision.code}]", refused.stderr)
                 self.assertEqual(theirs, target.read_bytes())
                 target.unlink()
                 admitted = self.served_host_on(host)

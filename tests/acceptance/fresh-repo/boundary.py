@@ -27,6 +27,7 @@ Three things in here are load-bearing and easy to lose:
 from __future__ import annotations
 
 import copy
+import dataclasses
 import importlib
 import itertools
 import json
@@ -130,6 +131,8 @@ def interpreter_modules() -> list:
 def _carries_behaviour(value) -> bool:
     if callable(value):
         return True
+    if dataclasses.is_dataclass(value) and not isinstance(value, type):
+        return any(callable(getattr(value, f.name)) for f in dataclasses.fields(value))
     return isinstance(value, (tuple, list)) and any(callable(item) for item in value)
 
 
@@ -156,6 +159,17 @@ def provided_terms() -> set:
             if name.isupper() and isinstance(value, dict) and value:
                 if any(_carries_behaviour(item) for item in value.values()):
                     provided |= {key for key in value if isinstance(key, str)}
+        # A DISCOVERED registry (`kinds.registry` over a family of modules) provides every key its
+        # family publishes, as one extension point: a row that defers its work to a later step of
+        # the run is still a row of the machine's own registry, never a word an instance invented.
+        discover = getattr(module, "registry", None)
+        if callable(discover) and getattr(discover, "__module__", None) == module.__name__:
+            try:
+                found = discover()
+            except TypeError:
+                found = None
+            if isinstance(found, dict):
+                provided |= {key for key in found if isinstance(key, str)}
     return provided
 
 

@@ -35,6 +35,7 @@ import re
 
 import collection
 import corpus
+import routegraph
 import declared
 
 #: The obligation-markers schema's own field names. The MARKS are rows of a declared vocabulary --
@@ -144,7 +145,7 @@ def _unreached(ctx, params) -> tuple:
             reading, None, marks, {}, [], findings,
         )
 
-    graph = corpus.routes(ctx, reading, params.get(corpus.ROOTS))
+    graph = routegraph.routes(ctx, reading, params.get(corpus.ROOTS))
     owed = {}
     for resident in reading.residents:
         carried = _owed(ctx, resident, marks)
@@ -219,7 +220,7 @@ def _indexed(ctx, params) -> list:
         print(f"        {absent}")
         return []
 
-    entries = corpus.indexed(ctx, reading)
+    entries = routegraph.indexed(ctx, reading)
     residents = {resident.path: resident for resident in reading.residents}
     unindexed = len(reading.places) - len(entries)
 

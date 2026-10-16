@@ -46,7 +46,6 @@ from __future__ import annotations
 import json
 
 import corpus
-import accepted as accepted_state
 import gatekinds
 from errors import KitError
 
@@ -84,8 +83,7 @@ def _accepted(ctx, space: str) -> tuple:
     whose file was deleted or renamed since the last accepted state is exactly the row a ratchet
     must still see, and enumerating the tree's own files would lose it in the one case that matters.
     """
-    root = ctx.workspace.path(".")
-    listing, why = accepted_state.listing(root, space)
+    listing, why = ctx.workspace.accepted_listing(space)
     if listing is None:
         return None, (
             f"THERE IS NO PREVIOUS ACCEPTED STATE FOR {space!r}: {why}. Every budget below is read "
@@ -100,7 +98,7 @@ def _accepted(ctx, space: str) -> tuple:
         if not name.endswith(".json"):
             continue
         rel = f"{space}/{name}"
-        text, why = accepted_state.text(root, rel)
+        text, why = ctx.workspace.accepted_text(rel)
         if text is None:
             return None, (
                 f"THE PREVIOUS ACCEPTED STATE COULD NOT BE READ: {rel} is in HEAD and its content "

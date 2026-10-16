@@ -38,11 +38,12 @@ for extra in [KIT / "interpreters", *sorted(p for p in (KIT / "interpreters").it
 
 import admission  # noqa: E402
 import dispatch_port  # noqa: E402
+import dispatching  # noqa: E402
 from manifest import Manifest  # noqa: E402
 
 MANIFEST = Manifest(KIT)
-PACKET_SCHEMA = MANIFEST.schema(dispatch_port.PACKET)
-TASK_SCHEMA = MANIFEST.schema(dispatch_port.TASK)
+PACKET_SCHEMA = MANIFEST.schema(dispatching.PACKET)
+TASK_SCHEMA = MANIFEST.schema(dispatching.TASK)
 
 
 def ctx() -> types.SimpleNamespace:
@@ -69,58 +70,58 @@ class DispatchPortRefusals(unittest.TestCase):
     # == 1. the reading is the port's ==========================================================
     def test_the_port_reads_what_a_caller_hands_over_and_refuses_what_states_no_task(self):
         packet = complete_packet()
-        self.assertEqual(packet, dispatch_port.packet_from(packet))
-        self.assertEqual(packet, dispatch_port.packet_from(json.dumps(packet)))
+        self.assertEqual(packet, dispatching.packet_from(packet))
+        self.assertEqual(packet, dispatching.packet_from(json.dumps(packet)))
         for handed in ("", "   ", "not json at all", "[1, 2]", '"a string"', "null", 17, None):
             with self.subTest(handed=handed):
-                with self.assertRaises(dispatch_port.DispatchRefused) as refused:
-                    dispatch_port.packet_from(handed)
+                with self.assertRaises(dispatching.DispatchRefused) as refused:
+                    dispatching.packet_from(handed)
                 self.assertTrue(str(refused.exception))
 
     # == 2. a declaration is filled only with what the port provides ============================
     def test_an_argv_is_filled_only_with_provided_placeholders_and_never_with_a_blank(self):
-        provided = dispatch_port.PROVIDED[0]
-        filled = dispatch_port._argv(["run", "{" + provided + "}"], {provided: "a-value"}, where="a declaration")
+        provided = dispatching.PROVIDED[0]
+        filled = dispatching.argv(["run", "{" + provided + "}"], {provided: "a-value"}, where="a declaration")
         self.assertEqual(["run", "a-value"], filled)
 
-        with self.assertRaises(dispatch_port.DispatchUnserved) as unserved:
-            dispatch_port._argv(["run", "{nobody_provides_this}"], {}, where="a declaration")
+        with self.assertRaises(dispatching.DispatchUnserved) as unserved:
+            dispatching.argv(["run", "{nobody_provides_this}"], {}, where="a declaration")
         self.assertIn("nobody_provides_this", str(unserved.exception))
 
-        with self.assertRaises(dispatch_port.DispatchRefused) as blank:
-            dispatch_port._argv(["run", "{" + provided + "}"], {provided: None}, where="a declaration")
+        with self.assertRaises(dispatching.DispatchRefused) as blank:
+            dispatching.argv(["run", "{" + provided + "}"], {provided: None}, where="a declaration")
         self.assertIn(provided, str(blank.exception))
 
     # == 3. one home for the task vocabulary ====================================================
     def test_every_state_the_port_names_is_declared_by_the_task_schema(self):
         declared = TASK_SCHEMA["properties"]["state"]["enum"]
-        self.assertEqual(declared, dispatch_port.vocabulary(ctx()))
-        for state in (dispatch_port.SUBMITTED, dispatch_port.WORKING, dispatch_port.INPUT_REQUIRED,
-                      dispatch_port.COMPLETED, dispatch_port.FAILED):
+        self.assertEqual(declared, dispatching.vocabulary(ctx()))
+        for state in (dispatching.SUBMITTED, dispatching.WORKING, dispatching.INPUT_REQUIRED,
+                      dispatching.COMPLETED, dispatching.FAILED):
             self.assertIn(state, declared)
 
     def test_a_port_naming_a_state_the_schema_does_not_declare_is_refused_before_any_write(self):
         """The congruence check BITES: pointed at a schema that has moved, it names the state."""
         moved = json.loads(json.dumps(TASK_SCHEMA))
         moved["properties"]["state"]["enum"] = [s for s in moved["properties"]["state"]["enum"]
-                                                if s != dispatch_port.WORKING]
+                                                if s != dispatching.WORKING]
         shim = types.SimpleNamespace(manifest=types.SimpleNamespace(schema=lambda _name: moved))
-        with self.assertRaises(dispatch_port.VocabularyDrift) as drift:
-            dispatch_port.vocabulary(shim)
-        self.assertIn(dispatch_port.WORKING, str(drift.exception))
+        with self.assertRaises(dispatching.VocabularyDrift) as drift:
+            dispatching.vocabulary(shim)
+        self.assertIn(dispatching.WORKING, str(drift.exception))
 
     # == 4. the packet's completeness is the schema's statement =================================
     def test_an_incomplete_packet_is_refused_and_every_missing_part_is_named_at_once(self):
-        self.assertEqual(complete_packet(), dispatch_port.complete(ctx(), complete_packet()))
+        self.assertEqual(complete_packet(), dispatching.complete(ctx(), complete_packet()))
         for name in PACKET_SCHEMA["required"]:
             with self.subTest(missing=name):
                 short = {k: v for k, v in complete_packet().items() if k != name}
-                with self.assertRaises(dispatch_port.DispatchRefused) as refused:
-                    dispatch_port.complete(ctx(), short)
+                with self.assertRaises(dispatching.DispatchRefused) as refused:
+                    dispatching.complete(ctx(), short)
                 self.assertIn(name, str(refused.exception))
         empty = dict(complete_packet(), id="")
-        with self.assertRaises(dispatch_port.DispatchRefused):
-            dispatch_port.complete(ctx(), empty)
+        with self.assertRaises(dispatching.DispatchRefused):
+            dispatching.complete(ctx(), empty)
 
 
 class PublishedDispatchAdapters(unittest.TestCase):
@@ -141,10 +142,10 @@ class PublishedDispatchAdapters(unittest.TestCase):
         for capability in sorted((REPO / "adapters").glob("*/capability.json")):
             declaration = json.loads(capability.read_text(encoding="utf-8"))
             for document in declaration.get("documents", []):
-                if document.get("validates") != dispatch_port.ADAPTERS["validates"]:
+                if document.get("validates") != dispatching.ADAPTERS["validates"]:
                     continue
                 beside = capability.parent / Path(document["source"]).name
-                for row in json.loads(beside.read_text(encoding="utf-8"))[dispatch_port.ADAPTER_LIST]:
+                for row in json.loads(beside.read_text(encoding="utf-8"))[dispatching.ADAPTER_LIST]:
                     found.append((capability.parent.name, row))
         return found
 
@@ -157,8 +158,8 @@ class PublishedDispatchAdapters(unittest.TestCase):
         for _where, row in published:
             with self.subTest(adapter=row["id"]):
                 self.assertEqual([], MANIFEST.validate(
-                    {"schema_version": 1, dispatch_port.ADAPTER_LIST: [row]},
-                    dispatch_port.ADAPTERS["validates"]))
+                    {"schema_version": 1, dispatching.ADAPTER_LIST: [row]},
+                    dispatching.ADAPTERS["validates"]))
 
     def test_every_published_adapter_names_only_what_the_port_provides(self):
         """A placeholder or a channel the port does not provide is refused BY NAME, and is refused
@@ -167,12 +168,12 @@ class PublishedDispatchAdapters(unittest.TestCase):
         go on passing over the next block an adapter may declare."""
         for where, row in self.published():
             with self.subTest(adapter=row["id"]):
-                dispatch_port.coherent(row)
-                blanks = {name: "a-value" for name in dispatch_port.PROVIDED}
+                dispatching.coherent(row)
+                blanks = {name: "a-value" for name in dispatching.PROVIDED}
                 if "stdin" in row["starts"]:
-                    dispatch_port._argv([row["starts"]["stdin"]], blanks, where=where)
+                    dispatching.argv([row["starts"]["stdin"]], blanks, where=where)
                 for part in row["returns"]:
-                    self.assertIn(part["from"], dispatch_port.CHANNELS,
+                    self.assertIn(part["from"], dispatching.CHANNELS,
                                   f"{row['id']} returns {part['name']!r} from a channel the port "
                                   f"does not provide; an artifact read from nowhere is a fabricated one")
 
@@ -180,12 +181,12 @@ class PublishedDispatchAdapters(unittest.TestCase):
         """The file channel exists exactly so that an ARTIFACT comes back as a file with a declared
         shape instead of a transcript somebody parsed. The port provides the path; an adapter that
         named a path of its own would put the host's layout into a second home."""
-        self.assertIn(dispatch_port.FILE, dispatch_port.CHANNELS)
-        self.assertIn(dispatch_port.ARTIFACT, dispatch_port.PROVIDED)
+        self.assertIn(dispatching.FILE, dispatching.CHANNELS)
+        self.assertIn(dispatching.ARTIFACT, dispatching.PROVIDED)
         for _where, row in self.published():
-            if any(part["from"] == dispatch_port.FILE for part in row["returns"]):
+            if any(part["from"] == dispatching.FILE for part in row["returns"]):
                 with self.subTest(adapter=row["id"]):
-                    self.assertIn("{" + dispatch_port.ARTIFACT + "}", " ".join(row["starts"]["argv"]),
+                    self.assertIn("{" + dispatching.ARTIFACT + "}", " ".join(row["starts"]["argv"]),
                                   "this adapter returns an artifact from a file and is never told "
                                   "which file, so nothing it wrote could be read back")
 
@@ -218,49 +219,49 @@ class AnAdapterThatAsks(unittest.TestCase):
     def test_the_two_values_a_resume_needs_are_values_the_port_provides(self):
         """`{answer}` and `{reentry}` are the port's to provide, like every other placeholder: an
         adapter widens nothing by naming them, and one that names something else is refused."""
-        self.assertIn(dispatch_port.ANSWER, dispatch_port.PROVIDED)
-        self.assertIn(dispatch_port.REENTRY, dispatch_port.PROVIDED)
-        asking = self.row(**{dispatch_port.ASKS: self.ASKS, dispatch_port.RESUMES: self.RESUMES})
+        self.assertIn(dispatching.ANSWER, dispatching.PROVIDED)
+        self.assertIn(dispatching.REENTRY, dispatching.PROVIDED)
+        asking = self.row(**{dispatching.ASKS: self.ASKS, dispatching.RESUMES: self.RESUMES})
         self.assertEqual([], MANIFEST.validate({"schema_version": 1, "adapters": [asking]},
-                                               dispatch_port.ADAPTERS["validates"]))
-        self.assertIs(asking, dispatch_port.coherent(asking))
+                                               dispatching.ADAPTERS["validates"]))
+        self.assertIs(asking, dispatching.coherent(asking))
 
     def test_an_adapter_may_declare_neither_block_and_nothing_about_it_changes(self):
         """The round-trip is a capability an adapter DECLARES, never one the port assumes: the
         rows that existed before C4 are still whole adapters and still pass the same door."""
         self.assertEqual([], MANIFEST.validate({"schema_version": 1, "adapters": [self.row()]},
-                                               dispatch_port.ADAPTERS["validates"]))
-        dispatch_port.coherent(self.row())
+                                               dispatching.ADAPTERS["validates"]))
+        dispatching.coherent(self.row())
 
     def test_one_ending_may_not_mean_both_finished_and_needs_input(self):
-        with self.assertRaises(dispatch_port.DispatchUnserved) as refused:
-            dispatch_port.coherent(self.row(**{dispatch_port.ASKS: dict(self.ASKS, exit=0),
-                                               dispatch_port.RESUMES: self.RESUMES}))
+        with self.assertRaises(dispatching.DispatchUnserved) as refused:
+            dispatching.coherent(self.row(**{dispatching.ASKS: dict(self.ASKS, exit=0),
+                                               dispatching.RESUMES: self.RESUMES}))
         self.assertIn("two states", str(refused.exception))
 
     def test_a_question_is_read_from_a_channel_the_adapter_declared_and_never_from_nowhere(self):
-        for role in (dispatch_port.QUESTION, dispatch_port.REENTRY):
+        for role in (dispatching.QUESTION, dispatching.REENTRY):
             with self.subTest(carries=role):
-                with self.assertRaises(dispatch_port.DispatchUnserved) as refused:
-                    dispatch_port.coherent(self.row(
-                        **{dispatch_port.ASKS: dict(self.ASKS, **{role: "an-artifact-nobody-declares"}),
-                           dispatch_port.RESUMES: self.RESUMES}))
+                with self.assertRaises(dispatching.DispatchUnserved) as refused:
+                    dispatching.coherent(self.row(
+                        **{dispatching.ASKS: dict(self.ASKS, **{role: "an-artifact-nobody-declares"}),
+                           dispatching.RESUMES: self.RESUMES}))
                 self.assertIn("an-artifact-nobody-declares", str(refused.exception))
 
     def test_a_question_and_the_way_back_in_may_not_be_the_one_text(self):
-        with self.assertRaises(dispatch_port.DispatchUnserved) as refused:
-            dispatch_port.coherent(self.row(
-                **{dispatch_port.ASKS: dict(self.ASKS, reentry=self.ASKS["question"]),
-                   dispatch_port.RESUMES: self.RESUMES}))
+        with self.assertRaises(dispatching.DispatchUnserved) as refused:
+            dispatching.coherent(self.row(
+                **{dispatching.ASKS: dict(self.ASKS, reentry=self.ASKS["question"]),
+                   dispatching.RESUMES: self.RESUMES}))
         self.assertIn(self.ASKS["question"], str(refused.exception))
 
     def test_a_resume_argv_is_held_to_what_the_port_provides_before_anything_is_leased(self):
-        with self.assertRaises(dispatch_port.DispatchUnserved) as refused:
-            dispatch_port.coherent(self.row(**{
-                dispatch_port.ASKS: self.ASKS,
-                dispatch_port.RESUMES: {"argv": ["a-program", "{nobody_provides_this}"]}}))
+        with self.assertRaises(dispatching.DispatchUnserved) as refused:
+            dispatching.coherent(self.row(**{
+                dispatching.ASKS: self.ASKS,
+                dispatching.RESUMES: {"argv": ["a-program", "{nobody_provides_this}"]}}))
         self.assertIn("nobody_provides_this", str(refused.exception))
-        self.assertIn(dispatch_port.RESUMES, str(refused.exception))
+        self.assertIn(dispatching.RESUMES, str(refused.exception))
 
     def test_the_exchange_a_record_keeps_is_a_shape_the_task_schema_declares(self):
         """Both turns, held to the record's own contract -- the question the port builds from a
@@ -268,9 +269,9 @@ class AnAdapterThatAsks(unittest.TestCase):
         be discovered at the first flush, on a record that already had a worker standing behind it."""
         artifacts = [{"name": "result", "from": "file", "text": "which of the two did you mean?"},
                      {"name": "session", "from": "stdout", "text": "a-session\n"}]
-        asked = dispatch_port._question(self.row(**{dispatch_port.RESUMES: self.RESUMES}),
+        asked = dispatch_port._question(self.row(**{dispatching.RESUMES: self.RESUMES}),
                                         self.ASKS, artifacts, "a-moment")
-        self.assertEqual("a-session", asked[dispatch_port.REENTRY])
+        self.assertEqual("a-session", asked[dispatching.REENTRY])
         self.assertNotIn("unresumable", asked)
         unresumable = dispatch_port._question(self.row(), self.ASKS, artifacts, "a-moment")
         self.assertIn(self.row()["id"], unresumable["unresumable"])
@@ -282,9 +283,9 @@ class AnAdapterThatAsks(unittest.TestCase):
         self.assertNotIn("text", empty, "an empty question was recorded as a question")
         self.assertTrue(empty["absent"] and empty["reentry_absent"])
 
-        declared = TASK_SCHEMA["properties"][dispatch_port.HISTORY]["items"]
+        declared = TASK_SCHEMA["properties"][dispatching.HISTORY]["items"]
         for turn in (asked, unresumable, empty,
-                     {"role": dispatch_port.OPERATOR, "at": "a-moment", "text": "an answer",
+                     {"role": dispatching.OPERATOR, "at": "a-moment", "text": "an answer",
                       "by": "an-operator"}):
             for field in turn:
                 self.assertIn(field, declared["properties"])

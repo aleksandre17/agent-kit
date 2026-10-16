@@ -29,6 +29,7 @@ from __future__ import annotations
 import hashlib
 
 import estate as estate_module
+import installmodes
 import space
 from errors import KitError
 
@@ -161,7 +162,7 @@ def survey(ctx, capabilities, recorded, stewards, adoptions=None, moved=None) ->
         taken = stewards.measures(steward) and not estate_module.is_root(path)
         read_at = moved.get(path, path)
         # A space is there when a clone would receive it, which is its marker (space.carried).
-        present = (space.carried(ctx.manifest, ws, read_at) if mode in space.MODES
+        present = (space.carried(ctx.manifest, ws, read_at) if installmodes.opens_space(mode)
                    else ws.exists(read_at))
         here = hashlib.sha256(ws.read_bytes(read_at)).hexdigest() if (present and taken) else None
         found = cell(shipped is not None, shipped["digest"] if shipped else None,

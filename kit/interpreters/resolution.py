@@ -24,9 +24,11 @@ sentences. A refusal belongs to a gate, which stands on the same reading and is 
 
 from __future__ import annotations
 
+import functools
 from dataclasses import dataclass
+from pathlib import Path
 
-import corpus
+import kinds
 from errors import KitError
 
 
@@ -36,11 +38,15 @@ class ResolutionError(KitError):
     code = "KIT0054"
 
 
-#: Which resolver answers for which declared kind -- the union of what the resolvers themselves
-#: publish, in the same form `PROJECTION_SHAPES` and the gate registry already use. A new kind of
-#: resolved reading is a module publishing a `VIEWS` registry and one row here; nothing that
-#: dispatches over it is ever touched, and no kind is spelled in this file.
-KINDS = {**corpus.VIEWS}
+#: Where a resolver may be declared: each module in `resolvers/` publishes `RESOLVES`, the kinds it
+#: answers for. A new kind of resolved reading is a module; nothing that dispatches over it is
+#: touched, and no kind is spelled in this file.
+RESOLVERS = Path(__file__).resolve().parent / "resolvers"
+
+
+@functools.lru_cache(maxsize=None)
+def registry() -> dict:
+    return kinds.registry(RESOLVERS, "RESOLVES", "resolved view", ResolutionError)
 
 #: The block's own field names. The `capability` schema is their home; these are the three this
 #: module reads: what the view will call it, who can produce it, and what it is configured with.
@@ -63,12 +69,12 @@ def resolved_of(ctx, capability) -> list:
     declares none, which is the ordinary answer for every capability that projects no reading."""
     found = []
     for spec in capability.raw.get(BLOCK, []):
-        resolve = KINDS.get(spec[KIND])
+        resolve = registry().get(spec[KIND])
         if resolve is None:
             raise ResolutionError(
                 f"capability {capability.id!r} declares the view {spec[ID]!r} resolved by "
                 f"{spec[KIND]!r}, which no resolver answers for; the kinds declared are "
-                f"{sorted(KINDS)}"
+                f"{sorted(registry())}"
             )
         found.append(Resolved(spec, resolve(ctx, spec[PARAMS])))
     return found

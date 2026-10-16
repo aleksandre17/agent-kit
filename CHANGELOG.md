@@ -5,7 +5,16 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade --plan`, which names every path that changes between the two.
 
-## 0.1.6 — unreleased
+## 0.2.0 — unreleased
+
+**Changed — every dispatch table is a discovered registry; the core reaches ports only through the root (ADR-023 amendment 5)**
+- Families `modes/`, `shapes/`, `readers/`, `resolvers/`; `installmodes`, `shaping`, `serving`,
+  `dispatching`, `taskrecord`, `routegraph`; `ports/sources.py`; `ports/runtime.py` and `accepted.py`
+  removed; `manifest.plane()`, `manifest.files()`, `manifest.kit_at()`; workspace `accepted_listing`/`accepted_text`.
+- The ecosystem detectors moved to `adapters/{dotnet,node,pnpm,go,python}` (taken by `standard`).
+- Unit `test_events_are_provided`; the arrow test refuses a core->port import.
+
+## 0.1.6
 
 **Added — a new host starts in one door, served to the field's standards (ADR-023)**
 - Verb `start --path starters/<id>.json --approve <who>`: walks a published starter (take, enable,

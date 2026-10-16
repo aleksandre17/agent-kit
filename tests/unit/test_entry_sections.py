@@ -15,7 +15,7 @@ for extra in [KIT / "interpreters", *sorted(p for p in (KIT / "interpreters").it
                                             if p.is_dir() and not p.name.startswith("_"))]:
     sys.path.insert(0, str(extra))
 
-import runtime  # noqa: E402
+import serve  # noqa: E402 -- the served shape, discovered beside the others
 
 
 class _Workspace:
@@ -30,6 +30,6 @@ class _Context:
 def test_a_pointer_section_ends_its_line_as_an_inlined_page_does():
     view = {"sections": [{"heading": "Page", "from": "a.md"},
                          {"heading": "Pointer", "from": "b.md", "points": "what b says"}]}
-    rows = runtime._sections(_Context(), view, {"a.md": "page text\n", "b.md": "unread\n"})
+    rows = serve._sections(_Context(), view, {"a.md": "page text\n", "b.md": "unread\n"})
     assert [row["text"].endswith("\n") for row in rows] == [True, True]
     assert rows[1]["text"] == "Read `b.md` for what b says.\n"

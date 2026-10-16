@@ -52,6 +52,18 @@ def _hand(ctx, surface_id: "str | None") -> dict:
     return surface["hands"]
 
 
+#: The event this verb PROVIDES to attestation: a write an edit gate refused, observed at the moment
+#: it was refused. A vocabulary row that is proven by it names it in `observed_on` (ADR-022 d. 6).
+REFUSED_WRITE = "a-refused-write"
+
+
+def _refused(refused) -> str:
+    """The evidence of a refused write, in the provider's own words: `[(path, gate), ...]`."""
+    return "the judge refused " + ", ".join(f"{path} by {gate}" for path, gate in refused)
+
+
+EVENTS = {REFUSED_WRITE: _refused}
+
 #: This verb's stdout can belong to the product whose hook ran it (a decision it reads there), so the
 #: entry point writes its own header to stderr (`cli.py`).
 STDOUT_IS_THE_PRODUCTS = True
@@ -130,8 +142,8 @@ def run(ctx, args) -> int:
               file=sys.stderr)
     if refused:
         # A refusal that happened is a record of what this runtime CAN be held to (ADR-022 decision 6).
-        attestation.observe(ctx, getattr(args, "surface", None), attestation.REFUSED_WRITE,
-                            [(p, r) for p, r, _b, _i in refused])
+        attestation.observe(ctx, getattr(args, "surface", None), REFUSED_WRITE,
+                            _refused([(p, r) for p, r, _b, _i in refused]))
         return refuse(*(f"judge: REFUSED  {path}  {rule_id} -- {because} Instead: {instead}"
                         for path, rule_id, because, instead in refused))
     claims.recorded(ctx, principals, [rel for rel, _t in within], ctx.clock.now())

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "pnpm",
+  "version": "1.0.0",
+  "summary": "An ADAPTER for the pnpm toolchain: the one published declaration that carries its name. It brings one detector -- how a pnpm project is recognised in a host's tree -- so the reading names the toolchains a host actually builds with. The kit core ships no ecosystem's reading (ADR-023 amendment 5); a host that builds with this toolchain takes this adapter, and a new toolchain is a new adapter, never a kit edit.",
+  "requires": [],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [
+    {
+      "id": "pnpm_workspace",
+      "source": "capabilities/pnpm/pnpm-workspace.json",
+      "validates": "detector"
+    }
+  ],
+  "installs": [],
+  "gates": []
+}

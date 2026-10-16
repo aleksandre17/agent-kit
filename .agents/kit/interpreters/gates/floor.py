@@ -162,8 +162,7 @@ def _layout_floor_present(ctx, params):
     if not rows and not errors:
         return [f"no enabled capability ships a layout document named {params['document']!r}"]
     through = getattr(ctx, "through", None) or {}
-    rows, unmeasured = observed(rows, [p["root"] for p in ctx.manifest.planes
-                                       if p["class"] == ephemeral.OBSERVED])
+    rows, unmeasured = observed(rows, [ctx.manifest.plane(ephemeral.OBSERVED)])
     for entry in unmeasured:
         print(f"        NOT MEASURED  {entry['path']}  (observed state, which no version control carries"
               + (f"; this check runs through {through['id']}, whose clone is declared "

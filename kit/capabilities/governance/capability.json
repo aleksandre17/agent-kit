@@ -17,9 +17,7 @@
   "conflicts": [],
   "declares": {
     "detectors": [
-      "git-repository",
-      "node-workspace",
-      "python-project"
+      "git-repository"
     ],
     "schemas": [
       "project",
@@ -275,8 +273,13 @@
       "id": "FF-PLANE-WRITER",
       "kind": "plane-held-by-its-writer",
       "params": {
-        "classes": ["vendor", "projection"],
-        "writers": ["an-interactive-session"],
+        "classes": [
+          "vendor",
+          "projection"
+        ],
+        "writers": [
+          "an-interactive-session"
+        ],
         "instead": {
           "vendor": "take a newer kit with `upgrade`, or fix the kit upstream; the pinned copy equals its lock.",
           "projection": "change the declaration the page is generated from, then `render`."

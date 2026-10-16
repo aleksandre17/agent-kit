@@ -26,6 +26,7 @@ from harness import KIT, LOCK, Fixtures, install_target, planned  # noqa: I001 -
 import space  # noqa: E402 -- the one home for a declared empty space
 
 import pin  # noqa: E402
+import sources  # noqa: E402
 import resolver  # noqa: E402
 from manifest import Manifest  # noqa: E402
 
@@ -162,7 +163,7 @@ class HostFloor(Fixtures, unittest.TestCase):
             self.skipTest(f"revision {OLD_SHAPE_REVISION} is not in this clone's history")
         # The OLD release is run by its OWN interpreter, as a host given 0.1.5 ran it: its
         # declarations read by today's code would be a shape no release ever had.
-        old, scratch = pin.fetched(f"git+{KIT.parent.as_posix()}@{OLD_SHAPE_REVISION}"
+        old, scratch = sources.fetched(f"git+{KIT.parent.as_posix()}@{OLD_SHAPE_REVISION}"
                                    f"#subdirectory=kit")
         self._trash.append(scratch)
         host = self.host()

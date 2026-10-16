@@ -44,20 +44,10 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
-import re
-import shutil
-import stat
-import subprocess
-import sys
-import tarfile
-import tempfile
 from pathlib import Path, PurePosixPath
 
 import lockfile
 from errors import KitError
-from manifest import Manifest
-from workspace import Workspace
 
 #: The install mode whose target IS the pinned kit. Found through the declarations, never by a
 #: path constant -- the same rule the estate's own mode follows.
@@ -76,11 +66,6 @@ UNRELEASED = "unreleased"
 #: sentence, one home: every surface that states a release identity prints exactly this.
 UNSIGNED = "authenticity NOT ESTABLISHED (the kit's own lock carries no signature)"
 
-#: A release source naming a revision of a repository, in the form the Python packaging field
-#: standardised for exactly this (PEP 508 / pip's VCS form): `git+<repo>@<rev>#subdirectory=<dir>`.
-_VCS = re.compile(r"^git\+(?P<repo>.+)@(?P<rev>[^@#]+)(#subdirectory=(?P<sub>[^#]+))?$")
-
-
 class ReleaseError(KitError):
     """A kit that cannot state what it is was asked to be pinned, a pinned kit was asked to
     re-deliver itself while it no longer equals its own lock, or a source that claims to be a
@@ -93,13 +78,8 @@ def digest_of(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def is_source(text: str) -> bool:
-    """Whether a `--kit` value names a release SOURCE (a revision) rather than a directory."""
-    return bool(_VCS.match(text or ""))
-
-
 # -- where a pinned kit and its lock sit ---------------------------------------------------------
-def seats(manifest: Manifest):
+def seats(manifest):
     """(tree target, lock target) as governance DECLARES them, or None for a kit that pins
     nothing. Both are host-relative; neither is ever spelled in an interpreter."""
     found = {item["mode"]: item["target"] for c in manifest.capabilities for item in c.installs
@@ -109,7 +89,7 @@ def seats(manifest: Manifest):
     return found[MODE], found[LOCK_MODE]
 
 
-def lock_file(manifest: Manifest) -> Path:
+def lock_file(manifest) -> Path:
     """The lock THIS kit is judged against, as a path on disk.
 
     An upstream kit carries its lock inside its own tree (`ships.lock`). A PINNED copy does not:
@@ -127,14 +107,14 @@ def lock_file(manifest: Manifest) -> Path:
 
 
 # -- reading a kit -----------------------------------------------------------------------------
-def reading(manifest: Manifest) -> dict:
+def reading(manifest) -> dict:
     """The kit as it stands against the lock it is judged by. Pure over the kit's own tree and
     the one lock `lock_file` names.
 
     `unresolved` are the survey's own non-`matched` rows: paths the kit cannot ship at all.
     `drift` is the comparison with the recorded lock: paths on which this tree and its lock
     disagree. A kit is a RELEASE only when both are empty."""
-    kit = Workspace(manifest.root)
+    kit = manifest.files()
     lock = lock_file(manifest)
     rows = lockfile.survey(manifest, kit)
     unresolved = [row for row in rows if row["state"] != lockfile.MATCHED]
@@ -151,7 +131,7 @@ def reading(manifest: Manifest) -> dict:
             "released": intact and recorded["kit_version"] == manifest.version}
 
 
-def identity(manifest: Manifest) -> str:
+def identity(manifest) -> str:
     """One line that says what this kit IS as a release, for every surface that must say it."""
     seen = reading(manifest)
     # What the host TOOK is stated beside the release, never folded into it (ADR-018 decision 5).
@@ -168,7 +148,7 @@ def identity(manifest: Manifest) -> str:
             f"so it is no release")
 
 
-def _require_shippable(manifest: Manifest, seen: dict) -> None:
+def _require_shippable(manifest, seen: dict) -> None:
     if seen["unresolved"]:
         raise ReleaseError(
             f"{manifest.root.as_posix()}: this kit cannot state what it is, so it cannot be "
@@ -178,7 +158,7 @@ def _require_shippable(manifest: Manifest, seen: dict) -> None:
             "then deliver it again")
 
 
-def lock_text(manifest: Manifest, seen: dict, moment: str) -> str:
+def lock_text(manifest, seen: dict, moment: str) -> str:
     """The lock a delivery leaves beside the pinned tree. A release carries its OWN lock verbatim
     (its identity is that text); a working tree carries a fresh reading labelled `+unreleased`,
     validated against the lock schema like any reading the kit writes down.
@@ -203,11 +183,11 @@ def lock_text(manifest: Manifest, seen: dict, moment: str) -> str:
 
 
 # -- the install modes: foresee, apply ---------------------------------------------------------
-def _same_root(manifest: Manifest, ws: Workspace, tree: str) -> bool:
+def _same_root(manifest, ws, tree: str) -> bool:
     return manifest.root.resolve() == ws.path(tree).resolve()
 
 
-def foresee(manifest: Manifest, ws: Workspace, tree: str, lock: str) -> str:
+def foresee(manifest, ws, tree: str, lock: str) -> str:
     """What delivering this kit to the host's `tree` and lock seat would do -- decided ONCE,
     before any byte moves, so a refusal lands in the plan and never half-way through an install.
     The tree and its lock are one act, so both modes ask this one question.
@@ -230,7 +210,7 @@ def foresee(manifest: Manifest, ws: Workspace, tree: str, lock: str) -> str:
         return "keep"
     if not ws.exists(tree.rstrip("/")):
         return "create"
-    failures, _pinned = verify(ws, tree, lock)
+    failures, _pinned = verify(manifest, ws, tree, lock)
     if failures:
         return "replace"
     held = ws.read_json(lock)
@@ -240,7 +220,7 @@ def foresee(manifest: Manifest, ws: Workspace, tree: str, lock: str) -> str:
     return "keep" if same else "replace"
 
 
-def foresee_lock(manifest: Manifest, ws: Workspace, tree: str, lock: str) -> str:
+def foresee_lock(manifest, ws, tree: str, lock: str) -> str:
     """The seat's disposition follows the tree's -- one act, one decision -- except that a seat is
     created where none stood."""
     if foresee(manifest, ws, tree, lock) == "keep" and ws.exists(lock):
@@ -248,7 +228,7 @@ def foresee_lock(manifest: Manifest, ws: Workspace, tree: str, lock: str) -> str
     return "replace" if ws.exists(lock) else "create"
 
 
-def deliver(manifest: Manifest, ws: Workspace, tree: str, moment: str) -> dict:
+def deliver(manifest, ws, tree: str, moment: str) -> dict:
     """Replace `tree` of the host WHOLE with this kit: every path its survey accounts for,
     verbatim. The tree is the release; a stray file in it would make the pinned copy something no
     release describes, so the swap leaves nothing else behind. The lock is the other half of the
@@ -258,13 +238,13 @@ def deliver(manifest: Manifest, ws: Workspace, tree: str, moment: str) -> dict:
     if _same_root(manifest, ws, tree):
         return {"released": seen["released"], "count": len(seen["rows"]),
                 "lock": digest_of(seen["lock_text"])}
-    source = Workspace(manifest.root)
+    source = manifest.files()
     text = lock_text(manifest, seen, moment)
     ws.write_tree(tree, {row["path"]: source.read_bytes(row["path"]) for row in seen["rows"]})
     return {"released": seen["released"], "count": len(seen["rows"]), "lock": digest_of(text)}
 
 
-def deliver_lock(manifest: Manifest, ws: Workspace, tree: str, lock: str, moment: str) -> str:
+def deliver_lock(manifest, ws, tree: str, lock: str, moment: str) -> str:
     """Write the lock the host was given at its seat, and return its digest. A release leaves its
     own lock verbatim; a working tree leaves its labelled fresh reading."""
     seen = reading(manifest)
@@ -275,84 +255,20 @@ def deliver_lock(manifest: Manifest, ws: Workspace, tree: str, lock: str, moment
     return digest_of(text)
 
 
-def verify(ws: Workspace, tree: str, lock: str) -> tuple:
+def verify(manifest, ws, tree: str, lock: str) -> tuple:
     """(failures, pinned manifest or None): the pinned tree against the lock the host was given."""
     if not ws.exists(tree.rstrip("/") + "/MANIFEST.json"):
         return [f"{tree}: no pinned kit -- this host cannot run a verb by itself"], None
     try:
-        pinned = Manifest(ws.path(tree))
+        pinned = manifest.kit_at(ws.path(tree))
         if not ws.exists(lock):
             return [f"{lock}: the host holds no lock for its pinned kit, so nothing states what "
                     f"it is"], pinned
         recorded = ws.read_json(lock)
-        rows = lockfile.survey(pinned, Workspace(ws.path(tree)))
+        rows = lockfile.survey(pinned, pinned.files())
     except (KitError, ValueError) as broken:
         return [f"{tree}: the pinned kit cannot state what it is -- {broken}"], None
     return ([f"{tree}{path}: {state} -- {why}"
              for state, path, why in lockfile.compare(recorded, rows)], pinned)
 
 
-# -- a release source --------------------------------------------------------------------------
-def fetch(source: str, into: Path) -> Path:
-    """A release, read from a DECLARED revision into `into`, and returned only if it IS one.
-
-    `git+<repo>@<rev>#subdirectory=<dir>` is read with `git archive` at exactly that revision --
-    never a working tree, and with nothing the standard library and git cannot stand behind."""
-    vcs = _VCS.match(source)
-    if vcs is None:
-        raise ReleaseError(f"release source {source!r}: not of the form "
-                           f"git+<repo>@<rev>#subdirectory=<dir>")
-    repo, rev, sub = vcs["repo"], vcs["rev"], (vcs["sub"] or ".").strip("/")
-    if not Path(repo).is_dir():
-        # A repository that is not on this machine (https://, ssh://, git@host:, file://) is
-        # cloned bare into the scratch first: `git archive --remote` is refused by most hosts,
-        # and what is read is still exactly the named revision, never a working tree.
-        local = into / "source.git"
-        cloned = subprocess.run(["git", "clone", "--bare", "--quiet", repo, str(local)],
-                                capture_output=True, text=True)
-        if cloned.returncode != 0:
-            raise ReleaseError(f"release source {source!r}: the repository could not be cloned -- "
-                               f"{cloned.stderr.strip()}")
-        repo = str(local)
-    archive = into / "release.tar"
-    done = subprocess.run(["git", "-C", repo, "archive", "--format=tar", "-o", str(archive),
-                           rev, sub], capture_output=True, text=True)
-    if Path(repo) == into / "source.git":
-        remove_tree(into / "source.git")  # read: only the named revision's bytes go on
-    if done.returncode != 0:
-        raise ReleaseError(f"release source {source!r}: git archive refused -- "
-                           f"{done.stderr.strip()}")
-    with tarfile.open(archive) as tar:
-        tar.extractall(into / "tree", filter="data")
-    kit = (into / "tree" / sub).resolve()
-    if not (kit / "MANIFEST.json").is_file():
-        raise ReleaseError(f"release source {source!r}: no MANIFEST.json at {sub!r}")
-    seen = reading(Manifest(kit))
-    if not seen["released"]:
-        raise ReleaseError(
-            f"release source {source!r} is not a release: {len(seen['drift'])} path(s) differ "
-            f"from its own lock -- " + ", ".join(f"{p} ({s})" for s, p, _ in seen["drift"][:5]))
-    return kit
-
-
-def remove_tree(path: Path) -> None:
-    """Remove a scratch tree, read-only files included: a git object store marks its packs
-    read-only, and on Windows a plain removal leaves them behind, and the scratch with them."""
-    def writable(func, target, _exc):
-        os.chmod(target, stat.S_IWRITE)
-        func(target)
-    if sys.version_info >= (3, 12):
-        shutil.rmtree(path, onexc=writable)
-    else:
-        shutil.rmtree(path, onerror=writable)
-
-
-def fetched(source: str) -> tuple:
-    """(kit, scratch): `fetch` into a fresh directory OUTSIDE every host. The caller removes
-    `scratch` when the run ends, refused or not."""
-    scratch = Path(tempfile.mkdtemp(prefix="kit-release-"))
-    try:
-        return fetch(source, scratch), scratch
-    except BaseException:
-        remove_tree(scratch)
-        raise

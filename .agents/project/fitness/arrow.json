@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "summary": "This host's arrow over the kit it publishes, measured from the tree at 371a00a before it was declared: the interpreters are imported flat (every interpreter directory is on the path), so a referenced module name is located by trying each interpreter directory in turn. Verbs are the application layer and sit on top; gates judge and observers read; ports are the edge; the top-level modules are the shared core. Where the tree already runs against a rule, `check` names the edge -- it is not hidden by a narrower rule.",
+  "summary": "This host's arrow over the kit it publishes: the interpreters are imported flat (every interpreter directory is on the path), so a referenced module name is located by trying each interpreter directory in turn. Verbs are the application layer and sit on top; gates judge and observers read; ports are the edge, reached by the core only through the composition root (the entry point and the context it builds); the families a registry discovers (install modes, projection shapes, readers, resolvers, evidence kinds, proofs, units of spend) are plugins on the core. Where the tree already runs against a rule, `check` names the edge -- it is not hidden by a narrower rule.",
   "imports": [
     {
       "id": "python-module",
@@ -11,7 +11,14 @@
         "kit/interpreters/verbs/{ref}.py",
         "kit/interpreters/gates/{ref}.py",
         "kit/interpreters/ports/{ref}.py",
-        "kit/interpreters/observers/{ref}.py"
+        "kit/interpreters/observers/{ref}.py",
+        "kit/interpreters/modes/{ref}.py",
+        "kit/interpreters/shapes/{ref}.py",
+        "kit/interpreters/readers/{ref}.py",
+        "kit/interpreters/resolvers/{ref}.py",
+        "kit/interpreters/evidence/{ref}.py",
+        "kit/interpreters/proofs/{ref}.py",
+        "kit/interpreters/spend/{ref}.py"
       ],
       "proves": {
         "text": "import render as render_verb\nfrom errors import KitError\n    import hostlock  # local",
@@ -48,9 +55,19 @@
       "paths": "^kit/interpreters/ports/"
     },
     {
+      "id": "root",
+      "within": "kit/interpreters",
+      "paths": "^kit/interpreters/(cli|context)\\.py$"
+    },
+    {
+      "id": "plugins",
+      "within": "kit/interpreters",
+      "paths": "^kit/interpreters/(modes|shapes|readers|resolvers|evidence|proofs|spend)/"
+    },
+    {
       "id": "base",
       "within": "kit/interpreters",
-      "paths": "^kit/interpreters/[^/]+\\.py$"
+      "paths": "^kit/interpreters/(?!cli\\.py$|context\\.py$)[^/]+\\.py$"
     }
   ],
   "rules": [
@@ -58,10 +75,11 @@
       "id": "verbs-sit-on-top",
       "from": "verbs",
       "may": [
-        "verbs",
+        "base",
         "gates",
         "ports",
-        "base"
+        "root",
+        "verbs"
       ],
       "because": "a verb composes the machinery; it reads receipts through the core, never an observer directly.",
       "instead": "reach an observer through the core module that owns the reading.",
@@ -133,18 +151,55 @@
       "from": "base",
       "may": [
         "base",
-        "ports",
         "observers"
       ],
-      "because": "the core is what verbs and gates are built from; a core module that imports one is a cycle wearing a layer's name.",
-      "instead": "inject the behaviour through a port or a declared registry.",
+      "because": "the core is what verbs and gates are built from, and it depends on the world only through the ports the composition root hands it: a core module that imports a verb is a cycle wearing a layer's name, and one that imports a port has chosen its concrete adapter for itself.",
+      "instead": "reach the port through the context (`ctx.workspace`, `ctx.manifest`, `ctx.clock`), or move what is not I/O into the core; inject behaviour through a declared registry.",
       "proves": {
         "path": "kit/interpreters/x.py",
-        "to": "kit/interpreters/verbs/check.py"
+        "to": "kit/interpreters/ports/workspace.py"
       },
       "admits": {
         "path": "kit/interpreters/x.py",
-        "to": "kit/interpreters/ports/clock.py"
+        "to": "kit/interpreters/errors.py"
+      }
+    },
+    {
+      "id": "the-root-composes",
+      "from": "root",
+      "may": [
+        "root",
+        "base",
+        "ports",
+        "observers"
+      ],
+      "because": "the entry point and the context are where concrete ports are chosen and handed in; they compose the core and never reach a verb, a gate or a plugin by name.",
+      "instead": "reach a verb or a plugin through its discovered registry.",
+      "proves": {
+        "path": "kit/interpreters/context.py",
+        "to": "kit/interpreters/verbs/check.py"
+      },
+      "admits": {
+        "path": "kit/interpreters/context.py",
+        "to": "kit/interpreters/ports/workspace.py"
+      }
+    },
+    {
+      "id": "plugins-stand-on-the-core",
+      "from": "plugins",
+      "may": [
+        "plugins",
+        "base"
+      ],
+      "because": "a plugin answers one declared kind for the core that discovered it; one that reached a verb, a gate or a port would make the registry depend on what it serves.",
+      "instead": "take what is needed from a core module, or receive it from the caller.",
+      "proves": {
+        "path": "kit/interpreters/shapes/x.py",
+        "to": "kit/interpreters/ports/workspace.py"
+      },
+      "admits": {
+        "path": "kit/interpreters/shapes/x.py",
+        "to": "kit/interpreters/template.py"
       }
     }
   ]

@@ -33,7 +33,7 @@ import doors
 import estate as estate_module
 import hostlock
 import plan as plan_module
-import runtime as runtime_port
+import serving
 from errors import KitError
 
 SUMMARY = "hand a path the kit shipped to the host, through a signed door"
@@ -72,7 +72,7 @@ def _transfers(ctx, recorded, stewards, paths) -> list:
     # A file served to a runtime is a path this host WAS given, recorded in the projection plane
     # rather than the estate (ADR-013). Reading only the estate would answer "never given it" --
     # a confident lie about a file carrying the kit's bytes. Asked of the port that owns the record.
-    served = runtime_port.served_rows(ctx, ctx.enabled_capabilities())
+    served = serving.served_rows(ctx, ctx.enabled_capabilities())
     classes = {plane["class"] for plane in ctx.manifest.planes}
     found, problems = [], []
     for path in paths:

@@ -41,7 +41,6 @@ import lockfile
 import pin
 import version_range
 from errors import KitError
-from workspace import Workspace
 
 #: The id under which a capability ships the provenance declaration.
 DOCUMENT = "provenance"
@@ -203,7 +202,7 @@ def digest(ctx, capability, issued=None) -> str:
     take = ctx.manifest.take_of(capability.id)
     if take is not None:
         return tree_digest(take[0], take[1], (capability.raw.get(CLAIM) or {}).get("signature"))
-    kit = Workspace(ctx.manifest.root)
+    kit = ctx.manifest.files()
     issued = _issued(ctx) if issued is None else issued
     skip = set(issued) | {ctx.manifest.raw_ships()["lock"]}
     signature = (capability.raw.get(CLAIM) or {}).get("signature")

@@ -22,7 +22,7 @@ from pathlib import Path
 
 from harness import Fixtures, host_digest
 
-import runtime as runtime_port  # noqa: E402
+import serving  # noqa: E402
 from manifest import Manifest  # noqa: E402
 
 from test_adapters import ADAPTERS, UNACTIVATED, adapted_kit, surface_documents, surfaces_of  # noqa: E402
@@ -30,7 +30,7 @@ from test_adapters import ADAPTERS, UNACTIVATED, adapted_kit, surface_documents,
 KIT = adapted_kit(adapters=UNACTIVATED)  # about scoped law, not activation
 MANIFEST = Manifest(KIT)
 CAPABILITIES = [c.raw for c in MANIFEST.capabilities]
-SERVED = next(i for c in CAPABILITIES for i in c["installs"] if i.get("shape") == runtime_port.SHAPE)
+SERVED = next(i for c in CAPABILITIES for i in c["installs"] if i.get("shape") == serving.SHAPE)
 SPEC = SERVED["serves"]
 SCOPED = next(v for v in SPEC["views"] if "scopes" in v)
 SCOPE_INSTALL = next(i for c in CAPABILITIES for i in c["installs"]
@@ -107,9 +107,9 @@ class ScopedLaw(Fixtures, unittest.TestCase):
                 said = refused.stdout + refused.stderr
                 if bad in ("/abs", "."):
                     # the schema's path grammar may refuse first; either way nothing is served
-                    self.assertTrue(runtime_port.ScopeRefused.code in said or "law-scope" in said, said)
+                    self.assertTrue(serving.ScopeRefused.code in said or "law-scope" in said, said)
                 else:
-                    self.assertIn(runtime_port.ScopeRefused.code, said)
+                    self.assertIn(serving.ScopeRefused.code, said)
                 after = {k: v for k, v in host_digest(host).items() if not k.startswith(EPHEMERAL)}
                 self.assertEqual(before, after)
 

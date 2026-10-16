@@ -36,7 +36,7 @@ import hostlock
 import init as init_verb
 import reconcile
 import relocation
-from errors import KitError, PendingApproval
+from errors import KitError
 
 SUMMARY = "reconcile what was shipped, what the host has, and what this kit ships -- then install"
 MUTATES = True

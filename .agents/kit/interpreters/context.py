@@ -48,8 +48,8 @@ class Context:
     def _served_paths(self) -> set:
         """Every path the kit's own record says it served -- the record, read from every
         capability the kit composes (never the enabled set, which is itself resolved from facts)."""
-        import runtime as runtime_port  # the port reads the record; imported where it is needed
-        return set(runtime_port.prior_rows(self, self.manifest.capabilities))
+        import serving  # the record is read where it is needed
+        return set(serving.prior_rows(self, self.manifest.capabilities))
 
     # -- boundary ---------------------------------------------------------------------------
     def boundary(self) -> dict:
