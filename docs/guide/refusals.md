@@ -1,6 +1,6 @@
 # Refusals
 
-A refusal is a decision, not an obstacle (rule `engineering@1.1.0#a-refusal-is-final`). Remove its
+A refusal is a decision, not an obstacle (rule `engineering@1.1.1#a-refusal-is-final`). Remove its
 cause and ask again through the same door. Never retry through another tool, another path or another
 agent.
 
