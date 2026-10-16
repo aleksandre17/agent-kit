@@ -122,7 +122,10 @@ def _members(view_spec: dict, view: dict, produced: dict, capabilities) -> list:
             continue
         description = record.get(view_spec.get("describes", "")) or view_spec.get("undescribed", "")
         fields = {"id": identity, "description": description, "body": produced[path]}
-        members.append({**fields, "quoted": {k: _quoted(v) for k, v in fields.items()}})
+        # What the host tells its runtime about this instance (a model, a tool set), row by row: the
+        # adapter's template spells each row in its product's own field names.
+        runtime = decorated([{"id": row["id"], "value": row["value"]} for row in record.get("runtime") or []])
+        members.append({**fields, "quoted": {k: _quoted(v) for k, v in fields.items()}, "runtime": runtime})
     return members
 
 

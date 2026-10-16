@@ -38,7 +38,20 @@
         "Domain-Driven Design, for where a boundary belongs",
         "arc42 and MADR, for an architecture that can be read and dated",
         "fitness functions, for a rule that holds without a human remembering it"
-      ]
+      ],
+      "profile": {
+        "tools": [
+          "read",
+          "search"
+        ],
+        "may_change": "nothing",
+        "context": [
+          "the laws",
+          "the decisions home",
+          "the engineering-standards skill"
+        ],
+        "task_class": "judgement"
+      }
     },
     {
       "id": "debugger",
@@ -55,7 +68,20 @@
         "the five whys, held to evidence rather than to plausibility",
         "observability's three pillars, for a system that can be asked rather than inferred",
         "post-mortem practice, for a finding that outlives the incident"
-      ]
+      ],
+      "profile": {
+        "tools": [
+          "read",
+          "search",
+          "run"
+        ],
+        "may_change": "its-own-tree",
+        "context": [
+          "the failing evidence",
+          "the laws"
+        ],
+        "task_class": "judgement"
+      }
     },
     {
       "id": "orchestrator",
@@ -72,7 +98,21 @@
         "work-in-progress limits, for a queue that reveals its own bottleneck",
         "the strangler fig, for a migration that is green at every step",
         "blameless hand-off, for a boundary crossed without loss"
-      ]
+      ],
+      "profile": {
+        "tools": [
+          "read",
+          "search",
+          "delegate"
+        ],
+        "may_change": "nothing",
+        "context": [
+          "the route table",
+          "the board",
+          "the packet fields"
+        ],
+        "task_class": "judgement"
+      }
     },
     {
       "id": "executor",
@@ -89,7 +129,21 @@
         "trunk-based development, for a step small enough to be safe",
         "idempotent apply, for a run that can be repeated without fear",
         "the plan-then-apply split, for an effect nobody saw coming being nobody's excuse"
-      ]
+      ],
+      "profile": {
+        "tools": [
+          "read",
+          "search",
+          "edit",
+          "run"
+        ],
+        "may_change": "its-own-tree",
+        "context": [
+          "the packet",
+          "the laws"
+        ],
+        "task_class": "assisted"
+      }
     },
     {
       "id": "dispatch-worker",
@@ -106,7 +160,72 @@
         "A2A's task model, for an artifact that arrives as an artifact rather than as a status message",
         "the Humble Object pattern, for a boundary piece thin enough that nothing needs testing inside it",
         "the null renderer, for a surface that shows a declared absence rather than an invented answer"
-      ]
+      ],
+      "profile": {
+        "tools": [
+          "read",
+          "edit",
+          "run"
+        ],
+        "may_change": "its-own-tree",
+        "context": [
+          "the packet"
+        ],
+        "task_class": "assisted"
+      }
+    },
+    {
+      "id": "reviewer",
+      "seam": "Whether a change meets what it claims, read against oracles -- the tests, the gates, the record -- and never against its author's account. It changes when the definition of 'proven' changes.",
+      "duty": [
+        "run the oracles before reading the prose",
+        "name every finding with its evidence, its owner and its priority",
+        "refuse a verdict the evidence does not carry: NOT_RUN is not PASS",
+        "end in an improvement record, not only a verdict"
+      ],
+      "reference_class": [
+        "the review protocol of the engineering-standards skill",
+        "the verdict method: invariants binary, criteria evidence-bound",
+        "change-record coverage over a review range"
+      ],
+      "profile": {
+        "tools": [
+          "read",
+          "search",
+          "run"
+        ],
+        "may_change": "nothing",
+        "context": [
+          "the change and its record",
+          "the laws",
+          "the gates"
+        ],
+        "task_class": "judgement"
+      }
+    },
+    {
+      "id": "explorer",
+      "seam": "Finding where something is and what it says, read-only, and returning pointers -- never copies. It changes when what counts as a sufficient answer changes.",
+      "duty": [
+        "answer with paths and lines, not with pasted text",
+        "say what was not searched",
+        "stop at the first sufficient answer"
+      ],
+      "reference_class": [
+        "progressive disclosure: pointers over copies",
+        "the cheapest sufficient search"
+      ],
+      "profile": {
+        "tools": [
+          "read",
+          "search"
+        ],
+        "may_change": "nothing",
+        "context": [
+          "the question"
+        ],
+        "task_class": "assisted"
+      }
     }
   ]
 }

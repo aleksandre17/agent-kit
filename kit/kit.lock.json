@@ -401,7 +401,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "payload",
-      "digest": "2dfc94f7b741fa944f21d769454fc6b47081d6a966ac6f833349c47ea975c54e",
+      "digest": "86ca804a81b1df75fe5d5a67ebc986a7a46ff896802679e4b806e5ba7e5eb6cb",
       "path": "capabilities/roles/payload/ROLE.md.mustache"
     },
     {
@@ -1169,7 +1169,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "66ca71beb8ea28f0974f14d9a01e796d97bf6d007ffece2f29a9a50b8547ce24",
+      "digest": "d4dc9775b398b99f33918ae3e08777d8b72bae9b6050b2c3567d7f1a75103355",
       "path": "interpreters/shapes/serve.py"
     },
     {
@@ -1409,7 +1409,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "6c775e075d49dd8754004f27fbfe8716f022f99bf4f93986c933ef0b4c183539",
+      "digest": "e4dc0909fdb0c58b86396520e4c73f4f537bb62875afe7c0017b925153b58aaf",
       "path": "roles/archetypes.json"
     },
     {
@@ -1439,7 +1439,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "74117c359e044fabdcb135d2787de89e1ef34ba000b999dfd036605f52b37a5c",
+      "digest": "2bcef5a99e5562c7bc329cf55c7dd83ade20256a7376e0787d5dd4959c1482ed",
       "path": "schemas/archetype.schema.json"
     },
     {
@@ -1902,5 +1902,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T13:27:20+00:00"
+  "taken_at": "2026-10-16T13:31:46+00:00"
 }

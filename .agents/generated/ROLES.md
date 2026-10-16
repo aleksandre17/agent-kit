@@ -20,7 +20,7 @@ a page that simply ended would read exactly like a page whose roles failed to re
 
 **No archetype has been taken up by this host.**
 
-**5 declared archetype(s) are not instanced here.** Available, and this host has taken none
+**7 declared archetype(s) are not instanced here.** Available, and this host has taken none
 of them up.
 
 They are not named on this page, deliberately. Which roles exist follows from what the work IS,

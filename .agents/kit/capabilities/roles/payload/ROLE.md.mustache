@@ -27,6 +27,15 @@ an exit code, under `FF-ROLE-BASE`.
 1. {{.}}
 {{/duty}}
 
+## Profile — what this role operates with
+
+{{#profile}}
+- tools: {{#tools}}{{.}} {{/tools}}
+- may change: {{may_change}}
+- context: {{#context}}{{.}}; {{/context}}
+- class of work: {{task_class}} (the route table decides its model and effort)
+{{/profile}}
+
 ## Reference class — what this role is measured against
 
 {{#reference_class}}

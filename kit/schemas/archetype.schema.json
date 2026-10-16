@@ -4,19 +4,35 @@
   "description": "One document, two lists, and the same rule holds both: nothing here may be written in any repository's vocabulary. An archetype states what is true of a role AS A KIND -- wherever the discipline is practised -- so it can be shipped to a host that has not been built yet. The protocol states what every definition carries whatever its role is, and it lives here ONCE so that it is RENDERED into every definition rather than restated in each. This shape is declared by the kit and authored by the host in exactly the same words: a host-origin role has no base to overlay, so it declares an archetype of its own rather than a second kind of document. Two sources, one grammar.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "protocol", "archetypes"],
+  "required": [
+    "schema_version",
+    "protocol",
+    "archetypes"
+  ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
     "protocol": {
       "description": "The binding lines every definition carries, whichever archetype it composes. Declared once, projected into all -- which is the whole cure: a line that is rendered cannot be restated, and a line that cannot be restated cannot drift. A host may add lines and may not edit these, because a source it does not own is not a source it can silently disagree with.",
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "says"],
+        "required": [
+          "id",
+          "says"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "says": { "type": "string", "minLength": 1 }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -25,9 +41,17 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "seam", "duty", "reference_class"],
+        "required": [
+          "id",
+          "seam",
+          "duty",
+          "reference_class"
+        ],
         "properties": {
-          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
           "seam": {
             "description": "The ONE reason this role has to change, in one sentence. A role with two is two roles wearing one name, and the archetype is where that is caught -- before a host has hired anybody.",
             "type": "string",
@@ -37,13 +61,65 @@
             "description": "What wins when duties compete, in order. An ordered list rather than a set, because every interesting failure of a role is two of its duties disagreeing and nobody having said which one yields.",
             "type": "array",
             "minItems": 1,
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           },
           "reference_class": {
             "description": "The proven exemplars this role is measured against -- the field's own best form, named, so that a definition is benchmarked rather than merely described.",
             "type": "array",
             "minItems": 1,
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "profile": {
+            "description": "What a role IS as an operating profile, not a persona: the kinds of tool it uses, what it may change, the context it is given, and the class of work it is (a task class, so the route decides its model and effort). Product names never appear here: a host's overlay states its runtime's own model and tool strings (`runtime` rows), which its adapter serves.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "tools",
+              "may_change",
+              "context",
+              "task_class"
+            ],
+            "properties": {
+              "tools": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "read",
+                    "search",
+                    "edit",
+                    "run",
+                    "delegate",
+                    "web"
+                  ]
+                }
+              },
+              "may_change": {
+                "type": "string",
+                "enum": [
+                  "nothing",
+                  "its-own-tree",
+                  "the-host"
+                ]
+              },
+              "context": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "task_class": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
         }
       }
