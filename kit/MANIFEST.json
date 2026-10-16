@@ -188,6 +188,8 @@
     "spawn-packets": "schemas/spawn-packets.schema.json",
     "change-record": "schemas/change-record.schema.json",
     "requirements": "schemas/requirements.schema.json",
-    "execution-graph": "schemas/execution-graph.schema.json"
+    "execution-graph": "schemas/execution-graph.schema.json",
+    "extension-points": "schemas/extension-points.schema.json",
+    "extension-ledger": "schemas/extension-ledger.schema.json"
   }
 }

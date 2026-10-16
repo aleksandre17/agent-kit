@@ -212,6 +212,13 @@
       "path": ".agents/project/evaluation/readings.json"
     },
     {
+      "capability": "governance",
+      "class": "binding",
+      "digest": "14c5f8f82500e821fc44a2b03ee882ed684cdf9a250546fad6be6076229ac838",
+      "mode": "seed",
+      "path": ".agents/project/extensions.json"
+    },
+    {
       "capability": "fitness",
       "class": "binding",
       "digest": "5735a970647c19652f59097fcb9358987158607dc6f71d31118644832c82ea63",
@@ -524,5 +531,5 @@
       "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-10-16T13:20:49+00:00"
+  "taken_at": "2026-10-16T13:29:57+00:00"
 }

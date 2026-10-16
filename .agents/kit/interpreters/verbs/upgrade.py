@@ -33,6 +33,7 @@ from __future__ import annotations
 import doors
 import estate as estate_module
 import hostlock
+import extend as extend_verb
 import init as init_verb
 import reconcile
 import relocation
@@ -122,4 +123,9 @@ def run(ctx, args) -> int:
 
     if getattr(args, "plan", False):
         print(f"upgrade: reconciled; the writes below are {init_verb.SUMMARY}")
-    return init_verb.run(ctx, args)
+    code = init_verb.run(ctx, args)
+    if code == 0 and args.approve and not getattr(args, "plan", False):
+        # A newer template of an extension point is merged three ways into what the host wrote there:
+        # clean merges land, a conflict is reported and the host's file is kept (ADR-024).
+        extend_verb.merge(ctx, args)
+    return code

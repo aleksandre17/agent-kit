@@ -33,7 +33,9 @@
       "record-keeping",
       "position-shape",
       "taken",
-      "law-scope"
+      "law-scope",
+      "extension-points",
+      "extension-ledger"
     ]
   },
   "space": {
@@ -105,7 +107,15 @@
       "mode": "seed",
       "class": "binding",
       "target": ".agents/project/doctrine/laws.md",
-      "source": "seeds/laws.md"
+      "source": "seeds/laws.md",
+      "points": [
+        {
+          "id": "laws",
+          "purpose": "this host's numbered laws, each naming where it is enforced",
+          "cardinality": "one",
+          "merges_into": "the always-loaded briefing (project laws)"
+        }
+      ]
     },
     {
       "mode": "seed",
@@ -118,7 +128,17 @@
     {
       "mode": "space",
       "class": "binding",
-      "target": ".agents/project/doctrine/laws/"
+      "target": ".agents/project/doctrine/laws/",
+      "points": [
+        {
+          "id": "scoped-laws",
+          "purpose": "laws binding in one directory and below it",
+          "cardinality": "many",
+          "named": "{name}.md",
+          "template": "capabilities/governance/payload/extend/scoped-laws.md",
+          "merges_into": "the scoped briefing of the directory a law-scope names"
+        }
+      ]
     },
     {
       "mode": "space",
@@ -182,6 +202,13 @@
       "class": "projection",
       "target": ".agents/generated/INDEX.md",
       "source": "capabilities/governance/payload/RECORDS-MAP.md.mustache"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/extensions.json",
+      "source": "capabilities/governance/payload/extensions-local.json",
+      "validates": "extension-ledger"
     }
   ],
   "relocations": [
@@ -504,6 +531,11 @@
           }
         ]
       }
+    },
+    {
+      "id": "FF-EXTENSIONS",
+      "kind": "extensions-held",
+      "params": {}
     }
   ]
 }

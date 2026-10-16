@@ -45,6 +45,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `doctor` | prove every served hook refuses a throwaway violation, and read what each product fired | nothing |
 | `eject` | hand a path the kit shipped to the host, through a signed door | yes -- `--plan` prints the writes first |
 | `evaluate` | open a judgement for every declared pair that has none, and state the measure | yes -- `--plan` prints the writes first |
+| `extend` | scaffold a host extension from its declared point, list the points, or merge a newer template | yes -- `--plan` prints the writes first |
 | `ground` | record a measured fact with its instrument and paths, or read one back while it still holds | nothing |
 | `guard` | before a command a runtime runs: a destructive one gets a recovery point first (advisory) | nothing |
 | `inherit` | read a host's prior agent system and state what becomes of every path of it | nothing |

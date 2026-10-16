@@ -28,7 +28,15 @@
       "target": ".agents/project/operating/routes.json",
       "source": "capabilities/operating/payload/routes.json",
       "validates": "route-table",
-      "reads_as": "route_table"
+      "reads_as": "route_table",
+      "points": [
+        {
+          "id": "routes",
+          "purpose": "route cells: task class x undo cost -> actor, model, effort, caps",
+          "cardinality": "one",
+          "merges_into": "the dispatch port's route judgement"
+        }
+      ]
     },
     {
       "mode": "space",

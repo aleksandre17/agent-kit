@@ -90,7 +90,15 @@
       "target": ".agents/project/mcp-servers.json",
       "source": "capabilities/runtimes/payload/mcp-servers-local.json",
       "validates": "mcp-servers",
-      "reads_as": "host_mcp_servers"
+      "reads_as": "host_mcp_servers",
+      "points": [
+        {
+          "id": "mcp-servers",
+          "purpose": "this host's MCP servers, by trust",
+          "cardinality": "one",
+          "merges_into": "each product's MCP file and permissions"
+        }
+      ]
     },
     {
       "mode": "seed",
@@ -98,12 +106,38 @@
       "target": ".agents/project/skills.json",
       "source": "capabilities/runtimes/payload/skills-local.json",
       "validates": "skills",
-      "reads_as": "host_skills"
+      "reads_as": "host_skills",
+      "points": [
+        {
+          "id": "skills-declaration",
+          "purpose": "this host's skills and its extensions of published ones",
+          "cardinality": "one",
+          "merges_into": "every product's skill home"
+        }
+      ]
     },
     {
       "mode": "space",
       "class": "binding",
-      "target": ".agents/project/skills/"
+      "target": ".agents/project/skills/",
+      "points": [
+        {
+          "id": "skill",
+          "purpose": "one skill's body (declare its row in skills.json)",
+          "cardinality": "many",
+          "named": "{name}/body.md",
+          "template": "capabilities/runtimes/payload/extend/skill-body.md",
+          "merges_into": "a served skill"
+        },
+        {
+          "id": "standards-chapter",
+          "purpose": "a chapter of this host's engineering standards (its stack, its profile, its invisible line)",
+          "cardinality": "many",
+          "named": "standards/{name}.md",
+          "template": "capabilities/runtimes/payload/extend/standards-chapter.md",
+          "merges_into": "the engineering-standards skill, by `extends`"
+        }
+      ]
     },
     {
       "mode": "seed",

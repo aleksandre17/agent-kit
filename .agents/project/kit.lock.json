@@ -1,17 +1,17 @@
 {
   "algorithm": "sha256",
-  "count": 307,
+  "count": 316,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "6e6961521ea56c4b809fb0515f6cb77bc740467fa2d63e5623c56fd374c11d39",
+      "digest": "b45003c8eda6fd8b5c40536446cfe96d76174927852d0d6d517470f8f2ba6d91",
       "path": "MANIFEST.json"
     },
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "747829e29a548b10d49ded8623626cd1c048817ca6526dcc2b2016bf0ef0b45f",
+      "digest": "55a58a4ad67f5105972e0dd81a083741fc8fe2ed92a480fb46baf368a4920f0e",
       "path": "README.md"
     },
     {
@@ -59,7 +59,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d90c49632aa783e62af2ca2580f0bcc0227f2b6156ecc6e4f67fa5d80f456370",
+      "digest": "5dbbc71adaefeac33db092b1c2d3f66cdaf450039d8d29422feafcc86b2b12f2",
       "path": "capabilities/doctrine/capability.json"
     },
     {
@@ -95,7 +95,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "10faaa6e121511cc402013a9a1e3d6499311221661e198091a0c94bc121d22ac",
+      "digest": "de53bd45c895ae19ad3fafe4f68cd0ebb96516dc502360242dfae8460f747cfb",
       "path": "capabilities/enforcement/capability.json"
     },
     {
@@ -173,7 +173,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "551c25a3af73cedc9aab28f843c5021cb7988bc8f06b9549fd35bc841a2b06bc",
+      "digest": "3c15179588dccf13a3f52f0021b5a80042d993b06a0642384d5cfc5bfc8e0b65",
       "path": "capabilities/governance/capability.json"
     },
     {
@@ -199,6 +199,18 @@
       "class": "payload",
       "digest": "5cd727caff097e27e862d86f4e9a09ea89d044f24b9a41e94cb9f3edba38f508",
       "path": "capabilities/governance/payload/RECORDS-MAP.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "f4ab82bf9272d24bcf1770ef554bfc8e9b2b4d5fd06a04be65ec8a5c45c07b03",
+      "path": "capabilities/governance/payload/extend/scoped-laws.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "14c5f8f82500e821fc44a2b03ee882ed684cdf9a250546fad6be6076229ac838",
+      "path": "capabilities/governance/payload/extensions-local.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -341,7 +353,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "741d419d8d61df51fbdfe26903941de558bf6115b6c2b1c623d457ae02144b14",
+      "digest": "9831ca1e8072965cbc84cf910099447528d2d5d1e40d6307e9d282600ad06762",
       "path": "capabilities/operating/capability.json"
     },
     {
@@ -413,7 +425,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d1c255214626b5e9afd1b979b12866e65da8c0c1fe38f63861f15b695c48dcee",
+      "digest": "0d466d78898a00e03a8ee5f2c0f484c1feae0004960f6e05dfccbb7482544b08",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -433,6 +445,18 @@
       "class": "declaration",
       "digest": "784559404ae6fc7843c6da9eb59b47f926c3a80e7b234c27436126464eaa8b09",
       "path": "capabilities/runtimes/payload/classes-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "4b870729a36ef7175f40a8abec068c9d512245d9a269ad943eb4000995789704",
+      "path": "capabilities/runtimes/payload/extend/skill-body.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "25276175da0c0bf68ab34fe054e50f7022077fc3d65f67ab4103a37ac35adff0",
+      "path": "capabilities/runtimes/payload/extend/standards-chapter.md"
     },
     {
       "accounted_by": "declaration-closure",
@@ -653,6 +677,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "568ed7ea43d1891a0ffacb190b60c34b6cae8dc5a4fa8bb7c88d26eec5f30746",
+      "path": "interpreters/extensions.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "1bd9bc159e392d4dfedce33bd4ba409afed33676542ad7bfef4362b818a5e46a",
       "path": "interpreters/gatekinds.py"
     },
@@ -721,6 +751,12 @@
       "class": "interpreter",
       "digest": "183ba929c013664d2774ae5139d5b888580054b9c028fd6f7b222b52fbf5395b",
       "path": "interpreters/gates/edits.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "5e1ddcdb1a8dcc792b8ea2dc54922df84d940828afbaa521f340af80aba989d8",
+      "path": "interpreters/gates/extended.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1253,6 +1289,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "7d907ee7a2d65343fb494f8a52bd9dd46261f2d518c26c9e2d33ece5e3aafaad",
+      "path": "interpreters/verbs/extend.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "ce357c202364075528a1960f2a02d7f1daa9cf5b630cc92fea2d1b1369ce4bf2",
       "path": "interpreters/verbs/ground.py"
     },
@@ -1355,7 +1397,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "83d83bcfca37c4ba46dffbebf07fb5f67e5fd1b57264a991cc8496296545baf3",
+      "digest": "3d05a57dc1b1eda35ee0418fb35f6f0b59ea1128ac20ac7317782d9aedeac2c9",
       "path": "interpreters/verbs/upgrade.py"
     },
     {
@@ -1421,7 +1463,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "1f7529da62acf0be292feb4050e11771a1ff4c203577cb203f5f7385249a0d44",
+      "digest": "fde6b795a0b7696714ec2daeac435e630e9baa6c9d5c0a2fcc4ee604dc3d655c",
       "path": "schemas/capability.schema.json"
     },
     {
@@ -1543,6 +1585,18 @@
       "class": "declaration",
       "digest": "876f13a32b637553f83b6466cbab6cb77a4cabfacaa10ada16694c4d3e944d47",
       "path": "schemas/execution-graph.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "0874117f7e8f22383dff298480fb08de8e0e72b67b1b7a7f2d2a0fd8f82cc699",
+      "path": "schemas/extension-ledger.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "959c6aa0e01b087da8a925d61408047f7406acd511503a3d990b1dad3b08196e",
+      "path": "schemas/extension-points.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1848,5 +1902,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T13:19:10+00:00"
+  "taken_at": "2026-10-16T13:27:20+00:00"
 }

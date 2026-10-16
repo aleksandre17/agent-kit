@@ -34,7 +34,15 @@
       "target": ".agents/project/doctrine/norms.json",
       "source": "capabilities/doctrine/payload/norms-local.json",
       "validates": "cardinal",
-      "reads_as": "host_norms"
+      "reads_as": "host_norms",
+      "points": [
+        {
+          "id": "norms",
+          "purpose": "this host's own doctrines and rules in the normative tree",
+          "cardinality": "one",
+          "merges_into": "the normative tree (FF-NORMS)"
+        }
+      ]
     },
     {
       "mode": "seed",
@@ -42,7 +50,15 @@
       "target": ".agents/project/doctrine/doctrine.json",
       "source": "capabilities/doctrine/payload/doctrine-local.json",
       "validates": "doctrine",
-      "reads_as": "doctrine_local"
+      "reads_as": "doctrine_local",
+      "points": [
+        {
+          "id": "doctrine-stances",
+          "purpose": "this host's stance on each published address",
+          "cardinality": "one",
+          "merges_into": "the doctrine rolls"
+        }
+      ]
     },
     {
       "mode": "projection",

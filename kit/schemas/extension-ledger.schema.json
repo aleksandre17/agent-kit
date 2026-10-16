@@ -1,0 +1,51 @@
+{
+  "$id": "extension-ledger",
+  "title": "THE EXTENSION LEDGER -- what this host scaffolded at each point, and the template it came from",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "generated": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "point",
+          "path",
+          "template",
+          "base",
+          "by",
+          "at"
+        ],
+        "properties": {
+          "point": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string"
+          },
+          "base": {
+            "type": "string"
+          },
+          "by": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

@@ -607,6 +607,62 @@
             "description": "On a take plane (ADR-018): the kit-relative prefix a taken capability's own declared paths are spelled under; `<namespace><id>/` resolves into that take's directory.",
             "type": "string",
             "minLength": 1
+          },
+          "points": {
+            "description": "The EXTENSION POINTS this install opens: where a host extends the kit, scaffolded on demand by `extend` (ADR-024).",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "purpose",
+                "cardinality",
+                "merges_into"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]*$"
+                },
+                "purpose": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                "cardinality": {
+                  "type": "string",
+                  "enum": [
+                    "one",
+                    "many"
+                  ]
+                },
+                "named": {
+                  "description": "For `many`: the member's path inside the place, with `{name}`.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "template": {
+                  "description": "The payload a member is written from (kit namespace); for `one`, the install's own source.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "required_by": {
+                  "description": "Why the host's profile requires this point answered; absent: optional.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "merges_into": {
+                  "description": "How the kit serves what the host writes here (an overlay, a chapter, an instance, a view).",
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
           }
         }
       }

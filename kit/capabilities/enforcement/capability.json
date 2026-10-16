@@ -27,7 +27,15 @@
       "target": ".agents/project/enforcement/edit-gates.json",
       "source": "capabilities/enforcement/payload/edit-gates-local.json",
       "validates": "edit-gate",
-      "reads_as": "host_edit_gates"
+      "reads_as": "host_edit_gates",
+      "points": [
+        {
+          "id": "edit-gates",
+          "purpose": "this host's calibrated edit gates",
+          "cardinality": "one",
+          "merges_into": "every edit and commit judgement"
+        }
+      ]
     }
   ],
   "gates": [
