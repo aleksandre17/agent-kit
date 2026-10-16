@@ -300,6 +300,17 @@ def fetch(source: str, into: Path) -> Path:
         raise ReleaseError(f"release source {source!r}: not of the form "
                            f"git+<repo>@<rev>#subdirectory=<dir>")
     repo, rev, sub = vcs["repo"], vcs["rev"], (vcs["sub"] or ".").strip("/")
+    if not Path(repo).is_dir():
+        # A repository that is not on this machine (https://, ssh://, git@host:, file://) is
+        # cloned bare into the scratch first: `git archive --remote` is refused by most hosts,
+        # and what is read is still exactly the named revision, never a working tree.
+        local = into / "source.git"
+        cloned = subprocess.run(["git", "clone", "--bare", "--quiet", repo, str(local)],
+                                capture_output=True, text=True)
+        if cloned.returncode != 0:
+            raise ReleaseError(f"release source {source!r}: the repository could not be cloned -- "
+                               f"{cloned.stderr.strip()}")
+        repo = str(local)
     archive = into / "release.tar"
     done = subprocess.run(["git", "-C", repo, "archive", "--format=tar", "-o", str(archive),
                            rev, sub], capture_output=True, text=True)

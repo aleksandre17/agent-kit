@@ -167,6 +167,27 @@ class PinnedKit(Fixtures, unittest.TestCase):
         # The working tree of that repository is not what was read: HEAD is.
         self.assertIn("README.md", refused.stderr)
 
+    def test_279b_a_release_source_on_another_machine_is_cloned_and_read_at_its_revision(self):
+        # A URL, not a directory: what a host names to install straight from where the kit is published.
+        repo = self._temp("kit-published-")
+        subprocess.run(["git", "init", "--quiet", str(repo)], check=True)
+        shutil.copyfile(KIT.parent / ".gitattributes", repo / ".gitattributes")
+        ship(repo / "kit")
+        git = ["git", "-C", str(repo), "-c", "user.name=suite", "-c", "user.email=suite@invalid"]
+        subprocess.run([*git, "add", "."], check=True, capture_output=True)
+        subprocess.run([*git, "commit", "--quiet", "-m", "a release"], check=True)
+        subprocess.run([*git, "tag", "v-test"], check=True)
+        source = f"git+{repo.as_uri()}@v-test#subdirectory=kit"
+        host = self.host()
+        self.assertEqual(3, from_source(source, host, "init").returncode)
+        done = from_source(source, host, "init", "--approve", "acceptance-suite")
+        self.assertEqual(0, done.returncode, said(done))
+        self.assertEqual((KIT / LOCK).read_bytes(), (host / SEAT).read_bytes())
+        missing = from_source(f"git+{(repo.parent / 'nowhere').as_uri()}@v-test#subdirectory=kit",
+                              self.host(), "init")
+        self.assertIn(f"[{CODE}]", missing.stderr)
+        self.assertIn("could not be cloned", missing.stderr)
+
 
 class PinnedComposition(Fixtures, unittest.TestCase):
 

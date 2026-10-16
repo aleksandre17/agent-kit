@@ -35,6 +35,10 @@ python .agents/kit/interpreters/cli.py render --root .     # rebuild every gener
 python platform/kits/agent-kit/kit/interpreters/cli.py upgrade --root . --plan   # take a newer kit
 ```
 
+A kit can also be read straight from where it is published, at an exact revision, instead of a
+submodule: `--kit "git+https://github.com/aleksandre17/agent-kit.git@<tag>#subdirectory=kit"` (it is
+cloned into a scratch outside the host, read with `git archive`, and refused unless it equals its lock).
+
 Three things stay yours to write, because no framework can know them: the project's laws
 (`.agents/project/doctrine/laws.md`), a stance on each published cardinal
 (`.agents/project/doctrine/doctrine.json`), and the build and test commands, declared where a

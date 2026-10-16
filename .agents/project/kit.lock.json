@@ -851,7 +851,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "38d592bf6d8c4dd1a460df8094069958b76c782b607bf152b5529fc6dfa722ad",
+      "digest": "68df87c5ea01fcd26e600db602453357318289aa577eb226d24628e070f3a1ea",
       "path": "interpreters/pin.py"
     },
     {
@@ -1584,5 +1584,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T06:47:35+00:00"
+  "taken_at": "2026-10-16T07:01:06+00:00"
 }

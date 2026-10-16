@@ -128,6 +128,15 @@ Walking `start` on the GeoStat host, and then writing its own text into the entr
   every path, and its `proves` is a password: the commit that declared it was refused. The edit-gate
   declaration is no longer judged by the gates it declares (`declared.homes`); `check` still holds it to
   its schema and calibration. `test_enforcement` 289e.
+- **A release source had to be on this machine.** `--kit git+<repo>@<rev>` ran `git -C <repo> archive`,
+  so a published URL was refused. A repository that is not a local directory is cloned bare into the
+  run's scratch first; the revision is still read with `git archive` and refused unless it equals its
+  lock. `test_pinned_kit` 279b.
+- **Owed, designed, not built: skills.** The conduct bundle's `skill` and `playbook` records are served
+  only as roll entries. Their form in the field is the Agent Skills format (`SKILL.md` with `name` and
+  `description`), which Claude Code reads under `.claude/skills/<name>/`. The shape: an optional `body` on
+  a cardinal record of those genres, a projection per record into `.agents/generated/skills/` (the drawn,
+  pending row), and a `skills` view each runtime adapter renders where its product reads skills.
 
 *Rejected:* re-rendering the record on every `check` (a gate that writes is not a gate); keeping a
 whole-file digest beside the span's for the departing case (a host's file is never removed on the
