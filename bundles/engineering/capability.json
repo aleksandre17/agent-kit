@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "engineering",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "The generic engineering doctrine as a NORMATIVE TREE, published as a doctrine bundle beside the kit: four cardinals (one case never defines the system; source facts are immutable; under uncertainty, refuse; proven, not claimed), eleven doctrines and their rules, each with an RFC 2119 modality and, for a MUST, its enforcer. A host answers each address with a stance -- extends to tighten, narrows only with an exception -- and `check` holds the tree coherent (FF-NORMS).",
   "doctrine": "capabilities/engineering/payload/bundle.md",
   "requires": [

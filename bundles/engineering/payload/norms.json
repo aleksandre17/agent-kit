@@ -356,6 +356,18 @@
   },
   {
     "schema_version": 1,
+    "id": "engineering@1.0.0#a-refusal-is-final",
+    "genre": "rule",
+    "title": "A refusal is final",
+    "says": "A gate, hook or permission that refuses a write or a command has decided: the act is never retried through another tool, another path or another agent. The agent reports the refusal and its reason, or removes the cause the refusal names and asks again through the same door.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#security",
+    "modality": "SHOULD",
+    "subject": "refusals",
+    "procedure": "engineering-standards"
+  },
+  {
+    "schema_version": 1,
     "id": "engineering@1.0.0#bounded-retry-and-timeout",
     "genre": "rule",
     "title": "Bounded retry and timeout",
