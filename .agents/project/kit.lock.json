@@ -1055,7 +1055,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1bdb517e19a7cbce3d3f5c1a1a47b0ff85cb46999d60d9ad4e7723d10f151b25",
+      "digest": "c8bb1f1807cde7fd77a0c0ac56cff10fe40def612d23106a3e21d46ee86382e4",
       "path": "interpreters/resolvers/skills.py"
     },
     {
@@ -1631,7 +1631,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "5a3b85046f87db245cfbd2e6cac0e784fbdbaf7082e8624fd4f6fd923aa6497f",
+      "digest": "7d6979c2e7da7cf3528d99f82742b5b57539e14baae852d075e654e451771f59",
       "path": "schemas/skills.schema.json"
     },
     {
@@ -1722,5 +1722,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T12:15:24+00:00"
+  "taken_at": "2026-10-16T12:18:14+00:00"
 }

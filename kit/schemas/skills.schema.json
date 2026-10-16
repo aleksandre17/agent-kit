@@ -64,6 +64,98 @@
             "description": "The class of work the skill carries out, from the declared task-class vocabulary (ADR-024).",
             "type": "string",
             "minLength": 1
+          },
+          "chapters": {
+            "description": "Chapters read ON DEMAND (agentskills.io references/): each file is served beside the body, and the body's index is GENERATED from these rows, so the index and the files cannot disagree.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "title",
+                "summary",
+                "file"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]*$"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "summary": {
+                  "description": "One line: what the chapter holds, so the index says when to read it.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "file": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "extends": {
+      "description": "Chapters and STANCES this document adds to a skill another document declares -- a host's stack, its domain, its selections -- without editing the publisher's copy. One served skill: the publisher's chapters and every extension's, one index.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "skill"
+        ],
+        "properties": {
+          "skill": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "chapters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "title",
+                "summary",
+                "file"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]*$"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "summary": {
+                  "description": "One line: what the chapter holds, so the index says when to read it.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "file": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "stances": {
+            "description": "This host's selections and defaults, stated as its own.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         }
       }

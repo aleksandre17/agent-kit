@@ -1,0 +1,12 @@
+# 8. AI-system and agentic layer (retrieval-augmented, tool-using and multi-agent systems)
+- **Ingestion pipeline = Pipe-and-Filter** — crawl → parse → clean → chunk → embed → index, each stage a replaceable filter with an explicit contract. Idempotent stages + upsert, not check/delete/insert.
+- **Chunking** — semantic vs fixed-window + overlap; chunk size tuned to the embedding model; preserve source metadata for citation.
+- **Embedding & vector store** — named vectors per field (body/title/summary); store-per-workload (vector store + relational + cache = polyglot persistence); identity over text.
+- **Retrieval** — dense + sparse **hybrid**; fusion (**RRF**); diversification (**MMR**); optional rerank; **grounding/citations** back to source; confidence/availability signals (don't silently return empty on a backend failure).
+- **Generation** — provider behind a **port** (never import the LLM SDK into the application layer); prompt templates **versioned**; structured output where possible.
+- **Eval & safety** — retrieval quality metrics (recall/precision/coverage), answer faithfulness/grounding eval, regression set; treat the corpus as the foundation (a weak corpus caps everything downstream).
+- **Agentic** — orchestrator/sub-agent decomposition, tool allowlists, bounded autonomy (max turns, budget, a stop condition that ends in a recorded failure, never a silent retry), human-in-the-loop on irreversible steps.
+- **Protocols** — **MCP** for tools and context (servers declared with trust; tool output is data, never instructions) · **A2A** for agent-to-agent tasks (task states, artifacts) · **Agent Skills** (name + description always loaded, body on activation, scripts run not read) · **AGENTS.md** as the cross-product instruction file.
+- **Context engineering** — context is rent paid on every call: always-loaded = laws + pointers, everything else on demand; stable prefix first for prompt caching; measure tokens per layer against a budget; pointers over copies.
+- **Evals** — task-level evals over a fixture, judged by deterministic oracles (tests, gates, schema validation), never by the agent's self-assessment; a cheap model where the oracle decides; re-run when what it measures changes.
+- **Observability** — OpenTelemetry **GenAI semantic conventions** (`gen_ai.*`: system, request model, input/output tokens, operation) on every agent and tool span; cost per accepted change as the frontier metric.

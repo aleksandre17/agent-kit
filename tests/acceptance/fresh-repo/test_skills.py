@@ -94,6 +94,28 @@ class Skills(Fixtures, unittest.TestCase):
         self.assertIn(f"[{SkillError.code}]", said(refused))
         self.assertFalse(any((host / f"{home}fixture-skill/elsewhere.md").exists() for home, _ in HOMES))
 
+    def test_423_a_host_extends_a_published_skill_with_its_own_chapter_and_stance(self):
+        """A host's stack and selections reach the ONE served skill by declaration: the publisher's
+        chapters stay, the host's chapter is served beside them and indexed, its stance is its own."""
+        base = next(s for s in PUBLISHED if s.get("chapters"))
+        host = self.started()
+        self.declare(host, [], {"skills/stack/our-stack.md": "# Our stack\nA fixture chapter.\n"})
+        statement = json.loads((host / HOST_SKILLS).read_text(encoding="utf-8"))
+        statement[skills_resolver.EXTENDS] = [{"skill": base["id"], "stances": ["A fixture stance of this host."],
+                                               "chapters": [{"id": "our-stack", "title": "Our stack",
+                                                             "summary": "the fixture's own chapter",
+                                                             "file": "skills/stack/our-stack.md"}]}]
+        (host / HOST_SKILLS).write_text(json.dumps(statement, indent=2) + "\n", encoding="utf-8", newline="\n")
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+        for home, suffix in HOMES:
+            served = (host / f"{home}{base['id']}{suffix}").read_text(encoding="utf-8")
+            self.assertIn("Our stack", served)
+            self.assertIn("A fixture stance of this host.", served)
+            self.assertTrue(all(c["title"] in served for c in base["chapters"]))
+            self.assertIn("A fixture chapter.", (host / f"{home}{base['id']}/{skills_resolver.REFERENCES}our-stack.md")
+                          .read_text(encoding="utf-8"))
+        self.assertEqual(0, self.run_kit(KIT, host, "check").returncode)
+
     def test_422_a_name_outside_the_agent_skills_rule_is_refused_by_the_contract(self):
         host = self.started()
         self.declare(host, [{"id": "Not--A-Name", "description": "x", "body": "skills/x/body.md"}],

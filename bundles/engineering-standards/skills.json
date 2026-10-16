@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "summary": "One skill: the catalog's index is generated from its chapters, each chapter read on demand.",
+  "skills": [
+    {
+      "id": "engineering-standards",
+      "task_class": "judgement",
+      "description": "Generic software-architecture and engineering standards: styles (modular monolith, hexagonal, event-driven...), principles (SOLID, single source of truth), patterns and anti-patterns, ISO/IEC 25010 quality attributes, C4/ADR, API/data/testing/delivery, security (OWASP, STRIDE), operations, and the AI/agentic layer (MCP, A2A, skills, evals). Use when making or reviewing an architecture or design decision, choosing a pattern, designing an API or schema, or planning a refactor.",
+      "body": "skills/engineering-standards/body.md",
+      "chapters": [
+        {
+          "id": "styles",
+          "title": "1. Architecture styles",
+          "summary": "deployment topology, internal structure, communication, data, integration, UI and hosting -- orthogonal axes real systems combine",
+          "file": "skills/engineering-standards/references/01-styles.md"
+        },
+        {
+          "id": "principles",
+          "title": "2. Design principles",
+          "summary": "SOLID, GRASP, single source of truth and the named laws engineers cite",
+          "file": "skills/engineering-standards/references/02-principles.md"
+        },
+        {
+          "id": "patterns",
+          "title": "3. Design patterns and anti-patterns",
+          "summary": "GoF, enterprise, integration, distributed, resilience and concurrency patterns, and the anti-patterns to refuse",
+          "file": "skills/engineering-standards/references/03-patterns.md"
+        },
+        {
+          "id": "quality",
+          "title": "4. Quality attributes (ISO/IEC 25010)",
+          "summary": "the attributes an architecture trades -- name the one gained and the one lost",
+          "file": "skills/engineering-standards/references/04-quality.md"
+        },
+        {
+          "id": "documentation",
+          "title": "5. Documentation and modeling",
+          "summary": "C4, arc42, ADRs, fitness functions, benchmark sources",
+          "file": "skills/engineering-standards/references/05-documentation.md"
+        },
+        {
+          "id": "formal-standards",
+          "title": "6. Formal standards and methods",
+          "summary": "ISO/IEC/IEEE 42010, DDD, 12-factor, Well-Architected, ISO/IEC 42001 and NIST AI RMF",
+          "file": "skills/engineering-standards/references/06-formal-standards.md"
+        },
+        {
+          "id": "api-data-testing-delivery",
+          "title": "7. API, data, testing, security and delivery",
+          "summary": "API contracts and errors, data consistency, the test pyramid, delivery and accessibility",
+          "file": "skills/engineering-standards/references/07-api-data-testing-delivery.md"
+        },
+        {
+          "id": "ai-and-agentic-systems",
+          "title": "8. AI-system and agentic layer",
+          "summary": "RAG pipelines, MCP, A2A, Agent Skills, context engineering, evals and GenAI observability",
+          "file": "skills/engineering-standards/references/08-ai-and-agentic-systems.md"
+        },
+        {
+          "id": "security",
+          "title": "9. Security",
+          "summary": "OWASP, ASVS, STRIDE, zero trust, supply-chain provenance and the LLM/agentic threat lists",
+          "file": "skills/engineering-standards/references/09-security.md"
+        },
+        {
+          "id": "operations",
+          "title": "10. Operations and reliability",
+          "summary": "observability, SLOs, scaling, caching, trunk-based delivery, IaC and GitOps",
+          "file": "skills/engineering-standards/references/10-operations.md"
+        },
+        {
+          "id": "craftsmanship",
+          "title": "11. Craftsmanship and refactoring",
+          "summary": "code smells, the refactoring catalog, the bar for done, debugging discipline",
+          "file": "skills/engineering-standards/references/11-craftsmanship.md"
+        },
+        {
+          "id": "declarative-platforms",
+          "title": "12. Declarative and config-driven platforms",
+          "summary": "config as source of truth, interpreter plus registry, schema-driven contracts, safe expressions",
+          "file": "skills/engineering-standards/references/12-declarative-platforms.md"
+        }
+      ]
+    }
+  ]
+}
