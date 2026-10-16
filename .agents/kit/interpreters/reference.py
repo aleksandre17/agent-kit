@@ -146,10 +146,12 @@ def _relative(ctx, path) -> "str | None":
 
 
 def pinning(ctx, moment: str) -> tuple:
-    """(the lock a referenced host is given, the copies it then no longer needs) for the kit THIS run
-    is -- refused, by name, wherever the reference could not be honest: a kit outside the host's tree,
-    one not in a repository, one with uncommitted changes or differing from its own lock, a take whose
-    source is not in the host's tree or whose bytes are not the ones its provenance pin holds."""
+    """(the lock a referenced host is given, the copies it then no longer needs, the takes whose source
+    now holds a NEWER version and are taken again in this walk) for the kit THIS run is -- refused, by
+    name, wherever the reference could not be honest: a kit outside the host's tree, one not in a
+    repository, one with uncommitted changes or differing from its own lock, a take whose source is not
+    in the host's tree or was never pinned -- and, by provenance (KIT0032), a take whose bytes changed
+    under the version pinned or whose version is older than it."""
     import estate as estate_module
     import provenance
 
@@ -178,7 +180,7 @@ def pinning(ctx, moment: str) -> tuple:
     rows = ws.read_json(statement["target"])["takes"] if statement and ws.exists(statement["target"]) else []
     pins = {p["capability"]: p for p in (estate_module.read(ctx) or {}).get("taken", [])}
     declared = {c.id: c.raw for c in ctx.manifest.capabilities}
-    takes, copies = [], [pin.seats(ctx.manifest)[0]]
+    takes, copies, retaken = [], [pin.seats(ctx.manifest)[0]], []
     for row in rows:
         given = Path(row["source"])
         source = _relative(ctx, given if given.is_absolute() else ws.path(row["source"]))
@@ -188,10 +190,16 @@ def pinning(ctx, moment: str) -> tuple:
         signature = ((declared.get(row["id"]) or {}).get(provenance.CLAIM) or {}).get("signature")
         measured = provenance.tree_digest(ws.path(source), f"{plane['namespace']}{row['id']}/", signature)
         held = pins.get(row["id"])
-        if held is None or held["digest"] != measured:
-            raise ReferenceRefused(f"{row['id']}: {source}/ measures {measured}, and its provenance pin holds "
-                                   f"{held['digest'] if held else 'nothing'} -- the source is not the bytes this host "
-                                   f"took; take it again from {source}, then upgrade")
+        if held is None:
+            raise ReferenceRefused(f"{row['id']}: {source}/ measures {measured}, and no provenance pin holds it -- "
+                                   f"nothing says this host took these bytes; take it from {source}, then upgrade")
+        if held["digest"] != measured:
+            # A NEWER version at the referenced source is a re-release the advanced submodule brought:
+            # it is taken again in this walk, at the door the upgrade walks. The same version with other
+            # bytes, or an older one, is refused by the one judge of a pin (KIT0032), and no name opens it.
+            version = (declared.get(row["id"]) or {}).get("version", "")
+            provenance.arrival(ctx, row["id"], version, measured, "<who>", moment, held)
+            retaken.append({"id": row["id"], "version": version, "digest": measured, "prior": held})
         takes.append({"id": row["id"], "path": source})
         copies.append(f"{plane['target']}{row['id']}/")
     lock = json.loads(pin.lock_text(ctx.manifest, seen, moment))
@@ -199,4 +207,4 @@ def pinning(ctx, moment: str) -> tuple:
     errors = ctx.manifest.validate(lock, "lock")
     if errors:
         raise ReferenceRefused("the referenced lock would not honour the lock schema:\n  " + "\n  ".join(errors))
-    return lock, copies
+    return lock, copies, retaken

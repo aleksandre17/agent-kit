@@ -2,7 +2,8 @@
 
 Doctrine documents (the `cardinal` contract) are five levels of one grammar, told apart by genre:
 cardinals (L0, never waived), doctrines (L1, a concern area), rules (L2, with an RFC 2119 modality),
-their enforcement (L3: a gate, an edit gate or a verb a MUST names) and procedures (L4: a skill).
+their enforcement (L3: a gate, an edit gate, a verb -- or an enforcer a taken adapter vouches for in the
+host, `<prefix>:<name>` -- a MUST names) and procedures (L4: a skill).
 Every norm below a cardinal derives from exactly one parent (`derives_from`), so the tree is a tree.
 A host instantiates rules through its stances: `extends` tightens, `narrows` loosens -- and a loosening
 holds only with an exception that names its ADR, its owner, its expiry and its compensating control.
@@ -27,6 +28,8 @@ GENRES = ({declared.CONTRACT: "doctrine"}, "genres")
 #: Each modality's polarity and strength (RFC 2119): opposite polarities on one subject contradict.
 MODALITIES = {"MUST": (1, 3), "SHOULD": (1, 2), "MAY": (0, 1), "SHOULD NOT": (-1, 2), "MUST NOT": (-1, 3)}
 VOCABULARY = ({declared.CONTRACT: "doctrine"}, "stance_vocabulary")
+#: The enforcers a taken ADAPTER vouches for: found by their contract, never by a product's name.
+VOUCHED = {declared.CONTRACT: "enforcers"}
 
 
 def _norms(ctx) -> list:
@@ -41,6 +44,25 @@ def _enforcers(ctx) -> set:
     known = {f"gate:{g['id']}" for c in ctx.enabled_capabilities() for g in c.gates}
     known |= {f"edit-gate:{r['id']}" for r in declared.rules(ctx, {declared.CONTRACT: "edit-gate"}, "gates")}
     known |= {f"verb:{p.stem}" for p in (ctx.manifest.root / "interpreters" / "verbs").glob("*.py")}
+    return known | _vouched(ctx)
+
+
+def _vouched(ctx) -> set:
+    """`<prefix>:<key>` for every key the HOST declares, not empty, under the pointer of the file each
+    `enforcers` document names -- what an adapter can find in this host, and nothing it merely knows.
+    A file that is absent or unreadable vouches for nothing."""
+    known = set()
+    for document in declared.sources(ctx, VOUCHED).values():
+        if not ctx.workspace.exists(document["path"]):
+            continue
+        try:
+            value = ctx.workspace.read_json(document["path"])
+        except ValueError:
+            continue
+        for step in document["pointer"].split("."):
+            value = value.get(step) if isinstance(value, dict) else None
+        if isinstance(value, dict):
+            known |= {f"{document['prefix']}:{key}" for key, given in value.items() if given}
     return known
 
 

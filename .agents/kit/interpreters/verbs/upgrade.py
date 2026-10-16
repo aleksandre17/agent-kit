@@ -55,6 +55,7 @@ import hostlock
 import extend as extend_verb
 import init as init_verb
 import pin
+import provenance
 import reconcile
 import reference
 import relocation
@@ -68,10 +69,12 @@ REQUIRES_APPROVED_HOST = True
 #: not stand in front of it (ADR-024 decision 18).
 REPINS = True
 ARGUMENTS = [
-    ("--mode", {"default": None, "choices": ["referenced", "laws"],
+    ("--mode", {"default": None, "choices": ["referenced", "vendored", "laws"],
                 "help": "referenced: run the kit this host holds in its own tree (a submodule) at its "
-                        "commit, and remove the vendored copies once check is green; laws: move each "
-                        "numbered law of the deprecated law page into a rule in the host's norms"}),
+                        "commit, and remove the vendored copies once check is green (a referenced host "
+                        "upgrades so by default); vendored: return a referenced host to vendored copies; "
+                        "laws: move each numbered law of the deprecated law page into a rule in the "
+                        "host's norms"}),
 ]
 
 
@@ -117,20 +120,29 @@ def _refuse(rows) -> None:
 def _referenced(ctx, args) -> int:
     """Pin the kit this run IS, in the host's own tree, as the host's kit -- and drop the copies once
     the referenced host checks green. Nothing is removed on a red check: the copies stay, and say why."""
-    lock, copies = reference.pinning(ctx, ctx.clock.now())
+    moment = ctx.clock.now()
+    lock, copies, retaken = reference.pinning(ctx, moment)
     held = lock[reference.FIELD]
     print(f"upgrade: reference {held['path']}/ at {held['commit'][:12]} in {held['repository']}; "
           f"{len(held['takes'])} take(s) read where the host holds them; copies to remove once check is green: "
           + (", ".join(c for c in copies if ctx.workspace.exists(c.rstrip("/"))) or "none"))
+    for row in retaken:
+        print(f"upgrade: take again {row['id']}@{row['version']} {row['digest']} (pinned {row['prior']['version']} "
+              f"{row['prior']['digest']} by {row['prior']['pinned_by']}) -- a newer version at its referenced source")
     if getattr(args, "plan", False):
         return 0
     if not args.approve:
-        doors.refuse("this host would run the kit it holds in its own tree and drop its vendored copies",
+        doors.refuse("this host would run the kit it holds in its own tree and drop its vendored copies"
+                     + (f", and take again {', '.join(r['id'] + '@' + r['version'] for r in retaken)}"
+                        if retaken else ""),
                      "person who owns this host", "upgrade --root <host> --mode referenced --approve <who>",
                      "Which kit a host runs, and from where, is the host's choice, and the record names who chose.")
     seat = pin.seats(ctx.manifest)[1]
+    writes = _retaken(ctx, retaken, args.approve, moment)
 
     def write() -> int:
+        for target, (owner, document) in writes.items():
+            ctx.workspace.scoped(owner.targets()).write_json(target, document)
         ctx.workspace.scoped((seat,)).write_text(seat, json_text(lock))
         # The host read again: its takes are now read where its lock says it holds them.
         ctx.reread()
@@ -148,6 +160,75 @@ def _referenced(ctx, args) -> int:
               f"python {held['path']}/interpreters/cli.py <verb> --root .")
         ctx.reread()
         return check_verb.run(ctx, args)
+
+    return hostlock.held(ctx, args, write)
+
+
+def _retaken(ctx, retaken: list, who: str, moment: str) -> dict:
+    """target -> (owning capability, document): the estate and take statement once every take whose
+    referenced source holds a NEWER version is taken again -- what `take` writes, less the copy a
+    referenced host never keeps. The upgrade's approver walks the door, so the pin is attested by them
+    at arrival; a signature its verifier refutes is refused (KIT0032), as at any door."""
+    if not retaken:
+        return {}
+    at = estate_module.target(ctx)
+    recorded = estate_module.read(ctx)
+    pins = {p["capability"]: p for p in recorded.get("taken", [])}
+    statement = ctx.install_of_mode(reference.TAKEN_DECLARATION)
+    current = ctx.workspace.read_json(statement["target"])
+    rows = {row["id"]: row for row in current["takes"]}
+    declared = {c.id: c for c in ctx.manifest.capabilities}
+    for row in retaken:
+        fresh = provenance.arrival(ctx, row["id"], row["version"], row["digest"], who, moment, row["prior"])
+        found = provenance.authenticate(ctx, declared[row["id"]], row["digest"], moment)
+        if found["state"] == provenance.REFUTED:
+            raise provenance.ProvenanceRefused(
+                f"{row['id']}@{row['version']} claims a signature by {found['signer']!r} that "
+                f"{found['verifier']} rejected against this host's trust root: {found['evidence']}")
+        pins[row["id"]] = dict(fresh, authenticity=found,
+                               trust={"basis": provenance.basis_at(ctx, provenance.APPROVAL),
+                                      "attested_by": who, "attested_at": moment})
+        rows[row["id"]] = dict(rows[row["id"]], taken_by=who, at=moment)
+    estate = dict(recorded, taken=[pins[k] for k in sorted(pins)])
+    document = dict(current, takes=[rows[k] for k in sorted(rows)])
+    for value, schema, target in ((estate, ctx.install_of_mode(estate_module.MODE)["validates"], at),
+                                  (document, statement["validates"], statement["target"])):
+        errors = ctx.manifest.validate(value, schema)
+        if errors:
+            raise UpgradeRefused(f"{target} would not honour its schema:\n  " + "\n  ".join(errors))
+    owner = {i["target"]: c for c in ctx.manifest.capabilities for i in c.installs}
+    return {at: (owner[at], estate), statement["target"]: (owner[statement["target"]], document)}
+
+
+def _vendored(ctx, args) -> "int | None":
+    """Return a REFERENCED host to vendored copies, asked for by name: each referenced take is copied
+    into the take plane from the source its pin holds, the lock loses its `reference` block, and the
+    ordinary upgrade then delivers the kit's copy beside it. Never the default: a referenced host that
+    is upgraded stays referenced. None for a host that is already vendored."""
+    held = reference.of(ctx)
+    if not held:
+        return None
+    plane = ctx.install_of_mode(reference.TAKEN)
+    print(f"upgrade: leave the reference to {held['path']}/ at {held['commit'][:12]}; copy "
+          f"{len(held['takes'])} take(s) into {plane['target']} and the kit into {pin.seats(ctx.manifest)[0]}")
+    if getattr(args, "plan", False):
+        return 0
+    if not args.approve:
+        doors.refuse("this host would stop running the kit it holds in its own tree and keep vendored copies",
+                     "person who owns this host", "upgrade --root <host> --mode vendored --approve <who>",
+                     "Which kit a host runs, and from where, is the host's choice, and the record names who chose.")
+    seat = pin.seats(ctx.manifest)[1]
+    lock = {k: v for k, v in ctx.workspace.read_json(seat).items() if k != reference.FIELD}
+    owner = next(c for c in ctx.manifest.capabilities for i in c.installs if i["mode"] == reference.TAKEN)
+
+    def write() -> int:
+        for take in held["takes"]:
+            source = ctx.workspace.path(take["path"])
+            files = {p.relative_to(source).as_posix(): p.read_bytes()
+                     for p in sorted(source.rglob("*")) if p.is_file()}
+            ctx.workspace.scoped(owner.targets()).write_tree(plane["target"] + take["id"], files)
+        ctx.workspace.scoped((seat,)).write_text(seat, json_text(lock))
+        return 0
 
     return hostlock.held(ctx, args, write)
 
@@ -200,9 +281,22 @@ def run(ctx, args) -> int:
     if getattr(args, "mode", None) == "laws":
         hostlock.arrive(ctx, args)
         return _laws(ctx, args)
-    if getattr(args, "mode", None) == "referenced":
+    mode = getattr(args, "mode", None)
+    if mode is None and reference.of(ctx):
+        # A referenced host stays referenced: only `--mode vendored`, asked for by name, gives it copies.
+        print("upgrade: this host references the kit in its own tree, so it is upgraded as referenced "
+              "(`--mode vendored` returns it to copies)")
+        mode = "referenced"
+    if mode == "referenced":
         hostlock.arrive(ctx, args)
         return _referenced(ctx, args)
+    if mode == "vendored":
+        hostlock.arrive(ctx, args)
+        left = _vendored(ctx, args)
+        if left is not None:
+            if left != 0 or getattr(args, "plan", False):
+                return left
+            ctx.reread()
     # Guarded on arrival, so a held host is named as the cause before a reconciliation is printed
     # against a tree somebody else is writing. The hold itself is taken by the installer this verb
     # hands its verdict to, at the moment that installer writes, and under THIS verb's name.
