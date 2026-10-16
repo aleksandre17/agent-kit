@@ -1,0 +1,88 @@
+"""Acceptance: a policy published beside the kit holds every host that takes it (ADR-023 amendment 3).
+
+A rule true of every repository -- no private key, no access token -- is written once, as edit gates
+in a published capability, and taken by each host instead of copied into it. Each policy is held to:
+
+  1. it declares only documents that keep the edit-gate contract, and every gate is calibrated: it
+     refuses the edit it says it refuses and admits the lookalike it says is legitimate;
+  2. a host started by a starter that takes it can COMMIT the install itself -- the policy's own
+     calibration text lands in the take plane, which is the publisher's bytes and judged by digest --
+     and is refused, at the commit, an edit that introduces what a gate forbids.
+
+Every path, id and contract is read from the policy, the starter or the module that owns it.
+"""
+
+from __future__ import annotations
+
+import json
+import subprocess
+import unittest
+
+from harness import KIT, REPO, Fixtures
+
+import edits
+import manifest as manifest_port
+from manifest import Manifest
+from test_pinned_kit import said
+
+CORE = Manifest(KIT)
+DECLARATION = next(i for c in CORE.capabilities for i in c.installs
+                   if i["mode"] == manifest_port.TAKEN_MODE)["declaration"]
+POLICIES = sorted(p.parent for p in (REPO / "policies").glob(f"*/{DECLARATION}"))
+STARTERS = sorted((REPO / "starters").glob("*.json"))
+
+
+def _gates(policy) -> list:
+    value = json.loads((policy / DECLARATION).read_text(encoding="utf-8"))
+    seat = f"capabilities/{value['id']}/"
+    return [gate for document in value.get("documents", [])
+            for gate in json.loads((policy / document["source"][len(seat):]).read_text(encoding="utf-8"))
+            [edits.RULES]]
+
+
+def _git(host, *argv):
+    return subprocess.run(["git", "-C", str(host), "-c", "user.name=suite", "-c", "user.email=suite@invalid",
+                           *argv], capture_output=True, text=True)
+
+
+class Policies(Fixtures, unittest.TestCase):
+
+    def test_413_every_policy_keeps_the_edit_gate_contract_and_every_gate_is_calibrated(self):
+        self.assertTrue(POLICIES, "ADR-023 amendment 3 publishes at least one policy")
+        for policy in POLICIES:
+            value = json.loads((policy / DECLARATION).read_text(encoding="utf-8"))
+            self.assertTrue(value["documents"])
+            for document in value["documents"]:
+                self.assertEqual("edit-gate", document["validates"])
+            for gate in _gates(policy):
+                with self.subTest(policy=policy.name, gate=gate["id"]):
+                    self.assertEqual([], edits.calibration(gate))
+
+    def test_414_a_started_host_commits_its_install_and_refuses_what_a_policy_forbids(self):
+        starter = next(s for s in STARTERS
+                       if any((s.parent / rel).resolve() in {p.resolve() for p in POLICIES}
+                              for rel in json.loads(s.read_text(encoding="utf-8"))["takes"]))
+        taken = [p for p in POLICIES if any((starter.parent / rel).resolve() == p.resolve()
+                                            for rel in json.loads(starter.read_text(encoding="utf-8"))["takes"])]
+        host = self.host()
+        ran = self.run_kit(KIT, host, "start", "--path", str(starter), "--approve", "acceptance-suite")
+        self.assertEqual(0, ran.returncode, said(ran))
+        _git(host, "add", "-A")
+        installed = _git(host, "commit", "-m", "the install")
+        self.assertEqual(0, installed.returncode, installed.stdout + installed.stderr)
+        for policy in taken:
+            for gate in _gates(policy):
+                with self.subTest(gate=gate["id"]):
+                    target = host / "src" / f"{gate['id']}.txt"
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text(gate["proves"]["text"] + "\n", encoding="utf-8")
+                    _git(host, "add", "-A")
+                    refused = _git(host, "commit", "-m", "a secret")
+                    self.assertNotEqual(0, refused.returncode, refused.stdout + refused.stderr)
+                    self.assertIn(gate["id"], refused.stdout + refused.stderr)
+                    _git(host, "reset", "--quiet")
+                    target.unlink()
+
+
+if __name__ == "__main__":
+    unittest.main()

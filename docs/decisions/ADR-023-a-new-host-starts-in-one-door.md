@@ -144,3 +144,29 @@ strength of its own text matching an old digest -- a departing spanned file is w
 
 Proof: `test_entry_files` 341b (the host edits its own text, `check` stays green without a render),
 mutation-checked; `test_serving` 258 reads a spanned row by its span.
+
+## Amendment 3 — a rule true of every host is written once: policies (2026-10-16, owner-delegated)
+
+The owner: ten projects must stand on one architecture, its principles, structure and organisation,
+and nothing that is true of all of them may be written by hand in each. The doctrine already travels
+that way (bundles); the edit gates did not. GeoStat's first gates mixed two kinds: what only GeoStat
+knows (BioStar is read-only, DDL lives in its migrations folder) and what every repository holds
+(no committed key or token), and the second kind would have been copied into every host.
+
+**Decided:**
+- `policies/<id>/`, beside `adapters/`, `bundles/` and `starters/`: a published capability whose documents
+  keep the `edit-gate` contract. Enforcement already reads every such document an enabled capability
+  ships (`{"validates": "edit-gate"}`), so a taken policy binds at every edit and every commit with no
+  interpreter change. First policy: `secrets` 1.0.0 -- private keys, cloud access key ids, platform
+  tokens (the widely published token shapes, narrowed so a placeholder or a public key is admitted).
+  The `standard` starter takes it.
+- Host text gates do not judge the publisher's planes (the pinned kit, every taken capability): those
+  bytes are held by their digests (`pinned-kit-intact`, `taken-intact`), and a policy carries, as each
+  gate's `proves`, the very text it refuses -- judged, the commit that takes it would be refused.
+
+*Rejected:* a kit-shipped default gate set (the issued kit carries no policy, ADR-004; a host holds a
+rule by taking it); putting policies in `bundles/` (a bundle is doctrine, answered by stances; a policy
+is enforced, not answered); a host-side copy of the shared gates (ten copies, ten drifts).
+
+Proof: acceptance `test_policies` 413 (contract and calibration of every policy), 414 (a started host
+commits its own install and is refused each forbidden text at the commit), mutation-checked.

@@ -128,6 +128,17 @@ def _edit_gates_calibrated(ctx, params):
             for failure in calibration(rule)]
 
 
+def _published_roots(ctx) -> list:
+    """Where a PUBLISHER's bytes sit on the host: the pinned kit and every taken capability. They are
+    held by their digests (`pinned-kit-intact`, `taken-intact`), not by the host's text policy -- and
+    a published policy carries, as each gate's `proves`, the very text it refuses, so judging those
+    planes would refuse the commit that takes it."""
+    roots = [p["root"].rstrip("/") + "/" for p in ctx.manifest.planes if p["class"] == "vendor"]
+    roots += [i["target"] for c in ctx.manifest.capabilities for i in c.installs
+              if i["mode"] == "taken"]
+    return roots
+
+
 def _judged(ctx, params, edits):
     """This kind's entry in the one judge's registry: (path, id, because, instead) per refusal.
 
@@ -135,7 +146,9 @@ def _judged(ctx, params, edits):
     the very text it refuses, so a gate whose paths reach its own declaration would refuse the edit
     that declares it -- and `check` already holds that file to its schema and its calibration."""
     own = declared.homes(ctx, params["sources"])
-    edits = [(path, text) for path, text in edits if path not in own]
+    published = _published_roots(ctx)
+    edits = [(path, text) for path, text in edits
+             if path not in own and not any(path.startswith(root) for root in published)]
     found, unjudged = judge(declared.rules(ctx, params["sources"], RULES), edits)
     return [(path, rule["id"], rule["because"], rule["instead"]) for path, rule in found], unjudged
 

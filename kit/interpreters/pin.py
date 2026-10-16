@@ -44,9 +44,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import shutil
+import stat
 import subprocess
+import sys
 import tarfile
 import tempfile
 from pathlib import Path, PurePosixPath
@@ -314,6 +317,8 @@ def fetch(source: str, into: Path) -> Path:
     archive = into / "release.tar"
     done = subprocess.run(["git", "-C", repo, "archive", "--format=tar", "-o", str(archive),
                            rev, sub], capture_output=True, text=True)
+    if Path(repo) == into / "source.git":
+        remove_tree(into / "source.git")  # read: only the named revision's bytes go on
     if done.returncode != 0:
         raise ReleaseError(f"release source {source!r}: git archive refused -- "
                            f"{done.stderr.strip()}")
@@ -330,6 +335,18 @@ def fetch(source: str, into: Path) -> Path:
     return kit
 
 
+def remove_tree(path: Path) -> None:
+    """Remove a scratch tree, read-only files included: a git object store marks its packs
+    read-only, and on Windows a plain removal leaves them behind, and the scratch with them."""
+    def writable(func, target, _exc):
+        os.chmod(target, stat.S_IWRITE)
+        func(target)
+    if sys.version_info >= (3, 12):
+        shutil.rmtree(path, onexc=writable)
+    else:
+        shutil.rmtree(path, onerror=writable)
+
+
 def fetched(source: str) -> tuple:
     """(kit, scratch): `fetch` into a fresh directory OUTSIDE every host. The caller removes
     `scratch` when the run ends, refused or not."""
@@ -337,5 +354,5 @@ def fetched(source: str) -> tuple:
     try:
         return fetch(source, scratch), scratch
     except BaseException:
-        shutil.rmtree(scratch, ignore_errors=True)
+        remove_tree(scratch)
         raise

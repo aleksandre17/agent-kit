@@ -26,7 +26,7 @@ python platform/kits/agent-kit/kit/interpreters/cli.py start --root . \
 ```
 
 `start` walks a published **starter** (`starters/standard.json`: Claude Code, Codex/AGENTS.md and git served, the
-cardinals and the conduct taken, the commit gate active) and ends with `check` green. From then on
+cardinals, the conduct and the secrets policy taken, the commit gate active) and ends with `check` green. From then on
 the repository runs its own pinned copy:
 
 ```sh
@@ -63,6 +63,7 @@ detector reads them (`stack-kit.json` `commands`, or `package.json` `scripts.tes
 | `kit/` | the payload: interpreters, capabilities, schemas, detectors -- [kit/README.md](kit/README.md), with the verb table |
 | `adapters/` | runtime adapters published beside the kit (claude-code, codex, git, github-actions, ...) |
 | `bundles/` | doctrine bundles: `cardinals`, `conduct` |
+| `policies/` | edit gates every host holds once taken: `secrets` |
 | `starters/` | the walks `start` takes a new repository through |
 | `docs/decisions/` | ADRs -- why each mechanism is the way it is |
 | `tests/` | unit tests and the fresh-repository acceptance suite, the development loop |

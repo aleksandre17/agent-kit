@@ -33,6 +33,11 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   runtimes' refusal records no longer collide on an absent id and stop every verb. `test_attestation` 383.
 - `--kit git+<url>@<rev>`: a release source that is not a local directory is cloned bare into the
   scratch, then read at its revision as before. `test_pinned_kit` 279b.
+- Policies beside the kit (ADR-023 amendment 3): `policies/secrets` 1.0.0 -- edit gates every host
+  holds (private keys, cloud access keys, platform tokens), taken by the `standard` starter. Host text
+  gates no longer judge the pinned kit or taken capabilities. `test_policies` 413-414.
+- A release source cloned from a URL is removed with its read-only git objects: on Windows a plain
+  removal left the scratch behind (found by the full suite on `test_pinned_kit` 279).
 
 **Added — a reading is replaced through a door (ADR-021 amendment 2)**
 - Verb `retake`: names every moved fact; `--plan` writes nothing; unapproved it is a door; approved it

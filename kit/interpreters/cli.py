@@ -116,7 +116,7 @@ def main(argv=None) -> int:
         return _run(args, host, kit_root)
     finally:
         if scratch is not None:
-            shutil.rmtree(scratch, ignore_errors=True)
+            pin.remove_tree(scratch)
 
 
 def _run(args, host: Path, kit_root: Path) -> int:
