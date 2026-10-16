@@ -1,0 +1,75 @@
+{
+  "$id": "conformance",
+  "title": "A STANDARDS CONFORMANCE MAP -- each clause, the mechanism that meets it, its evidence and its status",
+  "description": "`conformant` needs evidence (`test:<path>::<test>`, `gate:<id>`, `edit-gate:<id>`, `verb:<name>`, `path:<file>`) that exists in the host, and its tests run in the suite; `partial`, `gap`, `mapping` (a management-system standard a repository supports and cannot meet alone), `non-goal` (cost exceeds benefit, or out of scope) and `not-asserted` (only an external authority can prove it) each state why (ADR-024).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "rows"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "standard",
+          "clause",
+          "mechanism",
+          "status",
+          "why"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "standard": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clause": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mechanism": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(test|gate|edit-gate|verb|path):.+$"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "conformant",
+              "partial",
+              "gap",
+              "mapping",
+              "non-goal",
+              "not-asserted"
+            ]
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 319,
+  "count": 322,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "498b4f42f7ecdf9585afc40a9352253f5cd9b900d8714c5517b1e41b8c722e9d",
+      "digest": "cb9493135f9757a3b9b4853320f084d863042cdf5d0efd3d72713ec5fb95bf65",
       "path": "MANIFEST.json"
     },
     {
@@ -173,7 +173,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "3c15179588dccf13a3f52f0021b5a80042d993b06a0642384d5cfc5bfc8e0b65",
+      "digest": "d330ac82f25933e686440511d0bcb27b2a4c0507d755ed3f5f2c0c427b57776f",
       "path": "capabilities/governance/capability.json"
     },
     {
@@ -199,6 +199,12 @@
       "class": "payload",
       "digest": "5cd727caff097e27e862d86f4e9a09ea89d044f24b9a41e94cb9f3edba38f508",
       "path": "capabilities/governance/payload/RECORDS-MAP.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "f99da60b64c0d1805afd2809211dfa3338f9892afedc5114a94772bf15b2081e",
+      "path": "capabilities/governance/payload/conformance-local.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -721,6 +727,12 @@
       "class": "interpreter",
       "digest": "e04df7a77456fbc4da4f4495e11fcc2e340f1ec2181519e0620d31360d33abac",
       "path": "interpreters/gates/calibration.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "4ff6eda1d7c2a77331684af1a86b73f1e2162cc3bdf3efded9f53862c599846d",
+      "path": "interpreters/gates/conformance.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1505,6 +1517,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "0cf566566e347d60adc9df7c822d13bd8b7b79ca511a89b94b2e811456c47948",
+      "path": "schemas/conformance.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "3ab0bcdea3f2d479d4b6e61814670be3316cd57326b92fb00905327a4ac85a6d",
       "path": "schemas/consumption.schema.json"
     },
@@ -1920,5 +1938,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T13:47:21+00:00"
+  "taken_at": "2026-10-16T13:52:07+00:00"
 }

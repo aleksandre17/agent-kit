@@ -1,0 +1,518 @@
+{
+  "schema_version": 1,
+  "summary": "agent-kit's own standards conformance map: each clause, the mechanism, its evidence, its status.",
+  "rows": [
+    {
+      "id": "llm01-prompt-injection",
+      "standard": "OWASP Top 10 for LLM Applications (2025)",
+      "clause": "LLM01 Prompt injection",
+      "mechanism": "policy untrusted-content: content is data, invisible-instruction and override gates; untrusted MCP write/exec denied",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_policies.py::test_414",
+        "test:tests/acceptance/fresh-repo/test_mcp.py::test_430"
+      ],
+      "status": "conformant",
+      "why": "refused at edit and commit; trust levels deny effects"
+    },
+    {
+      "id": "llm02-sensitive-disclosure",
+      "standard": "OWASP Top 10 for LLM Applications (2025)",
+      "clause": "LLM02 Sensitive information disclosure",
+      "mechanism": "policy secrets; memory policy refuses secrets in product memory",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_policies.py::test_414",
+        "test:tests/acceptance/fresh-repo/test_memory.py::test_450"
+      ],
+      "status": "conformant",
+      "why": "a secret is refused at edit, commit and in memory"
+    },
+    {
+      "id": "llm03-supply-chain",
+      "standard": "OWASP Top 10 for LLM Applications (2025)",
+      "clause": "LLM03 Supply chain",
+      "mechanism": "pinned kit, take by provenance with digests, actions pinned by SHA",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_provenance.py::test_204",
+        "test:tests/acceptance/fresh-repo/test_pinned_kit.py::test_276"
+      ],
+      "status": "partial",
+      "why": "integrity pinned; authenticity not established until releases are signed (owner's decision)"
+    },
+    {
+      "id": "llm05-output-handling",
+      "standard": "OWASP Top 10 for LLM Applications (2025)",
+      "clause": "LLM05 Improper output handling",
+      "mechanism": "a worker's tree is judged on return before it may enter (admission)",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_dispatch.py::test_315"
+      ],
+      "status": "conformant",
+      "why": "no worker output enters the host unjudged"
+    },
+    {
+      "id": "llm06-excessive-agency",
+      "standard": "OWASP Top 10 for LLM Applications (2025)",
+      "clause": "LLM06 Excessive agency",
+      "mechanism": "route cells: mechanical work never dispatched, task classes, MCP trust, roles as profiles of tools and change scope",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_routing.py::test_367",
+        "test:tests/acceptance/fresh-repo/test_mcp.py::test_430",
+        "test:tests/acceptance/fresh-repo/test_role_profiles.py::test_520"
+      ],
+      "status": "conformant",
+      "why": "agency is declared per route and per server"
+    },
+    {
+      "id": "llm07-system-prompt-leakage",
+      "standard": "OWASP Top 10 for LLM Applications (2025)",
+      "clause": "LLM07 System prompt leakage",
+      "mechanism": "briefings carry no secret (secrets policy over every served file)",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_policies.py::test_414"
+      ],
+      "status": "partial",
+      "why": "nothing secret is served; leakage of what is served is a product property"
+    },
+    {
+      "id": "llm10-unbounded-consumption",
+      "standard": "OWASP Top 10 for LLM Applications (2025)",
+      "clause": "LLM10 Unbounded consumption",
+      "mechanism": "context budgets per layer, route caps (budget, wall-time stop), spawn ceiling",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_context.py::test_441",
+        "test:tests/acceptance/fresh-repo/test_routing.py::test_368",
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_481"
+      ],
+      "status": "conformant",
+      "why": "every layer and every run is capped"
+    },
+    {
+      "id": "llm04-08-09-model",
+      "standard": "OWASP Top 10 for LLM Applications (2025)",
+      "clause": "LLM04 data poisoning, LLM08 embeddings, LLM09 misinformation",
+      "mechanism": "out of a repository framework's reach: no training, no vector store",
+      "evidence": [],
+      "status": "non-goal",
+      "why": "the kit trains and retrieves nothing"
+    },
+    {
+      "id": "agentic-tool-misuse",
+      "standard": "OWASP Agentic AI threats (T1-T15)",
+      "clause": "Tool misuse / privilege compromise",
+      "mechanism": "edit gates at every write, blocking hooks fail closed, destructive commands get a recovery point",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_482",
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_480"
+      ],
+      "status": "conformant",
+      "why": "a hook that cannot decide refuses"
+    },
+    {
+      "id": "agentic-memory-poisoning",
+      "standard": "OWASP Agentic AI threats (T1-T15)",
+      "clause": "Memory poisoning",
+      "mechanism": "memory policy: no secret, no copy of a repository fact; pointer-only",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_memory.py::test_450"
+      ],
+      "status": "conformant",
+      "why": "memory notes judged on every check"
+    },
+    {
+      "id": "agentic-cascading",
+      "standard": "OWASP Agentic AI threats (T1-T15)",
+      "clause": "Cascading hallucination / goal manipulation",
+      "mechanism": "results accepted by oracles only; evals judge by gates, never by the worker",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_trial.py::test_472"
+      ],
+      "status": "conformant",
+      "why": "the eval oracle is the evaluating host's gates"
+    },
+    {
+      "id": "agentic-overwhelming-hitl",
+      "standard": "OWASP Agentic AI threats (T1-T15)",
+      "clause": "Overwhelming human-in-the-loop / repudiation",
+      "mechanism": "doors: one named approval per decision, recorded on every act",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_start.py::test_408"
+      ],
+      "status": "conformant",
+      "why": "every act records who decided"
+    },
+    {
+      "id": "agentic-identity-spoofing",
+      "standard": "OWASP Agentic AI threats (T1-T15)",
+      "clause": "Identity spoofing between agents",
+      "mechanism": "a message from another agent is never approval (role protocol); dispatch adapters found by contract",
+      "evidence": [],
+      "status": "partial",
+      "why": "declared in every role; not machine-enforced across products"
+    },
+    {
+      "id": "nist-ai-rmf",
+      "standard": "NIST AI RMF 1.0 / ISO/IEC 42001",
+      "clause": "Govern, Map, Measure, Manage / AI management system",
+      "mechanism": "organisational standards: the kit supplies evidence (laws, doors, run records, evals, conformance map) an organisation's system cites",
+      "evidence": [],
+      "status": "mapping",
+      "why": "a management system is an organisation's, not a repository's"
+    },
+    {
+      "id": "mcp",
+      "standard": "Model Context Protocol (2025-06-18)",
+      "clause": "Servers, transports, tool annotations",
+      "mechanism": "contract mcp-servers by trust, served to each product's MCP file",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_mcp.py::test_430",
+        "test:tests/acceptance/fresh-repo/test_mcp.py::test_431"
+      ],
+      "status": "conformant",
+      "why": "stdio and streamable HTTP, names only for secrets"
+    },
+    {
+      "id": "a2a",
+      "standard": "Agent2Agent protocol",
+      "clause": "Task lifecycle states and artifacts",
+      "mechanism": "task records use A2A states (submitted, working, input-required, completed, failed); artifacts read from declared channels",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_dispatch.py::test_314",
+        "test:tests/acceptance/fresh-repo/test_dispatch.py::test_317"
+      ],
+      "status": "partial",
+      "why": "the states and artifacts, not the HTTP transport"
+    },
+    {
+      "id": "agent-skills",
+      "standard": "Agent Skills specification (agentskills.io)",
+      "clause": "SKILL.md name, description, body, scripts/references",
+      "mechanism": "contract skills, served per product; name and length rules in the schema",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_skills.py::test_420",
+        "test:tests/acceptance/fresh-repo/test_skills.py::test_422"
+      ],
+      "status": "conformant",
+      "why": "validated and served"
+    },
+    {
+      "id": "agents-md",
+      "standard": "AGENTS.md",
+      "clause": "One instruction file read by most agents",
+      "mechanism": "codex surface serves AGENTS.md; every product's entry carries the same sections",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_router.py::test_540"
+      ],
+      "status": "conformant",
+      "why": "one governance block"
+    },
+    {
+      "id": "otel-genai",
+      "standard": "OpenTelemetry GenAI semantic conventions",
+      "clause": "gen_ai.operation.name, provider, request/response model, usage tokens",
+      "mechanism": "run records carry gen_ai.* from what each adapter reads out of its product",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_trial.py::test_470"
+      ],
+      "status": "partial",
+      "why": "attribute names in run records; no exporter (owner's cut)"
+    },
+    {
+      "id": "json-schema",
+      "standard": "JSON Schema 2020-12",
+      "clause": "Validation vocabulary",
+      "mechanism": "every declaration is schema-validated by the kit's own validator",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_schema_versions.py::test_212"
+      ],
+      "status": "partial",
+      "why": "a subset of the vocabulary (type, enum, const, pattern, min/max, items, required, properties, additionalProperties, oneOf); no $ref"
+    },
+    {
+      "id": "semver",
+      "standard": "Semantic Versioning 2.0.0",
+      "clause": "MAJOR.MINOR.PATCH",
+      "mechanism": "kit, capabilities and schema versions; a newer document is refused",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_schema_versions.py::test_213",
+        "test:tests/acceptance/fresh-repo/test_provenance.py::test_205"
+      ],
+      "status": "conformant",
+      "why": "versions are read, never assumed"
+    },
+    {
+      "id": "conventional-commits",
+      "standard": "Conventional Commits 1.0.0",
+      "clause": "type(scope): subject",
+      "mechanism": "the kit's own history; not enforced on hosts",
+      "evidence": [],
+      "status": "partial",
+      "why": "followed here; a host's commit gate does not check the message"
+    },
+    {
+      "id": "keep-a-changelog",
+      "standard": "Keep a Changelog 1.1.0",
+      "clause": "Unreleased, Added/Changed/Fixed",
+      "mechanism": "CHANGELOG.md upstream",
+      "evidence": [],
+      "status": "partial",
+      "why": "kept by hand, not checked"
+    },
+    {
+      "id": "madr",
+      "standard": "MADR 4",
+      "clause": "Decision records with considered options",
+      "mechanism": "docs/decisions ADRs with decisions and rejected alternatives",
+      "evidence": [],
+      "status": "partial",
+      "why": "the content of MADR, not its exact headings"
+    },
+    {
+      "id": "rfc-2119",
+      "standard": "RFC 2119 / RFC 8174",
+      "clause": "MUST, SHOULD, MAY",
+      "mechanism": "normative tree: a MUST names its enforcer; contradiction and loosening are refused",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_norms.py::test_501",
+        "test:tests/acceptance/fresh-repo/test_norms.py::test_502"
+      ],
+      "status": "conformant",
+      "why": "coherence checked on every check"
+    },
+    {
+      "id": "rfc-6750",
+      "standard": "RFC 6750",
+      "clause": "Bearer token usage",
+      "mechanism": "an http MCP server's bearer token is a named variable, served as Authorization: Bearer",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_mcp.py::test_430"
+      ],
+      "status": "conformant",
+      "why": "no token value in any file"
+    },
+    {
+      "id": "trojan-source",
+      "standard": "CVE-2021-42574 (Trojan Source)",
+      "clause": "Bidirectional control characters",
+      "mechanism": "edit gate no-invisible-instruction-characters",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_policies.py::test_414"
+      ],
+      "status": "conformant",
+      "why": "refused at edit and commit"
+    },
+    {
+      "id": "h-pre-exec-guard",
+      "standard": "harvested: national-accounts",
+      "clause": "pre-exec guard for destructive commands",
+      "mechanism": "verb guard + policy recovery-points",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_480"
+      ],
+      "status": "conformant",
+      "why": "recovery point before the command"
+    },
+    {
+      "id": "h-hook-posture",
+      "standard": "harvested: national-accounts",
+      "clause": "hook posture and receipts",
+      "mechanism": "POSTURE applied by the entry point; one receipt per invocation",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_482"
+      ],
+      "status": "conformant",
+      "why": "fails closed, and leaves a receipt"
+    },
+    {
+      "id": "h-hook-lifecycle",
+      "standard": "harvested: national-accounts",
+      "clause": "session-start, stop, subagent ledger, session-end token log",
+      "mechanism": "pre-write, pre-exec, pre-spawn, commit, push hooks; dispatch telemetry is the ledger for dispatched workers",
+      "evidence": [],
+      "status": "partial",
+      "why": "session-start/stop/subagent-stop hooks of the product are not served; cost exceeds benefit until a host needs them"
+    },
+    {
+      "id": "h-change-coverage",
+      "standard": "harvested: gesotat-system",
+      "clause": "change-record coverage over a review range",
+      "mechanism": "bundle change-records + verb review",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_change_records.py::test_491"
+      ],
+      "status": "conformant",
+      "why": "uncovered paths named, tri-state report"
+    },
+    {
+      "id": "h-pre-push",
+      "standard": "harvested: national-accounts",
+      "clause": "pre-push gate",
+      "mechanism": "git adapter .githooks/pre-push runs check",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_483"
+      ],
+      "status": "conformant",
+      "why": "a red check blocks the push"
+    },
+    {
+      "id": "h-ground-ledger",
+      "standard": "harvested: national-accounts",
+      "clause": "ground ledger: a fact cached with the digests of its paths",
+      "mechanism": "verb ground; a packet citing a moved ground is refused",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_routing.py::test_365"
+      ],
+      "status": "conformant",
+      "why": "a stale premise refuses the dispatch"
+    },
+    {
+      "id": "h-runtime-limits",
+      "standard": "harvested: national-accounts",
+      "clause": "codex thread limits, browser MCP examples",
+      "mechanism": "MCP servers are declarations a host or bundle adds",
+      "evidence": [],
+      "status": "non-goal",
+      "why": "cost exceeds benefit: a host declares its own"
+    },
+    {
+      "id": "h-defense-register",
+      "standard": "harvested: national-accounts",
+      "clause": "defense-in-depth register",
+      "mechanism": "this conformance map",
+      "evidence": [],
+      "status": "non-goal",
+      "why": "cost exceeds benefit: the map carries the rows"
+    },
+    {
+      "id": "h-execution-graph",
+      "standard": "harvested: gesotat-system",
+      "clause": "obligations derived from an object registry",
+      "mechanism": "bundle execution-graph, gate FF-EXECUTION-GRAPH",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_change_records.py::test_492"
+      ],
+      "status": "conformant",
+      "why": "a unit cannot declare its way out"
+    },
+    {
+      "id": "h-tri-state",
+      "standard": "harvested: gesotat-system",
+      "clause": "PASS / NOT_RUN / NOT_ASSERTED readiness",
+      "mechanism": "review report: coverage CHECKED|NOT_ASSERTED, runtime conformance and production readiness NOT_ASSERTED; NOT MEASURED statements throughout check",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_change_records.py::test_491"
+      ],
+      "status": "conformant",
+      "why": "what was not checked is never reported as passed"
+    },
+    {
+      "id": "h-codeowners",
+      "standard": "harvested: gesotat-system",
+      "clause": "CODEOWNERS and branch protection",
+      "mechanism": "not served",
+      "evidence": [],
+      "status": "gap",
+      "why": "a host's owners and its branch protection are external controls, not asserted; the generated CI refuses whitespace and conflict markers (git diff --check)"
+    },
+    {
+      "id": "h-identical-block",
+      "standard": "harvested: gesotat-system",
+      "clause": "one identical governance block in AGENTS.md and CLAUDE.md",
+      "mechanism": "every product's entry is one projection of the same sections",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_router.py::test_540"
+      ],
+      "status": "conformant",
+      "why": "one block, never two"
+    },
+    {
+      "id": "h-worktree-pitfalls",
+      "standard": "harvested: national-accounts",
+      "clause": "Windows/worktree pitfalls",
+      "mechanism": "boundary measured: LF on disk, UTF-8 at every stream, PATHEXT",
+      "evidence": [],
+      "status": "partial",
+      "why": "fixed where met (stdin UTF-8, .cmd shims); not a lesson record"
+    },
+    {
+      "id": "h-shared-tree",
+      "standard": "harvested: national-accounts",
+      "clause": "claims, observed write arbitration, capsule CAS",
+      "mechanism": "core claims and arbitration (ADR-022); bundle shared-tree capsule by compare-and-swap",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_capsule.py::test_530",
+        "test:tests/acceptance/fresh-repo/test_attestation.py::test_380"
+      ],
+      "status": "conformant",
+      "why": "a stale write is refused"
+    },
+    {
+      "id": "h-operating-modes",
+      "standard": "harvested: national-accounts",
+      "clause": "operating modes",
+      "mechanism": "not built",
+      "evidence": [],
+      "status": "non-goal",
+      "why": "cost exceeds benefit (owner's cut)"
+    },
+    {
+      "id": "h-knowledge-store",
+      "standard": "harvested: national-accounts",
+      "clause": "separate knowledge store",
+      "mechanism": "the memory contract, pointer-only",
+      "evidence": [],
+      "status": "non-goal",
+      "why": "cost exceeds benefit (owner's cut)"
+    },
+    {
+      "id": "h-growth-ladder",
+      "standard": "harvested: national-accounts",
+      "clause": "growth ladder ceremony",
+      "mechanism": "the existing lesson schema and the frontier's script candidates",
+      "evidence": [],
+      "status": "non-goal",
+      "why": "cost exceeds benefit beyond the lesson schema (owner's cut)"
+    },
+    {
+      "id": "h-subagent-ledger",
+      "standard": "harvested: national-accounts",
+      "clause": "subagent ledger: requested vs verified model, tokens",
+      "mechanism": "dispatch telemetry: gen_ai.request.model vs gen_ai.response.model, usage",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_trial.py::test_470"
+      ],
+      "status": "partial",
+      "why": "for dispatched workers; a product's in-session subagents are not read"
+    },
+    {
+      "id": "h-spawn-gate",
+      "standard": "harvested: national-accounts",
+      "clause": "dispatch packet five fields and spawn budget gate",
+      "mechanism": "verb spawn + policy spawn-packets",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_481"
+      ],
+      "status": "conformant",
+      "why": "silent when compliant, refused when not"
+    },
+    {
+      "id": "h-doctor",
+      "standard": "harvested: national-accounts",
+      "clause": "doctor / liveness canary",
+      "mechanism": "verb doctor",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_484"
+      ],
+      "status": "conformant",
+      "why": "a dead chain is named"
+    },
+    {
+      "id": "h-procedures",
+      "standard": "harvested: national-accounts",
+      "clause": "procedures as skills",
+      "mechanism": "kit-skills (walk-a-door, propose-a-law, take-a-capability), record-a-change, engineering-standards review chapters",
+      "evidence": [],
+      "status": "partial",
+      "why": "the procedures a host walks today; audit/rotate/bootstrap are verbs already (check, start)"
+    }
+  ]
+}

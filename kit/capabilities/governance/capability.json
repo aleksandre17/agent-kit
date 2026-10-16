@@ -35,7 +35,8 @@
       "taken",
       "law-scope",
       "extension-points",
-      "extension-ledger"
+      "extension-ledger",
+      "conformance"
     ]
   },
   "space": {
@@ -209,6 +210,22 @@
       "target": ".agents/project/extensions.json",
       "source": "capabilities/governance/payload/extensions-local.json",
       "validates": "extension-ledger"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/conformance.json",
+      "source": "capabilities/governance/payload/conformance-local.json",
+      "validates": "conformance",
+      "reads_as": "host_conformance",
+      "points": [
+        {
+          "id": "conformance",
+          "purpose": "this host's own standards rows: clause, mechanism, evidence, status",
+          "cardinality": "one",
+          "merges_into": "the conformance map `check` holds (FF-CONFORMANCE)"
+        }
+      ]
     }
   ],
   "relocations": [
@@ -535,6 +552,11 @@
     {
       "id": "FF-EXTENSIONS",
       "kind": "extensions-held",
+      "params": {}
+    },
+    {
+      "id": "FF-CONFORMANCE",
+      "kind": "conformance-held",
       "params": {}
     }
   ]

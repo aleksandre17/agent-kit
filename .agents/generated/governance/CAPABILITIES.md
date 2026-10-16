@@ -67,6 +67,7 @@ Declares the four-class seam for a host: the reading, the declaration, the seede
 | `.agents/project/succession/migration-map.json` | binding | seed |
 | `.agents/generated/INDEX.md` | projection | projection |
 | `.agents/project/extensions.json` | binding | seed |
+| `.agents/project/conformance.json` | binding | seed |
 
 Gates declared by this capability:
 
@@ -83,6 +84,7 @@ Gates declared by this capability:
 - **FF-RECORDS-DECLARED** — `reference-declared-across`
 - **FF-POSITION-SHAPE** — `reference-declared-across`
 - **FF-EXTENSIONS** — `extensions-held`
+- **FF-CONFORMANCE** — `conformance-held`
 
 ### observability 0.1.0
 
