@@ -56,7 +56,7 @@ jobs:
             echo "kit gates: REFUSED -- the change from $base could not be read, so it was not judged" >&2
             exit 1
           }
-          printf '%s\n' "$change" | "$python" "{{vendor}}/interpreters/cli.py" judge --root . --surface {{surface}}
+          printf '%s\n' "$change" | "$python" "{{vendor}}/interpreters/cli.py" judge --root . --surface {{surface}} || exit 1
           # Whitespace errors the change introduces (trailing blanks, a conflict marker left behind):
           # git's own check over the same range (a first push has no range to check).
           [ "$base" = "$(git hash-object -t tree /dev/null)" ] || git diff --check "$base" HEAD || {
