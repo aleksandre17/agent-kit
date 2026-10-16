@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "id": "engineering",
+  "version": "1.0.0",
+  "summary": "The generic engineering doctrine as a NORMATIVE TREE, published as a doctrine bundle beside the kit: four cardinals (one case never defines the system; source facts are immutable; under uncertainty, refuse; proven, not claimed), eleven doctrines and their rules, each with an RFC 2119 modality and, for a MUST, its enforcer. A host answers each address with a stance -- extends to tighten, narrows only with an exception -- and `check` holds the tree coherent (FF-NORMS).",
+  "doctrine": "capabilities/engineering/payload/bundle.md",
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "doctrine"
+    },
+    {
+      "kind": "fact",
+      "id": "vcs.git",
+      "equals": true
+    },
+    {
+      "kind": "capability",
+      "id": "secrets"
+    },
+    {
+      "kind": "capability",
+      "id": "untrusted-content"
+    }
+  ],
+  "provides": [
+    "doctrine-bundle"
+  ],
+  "conflicts": [],
+  "declares": {},
+  "composes": {
+    "id": "engineering_roll",
+    "instances": "engineering_norms",
+    "base": {
+      "sources": [
+        "doctrine_local"
+      ],
+      "list": "stances",
+      "named_by": "id"
+    },
+    "shared": {
+      "sources": [
+        "doctrine_grammar"
+      ],
+      "list": "reading"
+    },
+    "census": "engineering_stance_census"
+  },
+  "documents": [
+    {
+      "id": "engineering_norms",
+      "source": "capabilities/engineering/payload/norms.json",
+      "validates": "cardinal"
+    }
+  ],
+  "installs": [
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/doctrine/engineering.md",
+      "source": "capabilities/engineering/payload/ROLL.md.mustache"
+    }
+  ],
+  "gates": []
+}

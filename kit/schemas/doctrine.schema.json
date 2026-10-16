@@ -34,6 +34,10 @@
           "means": {
             "type": "string",
             "minLength": 1
+          },
+          "derives": {
+            "description": "Whether a document of this genre stands in the normative tree BELOW a parent (`derives_from`): one without a parent is NT-ORPHAN.",
+            "type": "boolean"
           }
         }
       }
@@ -56,6 +60,10 @@
           "means": {
             "type": "string",
             "minLength": 1
+          },
+          "loosens": {
+            "description": "Whether a stance in this word LOOSENS what it answers: on a rule it holds only with an exception (NT-LOOSENED).",
+            "type": "boolean"
           }
         }
       }
@@ -156,6 +164,35 @@
           "declared_by": {
             "type": "string",
             "minLength": 1
+          },
+          "exception": {
+            "description": "What a NARROWING of a rule holds on: the ADR that decided it, its owner, its expiry and the control that compensates. A loosening without one is NT-LOOSENED; one past its expiry is NT-EXPIRED.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "adr",
+              "owner",
+              "expires",
+              "compensating"
+            ],
+            "properties": {
+              "adr": {
+                "type": "string",
+                "minLength": 1
+              },
+              "owner": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expires": {
+                "type": "string",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+              },
+              "compensating": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
         }
       }

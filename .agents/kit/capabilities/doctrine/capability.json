@@ -31,6 +31,14 @@
     {
       "mode": "seed",
       "class": "binding",
+      "target": ".agents/project/doctrine/norms.json",
+      "source": "capabilities/doctrine/payload/norms-local.json",
+      "validates": "cardinal",
+      "reads_as": "host_norms"
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
       "target": ".agents/project/doctrine/doctrine.json",
       "source": "capabilities/doctrine/payload/doctrine-local.json",
       "validates": "doctrine",
@@ -43,5 +51,11 @@
       "source": "capabilities/doctrine/payload/DOCTRINE.md.mustache"
     }
   ],
-  "gates": []
+  "gates": [
+    {
+      "id": "FF-NORMS",
+      "kind": "norms-coherent",
+      "params": {}
+    }
+  ]
 }

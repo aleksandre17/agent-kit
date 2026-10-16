@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 305,
+  "count": 307,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -59,13 +59,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "e9fdb6c9ae63c4900afbd2ce6be308978d6916bf50c6e72ed797e4c680c5619b",
+      "digest": "d90c49632aa783e62af2ca2580f0bcc0227f2b6156ecc6e4f67fa5d80f456370",
       "path": "capabilities/doctrine/capability.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "2ad29328817beb0fdd5a246b58c37cd55e5f1a071a6548782bca9c2725f638f3",
+      "digest": "66a602179187ef4c6b0240ca9881f229a5b166b06040406e1c361dff415dba68",
       "path": "capabilities/doctrine/grammar.json"
     },
     {
@@ -85,6 +85,12 @@
       "class": "payload",
       "digest": "b21c8dc71a43ed4850a244535987d3fb6e2caffd9b5c041767248915a2213bfb",
       "path": "capabilities/doctrine/payload/doctrine.md"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "path": "capabilities/doctrine/payload/norms-local.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -733,6 +739,12 @@
       "class": "interpreter",
       "digest": "842c288acb5cbd0b4390ed5b9f14f71a530373d4f44ba1d4153008ef7e9df3df",
       "path": "interpreters/gates/memory.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "67bdabbfb4e808406e741ced6ed2318f048a05922d35c55b20a278a634fa5d31",
+      "path": "interpreters/gates/norms.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1421,7 +1433,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "fa1f0f14bea8a9f311061941cb585869d787040f47f458398059c389f213ad27",
+      "digest": "e2a5420cca8e67fcdcfe89b68bd94a1f8c88ea2471852bff709d57df66d58b9a",
       "path": "schemas/cardinal.schema.json"
     },
     {
@@ -1499,7 +1511,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "a08f7f068d402a21d48263aa12a405a2464b4c2b36c5df71dec7c948b60f2f06",
+      "digest": "9e83a6aa5dec4a7c5370cd16ea6f72d61d54b32ec9e2a99a6abb709f05fbcd89",
       "path": "schemas/doctrine.schema.json"
     },
     {
@@ -1836,5 +1848,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T13:09:13+00:00"
+  "taken_at": "2026-10-16T13:19:10+00:00"
 }

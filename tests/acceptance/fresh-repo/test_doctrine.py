@@ -172,8 +172,11 @@ class DoctrineCarrier(Fixtures, unittest.TestCase):
         publishers = []
         for entry in MANIFEST["capabilities"]:
             declaration = json.loads((KIT / entry["declaration"]).read_text(encoding="utf-8"))
-            if any(item.get("validates") == CARDINAL_SCHEMA
-                   for item in declaration["installs"] + declaration.get("documents", [])):
+            # A SEED the host authors into (its own norms, empty when seeded) is not doctrine the kit
+            # publishes; a document, or a seed that arrives holding a record, would be.
+            seeded = [item for item in declaration["installs"] if item.get("validates") == CARDINAL_SCHEMA
+                      and json.loads((KIT / item["source"]).read_text(encoding="utf-8"))]
+            if seeded or any(item.get("validates") == CARDINAL_SCHEMA for item in declaration.get("documents", [])):
                 publishers.append(entry["id"])
         self.assertEqual([], publishers,
                          f"this kit ships doctrine of its own, in {publishers}; the carrier is no "

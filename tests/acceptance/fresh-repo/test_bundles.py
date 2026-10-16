@@ -25,7 +25,13 @@ import validation
 from manifest import Manifest
 from test_pinned_kit import pinned_cli, said
 
-BUNDLES = sorted(p.parent for p in (REPO / "bundles").glob("*/capability.json"))
+#: The DOCTRINE bundles: those whose documents keep the doctrine contract (the `cardinal` schema the
+#: doctrine capability declares). A bundle of skills or evals is a bundle too, held by its own module.
+_DOCTRINE = next(n for n in json.loads((KIT / "capabilities/doctrine/capability.json").read_text(encoding="utf-8"))
+                 ["declares"]["schemas"] if n == "cardinal")
+BUNDLES = sorted(p.parent for p in (REPO / "bundles").glob("*/capability.json")
+                 if any(d["validates"] == _DOCTRINE
+                        for d in json.loads(p.read_text(encoding="utf-8")).get("documents", [])))
 CORE = Manifest(KIT)
 ANSWERS = next(i for c in CORE.capabilities for i in c.installs if i["mode"] == "declaration")["target"]
 PLANE = next(i for c in CORE.capabilities for i in c.installs if i["mode"] == manifest_port.TAKEN_MODE)
@@ -73,11 +79,20 @@ class PublishedBundles(Fixtures, unittest.TestCase):
             value = declaration(bundle)
             with self.subTest(bundle=value["id"]):
                 host = self.installed(KIT)
-                took = pinned_cli(host, "take", "--path", str(bundle), "--approve", "acceptance-suite")
+                # A bundle whose MUST rules name enforcers requires the published capabilities that hold
+                # them; they are taken with it, found by the ids its declaration requires.
+                published_dirs = {json.loads(p.read_text(encoding="utf-8"))["id"]: p.parent
+                                  for p in REPO.glob("*/*/capability.json")}
+                needed = [published_dirs[r["id"]] for r in value["requires"]
+                          if r["kind"] == "capability" and r["id"] in published_dirs]
+                took = pinned_cli(host, "take", "--path", ",".join(str(d) for d in [bundle, *needed]),
+                                  "--approve", "acceptance-suite")
                 self.assertEqual(0, took.returncode, said(took))
                 self.assertTrue((host / PLANE["target"] / value["id"] / "capability.json").is_file())
                 answers = json.loads((host / ANSWERS).read_text(encoding="utf-8"))
-                answers["capabilities"] = sorted(set(answers["capabilities"]) | {value["id"]})
+                answers["capabilities"] = sorted(set(answers["capabilities"]) | {value["id"]}
+                                                 | {json.loads((d / "capability.json").read_text(encoding="utf-8"))["id"]
+                                                    for d in needed})
                 (host / ANSWERS).write_text(json.dumps(answers, indent=2) + "\n", encoding="utf-8", newline="\n")
                 for verb, flags in (("init", ("--approve", "acceptance-suite")), ("render", ())):
                     ran = pinned_cli(host, verb, *flags)
@@ -91,7 +106,8 @@ class PublishedBundles(Fixtures, unittest.TestCase):
                                  "a document this host said nothing about was not named as unanswered")
                 ran = pinned_cli(host, "check")
                 self.assertEqual(0, ran.returncode, said(ran))
-                self.assertIn(f"kit {CORE.version} + taken: {value['id']}", ran.stdout)
+                self.assertIn(f"kit {CORE.version} + taken: ", ran.stdout)
+                self.assertIn(value["id"], ran.stdout.split("+ taken: ", 1)[1].split(" · ", 1)[0])
 
 
 if __name__ == "__main__":

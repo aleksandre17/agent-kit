@@ -85,6 +85,24 @@
           "title": "13. Verdict method",
           "summary": "judging a design: invariants binary, criteria evidence-bound, attributes by a written decision hierarchy",
           "file": "skills/engineering-standards/references/13-verdict-method.md"
+        },
+        {
+          "id": "review-protocol",
+          "title": "14. Review protocol",
+          "summary": "trace the whole line, the smells, four axes and four views, the improvement record",
+          "file": "skills/engineering-standards/references/14-review-protocol.md"
+        },
+        {
+          "id": "rule-evolution",
+          "title": "15. Rule evolution",
+          "summary": "a business rule changed by evidence, versioned, with its migration and rollback",
+          "file": "skills/engineering-standards/references/15-rule-evolution.md"
+        },
+        {
+          "id": "documentation-as-learning",
+          "title": "16. Documentation as learning",
+          "summary": "the nine questions a technical document answers, in order",
+          "file": "skills/engineering-standards/references/16-documentation-as-learning.md"
         }
       ]
     }

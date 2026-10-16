@@ -46,6 +46,40 @@
         "description": "The address this document replaces, where it replaces one. A version is not a correction unless somebody says which sentence moved.",
         "type": "string",
         "minLength": 1
+      },
+      "derives_from": {
+        "description": "The ADDRESS of the one norm this one derives from: a doctrine from a cardinal, a rule from a doctrine, a procedure from a rule or a doctrine. Every norm below a cardinal has exactly one parent, so the norms form a tree (the normative tree, ADR-024).",
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]*@[0-9]+\\.[0-9]+\\.[0-9]+#[a-z0-9][a-z0-9-]*$"
+      },
+      "modality": {
+        "description": "A rule's RFC 2119 modality. MUST and MUST NOT need an enforcer; SHOULD is a default a host departs from only with a recorded reason; MAY is guidance and lives in a skill.",
+        "type": "string",
+        "enum": [
+          "MUST",
+          "MUST NOT",
+          "SHOULD",
+          "SHOULD NOT",
+          "MAY"
+        ]
+      },
+      "subject": {
+        "description": "What the rule is about, as one key: two rules on one subject with opposite modalities contradict.",
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]*$"
+      },
+      "enforced_by": {
+        "description": "The enforcers of a MUST: `gate:<id>`, `edit-gate:<id>` or `verb:<name>`. A MUST naming none this host has is NT-UNENFORCED.",
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^(gate|edit-gate|verb):[A-Za-z0-9._-]+$"
+        }
+      },
+      "procedure": {
+        "description": "The skill that says HOW to apply this norm.",
+        "type": "string",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
       }
     }
   }

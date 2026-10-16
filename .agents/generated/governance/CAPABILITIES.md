@@ -102,11 +102,13 @@ Carries conduct doctrine and ships none of it. A sentence about how a host shoul
 
 | path | class | mode |
 | --- | --- | --- |
+| `.agents/project/doctrine/norms.json` | binding | seed |
 | `.agents/project/doctrine/doctrine.json` | binding | seed |
 | `.agents/generated/DOCTRINE.md` | projection | projection |
 
 Gates declared by this capability:
 
+- **FF-NORMS** — `norms-coherent`
 
 ### enforcement 0.1.0
 

@@ -41,6 +41,9 @@ bundles stay comparable — an answer in private words is legible to nobody but 
 - **chapter** — a body of conduct doctrine about one subject -- an economy, a risk posture, an environment -- distributed as one document and answered as one. A chapter that applies only in some environments is not gated by a condition inside itself: its bundle declares a `requires` on a profile fact, so the condition lives in the declaration and never in an interpreter.
 - **skill** — a body of method a runtime loads only when a task needs it -- a CATALOG that is always small and chapters read on demand, so carrying a skill costs its index and nothing else until it is used.
 - **playbook** — a named chain of steps for one recurring situation, naming what each step produces, so the situation is met the same way every time and a deviation is a decision.
+- **doctrine** — A concern area (L1) that groups rules, derived from one cardinal.
+- **rule** — A norm (L2) with an RFC 2119 modality, derived from one doctrine; a MUST names its enforcer.
+- **procedure** — How a doctrine or a rule is applied (L4): a pointer to a skill.
 
 ## How this page cannot lie
 

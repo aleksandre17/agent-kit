@@ -16,6 +16,21 @@
     {
       "id": "playbook",
       "means": "a named chain of steps for one recurring situation, naming what each step produces, so the situation is met the same way every time and a deviation is a decision."
+    },
+    {
+      "id": "doctrine",
+      "means": "A concern area (L1) that groups rules, derived from one cardinal.",
+      "derives": true
+    },
+    {
+      "id": "rule",
+      "means": "A norm (L2) with an RFC 2119 modality, derived from one doctrine; a MUST names its enforcer.",
+      "derives": true
+    },
+    {
+      "id": "procedure",
+      "means": "How a doctrine or a rule is applied (L4): a pointer to a skill.",
+      "derives": true
     }
   ],
   "stance_vocabulary": [
@@ -25,7 +40,8 @@
     },
     {
       "id": "narrows",
-      "means": "this host holds less than the cardinal says, and states exactly how much less. A narrowing is a smaller claim, not a disagreement."
+      "means": "this host holds less than the cardinal says, and states exactly how much less. A narrowing is a smaller claim, not a disagreement.",
+      "loosens": true
     },
     {
       "id": "extends",

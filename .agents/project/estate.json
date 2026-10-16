@@ -177,6 +177,13 @@
       "path": ".agents/project/doctrine/laws/"
     },
     {
+      "capability": "doctrine",
+      "class": "binding",
+      "digest": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "mode": "seed",
+      "path": ".agents/project/doctrine/norms.json"
+    },
+    {
       "capability": "enforcement",
       "class": "binding",
       "digest": "97201a6f36e51c1af39b50ab4214b60951bc4172ffeaa227a3edb717e6b9b608",
@@ -517,5 +524,5 @@
       "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-10-16T12:10:28+00:00"
+  "taken_at": "2026-10-16T13:20:49+00:00"
 }
