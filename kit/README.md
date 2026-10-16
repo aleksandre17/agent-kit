@@ -39,6 +39,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | --- | --- | --- |
 | `activate` | point a setting outside the tree at what a served surface serves -- or withdraw it -- through a door | yes -- `--plan` prints the writes first |
 | `adopt` | read a host this kit has never touched and name every path that has no class | nothing |
+| `capsule` | show the continuity capsule, or replace one revision of it by compare-and-swap | yes -- `--plan` prints the writes first |
 | `check` | run the declared fitness functions and report | nothing |
 | `claim` | take, list, release or break by name a claim on paths, which the judge holds other writers to | nothing |
 | `dispatch` | hand one act to the dispatch port: start a worker for a task, or carry an operator's answer back into one that asked | yes -- `--plan` prints the writes first |

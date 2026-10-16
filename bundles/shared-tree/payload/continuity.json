@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "capsule_rev": 0,
+  "intent": "<pending: what this line of work is for>",
+  "position": "<pending: what is verified true now, with its evidence>",
+  "decisions": [],
+  "wip": [],
+  "next_action": "<pending: the exact next action>",
+  "risks": [],
+  "evidence": [],
+  "handoff": "open",
+  "must_not_forget": [],
+  "updated_at": "1970-01-01T00:00:00+00:00",
+  "updated_by": "the seed"
+}

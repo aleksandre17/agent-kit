@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "shared-tree",
+  "version": "1.0.0",
+  "summary": "Opt-in, for a host whose runtimes share ONE working tree (worktree isolation is the primary answer, and the dispatch port already gives every worker its own): a continuity capsule written by compare-and-swap under a lock with a journal, so two writers never lose an update; claims and observed write arbitration are the core's (ADR-022). `check` holds the capsule to its contract.",
+  "requires": [],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [],
+  "installs": [
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/continuity.json",
+      "source": "capabilities/shared-tree/payload/continuity.json",
+      "validates": "continuity-capsule",
+      "points": [
+        {
+          "id": "continuity",
+          "purpose": "the one handoff the next session reads, written by compare-and-swap",
+          "cardinality": "one",
+          "merges_into": "the next session's first read"
+        }
+      ]
+    }
+  ],
+  "gates": []
+}

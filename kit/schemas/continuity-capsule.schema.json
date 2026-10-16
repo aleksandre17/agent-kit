@@ -1,0 +1,96 @@
+{
+  "$id": "continuity-capsule",
+  "title": "THE CONTINUITY CAPSULE -- one typed handoff between sessions and runtimes",
+  "description": "What the next session needs and nothing else: the intent, the verified position, the decisions taken, the ONE thing in progress, the exact next action, the open risks, the evidence, the handoff state and what must not be forgotten. Written by compare-and-swap on `capsule_rev` (the `capsule` verb). Pointers, not copies: a fact with a home in the repository is named by its path.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "capsule_rev",
+    "intent",
+    "position",
+    "decisions",
+    "wip",
+    "next_action",
+    "risks",
+    "evidence",
+    "handoff",
+    "must_not_forget",
+    "updated_at",
+    "updated_by"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "capsule_rev": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "position": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "wip": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "next_action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "handoff": {
+      "type": "string",
+      "enum": [
+        "open",
+        "handed-off",
+        "closed"
+      ]
+    },
+    "must_not_forget": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "updated_by": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

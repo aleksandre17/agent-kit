@@ -18,7 +18,8 @@
       "arbitration",
       "register",
       "register-kind",
-      "task-classes"
+      "task-classes",
+      "continuity-capsule"
     ]
   },
   "installs": [

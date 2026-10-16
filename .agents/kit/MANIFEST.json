@@ -190,6 +190,7 @@
     "requirements": "schemas/requirements.schema.json",
     "execution-graph": "schemas/execution-graph.schema.json",
     "extension-points": "schemas/extension-points.schema.json",
-    "extension-ledger": "schemas/extension-ledger.schema.json"
+    "extension-ledger": "schemas/extension-ledger.schema.json",
+    "continuity-capsule": "schemas/continuity-capsule.schema.json"
   }
 }
