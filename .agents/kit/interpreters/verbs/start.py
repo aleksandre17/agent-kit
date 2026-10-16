@@ -83,7 +83,10 @@ def run(ctx, args) -> int:
     taken = _ids(takes, declaration)
     walk = [("init", []), ("init", ["--approve", who or "<who>"]),
             ("take", ["--path", ",".join(t.as_posix() for t in takes), "--approve", who or "<who>"]),
-            ("enable", taken), ("runtimes", [r["id"] for r in starter["runtimes"]]), ("render", [])]
+            ("enable", taken), ("runtimes", [r["id"] for r in starter["runtimes"]]),
+            # A take may bring a detector (a product's adapter reads that product's file), so the
+            # reading the first `init` took can be stale now: the walk re-reads it through its door.
+            ("retake", ["--approve", who or "<who>"]), ("render", [])]
     # Activation precedes the attesting init: that init ends in `check`, and a served setting not
     # yet pointed at what it serves is a failure `check` must report, not one to walk past.
     walk += [("activate", ["--surface", s, "--approve", who or "<who>"]) for s in starter["activate"]]

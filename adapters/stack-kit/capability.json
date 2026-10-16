@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id": "stack-kit",
+  "version": "1.0.0",
+  "summary": "An ADAPTER for stack-kit, the manifest-driven build and delivery kit: the one published declaration that carries its name. It brings a detector that reads the commands a host declares in `stack-kit.json` (`commands.test`, `commands.build`), so the briefing every runtime reads says how a change is built and proven. An ordinary capability, taken like any adapter; no interpreter in the kit knows that it exists.",
+  "requires": [],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [
+    {
+      "id": "stack_kit_commands",
+      "source": "capabilities/stack-kit/stack-kit-commands.json",
+      "validates": "detector"
+    }
+  ],
+  "installs": [],
+  "gates": []
+}

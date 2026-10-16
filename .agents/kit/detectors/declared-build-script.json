@@ -1,0 +1,10 @@
+{
+  "id": "declared-build-script",
+  "summary": "A build command the host itself declares, captured as the host spelled it.",
+  "evidence": [
+    { "kind": "json_path", "path": "package.json", "pointer": "scripts.build" }
+  ],
+  "emits": {
+    "quality.build.command": "$1"
+  }
+}

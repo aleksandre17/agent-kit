@@ -24,90 +24,22 @@ kit's is one reading, handed in by the context from the kit's own record -- neve
 
 from __future__ import annotations
 
-import json
-import re
+from pathlib import Path
 
+import kinds
 from errors import KitError
-
-
-def _dir_exists(ws, spec, ours):
-    return ws.path(spec["path"]).is_dir(), True
-
-
-def _file_exists(ws, spec, ours):
-    return spec["path"] not in ours and ws.path(spec["path"]).is_file(), True
-
-
-def _path_exists(ws, spec, ours):
-    """A path is THERE -- whether it is a file, a directory, or a link to either.
-
-    Some truths are about presence, not shape, and asserting the shape is how a detector
-    starts lying about a tree that is perfectly valid. `.git` is the standing example: a
-    normal clone holds a DIRECTORY, while a submodule, a linked worktree and
-    `--separate-git-dir` all hold a FILE pointing elsewhere. Git reads all four as a working
-    tree; a `dir_exists` check reads three of them as "not a repository".
-    """
-    return spec["path"] not in ours and ws.path(spec["path"]).exists(), True
-
-
-def _pattern(pattern: str):
-    """A glob as a regular expression over `/`-separated paths: `**/` is any number of whole
-    directories (none included), `*` and `?` never cross a `/`."""
-    out, i = "", 0
-    while i < len(pattern):
-        if pattern.startswith("**/", i):
-            out, i = out + "(?:[^/]+/)*", i + 3
-        elif pattern.startswith("**", i):
-            out, i = out + ".*", i + 2
-        elif pattern[i] == "*":
-            out, i = out + "[^/]*", i + 1
-        elif pattern[i] == "?":
-            out, i = out + "[^/]", i + 1
-        else:
-            out, i = out + re.escape(pattern[i]), i + 1
-    return re.compile(out + r"\Z")
-
-
-def _glob_any(ws, spec, ours):
-    carried = ws.carried()
-    if carried is None:
-        found = [p.relative_to(ws.root).as_posix() for p in ws.root.glob(spec["pattern"])]
-    else:
-        shape = _pattern(spec["pattern"])
-        found = [rel for rel in carried if shape.match(rel)]
-    matches = sorted(rel.rsplit("/", 1)[-1] for rel in found if rel not in ours)
-    return bool(matches), matches or None
-
-
-def _json_path(ws, spec, ours):
-    """Read one key path out of a JSON file. Pointer is dot-separated; no expression language."""
-    target = ws.path(spec["path"])
-    if spec["path"] in ours or not target.is_file():
-        return False, None
-    try:
-        value = json.loads(target.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return False, None
-    for step in spec["pointer"].split("."):
-        if not isinstance(value, dict) or step not in value:
-            return False, None
-        value = value[step]
-    return True, value
-
-
-EVIDENCE_KINDS = {
-    "dir_exists": _dir_exists,
-    "file_exists": _file_exists,
-    "path_exists": _path_exists,
-    "glob_any": _glob_any,
-    "json_path": _json_path,
-}
 
 
 class ProbeError(KitError):
     """A detector declared an evidence kind this interpreter does not know how to evaluate."""
 
     code = "KIT0016"
+
+
+#: Every evidence kind, by the name its module declares -- discovered, never listed here: a new kind
+#: of evidence is a module in `evidence/`, and this port is not edited (Cardinal II).
+EVIDENCE_KINDS = kinds.registry(Path(__file__).resolve().parents[1] / "evidence", "EVIDENCE",
+                                "evidence kind", ProbeError)
 
 
 class Probe:

@@ -232,10 +232,24 @@ class Manifest:
                 documents[declared["id"]] = document
             self._capabilities.append(Capability(raw, documents))
 
+        # The release's detectors, then every document a composed capability ships under the
+        # detector contract: a reading of a product's file is published with that product's
+        # adapter, never added to the kit core. One id, one detector -- a second is refused.
         self._detectors = []
+        owners: dict = {}
+        found = []
         for rel in self._raw["detectors"]:
             raw = self._read(rel)
             self._require_valid(raw, "detector", rel)
+            found.append(("the release", rel, raw))
+        found += [(capability.id, declared["source"], capability.documents[declared["id"]])
+                  for capability in self._capabilities for declared in capability.raw.get("documents", [])
+                  if declared["validates"] == "detector"]
+        for owner, rel, raw in found:
+            if raw["id"] in owners:
+                raise ManifestError(f"{rel}: detector {raw['id']!r} is already declared by "
+                                    f"{owners[raw['id']]}; one reading has one home")
+            owners[raw["id"]] = owner
             self._detectors.append(raw)
 
     # -- reading ----------------------------------------------------------------------------

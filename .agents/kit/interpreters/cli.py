@@ -135,8 +135,11 @@ def _run(args, host: Path, kit_root: Path) -> int:
     # pinned kit and a host driven from a working tree read identically otherwise -- and the one
     # question a reader of any output must be able to answer is what actually ran (ADR-016).
     taken = f" + taken: {', '.join(ctx.manifest.taken)}" if ctx.manifest.taken else ""
+    # A verb whose stdout belongs to the product that ran it (a hook's decision) declares it, and the
+    # line still goes out -- to stderr, where it cannot be read as the decision.
     print(f"kit {ctx.manifest.version}{taken} · {args.verb} · {host.as_posix()} · "
-          f"kit at {ctx.manifest.root.as_posix()}")
+          f"kit at {ctx.manifest.root.as_posix()}",
+          file=sys.stderr if getattr(module, "STDOUT_IS_THE_PRODUCTS", False) else sys.stdout)
 
     # Whatever the enabled capabilities declared should watch a run like this one is opened HERE
     # -- before the verb, before even the precondition that could refuse it -- and closed in a

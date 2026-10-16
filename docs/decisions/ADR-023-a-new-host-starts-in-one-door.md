@@ -170,3 +170,41 @@ is enforced, not answered); a host-side copy of the shared gates (ten copies, te
 
 Proof: acceptance `test_policies` 413 (contract and calibration of every policy), 414 (a started host
 commits its own install and is refused each forbidden text at the commit), mutation-checked.
+
+## Amendment 4 — a new product, a new kind of evidence: by declaration (2026-10-16, owner-delegated)
+
+The owner: a new driver, a new language, a new product must be addable without touching the kit --
+SOLID, open by declaration, no closed sets. An independent read-only audit found the interpreters free
+of product names, and three places where extension still needed a kit edit:
+
+- **Evidence kinds were a literal dict** in the probe. They are now discovered (`kinds.registry` over
+  `interpreters/evidence/`): a new kind of evidence is a module, and the probe is not edited.
+- **Detectors came only from the release's hand-kept list**, so a product's reading had to live in the
+  core (`stack-kit-commands` did). A composed capability now brings detectors as documents under the
+  `detector` contract; one id, one detector. `stack-kit-commands` moved to `adapters/stack-kit/` (the
+  standard starter takes it), and a core `declared-build-script` keeps the build reading measurable on
+  a host without it. `start` re-reads the reading after its takes (`retake`), since a take may bring a
+  detector.
+- **A hook could refuse only by exit code.** A surface may declare the decision text a product reads on
+  stdout (`hands.refusal.stdout` with `{reason}`, `hands.admission.stdout`); the judge then writes every
+  line of its own to stderr, and the entry point writes the judge's header there too
+  (`STDOUT_IS_THE_PRODUCTS`).
+- **Guard:** interpreters are imported flat, so two modules with one name would shadow each other
+  silently; `test_one_name_one_module` refuses it.
+
+*Rejected:* giving `declares.detectors` (a list of release detector ids) a second meaning as file paths;
+moving every ecosystem detector out of the core now (it changes every host's reading at once -- owed
+below, with a migration); a product-specific branch in the judge for stdout decisions.
+
+**Owed (measured, not built):** the hand-kept dispatch tables that the discovery doctrine says are rows
+(`init.INSTALL_MODES` with `space.MODES` a second home, `projection.PROJECTION_SHAPES`,
+`collection.READER_KINDS`, `attestation.EVENTS` with its order-dependent `REFUSED_WRITE`,
+`resolution.KINDS`); core modules importing concrete ports (`projection`, `activation`, `spans`,
+`succession` → `runtime`; `returns` → `dispatch_port`; `accepted` → `vcs`); "the plane of class X" looked
+up in five copies (one `manifest.plane()` accessor); large modules (`dispatch_port` 896 lines, `corpus`
+755, `init` 620); the core's ecosystem detectors (dotnet, node, pnpm, go, python) moved to published
+bundles with a reading migration; skills (amendment 2).
+
+Proof: acceptance `test_commands` 412b (a taken adapter's detector is read and served; none of its ids is
+in the core), unit `test_judge_decision`, `test_one_name_one_module`; mutation-checked (composition
+removed, stdout routing removed). `test_detectors` covers the discovered evidence kinds.

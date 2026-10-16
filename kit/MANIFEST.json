@@ -114,14 +114,14 @@
     "detectors/container-compose.json",
     "detectors/database-migrations.json",
     "detectors/dotnet-project.json",
+    "detectors/declared-build-script.json",
     "detectors/declared-test-runner.json",
     "detectors/git-repository.json",
     "detectors/go-module.json",
     "detectors/license-file.json",
     "detectors/node-workspace.json",
     "detectors/pnpm-workspace.json",
-    "detectors/python-project.json",
-    "detectors/stack-kit-commands.json"
+    "detectors/python-project.json"
   ],
   "schemas": {
     "manifest": "schemas/manifest.schema.json",

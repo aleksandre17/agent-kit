@@ -38,6 +38,11 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   gates no longer judge the pinned kit or taken capabilities. `test_policies` 413-414.
 - A release source cloned from a URL is removed with its read-only git objects: on Windows a plain
   removal left the scratch behind (found by the full suite on `test_pinned_kit` 279).
+- Open by declaration (ADR-023 amendment 4): evidence kinds discovered from `interpreters/evidence/`;
+  a capability brings detectors as `detector` documents (`adapters/stack-kit` 1.0.0 carries
+  `stack-kit-commands`, moved out of the core; core `declared-build-script` added); a surface may declare
+  a stdout decision (`hands.refusal.stdout`, `hands.admission.stdout`); `start` retakes after its takes;
+  `test_one_name_one_module`. `test_commands` 412b, unit `test_judge_decision`.
 
 **Added — a reading is replaced through a door (ADR-021 amendment 2)**
 - Verb `retake`: names every moved fact; `--plan` writes nothing; unapproved it is a door; approved it
