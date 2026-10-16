@@ -220,7 +220,7 @@ def _targets(ctx, item: dict, view: dict, produced: dict, capabilities) -> list:
                         # and references): the bytes the publisher wrote, rendered by no template.
                         for extra in member.get("files", []):
                             found.append((f"{root}/{member['id']}/{extra['path']}", None,
-                                          {**base, "text": extra["text"]}, {**rendered, "layer": "on-demand"}))
+                                          {**base, "text": extra["text"]}, {**rendered, "layer": extra.get("layer", "")}))
                     continue
                 for member in _members(view_spec, view, produced, capabilities):
                     found.append((f"{root}/{member['id']}{rendered.get('suffix', '')}",

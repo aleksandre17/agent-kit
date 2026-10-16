@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "summary": "The kit's context defaults: the always-loaded layer is laws and pointers; everything else is on demand.",
+  "estimator": {
+    "bytes_per_token": 4,
+    "says": "A declared approximation: prose and code average about four bytes per token in the products' published guidance. A surface whose product counts otherwise declares its own (`tokens`). An estimate, labelled as one -- never a product's own count."
+  },
+  "default_ceilings": {
+    "always_loaded_tokens": 2000,
+    "indexed_tokens": 1500,
+    "activated_body_tokens": 5000,
+    "on_demand_page_tokens": 12000
+  },
+  "inline_limit_tokens": 400
+}

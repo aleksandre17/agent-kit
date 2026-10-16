@@ -10,20 +10,23 @@
           "target": "AGENTS.md",
           "template": "capabilities/codex/payload/entry.md.mustache",
           "span": "briefing",
-          "seed": "capabilities/codex/payload/entry-seed.md.mustache"
+          "seed": "capabilities/codex/payload/entry-seed.md.mustache",
+          "layer": "always"
         },
         {
           "view": "scoped-briefing",
           "target": "AGENTS.md",
           "template": "capabilities/codex/payload/scoped.md.mustache",
           "span": "scoped-briefing",
-          "seed": "capabilities/codex/payload/scoped-seed.md.mustache"
+          "seed": "capabilities/codex/payload/scoped-seed.md.mustache",
+          "layer": "on-demand"
         },
         {
           "view": "role-definitions",
           "target": ".codex/agents/",
           "suffix": ".toml",
-          "template": "capabilities/codex/payload/role.toml.mustache"
+          "template": "capabilities/codex/payload/role.toml.mustache",
+          "layer": "indexed"
         },
         {
           "view": "enforcement",
@@ -69,7 +72,14 @@
         "refusal": {
           "exit": 2
         }
-      }
+      },
+      "limits": [
+        {
+          "measures": "always_loaded_tokens",
+          "ceiling": 8192,
+          "says": "Codex reads at most project_doc_max_bytes (32 KiB by default) of AGENTS.md -- from the product's configuration documentation; a claim until measured"
+        }
+      ]
     }
   ]
 }

@@ -265,6 +265,52 @@
                 }
               }
             }
+          },
+          "tokens": {
+            "description": "How THIS product counts: bytes per token, where it differs from the kit's estimator. A claim, like `says`.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "bytes_per_token",
+              "says"
+            ],
+            "properties": {
+              "bytes_per_token": {
+                "type": "number",
+                "minimum": 1
+              },
+              "says": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "limits": {
+            "description": "The product's OWN hard limits on a context measure, in tokens -- refused whatever the host budgets. A claim from the product's documentation.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "measures",
+                "ceiling",
+                "says"
+              ],
+              "properties": {
+                "measures": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ceiling": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "says": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
           }
         }
       }

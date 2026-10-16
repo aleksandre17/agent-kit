@@ -10,20 +10,23 @@
           "target": "CLAUDE.md",
           "template": "capabilities/claude-code/payload/entry.md.mustache",
           "span": "briefing",
-          "seed": "capabilities/claude-code/payload/entry-seed.md.mustache"
+          "seed": "capabilities/claude-code/payload/entry-seed.md.mustache",
+          "layer": "always"
         },
         {
           "view": "scoped-briefing",
           "target": "CLAUDE.md",
           "template": "capabilities/claude-code/payload/scoped.md.mustache",
           "span": "scoped-briefing",
-          "seed": "capabilities/claude-code/payload/scoped-seed.md.mustache"
+          "seed": "capabilities/claude-code/payload/scoped-seed.md.mustache",
+          "layer": "on-demand"
         },
         {
           "view": "role-definitions",
           "target": ".claude/agents/",
           "suffix": ".md",
-          "template": "capabilities/claude-code/payload/role.md.mustache"
+          "template": "capabilities/claude-code/payload/role.md.mustache",
+          "layer": "indexed"
         },
         {
           "view": "enforcement",
@@ -57,7 +60,14 @@
         "refusal": {
           "exit": 2
         }
-      }
+      },
+      "limits": [
+        {
+          "measures": "activated_body_tokens",
+          "ceiling": 5000,
+          "says": "The Agent Skills specification recommends a SKILL.md body under 5000 tokens; Claude Code truncates a skill listing's description at 1536 characters -- from the products' documentation"
+        }
+      ]
     }
   ]
 }

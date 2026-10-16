@@ -20,6 +20,8 @@ import declared
 from errors import KitError
 
 CONTRACT, LIST = "skills", "skills"
+#: The directory of a skill whose files are run, not read (agentskills.io, optional directories).
+SCRIPTS = "scripts/"
 
 
 class SkillError(KitError):
@@ -72,7 +74,11 @@ def _skills(ctx, params) -> list:
                 if not path.startswith(home + "/"):
                     raise SkillError(f"{where}: its file {rel!r} lies outside the skill's own directory "
                                      f"{home!r}; a skill travels as one directory")
-                files.append({"path": path[len(home) + 1:], "text": read(path)})
+                served = path[len(home) + 1:]
+                # The Agent Skills convention: `scripts/` is EXECUTED, never loaded into context; every
+                # other supporting file is read when the body points at it.
+                files.append({"path": served, "text": read(path),
+                              "layer": "" if served.startswith(SCRIPTS) else "on-demand"})
             members.append({"id": skill["id"], "description": skill["description"],
                             "body": read(body).rstrip("\n") + "\n",
                             "allowed_tools": " ".join(skill.get("allowed_tools", [])),

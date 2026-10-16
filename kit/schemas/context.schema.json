@@ -1,0 +1,51 @@
+{
+  "$id": "context",
+  "title": "CONTEXT -- how served text is costed, and the kit's default ceiling for each measure",
+  "description": "The estimator that turns bytes into tokens and the DEFAULT ceiling of every context measure (`always_loaded_tokens`, `indexed_tokens`, `activated_body_tokens`, `on_demand_page_tokens`, published by the context gate). A default binds only a measure the host has not budgeted in its corpus map; a host's row is its own number, held by the ratchet. The defaults are tight on purpose: the always-loaded layer carries laws and pointers, and everything else is read on demand (ADR-024).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "estimator",
+    "default_ceilings"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "estimator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bytes_per_token",
+        "says"
+      ],
+      "properties": {
+        "bytes_per_token": {
+          "type": "number",
+          "minimum": 1
+        },
+        "says": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "default_ceilings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "inline_limit_tokens": {
+      "description": "An inlined section above this is reported as one a pointer would carry.",
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

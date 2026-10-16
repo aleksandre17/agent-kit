@@ -193,6 +193,7 @@ Gates declared by this capability:
 - **FF-RUNTIME-CLASS** — `reference-declared-across`
 - **FF-RUNTIME-CLAIM** — `reference-declared-across`
 - **FF-RUNTIME-ACTIVE** — `served-setting-active`
+- **FF-CONTEXT** — `context-held`
 
 ### claude-code 1.3.1
 

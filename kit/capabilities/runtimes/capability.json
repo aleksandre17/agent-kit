@@ -22,7 +22,8 @@
       "runtime-observation",
       "skills",
       "mcp-servers",
-      "mcp-trust"
+      "mcp-trust",
+      "context"
     ]
   },
   "documents": [
@@ -35,6 +36,11 @@
       "id": "kit_mcp_trust",
       "source": "runtimes/mcp-trust.json",
       "validates": "mcp-trust"
+    },
+    {
+      "id": "kit_context",
+      "source": "runtimes/context.json",
+      "validates": "context"
     }
   ],
   "composes": {
@@ -337,6 +343,11 @@
     {
       "id": "FF-RUNTIME-ACTIVE",
       "kind": "served-setting-active",
+      "params": {}
+    },
+    {
+      "id": "FF-CONTEXT",
+      "kind": "context-held",
       "params": {}
     }
   ]

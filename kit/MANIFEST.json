@@ -179,6 +179,7 @@
     "register-kind": "schemas/register-kind.schema.json",
     "skills": "schemas/skills.schema.json",
     "mcp-servers": "schemas/mcp-servers.schema.json",
-    "mcp-trust": "schemas/mcp-trust.schema.json"
+    "mcp-trust": "schemas/mcp-trust.schema.json",
+    "context": "schemas/context.schema.json"
   }
 }
