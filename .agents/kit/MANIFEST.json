@@ -194,6 +194,7 @@
     "continuity-capsule": "schemas/continuity-capsule.schema.json",
     "conformance": "schemas/conformance.schema.json",
     "owners": "schemas/owners.schema.json",
-    "message-rules": "schemas/message-rules.schema.json"
+    "message-rules": "schemas/message-rules.schema.json",
+    "known-violations": "schemas/known-violations.schema.json"
   }
 }

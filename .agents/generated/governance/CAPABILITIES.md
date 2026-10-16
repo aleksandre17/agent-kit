@@ -121,11 +121,13 @@ Declares the ENFORCEMENT LINE: a host's own edit gates, judged at the moment an 
 | path | class | mode |
 | --- | --- | --- |
 | `.agents/project/enforcement/edit-gates.json` | binding | seed |
+| `.agents/project/enforcement/known-violations.json` | binding | seed |
 
 Gates declared by this capability:
 
 - **FF-EDIT-GATE** — `edit-gates-calibrated`
 - **FF-MESSAGE-RULE** — `message-rules-calibrated`
+- **FF-TREE-AUDIT** — `tree-audited`
 
 ### hygiene 0.1.0
 

@@ -37,6 +37,10 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - One secrets catalogue: secrets 1.2.0 publishes its edit-gate document's path and contract
   (`policies/secrets/README.md`) for other readers; stack-kit adapter 1.1.0 declares the bridge
   (`security.secretPatterns`). Acceptance test_policies 415 holds the published contract true.
+- The whole-tree audit: verb `audit` (KIT0084) runs every calibrated edit gate in force over every
+  tracked file, prints path:line, gate and because (never the matched text); extension point
+  `known-violations` (contract `known-violations`) acknowledges KNOWN findings with tracking and `until`;
+  EXPIRED and STALE named; gate FF-TREE-AUDIT ships `observe` and `check` prints its counts (`REPORTS`).
 
 
 **Changed — every dispatch table is a discovered registry; the core reaches ports only through the root (ADR-023 amendment 5)**

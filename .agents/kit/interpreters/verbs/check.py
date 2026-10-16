@@ -56,6 +56,8 @@ def run(ctx, args) -> int:
     thing only -- whether that failure fails this verb -- and it is printed beside the verdict with
     its author, so an observed failure is shown, counted and named, never a silent green."""
     kinds = registry()
+    # A kind whose READING is worth a line on every check, pass or fail (the tree audit's counts).
+    reports = registry("REPORTS")
     ctx.through = _through(ctx, getattr(args, "surface", None))
     enabled = ctx.enabled_capabilities()
     matured, idle = maturation.spent(ctx, enabled)
@@ -71,6 +73,7 @@ def run(ctx, args) -> int:
                     f"registered kinds are {sorted(kinds)}"
                 )
             held = stances[(capability.id, gate["id"])]
+            crashed = False
             try:
                 failures = kinds[kind](ctx, gate.get("params", {}))
             except KitError:
@@ -79,11 +82,14 @@ def run(ctx, args) -> int:
                 # Fail-safe defaults (Saltzer & Schroeder): a gate exists to deny, so a gate whose
                 # decision is UNKNOWN denies. It fails under its own stance -- never a pass, and never
                 # a crash that takes every other gate's verdict down with it (ADR-022 decision 8).
+                crashed = True
                 failures = [f"the gate kind {kind!r} crashed ({type(exc).__name__}: {exc}) -- an "
                             f"unjudged gate is not a passed one"]
             print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})  {held.label()}")
             for failure in failures:
                 print(f"        {failure}")
+            if kind in reports and not crashed:
+                print(f"        {reports[kind](ctx, gate.get('params', {}))}")
             if held.fails:
                 failed += 1 if failures else 0
             else:

@@ -127,6 +127,24 @@ declaration, never a kit edit, proven by a fixture the kit does not ship.
     scanner. *Rejected:* a second pattern list in the scanner (two judges of one question); the kit
     importing the scanner (a dependency on a tool it does not need).
 
+20. **The tree is audited by the gates that judge its edits** (owner's request: a violation already in the
+    tree was never seen). An edit gate judges what a change introduces -- a ratchet -- so a line older than
+    the gate, or one that reached the tree past every hook, stood unseen. Verb `audit` runs every calibrated
+    edit gate in force (the host's and every taken policy's, the `edit-gate` contract) over the FULL text of
+    every TRACKED file its `paths` reach, with the judge's own reach (a gate's declaration and the
+    publisher's pinned planes are not read), and prints `path:line`, the gate and its `because` -- never the
+    matched text, so a secret is located and not repeated. A known violation is acknowledged by
+    declaration, never by silencing the gate: the extension point `known-violations` (contract
+    `known-violations`: gate, exact path, tracking, `until?`) prints it KNOWN with its tracking; an `until`
+    that has passed makes it a finding again (EXPIRED); an acknowledgement matching nothing is STALE.
+    Exit 1 on an unacknowledged finding; KIT0084 where no repository says what is tracked or one violation
+    is acknowledged twice. `check` runs it as `FF-TREE-AUDIT` (kind `tree-audited`, calibrated), which
+    SHIPS `observe` and prints its counts on every run (a gate kind's `REPORTS` entry): blocking only when
+    the host raises its stance to `enforce`. *Rejected:* `judge --tree` (the judge's stdout and exit code
+    belong to the product whose hook ran it, and a tree is not an event); an acknowledgement by path
+    pattern (one row could cover a file nobody looked at); narrowing the gate's `paths` to exempt a file
+    (the file's next edit would no longer be judged); every untracked file (not what a clone receives).
+
 ## Cuts (the result did not outweigh the cost)
 
 Operating modes; a separate knowledge store; a growth-ladder ceremony beyond the lesson schema; a

@@ -18,7 +18,8 @@
       "edit-gate",
       "destructive-commands",
       "spawn-packets",
-      "message-rules"
+      "message-rules",
+      "known-violations"
     ]
   },
   "installs": [
@@ -35,6 +36,22 @@
           "purpose": "this host's calibrated edit gates",
           "cardinality": "one",
           "merges_into": "every edit and commit judgement"
+        }
+      ]
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/enforcement/known-violations.json",
+      "source": "capabilities/enforcement/payload/known-violations-local.json",
+      "validates": "known-violations",
+      "reads_as": "host_known_violations",
+      "points": [
+        {
+          "id": "known-violations",
+          "purpose": "violations already in this tree, acknowledged with their tracking",
+          "cardinality": "one",
+          "merges_into": "the whole-tree audit (`audit`, FF-TREE-AUDIT)"
         }
       ]
     }
@@ -56,6 +73,14 @@
         "sources": {
           "validates": "message-rules"
         }
+      }
+    },
+    {
+      "id": "FF-TREE-AUDIT",
+      "kind": "tree-audited",
+      "params": {},
+      "stance": {
+        "ships": "observe"
       }
     }
   ]

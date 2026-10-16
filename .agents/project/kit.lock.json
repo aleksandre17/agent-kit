@@ -1,17 +1,17 @@
 {
   "algorithm": "sha256",
-  "count": 333,
+  "count": 338,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "436f6b730d0d2f0a62a140cae26fc24b00048018fe6d34035bd06b8f0d757002",
+      "digest": "62a846c3ac298009b9987f408f913d342dceb8d7c3375e67dbef2512f4aa269f",
       "path": "MANIFEST.json"
     },
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "77dcc5e8861a19e1b8f5ec7dda60e0822083997c3a3a9610cea2efe92cd8617c",
+      "digest": "0b625668dbd7b84690073dd363b1b51b2ee76c087f43f66e3b4457ff822e3580",
       "path": "README.md"
     },
     {
@@ -95,7 +95,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "c21745b6069f523f6fd1d3c888814f9616aeae42d9e1e8496e043c4f218d32bd",
+      "digest": "95c7d39a7b39c3ab9f65cf00befa497fe6c5004c8fc68bdbe3a81f810739115a",
       "path": "capabilities/enforcement/capability.json"
     },
     {
@@ -103,6 +103,12 @@
       "class": "declaration",
       "digest": "8e46cda136642cf0a995b63940a24acd48446e7c96b9983fa6eff78176fc74cb",
       "path": "capabilities/enforcement/payload/edit-gates-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "c892f2b3ad89dc287911b7a4919f3feec45ef74dcbe4c7418d879aeeeb2db332",
+      "path": "capabilities/enforcement/payload/known-violations-local.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -539,7 +545,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "ccc8e6aec04ac644935af3569676ed1390038629a44ad5dac581c0c39b9b45d7",
+      "digest": "2fe62243d2159ca2fa0ee6e645ecdfa158ec221f7e10dd5579e84f6374c42c4b",
       "path": "diagnostics.json"
     },
     {
@@ -731,6 +737,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "242e6b5c8ca9ca3dc701bd66bd5ceb3624f0ffcff94655a0b5d205697260f5a3",
+      "path": "interpreters/gates/audited.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "e04df7a77456fbc4da4f4495e11fcc2e340f1ec2181519e0620d31360d33abac",
       "path": "interpreters/gates/calibration.py"
     },
@@ -773,7 +785,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d770a1a71c2eaae8c2dcead7220ab1b224eed1d84c18d0134d342997e9a649e6",
+      "digest": "c111844dfe7c3b673e9ecc3097ac3245b44ec0f9d5eb07acedbaf1a9724882d1",
       "path": "interpreters/gates/edits.py"
     },
     {
@@ -889,6 +901,12 @@
       "class": "interpreter",
       "digest": "faa40187df0c05eab1fad69f2babe8f15237486837849bcd1fbb76e538f79252",
       "path": "interpreters/gates/served.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "2fc07db2350a83ed218afe0ff5383569cc3cca08d6fe8522a4551d728d6b54ba",
+      "path": "interpreters/gates/standing.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1049,13 +1067,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "6214221e734f4f2d53e2c315918af98057cbcf684ee9529568bf2f8123023ee0",
+      "digest": "416a8de6d785855b9efff52535bf129b4aab2674c3c650cb6b7ce848493cd4b4",
       "path": "interpreters/ports/vcs.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "8f1c6f8619fe337fd138747f6db434faa780f9f9230ffb93320aa9fc68922d54",
+      "digest": "32416c9d0751d614418f6d5ccf7ae3a5b4d7cef7bb97777e90f9708bb3485cf5",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1301,13 +1319,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "84914c2dc64d4c4b2e84b414d38adf177582526bd1430a9c36359bd85a85bd27",
+      "path": "interpreters/verbs/audit.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "5cdf8e773c2e684065e108abfff5b8cb738589a6fd4ae0e0ee286c20a4c4d789",
       "path": "interpreters/verbs/capsule.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "8258b1dabf7c61895dfa97dfa2b42ee0fc5ffa981508d1d7c600ec0cf5a657a4",
+      "digest": "1611f4356dec30c93786e47b688e95be8f5ec1db9ebcb0a19adf4eefb23de0a3",
       "path": "interpreters/verbs/check.py"
     },
     {
@@ -1721,6 +1745,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "f079156baa80e63e9e7a2c33febcf7d3aff9d3126f00efaee4df8f5836e75bf1",
+      "path": "schemas/known-violations.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "5b79c749f2c873a267548e2143720c509f91eb490058095068c5c61bf055064d",
       "path": "schemas/law-scope.schema.json"
     },
@@ -2004,5 +2034,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T16:56:51+00:00"
+  "taken_at": "2026-10-16T17:33:21+00:00"
 }

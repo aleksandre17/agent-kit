@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 83,
+  "issued": 84,
   "codes": [
     {
       "code": "KIT0001",
@@ -500,6 +500,12 @@
       "status": "active",
       "title": "a referenced kit that is absent, at another commit or not equal to the lock -- or a reference that cannot be made honestly",
       "explanation": "A host that references the kit in its own tree (a submodule) runs it only while it is present, at the pinned commit and byte for byte the lock; the command that restores it is named (ADR-024)."
+    },
+    {
+      "code": "KIT0084",
+      "status": "active",
+      "title": "a whole-tree audit that cannot be taken honestly",
+      "explanation": "The audit reads what the repository tracks; with no repository it would pass on a guessed file list. One violation (gate, path) acknowledged twice has two tracking answers. Run it in the repository, or keep one acknowledgement (ADR-024)."
     }
   ]
 }

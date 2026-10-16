@@ -38,3 +38,13 @@ def carried(root) -> "list | None":
     if said is None:
         return None
     return sorted({p for p in said.split("\0") if p})
+
+
+def tracked(root) -> "list | None":
+    """Every file the repository at `root` TRACKS -- what a clone receives, never an untracked file
+    a person left beside it -- host-relative, `/`-separated, sorted; `None` where no repository
+    answers (the whole-tree audit, ADR-024 decision 20)."""
+    said, _why = run(root, ["ls-files", "-z", "--cached"])
+    if said is None:
+        return None
+    return sorted({p for p in said.split("\0") if p})

@@ -98,9 +98,12 @@ class GateStance(Fixtures, unittest.TestCase):
         self.plant(host)
         result = self.run_kit(KIT, host, "check")
         self.assertEqual(1, result.returncode)
-        for gate_id in (g["id"] for c in MANIFEST.capabilities for g in c.gates
-                        if c.id in json.loads((host / ANSWERS).read_text())["capabilities"]):
-            self.assertIn(f"[{UNANSWERED}: unanswered", gate_line(result.stdout, gate_id))
+        for gate in (g for c in MANIFEST.capabilities for g in c.gates
+                     if c.id in json.loads((host / ANSWERS).read_text())["capabilities"]):
+            # A gate whose PUBLISHER ships it in a stance stands there, and says who put it there.
+            ships = gate.get("stance", {}).get("ships")
+            self.assertIn(f"[{ships}: shipped so" if ships else f"[{UNANSWERED}: unanswered",
+                          gate_line(result.stdout, gate["id"]))
         self.assertIn(f"FAIL  {WATCHED}", result.stdout)
 
     # == 2. an observed failure is shown, counted and named =====================================
@@ -164,7 +167,7 @@ class GateStance(Fixtures, unittest.TestCase):
         self.declare(host, self.row(WATCHED, QUIET))
         clean = self.run_kit(KIT, host, "check")
         self.assertEqual(0, clean.returncode)
-        self.assertRegex(clean.stdout, rf"are clean: {re.escape(WATCHED)} \[{QUIET}\].*"
+        self.assertRegex(clean.stdout, rf"are clean: (?:\S+ \[\w+\], )*{re.escape(WATCHED)} \[{QUIET}\].*"
                                        rf"only the host makes")
 
         self.plant(host)

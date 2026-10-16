@@ -1,0 +1,42 @@
+{
+  "$id": "known-violations",
+  "title": "Known violations -- what a HOST acknowledges is already in its tree, and who tracks it",
+  "description": "The whole-tree audit (`audit`, gate FF-TREE-AUDIT) runs every calibrated edit gate in force over the full text of every tracked file. A violation the host already knows of is ACKNOWLEDGED here, by declaration -- never by silencing or narrowing the gate, which keeps holding every new edit. One row covers every line one gate finds in one path. An acknowledgement whose `until` (the last day it holds) has passed acknowledges nothing, so its findings stand again; one that matches no finding is STALE and is reported for removal (ADR-024 decision 20).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "acknowledgements"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "summary": { "type": "string" },
+    "acknowledgements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gate", "path", "tracking"],
+        "properties": {
+          "gate": {
+            "description": "The id of the edit gate whose finding this acknowledges.",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "path": {
+            "description": "The host-relative POSIX path of the tracked file, exactly -- never a pattern, so one row can never acknowledge a file nobody looked at.",
+            "type": "string",
+            "minLength": 1
+          },
+          "tracking": {
+            "description": "Where the repair is tracked: a card, an issue, a register row.",
+            "type": "string",
+            "minLength": 1
+          },
+          "until": {
+            "description": "The last day (YYYY-MM-DD, UTC) this acknowledgement holds.",
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          }
+        }
+      }
+    }
+  }
+}

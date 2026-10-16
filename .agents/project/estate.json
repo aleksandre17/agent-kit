@@ -205,6 +205,13 @@
       "path": ".agents/project/enforcement/edit-gates.json"
     },
     {
+      "capability": "enforcement",
+      "class": "binding",
+      "digest": "c892f2b3ad89dc287911b7a4919f3feec45ef74dcbe4c7418d879aeeeb2db332",
+      "mode": "seed",
+      "path": ".agents/project/enforcement/known-violations.json"
+    },
+    {
       "capability": "governance",
       "class": "binding",
       "digest": null,
@@ -552,5 +559,5 @@
       "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-10-16T16:56:51+00:00"
+  "taken_at": "2026-10-16T17:31:10+00:00"
 }

@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "summary": "Violations this HOST acknowledges are already in its tree, each with where its repair is tracked and, optionally, the last day the acknowledgement holds. Declared empty, every finding of `audit` stands -- a declared zero, never a gate switched off.",
+  "acknowledgements": []
+}

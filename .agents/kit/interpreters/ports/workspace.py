@@ -121,6 +121,13 @@ class Workspace:
             self._carried = vcs.carried(self._root)
         return self._carried
 
+    def tracked(self) -> "list[str] | None":
+        """Every file the repository at this root tracks, or `None` where no repository answers."""
+        if not hasattr(self, "_tracked"):
+            import vcs
+            self._tracked = vcs.tracked(self._root)
+        return self._tracked
+
     def accepted_listing(self, space: str) -> tuple:
         """(the file names under `space` at HEAD, None) or (None, why) -- the previous ACCEPTED state
         of a place, what HEAD holds and never what the tree holds now (ADR-019)."""

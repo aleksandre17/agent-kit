@@ -129,7 +129,7 @@ def _edit_gates_calibrated(ctx, params):
             for failure in calibration(rule)]
 
 
-def _published_roots(ctx) -> list:
+def published_roots(ctx) -> list:
     """Where a PUBLISHER's bytes sit on the host: the pinned kit and every taken capability. They are
     held by their digests (`pinned-kit-intact`, `taken-intact`), not by the host's text policy -- and
     a published policy carries, as each gate's `proves`, the very text it refuses, so judging those
@@ -148,7 +148,7 @@ def _judged(ctx, params, edits):
     the very text it refuses, so a gate whose paths reach its own declaration would refuse the edit
     that declares it -- and `check` already holds that file to its schema and its calibration."""
     own = declared.homes(ctx, params["sources"])
-    published = _published_roots(ctx)
+    published = published_roots(ctx)
     edits = [(path, text) for path, text in edits
              if path not in own and not any(path.startswith(root) for root in published)]
     found, unjudged = judge(declared.rules(ctx, params["sources"], RULES), edits)
