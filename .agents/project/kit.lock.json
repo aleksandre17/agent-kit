@@ -71,7 +71,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "payload",
-      "digest": "b4ed7484734213b60f9a1f9098a059cdbc7ca42248e3e9011288e93ca06edbee",
+      "digest": "600f9f519f00b12e71d8821b1e6b53e7b9b0d620d3a74b3e56615c86f0dde458",
       "path": "capabilities/doctrine/payload/DOCTRINE.md.mustache"
     },
     {
@@ -1584,5 +1584,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T06:14:40+00:00"
+  "taken_at": "2026-10-16T06:17:35+00:00"
 }

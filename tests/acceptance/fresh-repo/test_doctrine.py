@@ -153,7 +153,7 @@ class DoctrineCarrier(Fixtures, unittest.TestCase):
         page = (host / PAGE).read_text(encoding="utf-8")
         self.assertIn("THE DOCTRINE IN FORCE IS NONE", page,
                       "a host with no doctrine did not say so in the register the decision fixed")
-        self.assertIn("No bundle is installed", page)
+        self.assertIn("has declared no bundle in force", page)
         self.assertFalse(list((host / Path(PUBLISHED).parent).glob("*")) if (host / Path(PUBLISHED).parent).exists() else [],
                          "the kit put doctrine on a host that asked for none")
 

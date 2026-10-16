@@ -8,14 +8,12 @@
 ## The doctrine in force
 
 {{^reads.doctrine_local.bundles}}
-**THE DOCTRINE IN FORCE IS NONE.** No bundle is installed. No cardinal binds this host through
-this kit.
+**THE DOCTRINE IN FORCE IS NONE.** This host has declared no bundle in force
+(`bundles` in its doctrine declaration), so no cardinal binds it through this kit. A bundle it has
+TAKEN still renders its own roll; it is in force once this host states, in that list, why it took it.
 
-That is a complete and legal state, and `check` is green on it. This framework ships no doctrine
-bundle of its own and will not supply a starter one: a default norm is an opinion installed by a
-party that was never asked. What it ships is the carrier — the shape of a distributed cardinal,
-the shape of an answer to one, and this page — so that a host which takes doctrine is answering a
-publisher rather than filling in a blank somebody left for it.
+That is a complete and legal state, and `check` is green on it. The issued kit carries no doctrine
+of its own: a norm is an opinion, and it binds a host only by that host's own declaration.
 {{/reads.doctrine_local.bundles}}
 {{#reads.doctrine_local.bundles}}
 - **{{id}}@{{version}}** — taken {{taken_at}} by {{taken_by}}.{{#because}} {{.}}{{/because}}
