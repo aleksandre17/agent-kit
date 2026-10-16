@@ -87,6 +87,14 @@ declaration, never a kit edit, proven by a fixture the kit does not ship.
     for nothing to hold); reading the model from the event (the product puts none there); estimating
     tokens from text.
 
+16. **Review owners are declared once** (`owners`: pattern -> owners), an extension point the CI adapter
+    seeds and serves into a span of the host's own `.github/CODEOWNERS` through a generic `declared`
+    resolver (a view of any contract's rows). What only a person can set outside the tree -- branch
+    protection -- is a surface `controls` row: `doctor` names it NOT ASSERTED with the exact command, and
+    the kit never runs it. *Rejected:* a CODEOWNERS file the kit owns whole (a host's own owners would be
+    shadowed); setting protection through the API (a credential and a remote, irreversible act); a
+    resolver per contract.
+
 ## Cuts (the result did not outweigh the cost)
 
 Operating modes; a separate knowledge store; a growth-ladder ceremony beyond the lesson schema; a
@@ -98,7 +106,7 @@ NIST AI RMF rows beyond one `mapping` row (organisational standards). Each is a 
 - Signed releases and a licence (the owner's decisions).
 - Codex's session-start, stop and subagent-stop hooks: the event names are a claim (codex-cli 0.154.0 by
   inspection), their payloads and exit semantics unmeasured, so none is served; a session-end token log.
-- CODEOWNERS and branch protection (external controls; a conformance `gap` row).
+- Branch protection (an external control a person sets; a conformance `gap` row, `doctor` prints the command).
 - More procedure skills (verify, refactor) beyond kit-skills and the record/review procedures.
 - Codex memory home and Codex hook coverage for pre-exec and pre-spawn (no measured product fact yet).
 - One full acceptance run after the last commit: the last full run was 412/415, the three failures

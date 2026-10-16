@@ -24,7 +24,8 @@
       "mcp-servers",
       "mcp-trust",
       "context",
-      "briefing-section"
+      "briefing-section",
+      "owners"
     ]
   },
   "documents": [
@@ -287,6 +288,20 @@
               "kind": "skills",
               "params": {}
             }
+          },
+          {
+            "id": "owners",
+            "sections": [],
+            "carries": [
+              {
+                "as": "owners",
+                "kind": "declared",
+                "params": {
+                  "validates": "owners",
+                  "list": "rules"
+                }
+              }
+            ]
           },
           {
             "id": "mcp",

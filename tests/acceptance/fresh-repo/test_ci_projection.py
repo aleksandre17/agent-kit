@@ -36,7 +36,9 @@ import activated  # noqa: E402
 import activation  # noqa: E402
 import check as check_verb  # noqa: E402
 import judge  # noqa: E402
+import rows  # noqa: E402
 import serving  # noqa: E402
+from manifest import Manifest  # noqa: E402
 
 enforcement = commit_gate.enforcement
 HOST_GATE = enforcement.HOST_GATE
@@ -130,6 +132,37 @@ class CiProjection(enforcement.Enforcement):
                 admitted = self.served_host_on(host)
                 self.assertEqual(0, admitted.returncode, admitted.stdout + admitted.stderr)
                 self.assertEqual(theirs, beside.read_bytes(), "the kit touched a definition it does not own")
+
+    def test_298_declared_owners_are_served_into_a_span_of_the_hosts_file_and_branch_protection_is_named_not_set(self):
+        core = Manifest(self.kit)
+        # The view that lays out a host's declared rows, found by the resolver that answers for it.
+        view = next(v for c in core.capabilities for i in c.installs for v in i.get("serves", {}).get("views", [])
+                    if any(k["kind"] in rows.RESOLVES for k in v.get("carries", [])))
+        contract = next(k["params"]["validates"] for k in view["carries"] if k["kind"] in rows.RESOLVES)
+        seat = next(i["target"] for c in core.capabilities for i in c.installs if i.get("validates") == contract)
+        owning = [(s, r) for s in self.surfaces for r in s["renders"] if r["view"] == view["id"]]
+        if not owning:
+            raise AssertionError("no taken adapter serves the owners view -- this test would pass on nothing")
+        host = self.installed(self.kit)
+        value = json.loads((host / seat).read_text(encoding="utf-8"))
+        value["rules"] = [{"id": "kit-planes", "pattern": "/.agents/", "owners": ["@an-org/maintainers", "a@b.example"]}]
+        (host / seat).write_text(json.dumps(value) + "\n", encoding="utf-8")
+        ran = self.served_host_on(host)
+        self.assertEqual(0, ran.returncode, ran.stdout + ran.stderr)
+        for _surface, render in owning:
+            path = host / render["target"]
+            self.assertIn("/.agents/ @an-org/maintainers a@b.example\n", path.read_text(encoding="utf-8"))
+            # The file is the host's: a line of its own outside the span survives every render.
+            path.write_text("* @the-owner\n" + path.read_text(encoding="utf-8"), encoding="utf-8")
+            again = self.served_host_on(host)
+            self.assertEqual(0, again.returncode, again.stdout + again.stderr)
+            self.assertTrue(path.read_text(encoding="utf-8").startswith("* @the-owner\n"))
+        doctor = self.run_kit(self.kit, host, "doctor")
+        controls = [c for s in self.surfaces for c in s.get("controls", [])]
+        self.assertTrue(controls, "no taken adapter names a control only a person sets")
+        for control in controls:
+            self.assertIn("NOT ASSERTED", doctor.stdout)
+            self.assertIn(control["command"], doctor.stdout)
 
     def served_host_on(self, host: Path) -> subprocess.CompletedProcess:
         for surface in self.surfaces:

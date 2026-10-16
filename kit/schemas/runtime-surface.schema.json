@@ -440,6 +440,34 @@
                 "minLength": 1
               }
             }
+          },
+          "controls": {
+            "description": "Controls OUTSIDE the tree and outside the kit's reach -- a hosting service's own setting (branch protection, required reviews) -- that only a PERSON with the rights may set. The kit never sets one and never reads one: `doctor` names each as NOT ASSERTED with the exact command the person runs, and a conformance row stays a `gap` until the setting is observed. A claim about somebody else's software, like `says`.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "says",
+                "command"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]*$"
+                },
+                "says": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "command": {
+                  "description": "The one shell line the person runs, as written; never run by the kit.",
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
           }
         }
       }

@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 326,
+  "count": 328,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d6847f48000b1bc0228f8c551371b5a8ceb0e0be3baca9b8a4da2d0980eee202",
+      "digest": "02bf36af4b752ba5f3278054265b19a85bc1d950d84ec0163381231c83fd68ab",
       "path": "MANIFEST.json"
     },
     {
@@ -431,7 +431,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "ad0b657b2ec74199c224e8ffcaeb0e9210b39331928ac0f77501ab5b1f9f8cba",
+      "digest": "c025bac718e96d30b520472eb8be4bbdc49701de49789fb000b02909f69565aa",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -1163,6 +1163,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "4a2b44e7f082aec37dd74e930609c6db841c8bd2fd97a0acc086801617a80242",
+      "path": "interpreters/resolvers/rows.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "dd9f1a206c26dd5b4ef459b14aafd1bdc3b131dfc0d21cd95956a51e9ce71080",
       "path": "interpreters/resolvers/skills.py"
     },
@@ -1301,7 +1307,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "de8b1b835b1c6e5698708a13d51da66c711290ea388c44309ac74f444a862d24",
+      "digest": "26fe0e04c43f81da7ee2d4fef7b2af0db7faa4dfe50ea6b8a961b8fc37d380ff",
       "path": "interpreters/verbs/doctor.py"
     },
     {
@@ -1763,6 +1769,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "489dafea8a3cfe9c2410158aaf72ef7984e2a983ace54ac137683cb8279962ba",
+      "path": "schemas/owners.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "ed86189f32b1c13ec9a24f1d2cc4502a82128bf8c23f97e6dc44bfe20ce91901",
       "path": "schemas/position-shape.schema.json"
     },
@@ -1847,7 +1859,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "1e6767b9d803792840681e5dfdc6f72ef5b1d5ad121f72ea82ab56930f2e8b08",
+      "digest": "fe5524f92abdbc084418fab3d97c536f5d7cb2ce9b868e67cae09bc89d742319",
       "path": "schemas/runtime-surface.schema.json"
     },
     {
@@ -1962,5 +1974,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T15:36:18+00:00"
+  "taken_at": "2026-10-16T15:49:30+00:00"
 }

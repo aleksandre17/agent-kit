@@ -410,11 +410,24 @@
     {
       "id": "h-codeowners",
       "standard": "harvested: gesotat-system",
-      "clause": "CODEOWNERS and branch protection",
-      "mechanism": "not served",
-      "evidence": [],
+      "clause": "CODEOWNERS",
+      "mechanism": "contract owners (a host extension point seeded by the github-actions adapter), served into a span of the host's .github/CODEOWNERS by the generic `declared` resolver",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_ci_projection.py::test_298"
+      ],
+      "status": "conformant",
+      "why": "declared once, served in the product's grammar; the file stays the host's"
+    },
+    {
+      "id": "h-branch-protection",
+      "standard": "harvested: gesotat-system",
+      "clause": "branch protection",
+      "mechanism": "a surface `controls` row: `doctor` names it NOT ASSERTED with the exact `gh api` command a person runs; the generated CI refuses whitespace and conflict markers (git diff --check)",
+      "evidence": [
+        "verb:doctor"
+      ],
       "status": "gap",
-      "why": "a host's owners and its branch protection are external controls, not asserted; the generated CI refuses whitespace and conflict markers (git diff --check)"
+      "why": "an external control: setting it needs a person's rights on the hosting service, and the kit neither sets nor reads it"
     },
     {
       "id": "h-identical-block",

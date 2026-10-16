@@ -5,7 +5,9 @@ runs -- the pinned kit's entry point, the surface's hands, the judge -- refuses 
 verb hands each served surface's judge the event its product would write, carrying a declared gate's
 own specimen, exactly as the product's hook command runs it (the pinned kit, `--surface`), and expects
 the surface's refusal. It writes nothing to the tree: the judge is asked as a CANARY, so no observation
-or claim is recorded. What a product actually fired is a different fact, read from the hook receipts.
+or claim is recorded. What a product actually fired is a different fact, read from the hook receipts. A
+control outside the tree that only a person sets (a surface's `controls`) is named NOT ASSERTED, with the
+exact command the person runs; the kit never runs it.
 """
 
 from __future__ import annotations
@@ -37,14 +39,25 @@ def _stdin(hand: dict, path: str, text: str) -> str:
     return json.dumps(event)
 
 
+def _controls(ctx, served: set) -> None:
+    """What no hook can prove: a control outside the tree only a person sets. Named, with the person's
+    exact command, and never reported as either state -- the kit neither sets nor reads it."""
+    for surface in declared.rules(ctx, *hooks.SURFACES):
+        if surface["id"] in served:
+            for control in surface.get("controls", []):
+                print(f"  NOT ASSERTED  {surface['id']}: {control['id']} -- {control['says']} A person with the "
+                      f"rights runs:\n    {control['command']}")
+
+
 def run(ctx, args) -> int:
     gates = declared.rules(ctx, *GATES)
     canary = next((g for g in gates if g["paths"] == ".*"), gates[0] if gates else None)
+    served = serving.served_surfaces(ctx, ctx.enabled_capabilities())
     if canary is None:
         print("doctor: this host declares no edit gate, so there is nothing a hook could refuse")
+        _controls(ctx, served)
         return 0
     cli = ctx.workspace.path(ctx.manifest.plane("vendor")) / "interpreters" / "cli.py"
-    served = serving.served_surfaces(ctx, ctx.enabled_capabilities())
     dead = 0
     for surface in declared.rules(ctx, *hooks.SURFACES):
         hand = surface.get("hands")
@@ -60,4 +73,5 @@ def run(ctx, args) -> int:
         last = fired[-1]["at"] if fired else "never"
         print(f"  {'LIVE' if live else 'DEAD'}  {surface['id']}: {canary['id']} refused with exit {ran.returncode} "
               f"(expects {hand['refusal']['exit']}); {len(fired)} receipt(s), last {last}")
+    _controls(ctx, served)
     return 1 if dead else 0
