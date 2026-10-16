@@ -107,20 +107,6 @@
     {
       "mode": "seed",
       "class": "binding",
-      "target": ".agents/project/doctrine/laws.md",
-      "source": "seeds/laws.md",
-      "points": [
-        {
-          "id": "laws",
-          "purpose": "this host's numbered laws, each naming where it is enforced",
-          "cardinality": "one",
-          "merges_into": "the always-loaded briefing (project laws)"
-        }
-      ]
-    },
-    {
-      "mode": "seed",
-      "class": "binding",
       "target": ".agents/project/doctrine/law-scopes.json",
       "source": "seeds/law-scopes.json",
       "validates": "law-scope",
@@ -229,11 +215,6 @@
     }
   ],
   "relocations": [
-    {
-      "from": ".agents/project/laws.md",
-      "to": ".agents/project/doctrine/laws.md",
-      "decision": "ADR-021 decision 4"
-    },
     {
       "from": ".agents/project/law-scopes.json",
       "to": ".agents/project/doctrine/law-scopes.json",

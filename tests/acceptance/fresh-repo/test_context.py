@@ -28,7 +28,7 @@ CONTEXT = next(c.documents[d["id"]] for c in CORE.capabilities for d in c.raw.ge
                if d["validates"] == "context")
 SPEC = next(i["serves"] for c in CORE.capabilities for i in c.installs if i.get("shape") == serving.SHAPE)
 #: The first page a briefing INLINES: a section that points nowhere and is read from the host.
-INLINED = next(s["from"] for v in SPEC["views"] for s in v.get("sections", []) if not s.get("points"))
+INLINED = next(s.get("deprecated_from", s["from"]) for v in SPEC["views"] for s in v.get("sections", []) if not s.get("points"))
 #: The layer an entry briefing is loaded into (a document view of sections, unscoped), and the first
 #: measure of that layer -- its whole cost on every turn.
 BRIEFING = next(v["id"] for v in SPEC["views"] if v.get("sections") and "scopes" not in v)

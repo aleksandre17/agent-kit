@@ -41,6 +41,10 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   tracked file, prints path:line, gate and because (never the matched text); extension point
   `known-violations` (contract `known-violations`) acknowledges KNOWN findings with tracking and `until`;
   EXPIRED and STALE named; gate FF-TREE-AUDIT ships `observe` and `check` prints its counts (`REPORTS`).
+- One source for a host's laws: a host rule carries `law: <n>` and `enforcement_note` (contract `cardinal`);
+  the briefing's law list is rendered from them (`.agents/generated/LAWS.md`, resolver `numbered`); the
+  law page `.agents/project/doctrine/laws.md` is deprecated -- no longer seeded, served while present, FF-LAWS
+  fails both authored or a gap in the numbers; `upgrade --mode laws` moves each numbered law into a rule.
 
 
 **Changed — every dispatch table is a discovered registry; the core reaches ports only through the root (ADR-023 amendment 5)**

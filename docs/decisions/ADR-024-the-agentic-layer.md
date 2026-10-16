@@ -145,6 +145,21 @@ declaration, never a kit edit, proven by a fixture the kit does not ship.
     pattern (one row could cover a file nobody looked at); narrowing the gate's `paths` to exempt a file
     (the file's next edit would no longer be judged); every untracked file (not what a clone receives).
 
+21. **A host's laws have one source: its numbered rules** (owner's request: two homes for one law). A
+    host rule in the normative tree may carry `law: <n>` (its number in the served list) and an
+    `enforcement_note`; the briefing's project laws are RENDERED from those rules in law order -- bold
+    title, what it says, the note and the enforcers it names (`.agents/generated/LAWS.md`, resolver
+    `numbered`). The prose law page is DEPRECATED: no longer seeded (a host that has one keeps it, its
+    record orphaned, never deleted by an upgrade), and served in place of the rendered list while it
+    exists (`deprecated_from` on the section). `FF-LAWS` (kind `laws-one-source`, calibrated) fails a host
+    that authors both, or numbers that do not run 1..n in declared order, and reports which source is in
+    force on every check. `upgrade --mode laws --approve <who>` moves each numbered law into a rule
+    (`host@1.0.0#law-<n>`, its title, says and note), removes the page and renders; the host then
+    completes `derives_from`, `modality` and `subject` where FF-NORMS names them. *Rejected:* rendering
+    the page from prose (a parser as the source of truth); keeping the page authoritative and the rules
+    derived (the tree `check` holds coherent would follow the prose, not the reverse); deleting the page
+    in an ordinary upgrade (an upgrade cannot delete what the host wrote).
+
 ## Cuts (the result did not outweigh the cost)
 
 Operating modes; a separate knowledge store; a growth-ladder ceremony beyond the lesson schema; a

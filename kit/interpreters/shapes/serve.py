@@ -93,6 +93,10 @@ def _sections(ctx, view_spec: dict, produced: dict, record: "dict | None" = None
     rows = []
     for section in _ordered(view_spec.get("sections", []) + _contributed(ctx, view_spec)):
         source = record[section["from_field"]] if "from_field" in section else section["from"]
+        # A DEPRECATED source stays in force while the host still holds it (the law page, ADR-024
+        # d. 21); `check` names it, and refuses it once its successor is authored too.
+        if section.get("deprecated_from") and ctx.workspace.exists(section["deprecated_from"]):
+            source = section["deprecated_from"]
         if "inline" in section:
             rows.append({**section, "present": True, "text": section["inline"].rstrip("\n") + "\n"})
             continue

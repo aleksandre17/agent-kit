@@ -30,6 +30,13 @@
       "path": ".agents/generated/INDEX.md"
     },
     {
+      "capability": "doctrine",
+      "class": "projection",
+      "digest": null,
+      "mode": "projection",
+      "path": ".agents/generated/LAWS.md"
+    },
+    {
       "capability": "roles",
       "class": "projection",
       "digest": null,
@@ -175,13 +182,6 @@
       "digest": "a1d2a231421c119b377991757ed299b9dc7fa67ce832bd4eeca99bbe2cbc141b",
       "mode": "seed",
       "path": ".agents/project/doctrine/law-scopes.json"
-    },
-    {
-      "capability": "governance",
-      "class": "binding",
-      "digest": "d16941c0a2132c9baea6fe36ad1f748093f5e871966503f708a7bcdc573a29fb",
-      "mode": "seed",
-      "path": ".agents/project/doctrine/laws.md"
     },
     {
       "capability": "governance",
@@ -559,5 +559,5 @@
       "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-10-16T17:31:10+00:00"
+  "taken_at": "2026-10-16T17:43:34+00:00"
 }

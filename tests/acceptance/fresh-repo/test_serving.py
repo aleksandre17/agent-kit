@@ -60,7 +60,7 @@ SURFACE_GATE = next(g["id"] for g in CAPABILITY["gates"]
                     if g["params"]["references"][0]["field"] == ENABLING_FIELD)
 BINDING_ROOT = next(p["root"] for p in MANIFEST.planes if p["class"] == "binding").rstrip("/") + "/"
 LAW_SECTIONS = [s for v in SPEC["views"] for s in v.get("sections", [])
-                if s.get("from", "").startswith(BINDING_ROOT)]
+                if s.get("deprecated_from", s.get("from", "")).startswith(BINDING_ROOT)]
 INTERPRETERS = KIT / "interpreters"
 STANCES = next(d for c in MANIFEST.capabilities for d in c.documents.values()
                if isinstance(d, dict) and "unanswered" in d and "stances" in d)
@@ -159,7 +159,7 @@ class Serving(Fixtures, unittest.TestCase):
                 host = self.hired()
                 canary = "the one law only this host declared, in words no template contains"
                 for section in LAW_SECTIONS:
-                    with open(host / section["from"], "a", encoding="utf-8", newline="\n") as f:
+                    with open(host / section.get("deprecated_from", section["from"]), "a", encoding="utf-8", newline="\n") as f:
                         f.write(f"\n1. {canary}\n")
                 self.descriptor(host, "the-tool", **{ENABLING_FIELD: surface["id"]})
                 self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)

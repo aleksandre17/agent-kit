@@ -52,8 +52,8 @@ A kit can also be read straight from where it is published, at an exact revision
 submodule: `--kit "git+https://github.com/aleksandre17/agent-kit.git@<tag>#subdirectory=kit"` (it is
 cloned into a scratch outside the host, read with `git archive`, and refused unless it equals its lock).
 
-Three things stay yours to write, because no framework can know them: the project's laws
-(`.agents/project/doctrine/laws.md`), a stance on each published cardinal
+Three things stay yours to write, because no framework can know them: the project's laws, as numbered rules
+(`law: <n>` in `.agents/project/doctrine/norms.json`), a stance on each published cardinal
 (`.agents/project/doctrine/doctrine.json`), and the build and test commands, declared where a
 detector reads them (`stack-kit.json` `commands`, or `package.json` `scripts.test`).
 

@@ -11,6 +11,11 @@ The estate is what makes them separable, and a host without one is refused rathe
     python kit/interpreters/cli.py upgrade --root <host> --approve <who>   # walk the door
     python <kit-in-tree>/interpreters/cli.py upgrade --root <host> --mode referenced --approve <who>
 
+`--mode laws` (ADR-024 decision 21) moves each numbered law of the deprecated law page into a rule in
+the host's norms (`law: <n>`, its title, what it says and its enforcement note), removes the page and
+renders: the served law list is then rendered from those rules, and the host completes each one
+(`derives_from`, `modality`, `subject`) where the normative tree's gate names it.
+
 `--mode referenced` (ADR-024 decision 18) moves a host that holds the kit in its own tree (a
 submodule) off its vendored copy: the lock is rewritten to reference that kit at its commit, every
 projection is rendered to run it from there, `check` is run, and only when it is green are the copies
@@ -39,6 +44,10 @@ from __future__ import annotations
 
 import json
 
+import declared
+import laws
+import lawsource
+
 import check as check_verb
 import doors
 import estate as estate_module
@@ -59,9 +68,10 @@ REQUIRES_APPROVED_HOST = True
 #: not stand in front of it (ADR-024 decision 18).
 REPINS = True
 ARGUMENTS = [
-    ("--mode", {"default": None, "choices": ["referenced"],
+    ("--mode", {"default": None, "choices": ["referenced", "laws"],
                 "help": "referenced: run the kit this host holds in its own tree (a submodule) at its "
-                        "commit, and remove the vendored copies once check is green"}),
+                        "commit, and remove the vendored copies once check is green; laws: move each "
+                        "numbered law of the deprecated law page into a rule in the host's norms"}),
 ]
 
 
@@ -142,12 +152,54 @@ def _referenced(ctx, args) -> int:
     return hostlock.held(ctx, args, write)
 
 
+#: Where a host's own rules are published: the address the normative tree gives a host norm.
+HOST_ADDRESS = "host@1.0.0"
+
+
+def _laws(ctx, args) -> int:
+    """Move the deprecated law page's numbered laws into the host's norms, then retire the page."""
+    gate = next(g for c in ctx.enabled_capabilities() for g in c.gates if g["kind"] == lawsource.KIND)
+    page, reads = gate["params"]["deprecated"], gate["params"]["rules_from"]
+    target = next(i["target"] for c in ctx.enabled_capabilities() for i in c.installs if i.get("reads_as") == reads)
+    if not ctx.workspace.exists(page):
+        print(f"upgrade: {page} is absent; this host's laws already have one source")
+        return 0
+    norms = next(iter(declared.sources(ctx, [reads]).values()))
+    moved = laws.rules(ctx.workspace.read_text(page), HOST_ADDRESS, args.approve or "<who>",
+                       gate["params"]["genre"], ctx.manifest.version_of(laws.CONTRACT))
+    taken = {n["id"] for n in norms} & {r["id"] for r in moved}
+    if laws.numbered(norms) or taken:
+        raise UpgradeRefused(f"{target} already carries numbered laws or the addresses {sorted(taken)}; "
+                             f"a law moved over one would be a law with two homes. Reconcile {page} by hand")
+    for rule in moved:
+        print(f"upgrade: law {rule['law']} -> {target} as {rule['id']} ({rule['title']})")
+    print(f"upgrade: {page} is removed once its {len(moved)} law(s) are rules; complete each rule's "
+          f"derives_from, modality and subject where `check` names it")
+    if getattr(args, "plan", False):
+        return 0
+    if not args.approve:
+        doors.refuse(f"this host's laws would move from {page} into {target}, and the page would be removed",
+                     "person who owns this host", "upgrade --root <host> --mode laws --approve <who>",
+                     "Where a host's laws are written is the host's choice, and the record names who chose.")
+
+    def write() -> int:
+        ctx.workspace.scoped((target,)).write_text(target, json.dumps(norms + moved, indent=2, ensure_ascii=False) + "\n")
+        ctx.workspace.scoped((page,)).remove_file(page)
+        ctx.reread()
+        return render_verb.run(ctx, args)
+
+    return hostlock.held(ctx, args, write)
+
+
 def json_text(value) -> str:
     """A lock as every lock is written: sorted keys, two-space indent, one trailing newline."""
     return json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
 
 def run(ctx, args) -> int:
+    if getattr(args, "mode", None) == "laws":
+        hostlock.arrive(ctx, args)
+        return _laws(ctx, args)
     if getattr(args, "mode", None) == "referenced":
         hostlock.arrive(ctx, args)
         return _referenced(ctx, args)

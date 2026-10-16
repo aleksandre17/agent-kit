@@ -38,9 +38,9 @@
       "points": [
         {
           "id": "norms",
-          "purpose": "this host's own doctrines and rules in the normative tree",
+          "purpose": "this host's own doctrines and rules; a rule carrying `law` is a served project law",
           "cardinality": "one",
-          "merges_into": "the normative tree (FF-NORMS)"
+          "merges_into": "the normative tree (FF-NORMS) and the briefing's project laws"
         }
       ]
     },
@@ -65,6 +65,12 @@
       "class": "projection",
       "target": ".agents/generated/DOCTRINE.md",
       "source": "capabilities/doctrine/payload/DOCTRINE.md.mustache"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/LAWS.md",
+      "source": "capabilities/doctrine/payload/LAWS.md.mustache"
     }
   ],
   "gates": [
@@ -72,6 +78,31 @@
       "id": "FF-NORMS",
       "kind": "norms-coherent",
       "params": {}
+    },
+    {
+      "id": "FF-LAWS",
+      "kind": "laws-one-source",
+      "params": {
+        "rules_from": "host_norms",
+        "deprecated": ".agents/project/doctrine/laws.md",
+        "genre": "rule"
+      }
+    }
+  ],
+  "resolves": [
+    {
+      "id": "law_list",
+      "kind": "numbered",
+      "params": {
+        "reads": "host_norms",
+        "field": "law",
+        "carries": [
+          "title",
+          "says",
+          "enforcement_note",
+          "enforced_by"
+        ]
+      }
     }
   ]
 }

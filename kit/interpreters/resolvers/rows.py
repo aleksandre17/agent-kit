@@ -18,3 +18,17 @@ def _rows(ctx, params) -> list:
 
 
 RESOLVES = {"declared": _rows}
+
+
+def _numbered(ctx, params) -> list:
+    """The rows of one named readable that carry the numbering field, in that number's order, each
+    with exactly the fields the view lays out -- an optional one absent from a row is carried as
+    None, so a logic-less template asks whether it is present instead of naming what no row holds."""
+    found = []
+    for value in declared.sources(ctx, [params["reads"]]).values():
+        found += [row for row in (value if isinstance(value, list) else []) if params["field"] in row]
+    fields = [params["field"], *params["carries"]]
+    return [{name: row.get(name) for name in fields} for row in sorted(found, key=lambda r: r[params["field"]])]
+
+
+RESOLVES["numbered"] = _numbered

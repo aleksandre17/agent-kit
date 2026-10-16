@@ -53,7 +53,6 @@ Declares the four-class seam for a host: the reading, the declaration, the seede
 | `.agents/project/project.json` | binding | declaration |
 | `.agents/project/estate.json` | binding | estate |
 | `.agents/project/allowed_signers` | binding | seed |
-| `.agents/project/doctrine/laws.md` | binding | seed |
 | `.agents/project/doctrine/law-scopes.json` | binding | seed |
 | `.agents/project/doctrine/laws/` | binding | space |
 | `.agents/project/position/` | binding | space |
@@ -109,10 +108,12 @@ Carries conduct doctrine and ships none of it. A sentence about how a host shoul
 | `.agents/project/doctrine/norms.json` | binding | seed |
 | `.agents/project/doctrine/doctrine.json` | binding | seed |
 | `.agents/generated/DOCTRINE.md` | projection | projection |
+| `.agents/generated/LAWS.md` | projection | projection |
 
 Gates declared by this capability:
 
 - **FF-NORMS** — `norms-coherent`
+- **FF-LAWS** — `laws-one-source`
 
 ### enforcement 0.1.0
 

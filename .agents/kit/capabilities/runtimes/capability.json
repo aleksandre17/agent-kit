@@ -227,8 +227,9 @@
               {
                 "id": "project-laws",
                 "heading": "Project laws -- this host's numbered bindings",
-                "from": ".agents/project/doctrine/laws.md",
-                "absent": "This host declares no law page, so no runtime is told any project law -- a declared absence, and not a short list."
+                "from": ".agents/generated/LAWS.md",
+                "absent": "This host renders no law list, so no runtime is told any project law -- a declared absence, and not a short list.",
+                "deprecated_from": ".agents/project/doctrine/laws.md"
               },
               {
                 "id": "commands",

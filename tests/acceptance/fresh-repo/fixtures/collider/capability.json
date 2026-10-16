@@ -11,8 +11,8 @@
     {
       "mode": "seed",
       "class": "binding",
-      "target": ".agents/project/doctrine/laws.md",
-      "source": "seeds/laws.md"
+      "target": ".agents/project/doctrine/law-scopes.json",
+      "source": "seeds/law-scopes.json"
     }
   ],
   "gates": []

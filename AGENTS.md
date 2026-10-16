@@ -11,15 +11,7 @@ section is a projection of a declaration this host owns -- change the declaratio
 
 ## Project laws -- this host's numbered bindings
 
-# Project laws — BINDING
-
-> SEED. Written once, only if absent. From this moment it is yours: no upgrade will ever
-> read it for writing, diff it, or replace it. Delete the sentence you are reading and
-> write what is true here.
-
-## The laws of this repository
-
-1. _(none declared yet)_
+This host declares no law: no rule in its norms carries a `law` number -- a declared zero, and not a short list.
 
 ## Commands -- how a change is built and proven here
 

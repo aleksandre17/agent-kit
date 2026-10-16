@@ -80,6 +80,16 @@
         "description": "The skill that says HOW to apply this norm.",
         "type": "string",
         "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+      },
+      "law": {
+        "description": "A HOST rule's number in the law list served to every runtime's briefing (ADR-024 decision 21): the list is rendered from the rules that carry one, in this order, and numbered 1..n as declared. The host's laws then have one source.",
+        "type": "integer",
+        "minimum": 1
+      },
+      "enforcement_note": {
+        "description": "Where a numbered law is enforced, in the host's words: served in emphasis after what the law says.",
+        "type": "string",
+        "minLength": 1
       }
     }
   }

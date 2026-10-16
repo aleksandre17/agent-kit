@@ -256,7 +256,7 @@ class Composition(Fixtures, unittest.TestCase):
         self.assertIn("shadowed path", result.stderr)
         self.assertIn("'collider'", result.stderr)
         self.assertIn("'governance'", result.stderr)
-        self.assertIn(install_target("governance", source="seeds/laws.md"), result.stderr)
+        self.assertIn(install_target("governance", source="seeds/law-scopes.json"), result.stderr)
         self.assertFalse((host / ".agents").exists(), "the refusal must precede the first byte")
 
     # -- the Kind Law gate ------------------------------------------------------------------

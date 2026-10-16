@@ -30,7 +30,7 @@
       "runtime": "codex",
       "seed_sha256": "19d5827da319c1a4a75940e859424e227c01ec1261ab6829f83a427f23e8ba9a",
       "span": "briefing",
-      "span_sha256": "0b27c2c7f4d8ef9e38f5dc8c14361cf90526441faae1590ba95215f99eb37107",
+      "span_sha256": "ee3b30efdc5003649148028a09349858791c4f9dcf02ec25bfb865c4d4c55b83",
       "surface": "codex"
     },
     {
@@ -38,7 +38,7 @@
       "runtime": "claude-code",
       "seed_sha256": "19d5827da319c1a4a75940e859424e227c01ec1261ab6829f83a427f23e8ba9a",
       "span": "briefing",
-      "span_sha256": "2fcb840727caddc87259561130dc80c9ad64586250aa57e86a4494444937e3d9",
+      "span_sha256": "c475f4f777c8adec1fcd2d12a851d0c29be02cdff1e0dabf90e537335ba09a33",
       "surface": "claude-code"
     },
     {
