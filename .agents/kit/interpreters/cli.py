@@ -42,7 +42,9 @@ def measure_console() -> None:
     """The console is a boundary like any other: the kit writes UTF-8 and says so, rather than
     inheriting whatever code page the host shell happened to start with and garbling its own
     report. Measured once, here, before a byte is printed."""
-    for stream in (sys.stdout, sys.stderr):
+    # stdin too: a hook hands the judge a product's event or a staged patch, and a line decoded in the
+    # shell's code page instead of UTF-8 is text no gate can match (an invisible control read as mojibake).
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
         if getattr(stream, "encoding", "").lower().replace("-", "") != "utf8":
             try:
                 stream.reconfigure(encoding="utf-8", errors="replace")

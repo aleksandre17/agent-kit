@@ -180,6 +180,7 @@
     "skills": "schemas/skills.schema.json",
     "mcp-servers": "schemas/mcp-servers.schema.json",
     "mcp-trust": "schemas/mcp-trust.schema.json",
-    "context": "schemas/context.schema.json"
+    "context": "schemas/context.schema.json",
+    "briefing-section": "schemas/briefing-section.schema.json"
   }
 }

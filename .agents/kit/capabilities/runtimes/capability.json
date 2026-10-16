@@ -23,7 +23,8 @@
       "skills",
       "mcp-servers",
       "mcp-trust",
-      "context"
+      "context",
+      "briefing-section"
     ]
   },
   "documents": [
@@ -182,7 +183,13 @@
                 "absent": "This host declares no roles, so no runtime is handed a role definition.",
                 "points": "who this host has hired, before delegating work to a role"
               }
-            ]
+            ],
+            "sections_from": {
+              "sources": {
+                "validates": "briefing-section"
+              },
+              "list": "sections"
+            }
           },
           {
             "id": "scoped-briefing",

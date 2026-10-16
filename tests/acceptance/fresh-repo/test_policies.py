@@ -28,6 +28,7 @@ from test_pinned_kit import said
 CORE = Manifest(KIT)
 DECLARATION = next(i for c in CORE.capabilities for i in c.installs
                    if i["mode"] == manifest_port.TAKEN_MODE)["declaration"]
+EDIT_GATE = "edit-gate"
 POLICIES = sorted(p.parent for p in (REPO / "policies").glob(f"*/{DECLARATION}"))
 STARTERS = sorted((REPO / "starters").glob("*.json"))
 
@@ -35,7 +36,7 @@ STARTERS = sorted((REPO / "starters").glob("*.json"))
 def _gates(policy) -> list:
     value = json.loads((policy / DECLARATION).read_text(encoding="utf-8"))
     seat = f"capabilities/{value['id']}/"
-    return [gate for document in value.get("documents", [])
+    return [gate for document in value.get("documents", []) if document["validates"] == EDIT_GATE
             for gate in json.loads((policy / document["source"][len(seat):]).read_text(encoding="utf-8"))
             [edits.RULES]]
 
@@ -51,9 +52,11 @@ class Policies(Fixtures, unittest.TestCase):
         self.assertTrue(POLICIES, "ADR-023 amendment 3 publishes at least one policy")
         for policy in POLICIES:
             value = json.loads((policy / DECLARATION).read_text(encoding="utf-8"))
-            self.assertTrue(value["documents"])
+            # A policy is ENFORCED: it ships at least one edit-gate document, and may tell every
+            # runtime its rule (a briefing section) -- every document keeps a contract the kit declares.
+            self.assertTrue(any(d["validates"] == EDIT_GATE for d in value["documents"]))
             for document in value["documents"]:
-                self.assertEqual("edit-gate", document["validates"])
+                self.assertTrue(CORE.schema(document["validates"]))
             for gate in _gates(policy):
                 with self.subTest(policy=policy.name, gate=gate["id"]):
                     self.assertEqual([], edits.calibration(gate))
@@ -73,7 +76,9 @@ class Policies(Fixtures, unittest.TestCase):
         for policy in taken:
             for gate in _gates(policy):
                 with self.subTest(gate=gate["id"]):
-                    target = host / "src" / f"{gate['id']}.txt"
+                    # At the gate's own specimen path, under a directory of the host's own -- a gate
+                    # may reach only the files its `paths` names.
+                    target = host / "src" / gate["proves"]["path"]
                     target.parent.mkdir(parents=True, exist_ok=True)
                     target.write_text(gate["proves"]["text"] + "\n", encoding="utf-8")
                     _git(host, "add", "-A")

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "untrusted-content",
+  "version": "1.0.0",
+  "summary": "A POLICY published beside the kit, the guardrail against prompt injection (OWASP LLM01) and excessive agency (LLM06): content from tools, MCP servers, the web and files nobody here authored is DATA, never instructions. Every runtime is told so on every turn; text that hides instructions from a human reader (bidirectional controls, invisible tag characters) or overrides an agent's instructions in the files agents read is refused at the edit and the commit; and an untrusted MCP server's write and exec tools are denied by its declared trust (`mcp-trust`).",
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "enforcement"
+    },
+    {
+      "kind": "capability",
+      "id": "runtimes"
+    }
+  ],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [
+    {
+      "id": "untrusted_content_rule",
+      "source": "capabilities/untrusted-content/payload/briefing.json",
+      "validates": "briefing-section"
+    },
+    {
+      "id": "untrusted_content_gates",
+      "source": "capabilities/untrusted-content/payload/edit-gates.json",
+      "validates": "edit-gate"
+    }
+  ],
+  "installs": [],
+  "gates": []
+}

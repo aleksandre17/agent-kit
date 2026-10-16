@@ -1,0 +1,55 @@
+{
+  "$id": "briefing-section",
+  "title": "BRIEFING SECTIONS -- a rule a capability contributes to every always-loaded briefing",
+  "description": "A published policy or bundle that must tell every runtime ONE thing on every turn declares it here: a heading and at most a few sentences, inlined -- a law or a pointer, never a page (the always-loaded layer is laws and pointers, ADR-024). Served after the host's own declared sections, stable before volatile.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "sections"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "heading",
+          "text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "heading": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "volatility": {
+            "type": "string",
+            "enum": [
+              "stable",
+              "volatile"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
