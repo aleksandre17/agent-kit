@@ -118,7 +118,7 @@ def _skills(ctx, params) -> list:
         for chapter in row.get("chapters", []):
             if "path" in chapter:
                 # A host's own page, wherever it lives in its tree, served as the chapter: one home.
-                if read is not ctx.workspace.read_text:
+                if read != ctx.workspace.read_text:
                     raise SkillError(f"{where}: a published document names chapters by `file`, never by a host path")
                 source = _within("", chapter["path"], where)
             else:

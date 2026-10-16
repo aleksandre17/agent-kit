@@ -1091,7 +1091,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3e1e845fb6cb482cb23eb4776ad60ff27c7f9fccb8b90d92d2e6d46f6c92a5e4",
+      "digest": "dd9f1a206c26dd5b4ef459b14aafd1bdc3b131dfc0d21cd95956a51e9ce71080",
       "path": "interpreters/resolvers/skills.py"
     },
     {
@@ -1836,5 +1836,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T13:06:12+00:00"
+  "taken_at": "2026-10-16T13:09:13+00:00"
 }
