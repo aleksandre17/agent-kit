@@ -137,6 +137,83 @@
                   "type": "string",
                   "minLength": 1
                 }
+              },
+              "context": {
+                "description": "How this product takes a SESSION-START context line from its hook (the `session` verb): the text the hook writes to stdout, `{context}` replaced by the line, escaped as the body of a JSON string. Absent: the product is handed no context line at session start, and the verb says so.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "stdout"
+                ],
+                "properties": {
+                  "stdout": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "ledger": {
+                "description": "Where this product's SUBAGENT-STOP event puts the finished sub-agent, for the subagent ledger (the `ledger` verb): dotted keys to the agent's id, its kind and its own transcript, and how one transcript line carries a model turn -- `where` the fields a turn line equals, `key` the dotted key that names one turn (the LAST line of a key wins: a product that streams one turn as several lines repeats it), `fields` each recorded attribute (OpenTelemetry GenAI names) to a dotted key into the line; numbers are summed over turns, strings collected. `gen_ai.request.model` against `gen_ai.response.model` is the requested-versus-verified model check. A claim about somebody else's software, like `says`.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "agent",
+                  "transcript",
+                  "entries",
+                  "provider"
+                ],
+                "properties": {
+                  "agent": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "name": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "transcript": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "provider": {
+                    "description": "`gen_ai.provider.name`, in the semantic conventions' own vocabulary.",
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "entries": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "key",
+                      "fields"
+                    ],
+                    "properties": {
+                      "where": {
+                        "type": "object"
+                      },
+                      "key": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "fields": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           },
@@ -361,6 +438,34 @@
               "says": {
                 "type": "string",
                 "minLength": 1
+              }
+            }
+          },
+          "controls": {
+            "description": "Controls OUTSIDE the tree and outside the kit's reach -- a hosting service's own setting (branch protection, required reviews) -- that only a PERSON with the rights may set. The kit never sets one and never reads one: `doctor` names each as NOT ASSERTED with the exact command the person runs, and a conformance row stays a `gap` until the setting is observed. A claim about somebody else's software, like `says`.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "says",
+                "command"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]*$"
+                },
+                "says": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "command": {
+                  "description": "The one shell line the person runs, as written; never run by the kit.",
+                  "type": "string",
+                  "minLength": 1
+                }
               }
             }
           }

@@ -52,15 +52,19 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `inherit` | read a host's prior agent system and state what becomes of every path of it | nothing |
 | `init` | measure, choose, draft the answer, seed, vendor, render, check | yes -- `--plan` prints the writes first |
 | `judge` | judge one edit a runtime hook hands over, against this host's declared edit gates | nothing |
+| `ledger` | after a product's sub-agent stops: requested vs verified model and tokens, one ledger row (advisory) | nothing |
 | `lock` | enumerate what the kit is, measure it, and record the reading | yes -- `--plan` prints the writes first |
+| `message` | before a change is recorded: its message must take the form the host's message rules declare (blocking) | nothing |
 | `move` | move one card across one declared transition | yes -- `--plan` prints the writes first |
 | `propose` | state what this host learned that it says is not its own, as text a person carries | nothing |
 | `release` | state what this kit is as a release, or refuse to call a working tree one | nothing |
 | `render` | recompute every projection from VENDOR + BINDING | yes -- `--plan` prints the writes first |
 | `retake` | take this host's reading again, through a door, when its reality has legitimately moved | yes -- `--plan` prints the writes first |
 | `review` | check that a review range is covered by verified change records (tri-state JSON report) | nothing |
+| `session` | at a session's start: one context line -- the kit, how a change is proven, the capsule's handoff (advisory) | nothing |
 | `spawn` | before a runtime starts a sub-agent: the brief must be a packet under its ceiling (blocking) | nothing |
 | `start` | carry a host from nothing to a served, checked install in one door, by a published starter | yes -- `--plan` prints the writes first |
+| `stop` | before a session ends: the continuity capsule it leaves must keep its contract (blocking) | nothing |
 | `take` | take a published capability into this host's take plane, beside the pinned kit | yes -- `--plan` prints the writes first |
 | `takeover` | carry out the host's signed migration map, through a door that accepts its roster digest | yes -- `--plan` prints the writes first |
 | `trial` | run an agent eval on a fixture host, judged by the host's gates and check, recorded with its cost | yes -- `--plan` prints the writes first |

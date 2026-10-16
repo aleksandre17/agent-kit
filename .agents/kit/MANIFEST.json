@@ -192,6 +192,8 @@
     "extension-points": "schemas/extension-points.schema.json",
     "extension-ledger": "schemas/extension-ledger.schema.json",
     "continuity-capsule": "schemas/continuity-capsule.schema.json",
-    "conformance": "schemas/conformance.schema.json"
+    "conformance": "schemas/conformance.schema.json",
+    "owners": "schemas/owners.schema.json",
+    "message-rules": "schemas/message-rules.schema.json"
   }
 }

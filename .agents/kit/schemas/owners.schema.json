@@ -1,0 +1,56 @@
+{
+  "$id": "owners",
+  "title": "OWNERS -- who must review a change to which paths, declared once",
+  "description": "A host's review owners as rows: a path pattern (the gitignore-style pattern every owners-file grammar reads) and the owners whose review a change matching it requires. Declared in the kit's own terms and turned into a product's owners file by that product's adapter (ADR-024): the kit enforces nothing here -- a hosting service does, and only where its own protection is switched on, which is a person's act outside the tree. Order matters where a product reads the LAST matching row, so rows are served in the order declared.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "rules"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "pattern",
+          "owners"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "pattern": {
+            "description": "A path pattern: no whitespace and no `#`, which would end it or turn it into a comment.",
+            "type": "string",
+            "pattern": "^[^\\s#]+$"
+          },
+          "owners": {
+            "description": "Each owner as a hosting service names one: `@user`, `@org/team`, or an email address.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^(@[A-Za-z0-9][A-Za-z0-9-]*(/[A-Za-z0-9][A-Za-z0-9_.-]*)?|[^\\s@]+@[^\\s@]+\\.[^\\s@]+)$"
+            }
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

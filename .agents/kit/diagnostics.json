@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 81,
+  "issued": 83,
   "codes": [
     {
       "code": "KIT0001",
@@ -488,6 +488,18 @@
       "status": "active",
       "title": "a continuity capsule that breaks its contract, or a stale write",
       "explanation": "A capsule write lands only as the next revision over the one on disk, with one item in progress (ADR-024)."
+    },
+    {
+      "code": "KIT0082",
+      "status": "active",
+      "title": "a commit message that breaks a calibrated message rule the host declares",
+      "explanation": "A host that takes a message policy (Conventional Commits) records a change only with a message of the declared form; the rule, why and what instead are named (ADR-024)."
+    },
+    {
+      "code": "KIT0083",
+      "status": "active",
+      "title": "a referenced kit that is absent, at another commit or not equal to the lock -- or a reference that cannot be made honestly",
+      "explanation": "A host that references the kit in its own tree (a submodule) runs it only while it is present, at the pinned commit and byte for byte the lock; the command that restores it is named (ADR-024)."
     }
   ]
 }

@@ -35,6 +35,7 @@ for extra in [HERE, *sorted(p for p in HERE.iterdir()
 import clock as clock_port  # noqa: E402
 import hooks  # noqa: E402
 import observation  # noqa: E402
+import reference  # noqa: E402
 import sources  # noqa: E402
 from context import Context  # noqa: E402
 from errors import KitError  # noqa: E402
@@ -123,9 +124,21 @@ def main(argv=None) -> int:
 
 
 def _run(args, host: Path, kit_root: Path) -> int:
-    ctx = Context(kit_root=kit_root, host_root=host,
-                  clock=clock_port.from_environment(os.environ))
     module = importlib.import_module(args.verb)
+    try:
+        ctx = Context(kit_root=kit_root, host_root=host,
+                      clock=clock_port.from_environment(os.environ))
+    except KitError as failed:
+        # A hook whose host cannot even be read (a referenced kit's take gone, a declaration broken)
+        # still answers with its POSTURE: a blocking one refuses with the closed exit, never with the
+        # exit a product reads as a non-blocking error.
+        posture = getattr(module, "POSTURE", None)
+        if posture is None:
+            raise
+        code = hooks.CLOSED if posture == hooks.BLOCKING else 0
+        print(f"kit: [{failed.code or 'uncoded'}] {args.verb} could not decide ({failed}); its posture is "
+              f"{posture}, so it exits {code}", file=sys.stderr)
+        return code
 
     # What a verb may be ASKED for is a property the verb declares, read generically. The CLI
     # still knows no verb's name: a verb that writes nothing says so, and asking it for a plan is
@@ -161,6 +174,10 @@ def _run(args, host: Path, kit_root: Path) -> int:
     try:
         if getattr(module, "REQUIRES_APPROVED_HOST", False):
             ctx.require_approved()
+        # A REFERENCED host runs the kit it holds in its own tree: a tree that differs from the lock is
+        # refused before any verb runs, save the ones that pin a new state (ADR-024 decision 18).
+        if not getattr(module, "REPINS", False):
+            reference.refuse_drift(ctx)
         code = module.run(ctx, args)
         return code
     except KitError as refusal:

@@ -45,6 +45,11 @@ class Context:
         #: exactly what it is for: the rule a foresight can state when there is no record to read.
         self.decided = {}
 
+    def reread(self) -> None:
+        """Compose the manifest again, after this run changed WHERE the host's takes are read (a
+        referenced host's lock, ADR-024 decision 18): the run keeps its hold, its clock and its record."""
+        self.manifest = manifest_port.composed(self.manifest.root, self.workspace.root)
+
     def _served_paths(self) -> set:
         """Every path the kit's own record says it served -- the record, read from every
         capability the kit composes (never the enabled set, which is itself resolved from facts)."""

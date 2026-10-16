@@ -125,6 +125,7 @@ Declares the ENFORCEMENT LINE: a host's own edit gates, judged at the moment an 
 Gates declared by this capability:
 
 - **FF-EDIT-GATE** — `edit-gates-calibrated`
+- **FF-MESSAGE-RULE** — `message-rules-calibrated`
 
 ### hygiene 0.1.0
 
@@ -185,6 +186,7 @@ Declares that a RUNTIME -- the tool a host actually executes its agents on -- is
 | --- | --- | --- |
 | `.agents/project/briefing.json` | binding | seed |
 | `.agents/project/mcp-servers.json` | binding | seed |
+| `.agents/project/owners.json` | binding | seed |
 | `.agents/project/skills.json` | binding | seed |
 | `.agents/project/skills/` | binding | space |
 | `.agents/project/runtime-classes.json` | binding | seed |

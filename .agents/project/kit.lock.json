@@ -1,17 +1,17 @@
 {
   "algorithm": "sha256",
-  "count": 322,
+  "count": 333,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "d6847f48000b1bc0228f8c551371b5a8ceb0e0be3baca9b8a4da2d0980eee202",
+      "digest": "436f6b730d0d2f0a62a140cae26fc24b00048018fe6d34035bd06b8f0d757002",
       "path": "MANIFEST.json"
     },
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "a0b61489c92025f5e254380fc58425cbebd70d35af9522fdd3dd3837cd4097b5",
+      "digest": "77dcc5e8861a19e1b8f5ec7dda60e0822083997c3a3a9610cea2efe92cd8617c",
       "path": "README.md"
     },
     {
@@ -95,7 +95,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "de53bd45c895ae19ad3fafe4f68cd0ebb96516dc502360242dfae8460f747cfb",
+      "digest": "c21745b6069f523f6fd1d3c888814f9616aeae42d9e1e8496e043c4f218d32bd",
       "path": "capabilities/enforcement/capability.json"
     },
     {
@@ -431,7 +431,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "3223dda41ac40a230e9f343eb126b304ddd8f44e4673556357c7f341d729e34c",
+      "digest": "7a537223fa9049df5ec2fcfcb6c779de48c4fd827b868816a29f3b953935912b",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -475,6 +475,12 @@
       "class": "declaration",
       "digest": "2e5c200ccd87410ddff1e2137cc016e731452766e4c4266a4b7bb04b3fc4e077",
       "path": "capabilities/runtimes/payload/mcp-servers-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "14a8c8ddd046c9e5e6d7daf2241a7f4ec74ba58ded363781db06be6206de6af5",
+      "path": "capabilities/runtimes/payload/owners-local.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -533,7 +539,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "3e8567424946459939043f80302d3e106ef1327462db623faf3c0d549c3a3f52",
+      "digest": "ccc8e6aec04ac644935af3569676ed1390038629a44ad5dac581c0c39b9b45d7",
       "path": "diagnostics.json"
     },
     {
@@ -581,7 +587,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "e14a1c61b46817a597fe663051d0b306d34b00b6239e487b5de757694279f3d2",
+      "digest": "41b5547ca096b0d2632a1ba9203bf3df5e02a8a9df085307ca627c1715757ef4",
       "path": "interpreters/cli.py"
     },
     {
@@ -605,7 +611,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3518b4c206d64f6ab1a5dc81e53fc0037841432cb2b0f2488797609d391d3707",
+      "digest": "d40f3368545652a6ea45291477db189f8e0ec7db0b04afaad1f785165c4d526e",
       "path": "interpreters/context.py"
     },
     {
@@ -767,7 +773,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "183ba929c013664d2774ae5139d5b888580054b9c028fd6f7b222b52fbf5395b",
+      "digest": "d770a1a71c2eaae8c2dcead7220ab1b224eed1d84c18d0134d342997e9a649e6",
       "path": "interpreters/gates/edits.py"
     },
     {
@@ -779,7 +785,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4956f85b476a15005ce30e532c5ef8f8b7c7ff075016559038f22976ea47f694",
+      "digest": "697904482a9a173504c235603344cf82d7e78eca2c009291d3d9dcfb473bf1de",
       "path": "interpreters/gates/floor.py"
     },
     {
@@ -793,6 +799,12 @@
       "class": "interpreter",
       "digest": "842c288acb5cbd0b4390ed5b9f14f71a530373d4f44ba1d4153008ef7e9df3df",
       "path": "interpreters/gates/memory.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "616759e58d82742dacdce956ad573625efb0c2e10236beac7dbb17b76ffbf2e4",
+      "path": "interpreters/gates/messages.py"
     },
     {
       "accounted_by": "interpreter",
@@ -815,7 +827,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "28e6089967acf299d30ddcacb92d4fc9362420d92c28380014ccf398c44dfbca",
+      "digest": "ce04dbb5f87a4f950bd945fa105345fe8d6ef3d4f2673b59e735f1da2e186306",
       "path": "interpreters/gates/pinned.py"
     },
     {
@@ -881,7 +893,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "2910b36d8240ccb592050797a639c1c6ee65fc76c1c94df6c6f9069fadcf1181",
+      "digest": "32edb9b32ff8153bdccff8b80026b352764ac4460370851b7d61cdf958957dbf",
       "path": "interpreters/gates/taken.py"
     },
     {
@@ -959,7 +971,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "adde66baf0adb8501ce83ef74249f057062818674c6986796d5fb84fb340e396",
+      "digest": "785b1d6e103a59c0b7502ce05fdc60513057128b9a872304ac7eb9471de8aee5",
       "path": "interpreters/modes/pinning.py"
     },
     {
@@ -1019,7 +1031,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "53cca1c0abbe9d4a5c2c455ad469b7745b1b38ef86a40a8185ec6ca8c79dd6da",
+      "digest": "746d36d9c8bbfbef6053b412a4d19cffcd47dd739910762bb8c47af61f576a4c",
       "path": "interpreters/ports/manifest.py"
     },
     {
@@ -1043,7 +1055,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "11f5fb7425da3edaf193a4cb8b6a5486b09dfee83e312b6dc3bba5df43d9906d",
+      "digest": "8f1c6f8619fe337fd138747f6db434faa780f9f9230ffb93320aa9fc68922d54",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1127,6 +1139,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "704230659a99d180d984756b9984fa46d13c9f1c82b63d2e72e068e0b9c70042",
+      "path": "interpreters/reference.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "1a71b5a6d6e1d75205775e8a2b2b04152cc511d310007ab4471deb581f3bb967",
       "path": "interpreters/relocation.py"
     },
@@ -1151,8 +1169,20 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "82005ea4666f8b17a312a7c16db1eb5f790e59bdaa728343cd991df3964ad5b1",
+      "path": "interpreters/resolvers/contracts.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "015122343d5dd9d1b348602333d8c5c4fcdafeccffdd87ee17650d3551fcbd8f",
       "path": "interpreters/resolvers/mcp.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "4a2b44e7f082aec37dd74e930609c6db841c8bd2fd97a0acc086801617a80242",
+      "path": "interpreters/resolvers/rows.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1187,7 +1217,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d4dc9775b398b99f33918ae3e08777d8b72bae9b6050b2c3567d7f1a75103355",
+      "digest": "e7636747a1009d4734c003788cbeaa3844bebc54d499eaa56875bec7a1d2c4d3",
       "path": "interpreters/shapes/serve.py"
     },
     {
@@ -1295,7 +1325,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "de8b1b835b1c6e5698708a13d51da66c711290ea388c44309ac74f444a862d24",
+      "digest": "bd1189e55724b7c4610c5947ca27fa042c8291131adc1ea9c82786362fa54bf2",
       "path": "interpreters/verbs/doctor.py"
     },
     {
@@ -1349,8 +1379,20 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f49c5abb97f7be1a30968dbea78d780a610b1b6585cedc8eff4af31630ab310c",
+      "digest": "f9cc46d225427b917c207ca2936ade176e63c550b088cacabbd860190681444f",
+      "path": "interpreters/verbs/ledger.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "d5ba8c5848dc6a78b63cd5bd50dded65449a3553d69414b93be9de94297e946b",
       "path": "interpreters/verbs/lock.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "94848ac9d03a3ab5ac102ffb86759960a7218016238d36630315a632ef2985e7",
+      "path": "interpreters/verbs/message.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1391,6 +1433,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "126fb2ebed3369658906461eb78f290c8c52e5645452f1bb1d0e37209a476e0d",
+      "path": "interpreters/verbs/session.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "8f745a2ac6dd65015c097a59a723049aa7dd3bd68667d88ac8c3ed81afb6747f",
       "path": "interpreters/verbs/spawn.py"
     },
@@ -1399,6 +1447,12 @@
       "class": "interpreter",
       "digest": "b8b319eaf93d8ed2636638b37803478b8673d9aabd36bdd23c276c375d23c4fa",
       "path": "interpreters/verbs/start.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "cadf0ddb242c110eee5a92a9a687837cb67b37ef5dd459d36eed449de935646a",
+      "path": "interpreters/verbs/stop.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1421,7 +1475,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3d05a57dc1b1eda35ee0418fb35f6f0b59ea1128ac20ac7317782d9aedeac2c9",
+      "digest": "c5a51155b009df2f8a54fe7317e064c3a7872e2ef5a62c678fb6531e2773e2bd",
       "path": "interpreters/verbs/upgrade.py"
     },
     {
@@ -1691,7 +1745,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "ddbce7680b2e52e5e2968dca30c049da29769166c0fea4048e39cbba49afda4e",
+      "digest": "4bf9873821577f60635d9e126dd3d4a3cd92b5fac6df451c3d1b873bd1d936f0",
       "path": "schemas/lock.schema.json"
     },
     {
@@ -1711,6 +1765,12 @@
       "class": "declaration",
       "digest": "570f19b0fde682a5c8bef088dba0d62a2a7823ec23da08b02a3b43cd0a6a1a78",
       "path": "schemas/mcp-trust.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "b4ccb00d3148f87ac581ea0e6ef564531c514c64869cb67a9811a4bf68d89f36",
+      "path": "schemas/message-rules.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1735,6 +1795,12 @@
       "class": "declaration",
       "digest": "64a3a94b29dbff53ac83f3c36c6af347d6ae548f053800c3c55bd31558053220",
       "path": "schemas/overlay.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "489dafea8a3cfe9c2410158aaf72ef7984e2a983ace54ac137683cb8279962ba",
+      "path": "schemas/owners.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1823,7 +1889,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "214e58ab244559c6dc96e302be859d9ea94759529d4b942db9371bed6625ca02",
+      "digest": "fe5524f92abdbc084418fab3d97c536f5d7cb2ce9b868e67cae09bc89d742319",
       "path": "schemas/runtime-surface.schema.json"
     },
     {
@@ -1938,5 +2004,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T14:16:29+00:00"
+  "taken_at": "2026-10-16T16:56:51+00:00"
 }

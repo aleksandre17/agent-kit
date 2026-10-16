@@ -28,6 +28,9 @@ MUTATES = True
 #: What this verb mutates is the KIT, never the host `--root` names -- so the host's hold is not
 #: this verb's to take (ADR-007). Declared, so the set of verbs that hold is read, never listed.
 SUBJECT = "kit"
+#: Locking the kit is how its new state is stated, so the referenced host's drift guard does not
+#: stand in front of it (ADR-024 decision 18).
+REPINS = True
 REQUIRES_APPROVED_HOST = False
 
 

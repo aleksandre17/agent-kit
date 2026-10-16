@@ -9,6 +9,13 @@ The estate is what makes them separable, and a host without one is refused rathe
     python kit/interpreters/cli.py upgrade --root <host> --plan   # read, report, write nothing
     python kit/interpreters/cli.py upgrade --root <host>          # reconcile, refuse or install
     python kit/interpreters/cli.py upgrade --root <host> --approve <who>   # walk the door
+    python <kit-in-tree>/interpreters/cli.py upgrade --root <host> --mode referenced --approve <who>
+
+`--mode referenced` (ADR-024 decision 18) moves a host that holds the kit in its own tree (a
+submodule) off its vendored copy: the lock is rewritten to reference that kit at its commit, every
+projection is rendered to run it from there, `check` is run, and only when it is green are the copies
+(`.agents/kit/`, each referenced take under `.agents/taken/`) removed. Run again after the submodule
+moves, to pin the new commit.
 
 This verb WRITES NOTHING ITSELF, and that is a design decision rather than an economy. `init`
 already carries out every install mode correctly -- vendor replaces, seeds are created once,
@@ -30,18 +37,32 @@ holds its own file at the moment it decides.
 
 from __future__ import annotations
 
+import json
+
+import check as check_verb
 import doors
 import estate as estate_module
 import hostlock
 import extend as extend_verb
 import init as init_verb
+import pin
 import reconcile
+import reference
 import relocation
+import render as render_verb
 from errors import KitError
 
 SUMMARY = "reconcile what was shipped, what the host has, and what this kit ships -- then install"
 MUTATES = True
 REQUIRES_APPROVED_HOST = True
+#: An upgrade is how a new state of a REFERENCED kit is pinned, so the entry point's drift guard does
+#: not stand in front of it (ADR-024 decision 18).
+REPINS = True
+ARGUMENTS = [
+    ("--mode", {"default": None, "choices": ["referenced"],
+                "help": "referenced: run the kit this host holds in its own tree (a submodule) at its "
+                        "commit, and remove the vendored copies once check is green"}),
+]
 
 
 class UpgradeRefused(KitError):
@@ -83,7 +104,53 @@ def _refuse(rows) -> None:
     )
 
 
+def _referenced(ctx, args) -> int:
+    """Pin the kit this run IS, in the host's own tree, as the host's kit -- and drop the copies once
+    the referenced host checks green. Nothing is removed on a red check: the copies stay, and say why."""
+    lock, copies = reference.pinning(ctx, ctx.clock.now())
+    held = lock[reference.FIELD]
+    print(f"upgrade: reference {held['path']}/ at {held['commit'][:12]} in {held['repository']}; "
+          f"{len(held['takes'])} take(s) read where the host holds them; copies to remove once check is green: "
+          + (", ".join(c for c in copies if ctx.workspace.exists(c.rstrip("/"))) or "none"))
+    if getattr(args, "plan", False):
+        return 0
+    if not args.approve:
+        doors.refuse("this host would run the kit it holds in its own tree and drop its vendored copies",
+                     "person who owns this host", "upgrade --root <host> --mode referenced --approve <who>",
+                     "Which kit a host runs, and from where, is the host's choice, and the record names who chose.")
+    seat = pin.seats(ctx.manifest)[1]
+
+    def write() -> int:
+        ctx.workspace.scoped((seat,)).write_text(seat, json_text(lock))
+        # The host read again: its takes are now read where its lock says it holds them.
+        ctx.reread()
+        code = render_verb.run(ctx, args)
+        if code == 0:
+            code = check_verb.run(ctx, args)
+        if code != 0:
+            print(f"upgrade: the referenced host is not green, so the vendored copies are KEPT; fix what "
+                  f"check names and run this again")
+            return code
+        gone = [c for c in copies if ctx.workspace.exists(c.rstrip("/"))]
+        for copy in gone:
+            ctx.workspace.scoped((copy,)).remove_tree(copy.rstrip("/"))
+        print(f"upgrade: REFERENCED by {args.approve} -- {len(gone)} copy(ies) removed; this host now runs "
+              f"python {held['path']}/interpreters/cli.py <verb> --root .")
+        ctx.reread()
+        return check_verb.run(ctx, args)
+
+    return hostlock.held(ctx, args, write)
+
+
+def json_text(value) -> str:
+    """A lock as every lock is written: sorted keys, two-space indent, one trailing newline."""
+    return json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+
+
 def run(ctx, args) -> int:
+    if getattr(args, "mode", None) == "referenced":
+        hostlock.arrive(ctx, args)
+        return _referenced(ctx, args)
     # Guarded on arrival, so a held host is named as the cause before a reconciliation is printed
     # against a tree somebody else is writing. The hold itself is taken by the installer this verb
     # hands its verdict to, at the moment that installer writes, and under THIS verb's name.

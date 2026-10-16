@@ -24,7 +24,8 @@
       "mcp-servers",
       "mcp-trust",
       "context",
-      "briefing-section"
+      "briefing-section",
+      "owners"
     ]
   },
   "documents": [
@@ -113,6 +114,22 @@
           "purpose": "this host's MCP servers, by trust",
           "cardinality": "one",
           "merges_into": "each product's MCP file and permissions"
+        }
+      ]
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/owners.json",
+      "source": "capabilities/runtimes/payload/owners-local.json",
+      "validates": "owners",
+      "reads_as": "host_owners",
+      "points": [
+        {
+          "id": "owners",
+          "purpose": "this host's review owners: path pattern -> owners whose review a change requires",
+          "cardinality": "one",
+          "merges_into": "each forge adapter's owners file (a span)"
         }
       ]
     },
@@ -267,6 +284,11 @@
                 "as": "mcp",
                 "kind": "mcp-servers",
                 "params": {}
+              },
+              {
+                "as": "takes",
+                "kind": "contracts",
+                "params": {}
               }
             ]
           },
@@ -282,6 +304,20 @@
               "kind": "skills",
               "params": {}
             }
+          },
+          {
+            "id": "owners",
+            "sections": [],
+            "carries": [
+              {
+                "as": "owners",
+                "kind": "declared",
+                "params": {
+                  "validates": "owners",
+                  "list": "rules"
+                }
+              }
+            ]
           },
           {
             "id": "mcp",

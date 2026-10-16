@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "summary": "This host's review owners: one row per path pattern, the owners whose review a matching change requires. Served by each forge adapter into its owners file (a span the kit owns there); enforced by the hosting service only once a person switches on the protection that requires owners' review (`doctor` prints the command).",
+  "rules": []
+}

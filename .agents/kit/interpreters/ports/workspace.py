@@ -132,6 +132,27 @@ class Workspace:
         import vcs
         return vcs.run(self._root, ["show", f"HEAD:./{rel}"])
 
+    def revision(self, rel: str) -> tuple:
+        """(the commit the repository holding `rel` has checked out, its top level relative to this
+        root, None) or (None, None, why) -- how a host states the commit of a kit it holds in its own
+        tree (a submodule) without the core running a tool (ADR-024 decision 18)."""
+        import vcs
+        sha, why = vcs.run(self.path(rel), ["rev-parse", "HEAD"])
+        top, why_top = vcs.run(self.path(rel), ["rev-parse", "--show-toplevel"])
+        if sha is None or top is None:
+            return None, None, why or why_top
+        try:
+            at = Path(top.strip()).resolve().relative_to(self._root.resolve()).as_posix()
+        except ValueError:
+            return None, None, f"{rel} lies in a repository outside this host ({top.strip()})"
+        return sha.strip(), at, None
+
+    def changes(self, rel: str) -> tuple:
+        """(every uncommitted change under `rel` as its repository reports it, None) or (None, why)."""
+        import vcs
+        said, why = vcs.run(self.path(rel), ["status", "--porcelain", "--untracked-files=all", "--", "."])
+        return (None, why) if said is None else ([line for line in said.splitlines() if line.strip()], None)
+
     def files_under(self, rel: str) -> list[str]:
         """Every file below `rel`, host-relative, POSIX-formed, sorted. Directories are not
         classified: a directory is the shape of the tree, a file is the thing that ships."""

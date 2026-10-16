@@ -27,6 +27,13 @@ def _pinned(ctx, params) -> list:
             for row in rows if row["disposition"] not in (provenance.HOLD, provenance.CARRY)]
 
 
+def _relative(ctx, home) -> str:
+    try:
+        return home.resolve().relative_to(ctx.workspace.root.resolve()).as_posix()
+    except ValueError:
+        return home.as_posix()
+
+
 def _taken_intact(ctx, params) -> list:
     """Each take in its plane, judged against the digest its provenance pin holds (ADR-018
     decision 5, amendment 1: the row is what the host CHOSE; the digest is a READING of what
@@ -46,8 +53,10 @@ def _taken_intact(ctx, params) -> list:
     pins = {p["capability"]: p for p in (estate_module.read(ctx) or {}).get("taken", [])}
     failures = []
     for row in rows:
-        at = plane["target"] + row["id"]
-        home = ctx.workspace.path(at)
+        # Where the take is READ: its plane, or -- in a referenced host -- the source its lock names.
+        take = ctx.manifest.take_of(row["id"])
+        home = take[0] if take is not None else ctx.workspace.path(plane["target"] + row["id"])
+        at = _relative(ctx, home)
         if not home.is_dir():
             failures.append(f"{at}/: declared taken by {row['taken_by']} at {row['at']}, and its "
                             f"plane is absent")
