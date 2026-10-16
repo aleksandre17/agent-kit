@@ -129,7 +129,13 @@ def _edit_gates_calibrated(ctx, params):
 
 
 def _judged(ctx, params, edits):
-    """This kind's entry in the one judge's registry: (path, id, because, instead) per refusal."""
+    """This kind's entry in the one judge's registry: (path, id, because, instead) per refusal.
+
+    The declaration the gates live in is not judged by them: every gate carries, as its `proves`,
+    the very text it refuses, so a gate whose paths reach its own declaration would refuse the edit
+    that declares it -- and `check` already holds that file to its schema and its calibration."""
+    own = declared.homes(ctx, params["sources"])
+    edits = [(path, text) for path, text in edits if path not in own]
     found, unjudged = judge(declared.rules(ctx, params["sources"], RULES), edits)
     return [(path, rule["id"], rule["because"], rule["instead"]) for path, rule in found], unjudged
 

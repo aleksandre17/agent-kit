@@ -27,6 +27,8 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - A spanned served file records only the kit's span, so the host's own edit to an entry file
   keeps `check` green without a render; the entry seed's note is a comment (claude-code, codex
   1.3.1). `test_entry_files` 341b (ADR-023 amendment 2).
+- The edit-gate declaration is not judged by the gates it declares: each carries the text it
+  refuses as its `proves`, so a broad gate refused the commit that declared it. `test_enforcement` 289e.
 
 **Added — a reading is replaced through a door (ADR-021 amendment 2)**
 - Verb `retake`: names every moved fact; `--plan` writes nothing; unapproved it is a door; approved it

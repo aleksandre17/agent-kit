@@ -214,6 +214,22 @@ class Enforcement(Fixtures, unittest.TestCase):
                     self.assertEqual(surface["hands"]["refusal"]["exit"], ran.returncode, ran.stdout + ran.stderr)
                     self.assertIn("REFUSED", ran.stderr)
 
+    def test_289e_the_declaration_of_the_gates_is_not_judged_by_them(self):
+        # Every gate carries the text it refuses as its own `proves`; a gate whose paths reach its
+        # declaration would refuse the edit -- and the commit -- that declares it.
+        everywhere = {**HOST_GATE, "id": "everywhere", "paths": ".*",
+                      "proves": {"path": "a.ts", "text": "ctx.year"}, "admits": {"path": "a.ts", "text": "ctx.dims"}}
+        host = self.served_host([everywhere])
+        declaration = (host / GATES_FILE).read_text(encoding="utf-8")
+        self.assertIn("ctx.year", declaration)
+        for surface in self.surfaces:
+            hands = surface["hands"]
+            with self.subTest(surface=surface["id"]):
+                own = self.judge(host, surface, _event(hands, str(host / GATES_FILE), declaration))
+                self.assertEqual(0, own.returncode, own.stdout + own.stderr)
+                elsewhere = self.judge(host, surface, _event(hands, str(host / "src" / "b.ts"), "ctx.year"))
+                self.assertEqual(hands["refusal"]["exit"], elsewhere.returncode, elsewhere.stdout + elsewhere.stderr)
+
     def test_290_check_fails_an_uncalibrated_host_gate(self):
         host = self.served_host([{**HOST_GATE, "admits": HOST_GATE["proves"]}])
         checked = self.run_kit(self.kit, host, "check")

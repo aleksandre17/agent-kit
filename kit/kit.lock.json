@@ -593,7 +593,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "484a86ac4214100cd571b97ede31c1894c67cd4f2ba09e0c5ffbdd1272a95358",
+      "digest": "514ec29e1dce1761171233fb90d98d84b31de988706777bc545042d3f9645915",
       "path": "interpreters/declared.py"
     },
     {
@@ -695,7 +695,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "caab8be0857b455f31deb5a1a15b3dcbc8d367f468fdebd4f69f53a1a2c8f0e7",
+      "digest": "96d5f927cf152e6f93a0cc7dabd56a75dc78ac9227f3038170f35cf72e772097",
       "path": "interpreters/gates/edits.py"
     },
     {
@@ -1584,5 +1584,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T06:29:05+00:00"
+  "taken_at": "2026-10-16T06:43:09+00:00"
 }

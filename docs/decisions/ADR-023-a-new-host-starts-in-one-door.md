@@ -124,6 +124,10 @@ Walking `start` on the GeoStat host, and then writing its own text into the entr
 - **The entry seed spoke to the owner in the agent's context.** Its paragraph is now one HTML
   comment; claude-code and codex 1.3.1.
 - **"No bundle is installed"** was printed on a host that had taken two (fixed in `79af0df`).
+- **A gate refused its own declaration.** The first host's `no-connection-string-password` reaches
+  every path, and its `proves` is a password: the commit that declared it was refused. The edit-gate
+  declaration is no longer judged by the gates it declares (`declared.homes`); `check` still holds it to
+  its schema and calibration. `test_enforcement` 289e.
 
 *Rejected:* re-rendering the record on every `check` (a gate that writes is not a gate); keeping a
 whole-file digest beside the span's for the departing case (a host's file is never removed on the

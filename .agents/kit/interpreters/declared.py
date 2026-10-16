@@ -99,6 +99,14 @@ def sources(ctx, names) -> dict:
     return found
 
 
+def homes(ctx, names) -> set:
+    """The host paths the named sources are AUTHORED at -- the installs a capability declared
+    readable under those names. A shipped document has no host path and is not among them."""
+    names = named(ctx.enabled_capabilities(), names)
+    return {item["target"] for capability in ctx.enabled_capabilities() for item in capability.installs
+            if item.get("reads_as") in names}
+
+
 #: The two words a `where` is written in. A filter is ONE field and ONE value, and that narrowness
 #: is the design: a referent set is often a SUBSET of a declared list -- the states a place may
 #: name, the kinds of one plane -- and the alternative to expressing it as data was a gate module
