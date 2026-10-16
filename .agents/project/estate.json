@@ -291,7 +291,7 @@
     {
       "capability": "governance",
       "class": "binding",
-      "digest": "6a1a1484cd788577c78b04fed16cfb014c04d196e69ae4dc72f503c5d66ca08d",
+      "digest": "a56ae7203bfac9a1d67e423b4333f0afaa1db8fc7dfc09a2dbde300cc9b0e30f",
       "mode": "taken-declaration",
       "path": ".agents/project/taken.json"
     },
@@ -418,42 +418,42 @@
     {
       "authenticity": {
         "state": "unsigned",
-        "taken_at": "2026-10-16T05:59:13+00:00"
+        "taken_at": "2026-10-16T06:39:27+00:00"
       },
       "capability": "claude-code",
-      "digest": "h1:tnINoxL6FVLgpOCDVwuf/MCaumz9/+YZZ2H5w5hcGlo=",
-      "pinned_at": "2026-10-16T05:59:13+00:00",
+      "digest": "h1:dAbSBlYSnvx1ORyMAmg/aXVCK7tEwlvNpZ4/B3Y0+QQ=",
+      "pinned_at": "2026-10-16T06:39:26+00:00",
       "pinned_by": "claude(owner-delegated:2026-10-16)",
       "supersedes": {
-        "digest": "h1:pVSSiIJgVAO7cx8R1fHVT6/Cdp4XA8XPlY60AeKTIuE=",
-        "version": "1.1.0"
+        "digest": "h1:tnINoxL6FVLgpOCDVwuf/MCaumz9/+YZZ2H5w5hcGlo=",
+        "version": "1.3.0"
       },
       "trust": {
-        "attested_at": "2026-10-16T05:59:13+00:00",
+        "attested_at": "2026-10-16T06:39:27+00:00",
         "attested_by": "claude(owner-delegated:2026-10-16)",
         "basis": "attested"
       },
-      "version": "1.3.0"
+      "version": "1.3.1"
     },
     {
       "authenticity": {
         "state": "unsigned",
-        "taken_at": "2026-10-16T05:59:13+00:00"
+        "taken_at": "2026-10-16T06:39:27+00:00"
       },
       "capability": "codex",
-      "digest": "h1:IL+RLiISNJF8PoGe4fH00XD2m9fgo7fvtuNiG+9Ovv0=",
-      "pinned_at": "2026-10-16T05:59:13+00:00",
+      "digest": "h1:m1m3tRSR1WeE4wdqmXf0BxBmASpEFkLDnE09WbIssX0=",
+      "pinned_at": "2026-10-16T06:39:26+00:00",
       "pinned_by": "claude(owner-delegated:2026-10-16)",
       "supersedes": {
-        "digest": "h1:n3r0smvUd2mBUZP63FXEgRQb0EXk5kgIsio5aS4XREA=",
-        "version": "1.1.0"
+        "digest": "h1:IL+RLiISNJF8PoGe4fH00XD2m9fgo7fvtuNiG+9Ovv0=",
+        "version": "1.3.0"
       },
       "trust": {
-        "attested_at": "2026-10-16T05:59:13+00:00",
+        "attested_at": "2026-10-16T06:39:27+00:00",
         "attested_by": "claude(owner-delegated:2026-10-16)",
         "basis": "attested"
       },
-      "version": "1.3.0"
+      "version": "1.3.1"
     },
     {
       "authenticity": {
@@ -496,5 +496,5 @@
       "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-10-16T05:59:13+00:00"
+  "taken_at": "2026-10-16T06:39:27+00:00"
 }

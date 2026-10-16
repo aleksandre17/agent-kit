@@ -2,13 +2,13 @@
   "schema_version": 1,
   "takes": [
     {
-      "at": "2026-10-16T05:59:13+00:00",
+      "at": "2026-10-16T06:39:26+00:00",
       "id": "claude-code",
       "source": "adapters/claude-code",
       "taken_by": "claude(owner-delegated:2026-10-16)"
     },
     {
-      "at": "2026-10-16T05:59:13+00:00",
+      "at": "2026-10-16T06:39:26+00:00",
       "id": "codex",
       "source": "adapters/codex",
       "taken_by": "claude(owner-delegated:2026-10-16)"

@@ -111,6 +111,14 @@ class EntryFiles(Fixtures, unittest.TestCase):
         checked = self.run_kit(KIT, host, "check")
         self.assertEqual(0, checked.returncode, checked.stdout)
 
+    def test_341b_the_hosts_own_edit_outside_the_span_needs_no_render_to_stay_green(self):
+        # The served record is a projection: if it digested the whole file, every edit the host makes
+        # to its own text would leave the record unreproducible until somebody ran `render`.
+        host = self.served_host()
+        (host / ENTRY).write_text(HOST_TEXT + "\n" + self.entry(host), encoding="utf-8", newline="\n")
+        checked = self.run_kit(KIT, host, "check")
+        self.assertEqual(0, checked.returncode, checked.stdout)
+
     def test_342_an_edit_inside_the_span_is_reported_by_check_and_refused_by_render(self):
         host = self.served_host()
         text = self.entry(host)

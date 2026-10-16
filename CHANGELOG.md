@@ -24,6 +24,9 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - A verb that delegates its writes to separate runs declares `DELEGATES` and is observed through
   them (ADR-023 amendment 1): `start` on a host that has already answered no longer fails its own
   acts' `FF-RUN-RECEIPT`.
+- A spanned served file records only the kit's span, so the host's own edit to an entry file
+  keeps `check` green without a render; the entry seed's note is a comment (claude-code, codex
+  1.3.1). `test_entry_files` 341b (ADR-023 amendment 2).
 
 **Added — a reading is replaced through a door (ADR-021 amendment 2)**
 - Verb `retake`: names every moved fact; `--plan` writes nothing; unapproved it is a door; approved it

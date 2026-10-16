@@ -569,7 +569,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a2c2b4c2f181ef4fe40aac11215fe5dd59f4dc7bb4b8ff7fd3da71984cdab5a2",
+      "digest": "2b1c478a2d4fe01f63f00449ff658a8fb82e9cb74e8c22411265e4e4249a4497",
       "path": "interpreters/context.py"
     },
     {
@@ -899,7 +899,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "fa55f86989736f547bcd2388fb499a51c47db4b3103b982abce114a247a8e804",
+      "digest": "686eddd3466ee526345ba80dbb6b29c448084f8bf44434f161c1e80c5b9d448f",
       "path": "interpreters/ports/runtime.py"
     },
     {
@@ -1584,5 +1584,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T06:17:35+00:00"
+  "taken_at": "2026-10-16T06:29:05+00:00"
 }

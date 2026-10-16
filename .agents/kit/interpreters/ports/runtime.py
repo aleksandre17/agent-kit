@@ -235,7 +235,10 @@ def project(ctx, item: dict, view: dict, produced: dict, capabilities) -> dict:
                         "span_sha256": _digest(derivation.span(text, rendered["span"])),
                         "seed_sha256": _digest(derivation.withdrawn(seed, rendered["span"]))})
         out[path] = text
-        record.append({**row, "sha256": _digest(text)})
+        # A spanned file is the HOST's: only the span is the kit's, and only the span is recorded.
+        # A whole-file digest here would move every time the host edited its own text, and the
+        # record -- a projection -- would then fail to reproduce over an edit nobody may refuse.
+        record.append(row if rendered.get("span") else {**row, "sha256": _digest(text)})
     out[item["target"]] = json.dumps(
         {"schema_version": RECORD_VERSION, "served": sorted(record, key=lambda r: r["path"])},
         indent=2, sort_keys=True, ensure_ascii=False) + "\n"
@@ -314,7 +317,7 @@ def prior_rows(ctx, capabilities) -> dict:
 def prior(ctx, capabilities) -> dict:
     """path -> digest the kit's own record says it last served. Read BEFORE the plane is rebuilt:
     the record is the only evidence of which bytes outside the planes are the kit's."""
-    return {path: row["sha256"] for path, row in prior_rows(ctx, capabilities).items()}
+    return {path: row["sha256"] for path, row in prior_rows(ctx, capabilities).items() if "sha256" in row}
 
 
 def reach(ctx, capabilities) -> list:
@@ -408,7 +411,7 @@ def admit(ctx, capabilities, produced: dict) -> list:
 
 def departing_planned(ctx, capabilities, targets) -> list:
     """For a plan: every path the record names outside the planes that nothing renders now."""
-    return sorted(rel for rel in prior(ctx, capabilities)
+    return sorted(rel for rel in prior_rows(ctx, capabilities)
                   if rel not in targets and not _in_a_plane(ctx, rel) and ctx.workspace.exists(rel))
 
 

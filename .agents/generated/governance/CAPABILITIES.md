@@ -191,7 +191,7 @@ Gates declared by this capability:
 - **FF-RUNTIME-CLAIM** — `reference-declared-across`
 - **FF-RUNTIME-ACTIVE** — `served-setting-active`
 
-### claude-code 1.3.0
+### claude-code 1.3.1
 
 A runtime ADAPTER for Claude Code: the one published declaration that carries this product's name, and nothing else. It is an ORDINARY capability (ADR-004, ADR-014) -- a host takes it through the provenance door (ADR-008) exactly as it takes a doctrine bundle, and no interpreter in the kit knows that it exists. Its single document keeps the runtime-surface contract, which is how the kit's served projection finds it: by the contract, never by a list of publishers. Remove it and the host serves this product nothing -- and says so.
 
@@ -201,7 +201,7 @@ A runtime ADAPTER for Claude Code: the one published declaration that carries th
 Gates declared by this capability:
 
 
-### codex 1.3.0
+### codex 1.3.1
 
 A runtime ADAPTER for Codex: the one published declaration that carries this product's name, and nothing else. It is an ORDINARY capability (ADR-004, ADR-014) -- a host takes it through the provenance door (ADR-008) exactly as it takes a doctrine bundle, and no interpreter in the kit knows that it exists. Its single document keeps the runtime-surface contract, which is how the kit's served projection finds it: by the contract, never by a list of publishers. Remove it and the host serves this product nothing -- and says so.
 

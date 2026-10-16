@@ -119,7 +119,10 @@ class Serving(Fixtures, unittest.TestCase):
                 record = self.record(host)
                 for rel in expected:
                     self.assertTrue((host / rel).is_file(), rel)
-                    self.assertEqual(runtime_port._file_digest(self._ctx(host), rel), record[rel]["sha256"])
+                    if "span" in record[rel]:  # the host's file: only the kit's span is recorded
+                        self.assertNotIn("sha256", record[rel])
+                    else:
+                        self.assertEqual(runtime_port._file_digest(self._ctx(host), rel), record[rel]["sha256"])
                 self.assertEqual(sorted(expected), sorted(record))
                 if activation.FIELD in surface:
                     # served is not yet run: a surface that declares activation walks its own door

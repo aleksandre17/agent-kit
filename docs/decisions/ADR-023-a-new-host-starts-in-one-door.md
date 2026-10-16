@@ -111,3 +111,23 @@ process could set, hiding a dead run's evidence from `check` -- an exemption no 
 see); closing the parent's record before the walk (a record stating an end that had not happened).
 
 Proof: `test_start` 410 (a host walked twice ends green), mutation-checked.
+
+## Amendment 2 — what the first real host found (2026-10-16, owner-delegated)
+
+Walking `start` on the GeoStat host, and then writing its own text into the entry files, found:
+
+- **A host's own edit failed `check`.** The served record digested the whole entry file, so the
+  host's edit outside the kit's span left `SERVED.json` unreproducible (`FF-KIT-PROJECTION`) until
+  someone ran `render`. A spanned row now records only the span (`span_sha256`, `seed_sha256`) and
+  no whole-file `sha256`; the record's paths and its digests are read apart (`prior_rows` for the
+  paths a plan and the probe need, `prior` for the files the kit served whole).
+- **The entry seed spoke to the owner in the agent's context.** Its paragraph is now one HTML
+  comment; claude-code and codex 1.3.1.
+- **"No bundle is installed"** was printed on a host that had taken two (fixed in `79af0df`).
+
+*Rejected:* re-rendering the record on every `check` (a gate that writes is not a gate); keeping a
+whole-file digest beside the span's for the departing case (a host's file is never removed on the
+strength of its own text matching an old digest -- a departing spanned file is withdrawn by its span).
+
+Proof: `test_entry_files` 341b (the host edits its own text, `check` stays green without a render),
+mutation-checked; `test_serving` 258 reads a spanned row by its span.

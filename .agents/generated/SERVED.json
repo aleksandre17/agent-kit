@@ -28,8 +28,7 @@
     {
       "path": "AGENTS.md",
       "runtime": "codex",
-      "seed_sha256": "e18f9ee17e0e5ca0af5d102229cd023307b36fe5549dbd5d4e20fd79e72e8433",
-      "sha256": "72b69233c472236a4b3746b4d549cc15fab31ea8345d763582f5b0a6ef3de806",
+      "seed_sha256": "19d5827da319c1a4a75940e859424e227c01ec1261ab6829f83a427f23e8ba9a",
       "span": "briefing",
       "span_sha256": "35dc1289b44a325d39a6a9b39479c260ba20b8858a27d47ece5ed1b64cb21b1a",
       "surface": "codex"
@@ -37,8 +36,7 @@
     {
       "path": "CLAUDE.md",
       "runtime": "claude-code",
-      "seed_sha256": "e18f9ee17e0e5ca0af5d102229cd023307b36fe5549dbd5d4e20fd79e72e8433",
-      "sha256": "bb3b99eda35d73f8aa032c0e79c2368000ef1f5d4f166e18143ae2acd40152da",
+      "seed_sha256": "19d5827da319c1a4a75940e859424e227c01ec1261ab6829f83a427f23e8ba9a",
       "span": "briefing",
       "span_sha256": "58ddbd5866acbdb1c7e96efbdf9c1d0958c432266941e522442996e5e6f31b81",
       "surface": "claude-code"
@@ -47,7 +45,6 @@
       "path": "tests/acceptance/fresh-repo/AGENTS.md",
       "runtime": "codex",
       "seed_sha256": "358409e3f6ac6fe078528d0d52923fa798266b3aed31f1a3f23f7d9edc53cff1",
-      "sha256": "b2598a46bca811d9d3cf0383c7e0c459e951e4231754cc254210050faba39dd5",
       "span": "scoped-briefing",
       "span_sha256": "34ab12123c7cfdbd8cfb1d69b421562f61c4f83338fddae49a78ca5fe218e1aa",
       "surface": "codex"
@@ -56,7 +53,6 @@
       "path": "tests/acceptance/fresh-repo/CLAUDE.md",
       "runtime": "claude-code",
       "seed_sha256": "358409e3f6ac6fe078528d0d52923fa798266b3aed31f1a3f23f7d9edc53cff1",
-      "sha256": "e7dab4637e160f4371ade91d7ef5a9a7dedb63c496a6c0d23f5c4fb55c75a6d7",
       "span": "scoped-briefing",
       "span_sha256": "968e52cc03a670c35c1c377b52965613728b8836f27598ae1799692d69b63d9b",
       "surface": "claude-code"
