@@ -67,7 +67,15 @@
           "ceiling": 5000,
           "says": "The Agent Skills specification recommends a SKILL.md body under 5000 tokens; Claude Code truncates a skill listing's description at 1536 characters -- from the products' documentation"
         }
-      ]
+      ],
+      "memory": {
+        "home": "~/.claude/projects/{repo_slug}/memory/",
+        "slug": {
+          "replace": "[^A-Za-z0-9]",
+          "with": "-"
+        },
+        "says": "Claude Code's auto memory lives at ~/.claude/projects/<project>/memory/ (MEMORY.md index, first 200 lines or 25 KB loaded every session), <project> derived from the git repository path -- from the product's memory documentation (fetched 2026-10-16); the slug form (every character outside A-Z, a-z, 0-9 becomes '-') is MEASURED on this machine against a session's own memory directory."
+      }
     }
   ]
 }

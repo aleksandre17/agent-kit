@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "memory",
+  "version": "1.0.0",
+  "summary": "A POLICY published beside the kit: a product's persistent memory POINTS, never copies. Every runtime is told so on every turn; every `check` on a working clone reads each served product's memory home and refuses a note that holds a secret (the host's edit gates, applied to the note) or copies a line the repository already holds (one source of truth). Codex declares no memory home outside the repository, so nothing there is measured -- and that is said.",
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "enforcement"
+    },
+    {
+      "kind": "capability",
+      "id": "runtimes"
+    }
+  ],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [
+    {
+      "id": "memory_rule",
+      "source": "capabilities/memory/payload/briefing.json",
+      "validates": "briefing-section"
+    }
+  ],
+  "installs": [],
+  "gates": [
+    {
+      "id": "FF-MEMORY",
+      "kind": "memory-held",
+      "params": {
+        "shortest_shared_line": 60
+      }
+    }
+  ]
+}

@@ -311,6 +311,42 @@
                 }
               }
             }
+          },
+          "memory": {
+            "description": "Where this product keeps notes across sessions OUTSIDE the repository, so the memory policy can hold them (no secret, no copy of a repository fact). `home` may name `~` and `{repo_slug}`, the host root's absolute path in `slug` form. A claim about somebody else's software, like `says`.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "home",
+              "says"
+            ],
+            "properties": {
+              "home": {
+                "type": "string",
+                "minLength": 1
+              },
+              "slug": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "replace",
+                  "with"
+                ],
+                "properties": {
+                  "replace": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "with": {
+                    "type": "string"
+                  }
+                }
+              },
+              "says": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
         }
       }

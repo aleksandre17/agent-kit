@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "sections": [
+    {
+      "id": "memory-points",
+      "heading": "Memory -- points, never copies",
+      "text": "Keep in a product's memory only preferences, corrections and POINTERS to where a fact lives in this repository. Never a secret, never a copy of what the repository already holds: `check` refuses both."
+    }
+  ]
+}

@@ -52,9 +52,10 @@ class Policies(Fixtures, unittest.TestCase):
         self.assertTrue(POLICIES, "ADR-023 amendment 3 publishes at least one policy")
         for policy in POLICIES:
             value = json.loads((policy / DECLARATION).read_text(encoding="utf-8"))
-            # A policy is ENFORCED: it ships at least one edit-gate document, and may tell every
-            # runtime its rule (a briefing section) -- every document keeps a contract the kit declares.
-            self.assertTrue(any(d["validates"] == EDIT_GATE for d in value["documents"]))
+            # A policy is ENFORCED: it ships an edit-gate document or declares a gate `check` runs,
+            # and may tell every runtime its rule (a briefing section) -- every document keeps a
+            # contract the kit declares.
+            self.assertTrue(any(d["validates"] == EDIT_GATE for d in value["documents"]) or value["gates"])
             for document in value["documents"]:
                 self.assertTrue(CORE.schema(document["validates"]))
             for gate in _gates(policy):
