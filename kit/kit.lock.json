@@ -1169,7 +1169,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4d21696bb42e31dfa7029c50827e6cd6f0ac9494f34e41d76c16c60510939f88",
+      "digest": "65f32f3820d7d12c82dc9e1c74dc8d257844dcfd22f3d628552ee5e22973cb39",
       "path": "interpreters/verbs/start.py"
     },
     {
@@ -1596,5 +1596,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T07:55:51+00:00"
+  "taken_at": "2026-10-16T08:08:34+00:00"
 }

@@ -184,7 +184,9 @@ of product names, and three places where extension still needed a kit edit:
   `detector` contract; one id, one detector. `stack-kit-commands` moved to `adapters/stack-kit/` (the
   standard starter takes it), and a core `declared-build-script` keeps the build reading measurable on
   a host without it. `start` re-reads the reading after its takes (`retake`), since a take may bring a
-  detector.
+  detector. On a host that has already accepted its answer the walk skips its two opening `init` acts:
+  they would judge, before the walk could retake it, a reading the walk is about to replace
+  (`test_start` 411; found on the first host, whose reading the moved detector made stale).
 - **A hook could refuse only by exit code.** A surface may declare the decision text a product reads on
   stdout (`hands.refusal.stdout` with `{reason}`, `hands.admission.stdout`); the judge then writes every
   line of its own to stderr, and the entry point writes the judge's header there too

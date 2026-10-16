@@ -24,6 +24,7 @@ import validation
 from errors import PendingApproval
 from manifest import Manifest
 from test_pinned_kit import said
+from test_retake import FILE
 import manifest as manifest_port
 from verbs.start import SCHEMA, StartError
 
@@ -80,6 +81,18 @@ class Start(Fixtures, unittest.TestCase):
         for _ in range(2):
             ran = self.start(host, STARTERS[0], "--approve", "acceptance-suite")
             self.assertEqual(0, ran.returncode, said(ran))
+        self.assertEqual(0, self.run_kit(KIT, host, "check").returncode)
+
+    def test_411_an_answered_host_whose_reading_moved_is_walked_to_green(self):
+        # The opening acts are for a host with no kit; on one that has accepted its answer they would
+        # judge a stale reading before the walk could retake it (ADR-023 amendment 4).
+        host = self.host()
+        self.assertEqual(0, self.start(host, STARTERS[0], "--approve", "acceptance-suite").returncode)
+        moved = host / "apps" / FILE
+        moved.parent.mkdir(parents=True)
+        moved.write_text("{}\n", encoding="utf-8")
+        ran = self.start(host, STARTERS[0], "--approve", "acceptance-suite")
+        self.assertEqual(0, ran.returncode, said(ran))
         self.assertEqual(0, self.run_kit(KIT, host, "check").returncode)
 
     def test_409_a_starter_that_takes_no_capability_is_refused_and_nothing_is_written(self):

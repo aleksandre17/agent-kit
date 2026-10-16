@@ -81,8 +81,12 @@ def run(ctx, args) -> int:
     starter, takes = _starter(ctx, args, declaration)
     who = args.approve
     taken = _ids(takes, declaration)
-    walk = [("init", []), ("init", ["--approve", who or "<who>"]),
-            ("take", ["--path", ",".join(t.as_posix() for t in takes), "--approve", who or "<who>"]),
+    # The opening acts install the kit into a host that has none. A host that has already accepted
+    # its answer has the kit: its closing `init` re-attests what this walk changes, and the opening
+    # one would only judge, before the walk could repair it, a reading the walk is about to retake.
+    accepted = doors.walked(ctx.host_answers(required=False) or {})
+    walk = [] if accepted else [("init", []), ("init", ["--approve", who or "<who>"])]
+    walk += [("take", ["--path", ",".join(t.as_posix() for t in takes), "--approve", who or "<who>"]),
             ("enable", taken), ("runtimes", [r["id"] for r in starter["runtimes"]]),
             # A take may bring a detector (a product's adapter reads that product's file), so the
             # reading the first `init` took can be stale now: the walk re-reads it through its door.
