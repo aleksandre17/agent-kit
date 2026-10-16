@@ -1,21 +1,100 @@
 {
   "schema_version": 1,
-  "summary": "The kit's three classes of work. A host's route cells name one each.",
+  "summary": "Every token serves the result: what is deterministic is a verb or a script; a model is spent where judgement is needed; what must be declared is authored; what only a person can decide stays theirs. Both directions are defects -- automating past the preconditions, and retyping what is derivable.",
   "classes": [
     {
       "id": "mechanical",
       "actor": "script",
-      "says": "Deterministic: render, check, lint, format, migrate, a plan. Run the verb or the script; never reason it out. Zero tokens."
+      "says": "Deterministically derivable from declared authority, every precondition holding: render, check, lint, format, migrate, a plan. Run the verb or the script; never reason it out. Zero tokens."
     },
     {
       "id": "assisted",
       "actor": "model",
-      "says": "Crystallized judgement over a known procedure (a skill): the cheapest model and effort that keeps the gates green; escalated on a declared signal."
+      "says": "The machine proposes, pre-fills, validates or detects; it can be wrong in a way a person can see and correct. The cheapest model and effort that keeps the gates green; escalated on a declared signal."
     },
     {
       "id": "judgement",
       "actor": "model",
-      "says": "Design, ambiguity, a high undo cost: a strong model at high effort, and a human at an irreversible door."
+      "says": "Design, ambiguity, a high undo cost: a strong model at high effort, its result accepted by oracles, never by itself."
+    },
+    {
+      "id": "explicit",
+      "actor": "human",
+      "says": "Could often be inferred, but the DECLARATION is the authority: authored and readable, never derived (inference is right most of the time and silently wrong the rest)."
+    },
+    {
+      "id": "decision",
+      "actor": "human",
+      "says": "Does not exist until a person decides -- an accountable act. The machine executes after the decision, never instead of it."
+    }
+  ],
+  "procedure": [
+    {
+      "asks": "Is the output fully determined by approved authority already in the repository?",
+      "decides": "no, and the missing input exists nowhere -> decision; no, it exists somewhere -> assisted (surface it, a person binds it)"
+    },
+    {
+      "asks": "Would deriving it silently overwrite a declaration that must stay authoritative?",
+      "decides": "yes -> explicit"
+    },
+    {
+      "asks": "Does the act carry an accountable or externally visible effect (approval, a fact corrected, a permission, a release)?",
+      "decides": "yes -> decision for the decision, mechanical for its execution after it"
+    },
+    {
+      "asks": "Can the result be verified independently of what produced it?",
+      "decides": "no -> assisted until a verification exists"
+    },
+    {
+      "asks": "Do all the preconditions hold?",
+      "decides": "no -> assisted, the missing precondition recorded; yes -> mechanical"
+    }
+  ],
+  "preconditions": [
+    {
+      "id": "deterministic",
+      "says": "same inputs, same output, whatever the order, host, locale or clock",
+      "falsifier": "two runs differ"
+    },
+    {
+      "id": "reproducible",
+      "says": "re-runnable later from retained inputs",
+      "falsifier": "an input is not retained, or is mutable"
+    },
+    {
+      "id": "traceable",
+      "says": "the output names its inputs and rule version",
+      "falsifier": "a value cannot answer what produced it"
+    },
+    {
+      "id": "validatable",
+      "says": "an independent check confirms the result",
+      "falsifier": "the only proof is the code itself"
+    },
+    {
+      "id": "regenerable",
+      "says": "the output can be discarded and rebuilt",
+      "falsifier": "the output became the only home of a fact"
+    },
+    {
+      "id": "fail-closed",
+      "says": "ambiguity or a failed dependency stops it",
+      "falsifier": "an empty or default result is produced"
+    },
+    {
+      "id": "idempotent",
+      "says": "re-running has no second effect",
+      "falsifier": "a retry duplicates a row, a message or a commit"
+    },
+    {
+      "id": "bounded",
+      "says": "declared limits on size, time and memory",
+      "falsifier": "an input exhausts a resource"
+    },
+    {
+      "id": "observable",
+      "says": "success and failure are visible and correlated",
+      "falsifier": "a silent failure mode exists"
     }
   ]
 }

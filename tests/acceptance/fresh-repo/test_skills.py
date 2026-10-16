@@ -104,13 +104,21 @@ class Skills(Fixtures, unittest.TestCase):
         statement[skills_resolver.EXTENDS] = [{"skill": base["id"], "stances": ["A fixture stance of this host."],
                                                "chapters": [{"id": "our-stack", "title": "Our stack",
                                                              "summary": "the fixture's own chapter",
-                                                             "file": "skills/stack/our-stack.md"}]}]
+                                                             "file": "skills/stack/our-stack.md"},
+                                                            {"id": "our-page", "title": "Our standards page",
+                                                             "summary": "a page that lives in the host's own docs",
+                                                             "path": "docs/our-standards.md"}]}]
+        (host / "docs").mkdir(exist_ok=True)
+        (host / "docs" / "our-standards.md").write_text("# Our standards\nThe host's own page.\n", encoding="utf-8")
         (host / HOST_SKILLS).write_text(json.dumps(statement, indent=2) + "\n", encoding="utf-8", newline="\n")
         self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
         for home, suffix in HOMES:
             served = (host / f"{home}{base['id']}{suffix}").read_text(encoding="utf-8")
             self.assertIn("Our stack", served)
             self.assertIn("A fixture stance of this host.", served)
+            self.assertIn("Our standards page", served)
+            self.assertIn("The host's own page.", (host / f"{home}{base['id']}/{skills_resolver.REFERENCES}our-standards.md")
+                          .read_text(encoding="utf-8"))
             self.assertTrue(all(c["title"] in served for c in base["chapters"]))
             self.assertIn("A fixture chapter.", (host / f"{home}{base['id']}/{skills_resolver.REFERENCES}our-stack.md")
                           .read_text(encoding="utf-8"))

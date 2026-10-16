@@ -79,6 +79,12 @@
           "title": "12. Declarative and config-driven platforms",
           "summary": "config as source of truth, interpreter plus registry, schema-driven contracts, safe expressions",
           "file": "skills/engineering-standards/references/12-declarative-platforms.md"
+        },
+        {
+          "id": "verdict-method",
+          "title": "13. Verdict method",
+          "summary": "judging a design: invariants binary, criteria evidence-bound, attributes by a written decision hierarchy",
+          "file": "skills/engineering-standards/references/13-verdict-method.md"
         }
       ]
     }

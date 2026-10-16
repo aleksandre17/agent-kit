@@ -46,6 +46,55 @@
           }
         }
       }
+    },
+    "procedure": {
+      "description": "The decision procedure that assigns a class, one question at a time; the first answer that decides, decides.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "asks",
+          "decides"
+        ],
+        "properties": {
+          "asks": {
+            "type": "string",
+            "minLength": 1
+          },
+          "decides": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "preconditions": {
+      "description": "What must ALL hold before work is classed mechanical (automated): most-but-not-all is assisted.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says",
+          "falsifier"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          },
+          "falsifier": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     }
   }
 }

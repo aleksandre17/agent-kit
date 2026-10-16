@@ -5,3 +5,8 @@
 - **Platform-level thinking:** when a problem recurs or a capability is missing, prefer the solution that **adds reusable power** (promote to a shared library / framework seam) over a one-off local patch — solve it once, for every future caller. After the minimal fix ask: *what can it do now that it couldn't? is it open for extension (a new case = a new capability, interface unchanged)?* Balance against YAGNI: build the seam when the second caller is real, not speculatively.
 - **Clean code:** intention-revealing names · small functions, one level of abstraction · explicit side effects · no silent failures, clear error boundaries · comments explain *why*, not *what*. Boy-scout rule: leave it cleaner than you found it (bounded by scope + the no-broken-windows law).
 - **Debugging discipline:** **scientific method** (hypothesis → experiment) · **rubber-duck** · **delta debugging** (minimize the failing input) · **fault isolation / bisection** · correlation ≠ causation.
+- **Delivery discipline:** source facts are immutable -- a correction is a new record beside the fact, never an
+  overwrite · a blocking discovery stops the dependent work (fail-closed) and continues the independent ·
+  every consumer of a changed contract is proven, not assumed · non-regression: nothing is retired until the
+  survivor is proven a superset · no temporary substitute that becomes the permanent one -- a stopgap carries its
+  removal task · a test not run is reported NOT_RUN, never PASS.

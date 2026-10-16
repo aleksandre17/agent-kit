@@ -116,11 +116,17 @@ def _skills(ctx, params) -> list:
         if member is None:
             raise SkillError(f"{where} extends a skill nobody declares (declared: {sorted(members)})")
         for chapter in row.get("chapters", []):
-            path = f"{REFERENCES}{posixpath.basename(_within(base, chapter['file'], where))}"
+            if "path" in chapter:
+                # A host's own page, wherever it lives in its tree, served as the chapter: one home.
+                if read is not ctx.workspace.read_text:
+                    raise SkillError(f"{where}: a published document names chapters by `file`, never by a host path")
+                source = _within("", chapter["path"], where)
+            else:
+                source = _within(base, chapter["file"], where)
+            path = f"{REFERENCES}{posixpath.basename(source)}"
             if any(f["path"] == path for f in member["files"]) or any(c["id"] == chapter["id"] for c in member["chapters"]):
                 raise SkillError(f"{where}: its chapter {chapter['id']!r} collides with one the skill already has")
-            member["files"].append({"path": path, "text": read(_within(base, chapter["file"], where)),
-                                    "layer": "on-demand"})
+            member["files"].append({"path": path, "text": read(source), "layer": "on-demand"})
             member["chapters"].append({**chapter, "path": path})
         member["stances"] += list(row.get("stances", []))
     out = []

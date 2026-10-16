@@ -1,18 +1,28 @@
 {
   "schema_version": 1,
   "id": "change-records",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "Opt-in: every change states its scope, its applicability to each catalogued requirement, its tests and its evidence, with source digests, so a stale record and an uncovered path are caught by a machine. `check` holds every record (FF-CHANGE-RECORDS); `review --base --head` holds a review range covered by VERIFIED records, on a clean checkout of its head -- the CI gate. Tri-state: runtime conformance and production readiness are NOT ASSERTED.",
   "requires": [
     {
       "kind": "capability",
       "id": "evaluation"
+    },
+    {
+      "kind": "capability",
+      "id": "runtimes"
     }
   ],
   "provides": [],
   "conflicts": [],
   "declares": {},
-  "documents": [],
+  "documents": [
+    {
+      "id": "change_record_skill",
+      "source": "capabilities/change-records/skills.json",
+      "validates": "skills"
+    }
+  ],
   "installs": [
     {
       "mode": "seed",

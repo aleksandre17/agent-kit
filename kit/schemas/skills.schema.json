@@ -124,8 +124,7 @@
               "required": [
                 "id",
                 "title",
-                "summary",
-                "file"
+                "summary"
               ],
               "properties": {
                 "id": {
@@ -143,6 +142,11 @@
                   "maxLength": 200
                 },
                 "file": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "path": {
+                  "description": "A HOST chapter at a host-relative path anywhere in its own tree (its standards page), served as the skill's reference -- the page stays its one home. Only a host document may name one; a published one names `file`.",
                   "type": "string",
                   "minLength": 1
                 }

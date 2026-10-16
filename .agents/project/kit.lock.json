@@ -365,7 +365,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "f7a2835ccc16faa1f76112871a4123a899dbfbfe0755ad769fc4fb0d96a75952",
+      "digest": "0e69d284f50cf8756dedc008541d37ee57d2d78424372e00e21c5b057a35c687",
       "path": "capabilities/operating/payload/task-classes.json"
     },
     {
@@ -1091,7 +1091,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "48c74ba6d1b6eb77430450b9e7bd8a369967ac7071faeb0d00ee79e92da12068",
+      "digest": "3e1e845fb6cb482cb23eb4776ad60ff27c7f9fccb8b90d92d2e6d46f6c92a5e4",
       "path": "interpreters/resolvers/skills.py"
     },
     {
@@ -1733,7 +1733,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "7d6979c2e7da7cf3528d99f82742b5b57539e14baae852d075e654e451771f59",
+      "digest": "cb43c3d42f7373cf5d571fb30f49bf6c8da667c14e8a29a702bc752570aab616",
       "path": "schemas/skills.schema.json"
     },
     {
@@ -1781,7 +1781,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "3c179fa75a6a45b4645ec1b67e5ae5669122b45d58cdfe65666f7ddcd5ad55fd",
+      "digest": "dd4a6d8794be86a54d1a85e646ae95f1ff35491133bef077882e6ec737fdef76",
       "path": "schemas/task-classes.schema.json"
     },
     {
@@ -1836,5 +1836,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T13:01:30+00:00"
+  "taken_at": "2026-10-16T13:06:12+00:00"
 }

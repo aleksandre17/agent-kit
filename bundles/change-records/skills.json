@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skills": [
+    {
+      "id": "record-a-change",
+      "task_class": "assisted",
+      "description": "Use before and after changing code under change records: opens a record with its scope and requirement applicability before editing, and closes it VERIFIED with tests, evidence and source digests computed by its script -- never by hand.",
+      "body": "skills/record-a-change/body.md",
+      "files": [
+        "skills/record-a-change/scripts/digests.py"
+      ]
+    }
+  ]
+}
