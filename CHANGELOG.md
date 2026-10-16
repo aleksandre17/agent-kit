@@ -34,6 +34,9 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   `reference`; check, the entry point and every served hook refuse an absent, moved or edited kit
   (KIT0083, with the restoring command); a hook whose host cannot be read keeps its posture. The owners
   seed moved to the core (`runtimes`), beside `mcp-servers`.
+- One secrets catalogue: secrets 1.2.0 publishes its edit-gate document's path and contract
+  (`policies/secrets/README.md`) for other readers; stack-kit adapter 1.1.0 declares the bridge
+  (`security.secretPatterns`). Acceptance test_policies 415 holds the published contract true.
 
 
 **Changed — every dispatch table is a discovered registry; the core reaches ports only through the root (ADR-023 amendment 5)**

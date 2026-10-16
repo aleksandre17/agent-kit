@@ -119,6 +119,14 @@ declaration, never a kit edit, proven by a fixture the kit does not ship.
     from `.agents/kit` (a second path to one tree, unportable on Windows); trusting the submodule's commit
     alone (a working tree can differ from its commit).
 
+19. **One secrets catalogue** (owner's request: no duplicated sources). The secrets policy's calibrated
+    edit-gate document is the list every judge reads -- the edit hook and the commit gate here, a
+    tree-and-history scanner by path. Its README publishes the path and the contract (`edit-gate`: paths,
+    forbids, proves, admits, with the calibration a reader must apply first); the bridge to stack-kit's
+    `scan` (`security.secretPatterns`) is declared by the stack-kit adapter alone, and the core names no
+    scanner. *Rejected:* a second pattern list in the scanner (two judges of one question); the kit
+    importing the scanner (a dependency on a tool it does not need).
+
 ## Cuts (the result did not outweigh the cost)
 
 Operating modes; a separate knowledge store; a growth-ladder ceremony beyond the lesson schema; a

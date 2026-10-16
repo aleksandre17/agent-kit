@@ -18,10 +18,11 @@
       "id": "llm02-sensitive-disclosure",
       "standard": "OWASP Top 10 for LLM Applications (2025)",
       "clause": "LLM02 Sensitive information disclosure",
-      "mechanism": "policy secrets; memory policy refuses secrets in product memory",
+      "mechanism": "policy secrets -- the one catalogue of secret shapes, its contract published by path for a tree-and-history scanner (the stack-kit adapter's bridge); memory policy refuses secrets in product memory",
       "evidence": [
         "test:tests/acceptance/fresh-repo/test_policies.py::test_414",
-        "test:tests/acceptance/fresh-repo/test_memory.py::test_450"
+        "test:tests/acceptance/fresh-repo/test_memory.py::test_450",
+        "test:tests/acceptance/fresh-repo/test_policies.py::test_415"
       ],
       "status": "conformant",
       "why": "a secret is refused at edit, commit and in memory"

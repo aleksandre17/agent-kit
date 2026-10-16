@@ -70,6 +70,26 @@ class Policies(Fixtures, unittest.TestCase):
                 with self.subTest(policy=policy.name, rule=rule["id"]):
                     self.assertEqual([], messages.calibration(rule))
 
+    def test_415_a_catalogue_other_tools_read_by_path_states_a_contract_that_is_true(self):
+        """A policy whose README publishes its documents to other readers (one catalogue, many judges)
+        names each document's path, the contract it keeps, and every field that contract requires."""
+        published = [p for p in POLICIES if (p / "README.md").is_file()]
+        self.assertTrue(published, "no policy publishes its catalogue to other readers")
+        for policy in published:
+            text = (policy / "README.md").read_text(encoding="utf-8")
+            value = json.loads((policy / DECLARATION).read_text(encoding="utf-8"))
+            seat = f"capabilities/{value['id']}/"
+            for document in value["documents"]:
+                rel = (policy / document["source"][len(seat):]).relative_to(REPO).as_posix()
+                schema = CORE.schema(document["validates"])
+                rows = next(v for v in schema["properties"].values() if v.get("type") == "array")["items"]
+                with self.subTest(policy=policy.name, document=document["id"]):
+                    self.assertTrue((REPO / rel).is_file())
+                    self.assertIn(f"`{rel}`", text)
+                    self.assertIn(f"`$id: {schema['$id']}`", text)
+                    for name in rows["required"]:
+                        self.assertIn(f"`{name}`", text, f"the README omits the required field {name!r}")
+
     def test_414_a_started_host_commits_its_install_and_refuses_what_a_policy_forbids(self):
         starter = next(s for s in STARTERS
                        if any((s.parent / rel).resolve() in {p.resolve() for p in POLICIES}
