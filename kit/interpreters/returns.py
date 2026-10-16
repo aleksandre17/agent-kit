@@ -12,6 +12,20 @@ import dispatching
 import ephemeral
 
 
+def tasks(ctx) -> list:
+    """Every task record a dispatch on this host left -- its route, its ending, its admission and
+    what it cost (`telemetry`)."""
+    home = ephemeral.place(ctx, dispatching.HOME)
+    found = []
+    for rel in ctx.workspace.files_under(home):
+        if rel.endswith("/task.json"):
+            try:
+                found.append(json.loads(ctx.workspace.read_text(rel)))
+            except (OSError, ValueError):
+                continue
+    return found
+
+
 def recorded(ctx) -> list:
     """Every structured return a dispatch on this host recorded, read from its task record."""
     home = ephemeral.place(ctx, dispatching.HOME)

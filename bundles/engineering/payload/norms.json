@@ -557,5 +557,105 @@
     "modality": "SHOULD",
     "subject": "review-output",
     "procedure": "engineering-standards"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#every-token-serves-the-result",
+    "genre": "cardinal",
+    "title": "Cardinal E5 — Every token serves the result",
+    "says": "What a script or a verb can do deterministically is done by it, at zero tokens; intelligence is spent only where judgement is needed, at the highest standard; the strategy is chosen per problem. Quality is the floor: a saving that lowers it is worthless.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#economy",
+    "genre": "doctrine",
+    "title": "Doctrine — Economy",
+    "says": "The rules about what an agent spends, and on what.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#every-token-serves-the-result"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#mechanical-work-is-a-script",
+    "genre": "rule",
+    "title": "Mechanical work is a script",
+    "says": "Work of the mechanical task class is run as a verb or a script and never dispatched to a model; the route table refuses it.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#economy",
+    "modality": "MUST",
+    "subject": "mechanical-work",
+    "enforced_by": [
+      "verb:dispatch"
+    ]
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#always-loaded-is-laws-and-pointers",
+    "genre": "rule",
+    "title": "Always loaded is laws and pointers",
+    "says": "The always-loaded layer carries the laws and pointers only, under its budget; everything else is read on demand or loaded by description.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#economy",
+    "modality": "MUST",
+    "subject": "context-layers",
+    "enforced_by": [
+      "gate:FF-CONTEXT"
+    ]
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#oracles-accept",
+    "genre": "rule",
+    "title": "Oracles accept a result",
+    "says": "An agent's result is accepted by deterministic oracles -- tests, gates, check, schema validation -- never by its own assessment; every agent-to-tool handoff is structured, schema-validated output.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#economy",
+    "modality": "SHOULD",
+    "subject": "acceptance"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#stop-conditions",
+    "genre": "rule",
+    "title": "Every run has a stop condition",
+    "says": "Every dispatch and eval declares its caps and an escalation signal; a loop or a budget hit ends the run as a recorded failure, never a silent retry.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#economy",
+    "modality": "SHOULD",
+    "subject": "stop-conditions"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#repeated-work-becomes-a-verb",
+    "genre": "rule",
+    "title": "Repeated work becomes a verb",
+    "says": "The same manual act a third time is a fix to the mechanism, not the task: the frontier report names it as a script candidate.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#economy",
+    "modality": "SHOULD",
+    "subject": "repetition"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#cheapest-route-while-evals-hold",
+    "genre": "rule",
+    "title": "The cheapest route, while the evals hold",
+    "says": "A route keeps the cheapest actor that keeps quality, measured by tokens per accepted change and first-pass acceptance per task class; it escalates only on a declared signal, and the classifier stays a declaration, never a model call.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#economy",
+    "modality": "SHOULD",
+    "subject": "routing"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#cache-aware-order",
+    "genre": "rule",
+    "title": "Stable first, volatile last",
+    "says": "An always-loaded file puts what changes least first, so a product's prompt cache reuses the prefix.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#economy",
+    "modality": "SHOULD",
+    "subject": "cache-order"
   }
 ]

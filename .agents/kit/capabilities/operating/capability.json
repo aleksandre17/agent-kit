@@ -79,6 +79,13 @@
           "validates": "register-kind"
         }
       }
+    },
+    {
+      "id": "FF-FRONTIER",
+      "kind": "frontier-reported",
+      "params": {
+        "repeated": 3
+      }
     }
   ],
   "documents": [

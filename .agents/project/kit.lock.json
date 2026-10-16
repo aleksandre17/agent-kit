@@ -353,7 +353,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "9831ca1e8072965cbc84cf910099447528d2d5d1e40d6307e9d282600ad06762",
+      "digest": "ab04eb6b0a551fe63dbd10a2ab2a54cb185da68a452a16c992fab569d684099c",
       "path": "capabilities/operating/capability.json"
     },
     {
@@ -743,7 +743,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b92aa9406c2515221c254806580d08a0979e20e13eeaa53385c62cd60ed4369d",
+      "digest": "651252e7a70fafcf19ff660ba460f89edf62f7f826105e61fd9a978d1815c2de",
       "path": "interpreters/gates/economy.py"
     },
     {
@@ -1145,7 +1145,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ac5858b0e219113051eda342bb4dc120db0f78b7ccedf14aafbb22850405b413",
+      "digest": "499c8a872caef9a69d4f2a3864bd5aaa11e3f138043ed50bee435b9c4c41b54a",
       "path": "interpreters/returns.py"
     },
     {
@@ -1902,5 +1902,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T13:31:46+00:00"
+  "taken_at": "2026-10-16T13:37:51+00:00"
 }

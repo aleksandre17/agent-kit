@@ -252,6 +252,21 @@ class Routing(Fixtures, unittest.TestCase):
         self.assertEqual(1, refused.returncode)
         self.assertIn(f"[{dispatching.DispatchRefused.code}]", refused.stderr)
 
+    def test_369_the_frontier_is_reported_and_repeated_work_is_a_script_candidate(self):
+        host = self.repository()
+        modelled = next(r["id"] for c in CORE.capabilities for d in c.raw.get("documents", [])
+                        if d["validates"] == dispatching.CLASSES[0]["validates"]
+                        for r in c.documents[d["id"]][dispatching.CLASSES[1]] if r["actor"] == dispatching.DISPATCHED)
+        self.routes(host, cells=[{"id": "cheap", "decision_density": "low", "reversibility": "cheap",
+                                  "task_class": modelled}])
+        for i in range(3):
+            said = self.dispatched(host, packet(f"again-{i}", route=ECHOING.name, task_class=modelled, instruction="go"))
+            self.assertEqual(0, said.returncode, said.stdout + said.stderr)
+        cli = [sys.executable, str(Path(dispatch_port.__file__).parent.parent / "cli.py")]
+        checked = subprocess.run([*cli, "check", "--root", str(host), "--kit", str(self.kit)], capture_output=True, text=True)
+        self.assertIn(f"FRONTIER {modelled}: 3 run(s), 3 accepted on the first pass", checked.stdout)
+        self.assertIn("CANDIDATE  the same task 3 times", checked.stdout)
+
     def test_368_a_run_past_its_stop_condition_fails_on_the_record_and_escalates_without_a_retry(self):
         host = self.repository()
         self.routes(host, cells=[
