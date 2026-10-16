@@ -1,0 +1,18 @@
+#!/bin/sh
+# Generated. Do not edit. Served to the runtime {{runtime}} through the surface {{surface}} - kit {{kit_version}}.
+# git runs this with the path of the proposed commit message, once core.hooksPath names this
+# directory. It hands the message to the `message` verb in this host's pinned kit, which applies the
+# message rules this host declares -- none until it takes a message policy -- and holds no rule of its
+# own. It fails CLOSED: a message it cannot read, or a verb it cannot run, refuses the commit.
+[ -r "$1" ] || {
+  echo "message gate: REFUSED -- the commit message could not be read, so it was not judged" >&2
+  exit 1
+}
+for candidate in python3 python py; do
+  if "$candidate" -c "import sys" >/dev/null 2>&1; then
+    "$candidate" "{{vendor}}/interpreters/cli.py" message --root . --surface {{surface}} < "$1"
+    exit $?
+  fi
+done
+echo "message gate: REFUSED -- no Python interpreter could be run, so the message was not judged" >&2
+exit 1

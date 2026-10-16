@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "id": "conventional-commits",
+  "version": "1.0.0",
+  "summary": "A POLICY published beside the kit, opt-in: a host that takes it records a change only with a Conventional Commits 1.0.0 message. Its one rule keeps the `message-rules` contract and carries its own calibration (a free-form subject it must refuse, a conventional one it must admit), proven by `check` (FF-MESSAGE-RULE) before the commit-message hook a version-control adapter serves applies it.",
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "enforcement"
+    }
+  ],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [
+    {
+      "id": "conventional_commits",
+      "source": "capabilities/conventional-commits/payload/message-rules.json",
+      "validates": "message-rules"
+    }
+  ],
+  "installs": [],
+  "gates": []
+}

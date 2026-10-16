@@ -54,6 +54,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `judge` | judge one edit a runtime hook hands over, against this host's declared edit gates | nothing |
 | `ledger` | after a product's sub-agent stops: requested vs verified model and tokens, one ledger row (advisory) | nothing |
 | `lock` | enumerate what the kit is, measure it, and record the reading | yes -- `--plan` prints the writes first |
+| `message` | before a change is recorded: its message must take the form the host's message rules declare (blocking) | nothing |
 | `move` | move one card across one declared transition | yes -- `--plan` prints the writes first |
 | `propose` | state what this host learned that it says is not its own, as text a person carries | nothing |
 | `release` | state what this kit is as a release, or refuse to call a working tree one | nothing |

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "summary": "Conventional Commits 1.0.0: a commit message opens with a type, an optional scope in parentheses, an optional `!` for a breaking change, a colon, a space and the description. The messages git writes itself -- a merge, a revert, a fixup, squash or amend for a later autosquash -- are admitted as git writes them.",
+  "rules": [
+    {
+      "id": "conventional-commit-header",
+      "requires": "^(?:[a-z]+(?:\\([^()\\r\\n]+\\))?!?: \\S|(?:Merge|Revert|fixup!|squash!|amend!) )",
+      "because": "a Conventional Commits header (type(scope)!: description) is what changelogs, version bumps and a reader of the history parse; a free-form subject is read by nobody's tooling.",
+      "instead": "open the message with `<type>(<scope>): <what the change does>` -- e.g. `fix(parser): accept an empty input`; `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `ci`, `build`, `perf`, `style` are the common types, and `!` before the colon marks a breaking change.",
+      "proves": "Fixed the parser",
+      "admits": "fix(parser): accept an empty input"
+    }
+  ]
+}

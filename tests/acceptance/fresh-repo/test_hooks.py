@@ -13,7 +13,10 @@ kit, the product's event on stdin, read through the surface's declared hands):
   6. the stop gate is served only where the host takes a continuity capsule, and there refuses a stop
      over a capsule that breaks its contract;
   7. a product's own sub-agent leaves a ledger row -- requested vs verified model, tokens -- read
-     through the surface's declared `hands.ledger`, a mismatch named.
+     through the surface's declared `hands.ledger`, a mismatch named;
+  8. a host that takes a message policy records a change only with a message of the declared form --
+     through git itself -- and a rule that does not bite its own specimen is failed by `check` and
+     never applied; a host that takes none is held to nothing.
 
 Every key, label, ref and code is read from the declarations and the module that owns it.
 """
@@ -21,6 +24,8 @@ Every key, label, ref and code is read from the declarations and the module that
 from __future__ import annotations
 
 import json
+import os
+import shutil
 import subprocess
 import sys
 import unittest
@@ -31,7 +36,8 @@ import hooks
 from context import Context
 from test_adapters import ADAPTERS, documents_of, surfaces_of
 from test_pinned_kit import said
-from verbs import capsule, guard, ledger, session, spawn, stop
+import messages
+from verbs import capsule, guard, ledger, message, session, spawn, stop
 
 STARTER = REPO / "starters" / "standard.json"
 TAKEN = [(STARTER.parent / rel).resolve() for rel in json.loads(STARTER.read_text(encoding="utf-8"))["takes"]]
@@ -42,6 +48,8 @@ CAPSULE = REPO / "bundles" / "shared-tree"
 SEAT = next(i["target"] for i in json.loads((CAPSULE / "capability.json").read_text(encoding="utf-8"))["installs"]
             if i.get("validates") == capsule.CONTRACT)
 SETTINGS = next(r["target"] for r in SURFACE["renders"] if r["view"] == "enforcement")
+MESSAGES = REPO / "policies" / "conventional-commits"
+RULE = next(r for d in [MESSAGES] for doc in documents_of(d, message.SOURCES[0]["validates"]) for r in doc[messages.RULES])
 PACKET = next(p for d in TAKEN for doc in documents_of(d, spawn.PACKETS[0]["validates"]) for p in doc["packets"])
 
 
@@ -65,12 +73,17 @@ class Hooks(Fixtures, unittest.TestCase):
         return host
 
     def started_with_capsule(self):
+        return self.started_taking(CAPSULE)
+
+    def started_taking(self, *extra, green=True):
         host = self.host()
         starter = json.loads(STARTER.read_text(encoding="utf-8"))
-        starter["takes"] = [str((STARTER.parent / t).resolve()) for t in starter["takes"]] + [str(CAPSULE)]
+        starter["takes"] = [str((STARTER.parent / t).resolve()) for t in starter["takes"]] + [str(e) for e in extra]
         written = self._temp("starter-") / "starter.json"
         written.write_text(json.dumps(starter), encoding="utf-8")
         ran = self.run_kit(KIT, host, "start", "--path", str(written), "--approve", "acceptance-suite")
+        if not green:
+            return host, ran
         self.assertEqual(0, ran.returncode, said(ran))
         return host
 
@@ -195,6 +208,47 @@ class Hooks(Fixtures, unittest.TestCase):
         summary = self.run_kit(KIT, host, name)
         self.assertEqual(0, summary.returncode, said(summary))
         self.assertIn("1 run(s), 1 on a model other than the one requested", summary.stdout)
+
+    def commit(self, host, name, text):
+        env = {**os.environ, "GIT_AUTHOR_NAME": "suite", "GIT_AUTHOR_EMAIL": "s@invalid",
+               "GIT_COMMITTER_NAME": "suite", "GIT_COMMITTER_EMAIL": "s@invalid"}
+        (host / name).write_text(name + "\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(host), "add", name], capture_output=True, env=env)
+        # A message as an editor leaves it: git's own comment lines below the text the author wrote.
+        draft = self._temp("message-") / "MSG"
+        draft.write_text(text + "\n\n# Please enter the commit message for your changes.\n", encoding="utf-8")
+        return subprocess.run(["git", "-C", str(host), "commit", "-q", "--cleanup=strip", "-F", str(draft)],
+                              capture_output=True, text=True, env=env)
+
+    def test_488_a_message_policy_holds_every_commit_through_git_and_an_uncalibrated_rule_is_never_applied(self):
+        plain = self.started()
+        self.assertEqual(0, self.commit(plain, "one.txt", RULE["proves"]).returncode, "a host that took no policy was held")
+        host = self.started_taking(MESSAGES)
+        refused = self.commit(host, "two.txt", RULE["proves"])
+        self.assertNotEqual(0, refused.returncode, said(refused))
+        self.assertIn(f"[{message.MessageRefused.code}] {RULE['id']}", refused.stderr)
+        admitted = self.commit(host, "three.txt", RULE["admits"])
+        self.assertEqual(0, admitted.returncode, said(admitted))
+        # A policy nobody ships, whose rule admits the very message it claims to refuse.
+        fixture = self._temp("policy-") / "a-fixture-message-policy"
+        shutil.copytree(MESSAGES, fixture)
+        declaration = json.loads((fixture / "capability.json").read_text(encoding="utf-8"))
+        seat = f"capabilities/{declaration['id']}/"
+        document = declaration["documents"][0]
+        rel = document["source"][len(seat):]
+        declaration["id"] = fixture.name
+        document["source"] = f"capabilities/{fixture.name}/{rel}"
+        (fixture / "capability.json").write_text(json.dumps(declaration), encoding="utf-8")
+        value = json.loads((fixture / rel).read_text(encoding="utf-8"))
+        value[messages.RULES] = [{**RULE, "id": "a-rule-that-does-not-bite", "proves": RULE["admits"]}]
+        (fixture / rel).write_text(json.dumps(value), encoding="utf-8")
+        # `start` ends with `check`: everything is served and activated, and the check is red on the rule.
+        loose, started = self.started_taking(fixture, green=False)
+        self.assertNotEqual(0, started.returncode)
+        self.assertIn("a-rule-that-does-not-bite: UNCALIBRATED", said(started))
+        unjudged = self.commit(loose, "four.txt", RULE["proves"])
+        self.assertEqual(0, unjudged.returncode, said(unjudged))
+        self.assertIn("a-rule-that-does-not-bite", unjudged.stderr)
 
 
 if __name__ == "__main__":

@@ -17,7 +17,8 @@
     "schemas": [
       "edit-gate",
       "destructive-commands",
-      "spawn-packets"
+      "spawn-packets",
+      "message-rules"
     ]
   },
   "installs": [
@@ -45,6 +46,15 @@
       "params": {
         "sources": {
           "validates": "edit-gate"
+        }
+      }
+    },
+    {
+      "id": "FF-MESSAGE-RULE",
+      "kind": "message-rules-calibrated",
+      "params": {
+        "sources": {
+          "validates": "message-rules"
         }
       }
     }

@@ -27,6 +27,8 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - Review owners: contract `owners`, resolver `declared`, view `owners`; github-actions 1.3.0 seeds
   `.agents/project/owners.json` (extension point) and serves a span of `.github/CODEOWNERS`; surface
   `controls` -- `doctor` names branch protection NOT ASSERTED with the exact `gh api` command.
+- Commit messages: contract `message-rules`, gate FF-MESSAGE-RULE (calibrated), verb `message`
+  (KIT0082); git 1.3.0 serves `.githooks/commit-msg`; policy `conventional-commits` 1.0.0 (opt-in).
 
 
 **Changed — every dispatch table is a discovered registry; the core reaches ports only through the root (ADR-023 amendment 5)**

@@ -1,0 +1,64 @@
+{
+  "$id": "message-rules",
+  "title": "Message rules -- the form a commit message must take before it is recorded",
+  "description": "A host's judgement over the MESSAGE a change is recorded with, declared as data and applied by one generic verb (`message`) that a version-control adapter's message hook runs. The kit ships the grammar and no rule: a host opts in by taking a published policy (Conventional Commits) or declaring its own. Like an edit gate, every rule carries its own calibration -- one message it MUST refuse and one it MUST admit -- and `check` proves both before a message is judged on its word; an uncalibrated rule is named unjudged, never applied.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "rules"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "requires",
+          "because",
+          "instead",
+          "proves",
+          "admits"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "requires": {
+            "description": "One regular expression the message -- its comment lines and everything below a scissors line removed -- must match from its first character.",
+            "type": "string",
+            "minLength": 1
+          },
+          "because": {
+            "type": "string",
+            "minLength": 1
+          },
+          "instead": {
+            "type": "string",
+            "minLength": 1
+          },
+          "proves": {
+            "description": "A message this rule MUST refuse: the evidence it sees what it claims to catch.",
+            "type": "string",
+            "minLength": 1
+          },
+          "admits": {
+            "description": "A message this rule MUST admit: its measured edge.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

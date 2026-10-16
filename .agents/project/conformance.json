@@ -243,10 +243,13 @@
       "id": "conventional-commits",
       "standard": "Conventional Commits 1.0.0",
       "clause": "type(scope): subject",
-      "mechanism": "the kit's own history; not enforced on hosts",
-      "evidence": [],
-      "status": "partial",
-      "why": "followed here; a host's commit gate does not check the message"
+      "mechanism": "policy conventional-commits (opt-in): one calibrated message rule (contract message-rules, gate FF-MESSAGE-RULE), applied by verb message from the git adapter's commit-msg hook",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_488",
+        "gate:FF-MESSAGE-RULE"
+      ],
+      "status": "conformant",
+      "why": "a host that takes the policy records a change only with a conventional header; an uncalibrated rule is failed by check and never applied"
     },
     {
       "id": "keep-a-changelog",

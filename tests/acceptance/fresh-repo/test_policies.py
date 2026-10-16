@@ -3,8 +3,8 @@
 A rule true of every repository -- no private key, no access token -- is written once, as edit gates
 in a published capability, and taken by each host instead of copied into it. Each policy is held to:
 
-  1. it declares only documents that keep the edit-gate contract, and every gate is calibrated: it
-     refuses the edit it says it refuses and admits the lookalike it says is legitimate;
+  1. it declares only documents that keep an enforced contract, and every gate and message rule is
+     calibrated: it refuses what it says it refuses and admits the lookalike it says is legitimate;
   2. a host started by a starter that takes it can COMMIT the install itself -- the policy's own
      calibration text lands in the take plane, which is the publisher's bytes and judged by digest --
      and is refused, at the commit, an edit that introduces what a gate forbids.
@@ -22,26 +22,28 @@ from harness import KIT, REPO, Fixtures
 
 import edits
 import manifest as manifest_port
+import messages
 from manifest import Manifest
 from test_pinned_kit import said
-from verbs import guard, spawn
+from verbs import guard, message, spawn
 
 CORE = Manifest(KIT)
 DECLARATION = next(i for c in CORE.capabilities for i in c.installs
                    if i["mode"] == manifest_port.TAKEN_MODE)["declaration"]
 EDIT_GATE = "edit-gate"
 #: The contracts something ENFORCES: the edit judge's, and each contract a hook verb reads.
-ENFORCED = {EDIT_GATE, guard.PATTERNS[0]["validates"], spawn.PACKETS[0]["validates"]}
+MESSAGE_RULES = message.SOURCES[0]["validates"]
+ENFORCED = {EDIT_GATE, guard.PATTERNS[0]["validates"], spawn.PACKETS[0]["validates"], MESSAGE_RULES}
 POLICIES = sorted(p.parent for p in (REPO / "policies").glob(f"*/{DECLARATION}"))
 STARTERS = sorted((REPO / "starters").glob("*.json"))
 
 
-def _gates(policy) -> list:
+def _gates(policy, contract=EDIT_GATE, rows=edits.RULES) -> list:
     value = json.loads((policy / DECLARATION).read_text(encoding="utf-8"))
     seat = f"capabilities/{value['id']}/"
-    return [gate for document in value.get("documents", []) if document["validates"] == EDIT_GATE
+    return [gate for document in value.get("documents", []) if document["validates"] == contract
             for gate in json.loads((policy / document["source"][len(seat):]).read_text(encoding="utf-8"))
-            [edits.RULES]]
+            [rows]]
 
 
 def _git(host, *argv):
@@ -64,6 +66,9 @@ class Policies(Fixtures, unittest.TestCase):
             for gate in _gates(policy):
                 with self.subTest(policy=policy.name, gate=gate["id"]):
                     self.assertEqual([], edits.calibration(gate))
+            for rule in _gates(policy, MESSAGE_RULES, messages.RULES):
+                with self.subTest(policy=policy.name, rule=rule["id"]):
+                    self.assertEqual([], messages.calibration(rule))
 
     def test_414_a_started_host_commits_its_install_and_refuses_what_a_policy_forbids(self):
         starter = next(s for s in STARTERS

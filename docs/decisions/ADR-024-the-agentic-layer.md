@@ -95,6 +95,14 @@ declaration, never a kit edit, proven by a fixture the kit does not ship.
     shadowed); setting protection through the API (a credential and a remote, irreversible act); a
     resolver per contract.
 
+17. **A commit message is judged like an edit**, by declaration and opt-in: contract `message-rules` (a
+    pattern the message must match from its first character, why, instead, and its calibration -- one
+    message it must refuse, one it must admit), gate `FF-MESSAGE-RULE` in `check`, verb `message` (blocking)
+    run by the git adapter's `commit-msg` hook; the policy `conventional-commits` is the published rule.
+    A host that takes no rule is held to nothing; an uncalibrated rule is named and never applied.
+    *Rejected:* a message check in the edit judge (a message is not an edit and has no path); a hard-wired
+    Conventional Commits regex in the hook (a policy, not a mechanism).
+
 ## Cuts (the result did not outweigh the cost)
 
 Operating modes; a separate knowledge store; a growth-ladder ceremony beyond the lesson schema; a
