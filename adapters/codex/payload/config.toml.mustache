@@ -1,0 +1,23 @@
+{{#mcp.servers}}
+[mcp_servers.{{id}}]
+{{#stdio}}
+command = {{q.command}}
+args = [{{#args}}{{q.value}}{{^last}}, {{/last}}{{/args}}]
+env_vars = [{{#env_vars}}{{q.name}}{{^last}}, {{/last}}{{/env_vars}}]
+{{/stdio}}
+{{#http}}
+url = {{q.url}}
+{{#bearer_env}}
+bearer_token_env_var = {{q.bearer_env}}
+{{/bearer_env}}
+{{/http}}
+{{#restricted}}
+enabled_tools = [{{#allowed_tools}}{{q.value}}{{^last}}, {{/last}}{{/allowed_tools}}]
+{{/restricted}}
+{{#has_headers_env}}
+[mcp_servers.{{id}}.env_http_headers]
+{{#headers_env}}
+{{q.header}} = {{q.name}}
+{{/headers_env}}
+{{/has_headers_env}}
+{{/mcp.servers}}

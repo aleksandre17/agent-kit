@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "summary": "This host's MCP servers, declared once and served to every runtime by its adapter. Environment variable NAMES only -- a value never belongs here.",
+  "servers": []
+}

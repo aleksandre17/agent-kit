@@ -20,7 +20,9 @@
       "runtime",
       "runtime-surface",
       "runtime-observation",
-      "skills"
+      "skills",
+      "mcp-servers",
+      "mcp-trust"
     ]
   },
   "documents": [
@@ -28,6 +30,11 @@
       "id": "kit_runtime_classes",
       "source": "runtimes/classes.json",
       "validates": "runtime-class"
+    },
+    {
+      "id": "kit_mcp_trust",
+      "source": "runtimes/mcp-trust.json",
+      "validates": "mcp-trust"
     }
   ],
   "composes": {
@@ -70,6 +77,14 @@
     }
   },
   "installs": [
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/mcp-servers.json",
+      "source": "capabilities/runtimes/payload/mcp-servers-local.json",
+      "validates": "mcp-servers",
+      "reads_as": "host_mcp_servers"
+    },
     {
       "mode": "seed",
       "class": "binding",
@@ -183,7 +198,14 @@
           },
           {
             "id": "enforcement",
-            "sections": []
+            "sections": [],
+            "carries": [
+              {
+                "as": "mcp",
+                "kind": "mcp-servers",
+                "params": {}
+              }
+            ]
           },
           {
             "id": "role-definitions",
@@ -197,6 +219,16 @@
               "kind": "skills",
               "params": {}
             }
+          },
+          {
+            "id": "mcp",
+            "carries": [
+              {
+                "as": "mcp",
+                "kind": "mcp-servers",
+                "params": {}
+              }
+            ]
           }
         ]
       }

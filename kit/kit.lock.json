@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 278,
+  "count": 283,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "69429ac9073ade045ea66bc548d85908e6c4a7863924d12bd9d29a8ab4f705a1",
+      "digest": "ae266294c5d88439a30b831153cf529c7de1660fe5091d6a2f117373f1b2fa94",
       "path": "MANIFEST.json"
     },
     {
@@ -401,7 +401,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "0a391a946d502468b969fb06f6ffdc02030d893f787483228ac1b3271fb608d6",
+      "digest": "ace0a3d863f24a246f74b8c6f2e796cc33695945cb50b03e9d266b0501c62ccd",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -421,6 +421,12 @@
       "class": "declaration",
       "digest": "784559404ae6fc7843c6da9eb59b47f926c3a80e7b234c27436126464eaa8b09",
       "path": "capabilities/runtimes/payload/classes-local.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "2e5c200ccd87410ddff1e2137cc016e731452766e4c4266a4b7bb04b3fc4e077",
+      "path": "capabilities/runtimes/payload/mcp-servers-local.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1037,6 +1043,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "015122343d5dd9d1b348602333d8c5c4fcdafeccffdd87ee17650d3551fcbd8f",
+      "path": "interpreters/resolvers/mcp.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "5ea3d67aba7cd39b1ce88b89976c661f44d9bed949a59eba5ddc82c255f8f07a",
       "path": "interpreters/resolvers/skills.py"
     },
@@ -1283,6 +1295,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "5230e0fc507a789761768de74057a593638a1918feff793b5886c6434ef8f046",
+      "path": "runtimes/mcp-trust.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "d11948fe5e55054792bc282bbe948f650f2e4187209c31ce6e0c20e20cc7f227",
       "path": "schemas/arbitration.schema.json"
     },
@@ -1465,6 +1483,18 @@
       "class": "declaration",
       "digest": "9a3b7afa37a9885e822ef6e0edbcddea20c5e1b0485a47b383f312c04c65c44e",
       "path": "schemas/manifest.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "f95eee1c058222074a74492be721b98092f2a8622759be03601366a209f434b3",
+      "path": "schemas/mcp-servers.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "570f19b0fde682a5c8bef088dba0d62a2a7823ec23da08b02a3b43cd0a6a1a78",
+      "path": "schemas/mcp-trust.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1674,5 +1704,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T12:05:16+00:00"
+  "taken_at": "2026-10-16T12:08:25+00:00"
 }

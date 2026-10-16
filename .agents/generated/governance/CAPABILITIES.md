@@ -177,6 +177,7 @@ Declares that a RUNTIME -- the tool a host actually executes its agents on -- is
 
 | path | class | mode |
 | --- | --- | --- |
+| `.agents/project/mcp-servers.json` | binding | seed |
 | `.agents/project/skills.json` | binding | seed |
 | `.agents/project/skills/` | binding | space |
 | `.agents/project/runtime-classes.json` | binding | seed |

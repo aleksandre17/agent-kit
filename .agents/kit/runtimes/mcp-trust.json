@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "summary": "The kit's two trust levels. A host may declare more in a document keeping the same contract.",
+  "levels": [
+    {
+      "id": "trusted",
+      "says": "A server this host runs or whose publisher it answers for: every declared effect is allowed, an undeclared tool is asked about.",
+      "allows": [
+        "read",
+        "write",
+        "exec"
+      ],
+      "undeclared": "ask"
+    },
+    {
+      "id": "untrusted",
+      "says": "A server whose content may carry instructions (the web, third-party data): only its read tools are allowed; its write and exec tools are denied, and an undeclared tool is unavailable where the product can say so.",
+      "allows": [
+        "read"
+      ],
+      "undeclared": "deny"
+    }
+  ]
+}

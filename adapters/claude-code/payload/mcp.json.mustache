@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+{{#mcp.servers}}
+    {{q.id}}: {
+{{#stdio}}
+      "command": {{q.command}},
+      "args": [{{#args}}{{q.value}}{{^last}}, {{/last}}{{/args}}],
+      "env": { {{#env_vars}}{{q.name}}: "${{lbrace}}{{name}}{{rbrace}}"{{^last}}, {{/last}}{{/env_vars}} }
+{{/stdio}}
+{{#http}}
+      "type": "http",
+      "url": {{q.url}},
+      "headers": { {{#headers}}{{q.header}}: "{{prefix}}${{lbrace}}{{name}}{{rbrace}}"{{^last}}, {{/last}}{{/headers}} }
+{{/http}}
+    }{{^last}},{{/last}}
+{{/mcp.servers}}
+  }
+}

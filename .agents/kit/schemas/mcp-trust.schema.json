@@ -1,0 +1,62 @@
+{
+  "$id": "mcp-trust",
+  "title": "MCP TRUST -- the levels a server may be declared at, and what each lets a runtime do",
+  "description": "A level names the tool EFFECTS a runtime may use without asking and what happens to a tool the server's declaration does not name: `ask` leaves the product's own prompt, `deny` restricts the server to its allowed tools wherever the product can say so. A new level is a row; no interpreter names one.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "levels"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "levels": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says",
+          "allows",
+          "undeclared"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allows": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "read",
+                "write",
+                "exec"
+              ]
+            }
+          },
+          "undeclared": {
+            "type": "string",
+            "enum": [
+              "ask",
+              "deny"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

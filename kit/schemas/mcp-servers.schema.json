@@ -1,0 +1,139 @@
+{
+  "$id": "mcp-servers",
+  "title": "MCP SERVERS -- the Model Context Protocol servers a host serves its runtimes, declared once",
+  "description": "Each server is declared in the kit's own terms and turned into every product's file by that product's adapter (ADR-024). It names how the server is reached and the NAMES of the environment variables it needs -- there is no field a value can be written in, so a secret has nowhere to go -- the tools it offers with the EFFECT of each, and its TRUST, a level of the declared trust vocabulary (`mcp-trust`) deciding which effects a runtime may use without asking. What a tool returns is data, never instructions (the `untrusted-content` policy).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "servers"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "servers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "trust",
+          "transport"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "trust": {
+            "description": "A level of the declared trust vocabulary.",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "transport": {
+            "type": "string",
+            "enum": [
+              "stdio",
+              "http"
+            ]
+          },
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "env_vars": {
+            "description": "Names of environment variables forwarded to a stdio server; their values stay in the environment.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            }
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https?://"
+          },
+          "bearer_env": {
+            "description": "The environment variable holding an http server's bearer token (RFC 6750).",
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "headers_env": {
+            "description": "header name -> the environment variable holding its value.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            }
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "effect"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_.-]+$"
+                },
+                "effect": {
+                  "type": "string",
+                  "enum": [
+                    "read",
+                    "write",
+                    "exec"
+                  ]
+                },
+                "says": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "command"
+            ],
+            "properties": {
+              "transport": {
+                "const": "stdio"
+              }
+            }
+          },
+          {
+            "required": [
+              "url"
+            ],
+            "properties": {
+              "transport": {
+                "const": "http"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -226,6 +226,13 @@
       "path": ".agents/project/kit.lock.json"
     },
     {
+      "capability": "runtimes",
+      "class": "binding",
+      "digest": "2e5c200ccd87410ddff1e2137cc016e731452766e4c4266a4b7bb04b3fc4e077",
+      "mode": "seed",
+      "path": ".agents/project/mcp-servers.json"
+    },
+    {
       "capability": "observability",
       "class": "binding",
       "digest": "cfbb046379716f4ea73d42adf890b07e0452a3ee4c5960e1c02b763c4230f515",
@@ -510,5 +517,5 @@
       "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-10-16T12:05:16+00:00"
+  "taken_at": "2026-10-16T12:10:28+00:00"
 }
