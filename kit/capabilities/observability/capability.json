@@ -21,13 +21,13 @@
     {
       "id": "a-run-on-a-host-that-has-accepted-its-kit",
       "kind": "run-receipt",
-      "when": { "mutates": true, "plan": false, "host_status": "accepted" },
+      "when": { "mutates": true, "plan": false, "delegates": false, "host_status": "accepted" },
       "params": { "into": "receipts" }
     },
     {
       "id": "the-run-in-which-a-host-accepts-its-kit",
       "kind": "run-receipt",
-      "when": { "mutates": true, "plan": false, "host_status": "draft", "approving": true },
+      "when": { "mutates": true, "plan": false, "delegates": false, "host_status": "draft", "approving": true },
       "params": { "into": "receipts" }
     }
   ],

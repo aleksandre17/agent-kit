@@ -20,7 +20,10 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - The github-actions template pins `actions/checkout` by commit SHA; the kit's own suites run in CI.
 - `kit/README.md` verb table derived from the verbs (`test_verb_reference`); README rewritten with a
   quick start and a glossary.
-- `test_start` 407–409, `test_commands` 412, `test_enforcement` 289c–289d.
+- `test_start` 407–410, `test_commands` 412, `test_enforcement` 289c–289d.
+- A verb that delegates its writes to separate runs declares `DELEGATES` and is observed through
+  them (ADR-023 amendment 1): `start` on a host that has already answered no longer fails its own
+  acts' `FF-RUN-RECEIPT`.
 
 **Added — a reading is replaced through a door (ADR-021 amendment 2)**
 - Verb `retake`: names every moved fact; `--plan` writes nothing; unapproved it is a door; approved it

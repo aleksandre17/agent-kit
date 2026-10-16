@@ -305,7 +305,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "f6e6a02cdfbda154f3b280043ffbfd7951187ad05b2a8f6d742808b3f3700ac6",
+      "digest": "b5f70d903394f0098f47a681db2a4777df43f3dd604161ba45106b851ce26044",
       "path": "capabilities/observability/capability.json"
     },
     {
@@ -839,7 +839,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a6c815bb7392db8b29db65541390077ea6c4c174dda6055533c64a5bae2d9fa7",
+      "digest": "b7f5c6985d643e97b3b61115fe3d1f5d85fc0cfbf78259e85613d80fb6045466",
       "path": "interpreters/observation.py"
     },
     {
@@ -1157,7 +1157,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "23f905e7c1aecf75e13dbb39a394df1467f36d0f0e4d73fea48cfc3ec2e58770",
+      "digest": "871bd2496a0c0cd210e7816a72a270d372207f7f34e08a212cdc3a399a246d5a",
       "path": "interpreters/verbs/start.py"
     },
     {
@@ -1584,5 +1584,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T05:57:20+00:00"
+  "taken_at": "2026-10-16T06:14:40+00:00"
 }

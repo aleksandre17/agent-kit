@@ -75,6 +75,10 @@ def reading_of(ctx, args, module, verb: str) -> dict:
     return {
         "verb": verb,
         "mutates": bool(getattr(module, "MUTATES", False)),
+        # A verb that carries out its writes as separate runs of this kit, each observed on its
+        # own, declares it: its own record would stand open across every act it starts, and each
+        # act's `check` would read it as a run that died (ADR-023 amendment 1).
+        "delegates": bool(getattr(module, "DELEGATES", False)),
         "plan": bool(getattr(args, "plan", False)),
         "approving": bool(getattr(args, "approve", None)),
         "host_status": (answers or {}).get("status"),

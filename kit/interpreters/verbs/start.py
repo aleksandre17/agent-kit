@@ -35,6 +35,10 @@ from errors import KitError
 SUMMARY = "carry a host from nothing to a served, checked install in one door, by a published starter"
 MUTATES = True
 REQUIRES_APPROVED_HOST = False
+#: Every write is an act of its own run, observed by that run's own record; this run's two
+#: in-process writes (the answer's set, the runtime declarations) are each one atomic write of a
+#: declaration that the next `start` writes again (ADR-023 amendment 1).
+DELEGATES = True
 
 #: The schema a starter honours, by the name the manifest registers it under.
 SCHEMA = "starter"

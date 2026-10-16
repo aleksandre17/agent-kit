@@ -73,6 +73,15 @@ class Start(Fixtures, unittest.TestCase):
                 for surface in value["activate"]:
                     self.assertIn(f"{surface}: ACTIVE", checked.stdout)
 
+    def test_410_a_host_that_already_answered_is_walked_again_to_green(self):
+        # Its own run record would stand open across every act it starts, and each act's check would
+        # read it as a run that died: a walk is observed through its acts (ADR-023 amendment 1).
+        host = self.host()
+        for _ in range(2):
+            ran = self.start(host, STARTERS[0], "--approve", "acceptance-suite")
+            self.assertEqual(0, ran.returncode, said(ran))
+        self.assertEqual(0, self.run_kit(KIT, host, "check").returncode)
+
     def test_409_a_starter_that_takes_no_capability_is_refused_and_nothing_is_written(self):
         host = self.host()
         bad = self._temp("starter") / "bad.json"

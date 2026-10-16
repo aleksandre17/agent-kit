@@ -93,3 +93,21 @@ found, among other things:
 Acceptance `test_start` 407–409, `test_commands` 412, `test_enforcement` 289c–289d; unit
 `test_verb_reference`. Each mutation-checked: door removed, capability check removed, plane gate
 emptied, bare-python hook restored.
+
+## Amendment 1 — a walk is observed through its acts (2026-10-16, owner-delegated)
+
+Walked on its first real host -- one that had already answered -- `start` stopped at its first act:
+`init`'s closing `check` failed `FF-RUN-RECEIPT` on `start`'s own record, open because `start` was
+still running. On a fresh host the walk had passed only because an unanswered host is watched by
+nothing, so the parent run opened no record.
+
+**Decided:** a verb that carries out its writes as separate runs of the kit declares `DELEGATES`; the
+run reading carries `delegates`, and both run-receipt observations declare `"delegates": false`.
+Each act keeps its own record. `start`'s two in-process writes (the answer's set, the runtime
+declarations) are each one atomic write of a declaration the next walk writes again.
+
+*Rejected:* naming the parent's record to the children as in flight (an environment variable any
+process could set, hiding a dead run's evidence from `check` -- an exemption no declaration can
+see); closing the parent's record before the walk (a record stating an end that had not happened).
+
+Proof: `test_start` 410 (a host walked twice ends green), mutation-checked.
