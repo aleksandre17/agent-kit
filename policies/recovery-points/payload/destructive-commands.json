@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "summary": "Commands that discard tracked or untracked work across the tree.",
+  "commands": [
+    {
+      "id": "git-reset-hard",
+      "matches": "\\bgit\\s+reset\\b.*--hard\\b",
+      "because": "discards every tracked change"
+    },
+    {
+      "id": "git-clean",
+      "matches": "\\bgit\\s+clean\\b.*-[a-zA-Z]*f",
+      "because": "deletes untracked files"
+    },
+    {
+      "id": "git-checkout-discard",
+      "matches": "\\bgit\\s+(checkout|restore)\\b.*\\s(--\\s+)?\\.(\\s|$)",
+      "because": "discards every unstaged change"
+    },
+    {
+      "id": "git-worktree-remove",
+      "matches": "\\bgit\\s+worktree\\s+remove\\b",
+      "because": "removes a working tree and its changes"
+    },
+    {
+      "id": "recursive-delete",
+      "matches": "\\brm\\s+-[a-zA-Z]*r[a-zA-Z]*f|\\brm\\s+-[a-zA-Z]*f[a-zA-Z]*r|Remove-Item\\b.*-Recurse",
+      "because": "deletes a tree"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "id": "recovery-points",
+  "version": "1.0.0",
+  "summary": "A POLICY published beside the kit: before a runtime runs a command that discards work across the tree, the pre-exec hook (`guard`) takes a side-effect-free recovery point (a stash object kept under refs/kit/recovery/). Advisory: the command runs; tracked work it destroys can be restored.",
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "enforcement"
+    }
+  ],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [
+    {
+      "id": "destructive_commands",
+      "source": "capabilities/recovery-points/payload/destructive-commands.json",
+      "validates": "destructive-commands"
+    }
+  ],
+  "installs": [],
+  "gates": []
+}

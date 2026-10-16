@@ -12,6 +12,7 @@ import argparse
 import importlib
 import os
 import sys
+import time
 from pathlib import Path
 
 #: The interpreter lives INSIDE the payload it ships, so importing itself would drop bytecode
@@ -32,6 +33,7 @@ for extra in [HERE, *sorted(p for p in HERE.iterdir()
         sys.path.insert(0, str(extra))
 
 import clock as clock_port  # noqa: E402
+import hooks  # noqa: E402
 import observation  # noqa: E402
 import sources  # noqa: E402
 from context import Context  # noqa: E402
@@ -151,10 +153,23 @@ def _run(args, host: Path, kit_root: Path) -> int:
     # is the mechanism succeeding, not failing.
     watching = observation.opened(ctx, args, module, args.verb)
     code, message = 1, None
+    # A verb a product's HOOK runs declares its posture: one that cannot decide fails closed (blocking)
+    # or lets the act through saying why (advisory) -- applied here, never trusted to the verb -- and
+    # leaves a receipt on every exit path (ADR-024).
+    posture = getattr(module, "POSTURE", None)
+    started = time.monotonic()
     try:
         if getattr(module, "REQUIRES_APPROVED_HOST", False):
             ctx.require_approved()
         code = module.run(ctx, args)
+        return code
+    except BaseException as failed:
+        if posture is None or isinstance(failed, (SystemExit, KeyboardInterrupt)):
+            raise
+        code = hooks.failed_exit(ctx, getattr(args, "surface", None), posture)
+        message = f"{type(failed).__name__}: {failed}"
+        print(f"kit: {args.verb} could not decide ({message}); its posture is {posture}, so it exits {code}",
+              file=sys.stderr)
         return code
     except KitError as refusal:
         # A refusal is an ENDING. The run was turned away, said why, and did not vanish -- and a
@@ -166,6 +181,8 @@ def _run(args, host: Path, kit_root: Path) -> int:
         raise
     finally:
         observation.closed(watching, code, message)
+        if posture is not None:
+            hooks.receipt(ctx, args.verb, getattr(args, "surface", None), code, started)
 
 
 def _ids(text: str) -> list:

@@ -20,6 +20,7 @@ import attestation
 import claims
 import declared
 import edits as edits_module
+import hooks
 import judgement
 import placement
 from errors import KitError
@@ -42,14 +43,11 @@ class JudgeError(KitError):
 
 
 def _hand(ctx, surface_id: "str | None") -> dict:
-    surfaces = {row["id"]: row for row in declared.rules(ctx, SURFACES, "surfaces")}
-    surface = surfaces.get(surface_id or "")
-    if surface is None or "hands" not in surface:
-        raise JudgeError(
-            f"the hook asks to be judged through the surface {surface_id!r}, and no taken adapter "
-            f"declares that surface with a `hands` block (declared: {sorted(surfaces)}). Nothing "
-            f"states where this product puts the edit, so nothing can be judged.")
-    return surface["hands"]
+    return hooks.hand_of(ctx, surface_id)
+
+
+#: A write this hook cannot judge is not an allowed one: it fails closed (`hooks`, the entry point).
+POSTURE = hooks.BLOCKING
 
 
 #: The event this verb PROVIDES to attestation: a write an edit gate refused, observed at the moment

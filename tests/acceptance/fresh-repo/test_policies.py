@@ -24,11 +24,14 @@ import edits
 import manifest as manifest_port
 from manifest import Manifest
 from test_pinned_kit import said
+from verbs import guard, spawn
 
 CORE = Manifest(KIT)
 DECLARATION = next(i for c in CORE.capabilities for i in c.installs
                    if i["mode"] == manifest_port.TAKEN_MODE)["declaration"]
 EDIT_GATE = "edit-gate"
+#: The contracts something ENFORCES: the edit judge's, and each contract a hook verb reads.
+ENFORCED = {EDIT_GATE, guard.PATTERNS[0]["validates"], spawn.PACKETS[0]["validates"]}
 POLICIES = sorted(p.parent for p in (REPO / "policies").glob(f"*/{DECLARATION}"))
 STARTERS = sorted((REPO / "starters").glob("*.json"))
 
@@ -55,7 +58,7 @@ class Policies(Fixtures, unittest.TestCase):
             # A policy is ENFORCED: it ships an edit-gate document or declares a gate `check` runs,
             # and may tell every runtime its rule (a briefing section) -- every document keeps a
             # contract the kit declares.
-            self.assertTrue(any(d["validates"] == EDIT_GATE for d in value["documents"]) or value["gates"])
+            self.assertTrue(any(d["validates"] in ENFORCED for d in value["documents"]) or value["gates"])
             for document in value["documents"]:
                 self.assertTrue(CORE.schema(document["validates"]))
             for gate in _gates(policy):

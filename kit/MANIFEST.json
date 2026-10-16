@@ -183,6 +183,8 @@
     "context": "schemas/context.schema.json",
     "briefing-section": "schemas/briefing-section.schema.json",
     "task-classes": "schemas/task-classes.schema.json",
-    "eval": "schemas/eval.schema.json"
+    "eval": "schemas/eval.schema.json",
+    "destructive-commands": "schemas/destructive-commands.schema.json",
+    "spawn-packets": "schemas/spawn-packets.schema.json"
   }
 }

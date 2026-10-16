@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "id": "spawn-packets",
+  "version": "1.0.0",
+  "summary": "A POLICY published beside the kit: a sub-agent is started with a PACKET -- mission, ground, boundaries, return, budget -- under a ceiling, or not at all. The pre-spawn hook (`spawn`) is silent on a compliant brief, refuses an oversized one, and names in one line the fields a brief lacks. A full-history fork says why it needs the history.",
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "enforcement"
+    }
+  ],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [
+    {
+      "id": "spawn_packets",
+      "source": "capabilities/spawn-packets/payload/spawn-packets.json",
+      "validates": "spawn-packets"
+    }
+  ],
+  "installs": [],
+  "gates": []
+}

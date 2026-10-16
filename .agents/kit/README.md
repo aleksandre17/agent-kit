@@ -45,6 +45,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `eject` | hand a path the kit shipped to the host, through a signed door | yes -- `--plan` prints the writes first |
 | `evaluate` | open a judgement for every declared pair that has none, and state the measure | yes -- `--plan` prints the writes first |
 | `ground` | record a measured fact with its instrument and paths, or read one back while it still holds | nothing |
+| `guard` | before a command a runtime runs: a destructive one gets a recovery point first (advisory) | nothing |
 | `inherit` | read a host's prior agent system and state what becomes of every path of it | nothing |
 | `init` | measure, choose, draft the answer, seed, vendor, render, check | yes -- `--plan` prints the writes first |
 | `judge` | judge one edit a runtime hook hands over, against this host's declared edit gates | nothing |
@@ -54,6 +55,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `release` | state what this kit is as a release, or refuse to call a working tree one | nothing |
 | `render` | recompute every projection from VENDOR + BINDING | yes -- `--plan` prints the writes first |
 | `retake` | take this host's reading again, through a door, when its reality has legitimately moved | yes -- `--plan` prints the writes first |
+| `spawn` | before a runtime starts a sub-agent: the brief must be a packet under its ceiling (blocking) | nothing |
 | `start` | carry a host from nothing to a served, checked install in one door, by a published starter | yes -- `--plan` prints the writes first |
 | `take` | take a published capability into this host's take plane, beside the pinned kit | yes -- `--plan` prints the writes first |
 | `takeover` | carry out the host's signed migration map, through a door that accepts its roster digest | yes -- `--plan` prints the writes first |

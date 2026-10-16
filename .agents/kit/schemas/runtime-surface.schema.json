@@ -121,6 +121,22 @@
                     "description": "The text the judge writes to stdout when it admits the edit, for a product that reads its hook's decision there."
                   }
                 }
+              },
+              "commands": {
+                "description": "Dotted keys to the COMMAND a product is about to run, for the pre-exec hook (`guard`).",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "prompts": {
+                "description": "Dotted keys to the BRIEF a product starts a sub-agent with, for the pre-spawn hook (`spawn`).",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
               }
             }
           },

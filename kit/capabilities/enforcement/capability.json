@@ -4,12 +4,21 @@
   "version": "0.1.0",
   "summary": "Declares the ENFORCEMENT LINE: a host's own edit gates, judged at the moment an edit is made, from whichever runtime the host serves. The host declares the gates -- which paths, which introduced text, why, and what instead -- and the kit ships only their grammar and ONE judge (the `judge` verb), vendored in the pinned kit and run by the hook a runtime adapter serves. The judge holds no policy and knows no product: how a product hands a hook its edit, and how it is told no, is declared by that product's surface (ADR-013/014). Every gate is calibrated before it is believed; `check` fails an uncalibrated one, and the judge names it as unjudged rather than refusing on its word.",
   "requires": [
-    { "kind": "capability", "id": "governance" }
+    {
+      "kind": "capability",
+      "id": "governance"
+    }
   ],
-  "provides": ["enforcement"],
+  "provides": [
+    "enforcement"
+  ],
   "conflicts": [],
   "declares": {
-    "schemas": ["edit-gate"]
+    "schemas": [
+      "edit-gate",
+      "destructive-commands",
+      "spawn-packets"
+    ]
   },
   "installs": [
     {
@@ -26,7 +35,9 @@
       "id": "FF-EDIT-GATE",
       "kind": "edit-gates-calibrated",
       "params": {
-        "sources": { "validates": "edit-gate" }
+        "sources": {
+          "validates": "edit-gate"
+        }
       }
     }
   ]

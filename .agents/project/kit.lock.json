@@ -1,17 +1,17 @@
 {
   "algorithm": "sha256",
-  "count": 292,
+  "count": 297,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "a13df97a87e272ce122f07fe06687ed53845ef7ea96e51892ef4c3f3c283f608",
+      "digest": "6dee13ac412b98f8f18ece4743eb41a9de3f922dcf5c005e7505de00407f7114",
       "path": "MANIFEST.json"
     },
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "1bb6a0ad0e05ac628aaee7ee5605aa502125282bc03328365e9c65b95df3548e",
+      "digest": "54f302c268eb1ee8df77fc72a239861ffb5787eee58a4651ed5a93d5fa43a35c",
       "path": "README.md"
     },
     {
@@ -89,7 +89,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "503bfc076003fa53e5ec4832c78d77a1d678c76467dd56cdecb0f0e025ebfa95",
+      "digest": "10faaa6e121511cc402013a9a1e3d6499311221661e198091a0c94bc121d22ac",
       "path": "capabilities/enforcement/capability.json"
     },
     {
@@ -533,7 +533,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "2e11fb780fd331a0b2f53f8c4444d8ee7512d814cc5ff36e3addede0ed0f2af0",
+      "digest": "3eda00cffc6bd46f78e7ab3c0dbee63e36ad11902a2d7d86b837034f38dc3236",
       "path": "interpreters/cli.py"
     },
     {
@@ -799,6 +799,12 @@
       "class": "interpreter",
       "digest": "2910b36d8240ccb592050797a639c1c6ee65fc76c1c94df6c6f9069fadcf1181",
       "path": "interpreters/gates/taken.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "133ea631d6709d371654fa4b9cbf6b60d8e1bb47c7de379007cbdec1644fbd9e",
+      "path": "interpreters/hooks.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1217,6 +1223,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "73cbc5a0d46b15987c5349a96e0f5358d0b68df879fb8ef9b4040c3609daf5cd",
+      "path": "interpreters/verbs/guard.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "81ede2cb3818cbf47dd2455712fa1173722d4a4cfa2f3247f8f434832e56c3b4",
       "path": "interpreters/verbs/inherit.py"
     },
@@ -1229,7 +1241,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d8d31489ccf0c10683e200c80c0823bfbf73f282941b10f2aec5ad9f1bbcc0e3",
+      "digest": "f15fcf7020fb132794ab1c4f3d010694605ceee57dc45adeba36f2210cf91c7b",
       "path": "interpreters/verbs/judge.py"
     },
     {
@@ -1267,6 +1279,12 @@
       "class": "interpreter",
       "digest": "88705f6e6e644b6301be0c1b60a43983b12ce75df50da7fab430b11bf04a4d9f",
       "path": "interpreters/verbs/retake.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "8f745a2ac6dd65015c097a59a723049aa7dd3bd68667d88ac8c3ed81afb6747f",
+      "path": "interpreters/verbs/spawn.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1405,6 +1423,12 @@
       "class": "declaration",
       "digest": "1f4f6ed7d2a30a889533a9703877e1fd09f0a1ab39bdfca55828e868bd279861",
       "path": "schemas/delivery-policy.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "f7af333787de0a32073160c9ee80acf58177f4636d55cbe5630ab55a6c337877",
+      "path": "schemas/destructive-commands.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1649,7 +1673,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "79ea6be49ddbacdfee0fd45ee68880bf75dd85a63833a95fe4784e561f163da0",
+      "digest": "214e58ab244559c6dc96e302be859d9ea94759529d4b942db9371bed6625ca02",
       "path": "schemas/runtime-surface.schema.json"
     },
     {
@@ -1663,6 +1687,12 @@
       "class": "declaration",
       "digest": "7d6979c2e7da7cf3528d99f82742b5b57539e14baae852d075e654e451771f59",
       "path": "schemas/skills.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "e49a0a17003f23c2b987978a44e6d22f38111a56a819eda4110d965ccbbce9df",
+      "path": "schemas/spawn-packets.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1758,5 +1788,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T12:46:43+00:00"
+  "taken_at": "2026-10-16T12:52:07+00:00"
 }

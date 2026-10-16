@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "summary": "The five fields of a dispatch packet, as a sub-agent brief carries them.",
+  "packets": [
+    {
+      "id": "five-fields",
+      "ceiling_tokens": 1500,
+      "bytes_per_token": 4,
+      "fields": [
+        {
+          "label": "MISSION",
+          "says": "what to do, in one or two sentences"
+        },
+        {
+          "label": "GROUND",
+          "says": "the facts it stands on, as pointers"
+        },
+        {
+          "label": "BOUNDARIES",
+          "says": "what it may not touch or decide"
+        },
+        {
+          "label": "RETURN",
+          "says": "the artifact that ends the run"
+        },
+        {
+          "label": "BUDGET",
+          "says": "calls, context, time"
+        }
+      ],
+      "fork": {
+        "keys": [
+          "tool_input.subagent_type"
+        ],
+        "equals": "fork",
+        "label": "HISTORY-JUSTIFICATION"
+      }
+    }
+  ]
+}
