@@ -7,6 +7,16 @@ moment of need by `upgrade`, which is not built yet.
 
 ## 0.1.6 — unreleased
 
+**Added — a reading is replaced through a door (ADR-021 amendment 2)**
+- Verb `retake`: names every moved fact; `--plan` writes nothing; unapproved it is a door; approved it
+  writes the fresh reading with `retaken` (`signed_by`, `signed_at`, `replaces`). `KIT0072`.
+  `reading-current` names the remedy in its failure.
+- `node-workspace` reads a `package.json` anywhere the repository carries, so a monorepo's nested
+  package is evidence. A host with one sees `reading-current` fail once; `retake` is its remedy.
+- A take's `source` is recorded relative to the host when it lies inside it.
+- A served entry's pointer section ends its line: the next heading opens its own paragraph.
+- `test_retake` 404–406, unit `test_entry_sections`.
+
 **Fixed — a space opened before its marker is completed (ADR-021 amendment 1)**
 - `space.carried`: a space is there when its directory AND marker are. `init` (space modes) and the
   upgrade reconciliation both read it, so a bare directory left by an older install gets its marker

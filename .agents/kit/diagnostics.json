@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 71,
+  "issued": 72,
   "codes": [
     {
       "code": "KIT0001",
@@ -428,6 +428,12 @@
       "status": "active",
       "title": "a claim asked for incompletely, or one that is not held",
       "explanation": "A claim names its principal, the paths it takes and why (ADR-022). One of them is missing, or a release names a principal that holds no standing claim here. A claim whose reason nobody can read cannot be weighed by the writer it blocks. Nothing was written."
+    },
+    {
+      "code": "KIT0072",
+      "status": "active",
+      "title": "a reading retaken where none was taken, or one that would not honour its schema",
+      "explanation": "A reading is taken once, by init, and replaced only through the retake door (ADR-021 amendment 2). This host holds no reading to replace, or the reading that would replace it does not honour the profile schema. Nothing was written."
     }
   ]
 }

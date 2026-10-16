@@ -21,6 +21,17 @@
       }
     },
     "facts": { "type": "object" },
+    "retaken": {
+      "description": "Present when this reading REPLACED an earlier one through the retake door: who walked it, when, and the moment of the reading it replaced (git holds that reading's bytes).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signed_by", "signed_at", "replaces"],
+      "properties": {
+        "signed_by": { "type": "string", "minLength": 1 },
+        "signed_at": { "type": "string", "minLength": 1 },
+        "replaces": { "type": "string", "minLength": 1 }
+      }
+    },
     "detectors": {
       "type": "array",
       "items": {

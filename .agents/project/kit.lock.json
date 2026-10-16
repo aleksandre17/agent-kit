@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 257,
+  "count": 258,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -473,7 +473,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "5e526f02974dbe8b9cff692692c15166d2650f9de8e0043ec8ca79bb3aa52471",
+      "digest": "8e355ab6ef444332f9ab8cef7c70cb76069a8f5c1adca8f15c8fed9fb27cfd5b",
       "path": "detectors/node-workspace.json"
     },
     {
@@ -491,7 +491,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "f030fff4f8d633dff724af49fd5fa7151f50640d854ccd403d73d6e2a20bb00e",
+      "digest": "b068b7fec1bb0eeee0617a1f9d1f91613f1441ecf6a179052a42ce43dad2d982",
       "path": "diagnostics.json"
     },
     {
@@ -665,7 +665,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1f0e82742988498078760649665d62603c1a8eea0f8ca9bcc12126741556aa1f",
+      "digest": "1e44a626fece6437d0b1fc5e98f49b8a7d3f7dd617fa1dcb9c3794a5df4c0fc1",
       "path": "interpreters/gates/core.py"
     },
     {
@@ -881,7 +881,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d1086f67d31f097eda043330d0c868aac0802b47aa2f6d91f0ff32137e5a48ce",
+      "digest": "fa55f86989736f547bcd2388fb499a51c47db4b3103b982abce114a247a8e804",
       "path": "interpreters/ports/runtime.py"
     },
     {
@@ -1133,7 +1133,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f0506b153bccebcf34a8f25b2e2bda59cc796814c132a129dff92e9fcb31910f",
+      "digest": "88705f6e6e644b6301be0c1b60a43983b12ce75df50da7fab430b11bf04a4d9f",
+      "path": "interpreters/verbs/retake.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "23b5ebc16eabc24a03cfc707dd5246c11e5fe79bf061b8a6f66376955bd1603c",
       "path": "interpreters/verbs/take.py"
     },
     {
@@ -1385,7 +1391,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "75a81ab2700b85f492e8eb30b413fe6c8baad020443e6836ea86405d292f20a2",
+      "digest": "9a9a2e6260e22850403efad56e5e383d47ad6230d6fd88989ef61ed65fce3720",
       "path": "schemas/profile.schema.json"
     },
     {
@@ -1493,7 +1499,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "2a4ffe53efc24f3f769ef8fd99bfb187d2646db4d4c98a60679109649aac2ab1",
+      "digest": "8c8cb92e9295a55bf5800b9018eb33984ba025d1af0c07d6f8de1ad33a30e464",
       "path": "schemas/taken.schema.json"
     },
     {
@@ -1548,5 +1554,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-15T23:48:45+00:00"
+  "taken_at": "2026-10-16T05:21:49+00:00"
 }

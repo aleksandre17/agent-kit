@@ -130,7 +130,8 @@ def _sections(ctx, view_spec: dict, produced: dict, record: "dict | None" = None
         if present and section.get("points"):
             # A page a runtime reads WHEN a question arises is named, not inlined: the always-loaded
             # text stays the size of what binds on every turn (ADR-021 decision 5).
-            text = f"Read `{source}` for {section['points']}."
+            # It ends its line as a file's text does, so the next section opens on its own paragraph.
+            text = f"Read `{source}` for {section['points']}.\n"
         rows.append({**section, "from": source, "present": present, "text": text})
     return rows
 

@@ -21,6 +21,8 @@
 ## Conduct doctrine -- as this host takes and qualifies it
 
 Read `.agents/generated/DOCTRINE.md` for which cardinals bind this host, and this host's stance on each -- before a change that a cardinal speaks to.
+
 ## Roles -- who this host has hired
 
 Read `.agents/generated/ROLES.md` for who this host has hired, before delegating work to a role.
+

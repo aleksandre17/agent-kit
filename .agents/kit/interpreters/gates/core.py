@@ -62,7 +62,9 @@ def _reading_current(ctx, params):
     if recorded["facts"] != fresh["facts"]:
         return [
             f"{params['file']}: the reading taken at {recorded['taken_at']} says "
-            f"{recorded['facts']}, a reading taken at {fresh['taken_at']} says {fresh['facts']}"
+            f"{recorded['facts']}, a reading taken at {fresh['taken_at']} says {fresh['facts']}. "
+            f"If the host moved on purpose, its owner replaces the reading: `retake --plan`, then "
+            f"`retake --approve <who>`"
         ]
     return []
 

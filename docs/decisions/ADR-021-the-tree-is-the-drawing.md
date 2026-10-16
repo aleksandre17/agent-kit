@@ -175,3 +175,34 @@ no clone has; and a one-off repair per host, which the next host would need agai
 
 Proof: `test_fresh_clone` 352 (both doors, then clone and `check`), mutation-checked on each half.
 
+
+## Amendment 2 — a reading is replaced through a door (2026-10-16, owner-delegated)
+
+The second host's tree moved on purpose: a test project was added, and `node_modules` stopped being
+evidence. `reading-current` then failed on every `check` and named no remedy, and the only way out was
+to move `.agents/project/profile.json` aside and let `upgrade` take a new reading, unsigned. The same
+host is a monorepo whose Angular client lives at `platform/apps/inout/frontend/web/`, and
+`node-workspace` read `package.json` at the root only, so a Node host read as having no Node.
+
+**Decided:**
+- Verb `retake`: a fresh reading compared fact by fact with the recorded one. A reading that holds is
+  not retaken. `--plan` prints each moved fact (`+`, `-`, `~`); without `--approve <who>` it is a door
+  (`doors.refuse`) and writes nothing; approved, it writes the fresh reading with `retaken`
+  (`signed_by`, `signed_at`, `replaces`: the moment of the reading it replaced). That is an optional
+  property, so `profile` stays at version 1 (ADR-009 decision 5). `KIT0072` refuses a retake on a host
+  holding no reading, or one that would not honour its schema. What the new facts admit stays the
+  answer's: `upgrade --plan` names it.
+- `reading-current` names the remedy in its failure.
+- `node-workspace` matches `**/package.json` in what the repository carries (ADR-021 decision 8, so a
+  dependency directory is never evidence), and still emits the root's `workspaces` when declared.
+- A take records its `source` relative to the host when it lies inside it (a submodule, a vendored
+  kit), so every clone reads the same row; absolute only when it lies outside.
+- A served entry's pointer section ends its line, so the next heading opens its own paragraph.
+
+*Rejected:* re-taking the reading inside `upgrade` (it would impose a new composition basis nobody
+stated); keeping the replaced reading beside the new one (two readings in the tree are two answers to
+one question, and git already holds the old bytes); a `**/*migrat*` migrations pattern alongside the
+node change (it matches the kit's own `migration-map` files, a detector that fires on a lookalike).
+
+Proof: acceptance `test_retake` 404–406, unit `test_entry_sections`; each mutation-checked (door
+removed, remedy removed, absolute source, pointer newline removed).

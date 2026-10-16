@@ -31,7 +31,7 @@
             "pattern": "^[a-z][a-z0-9-]*$"
           },
           "source": {
-            "description": "Where the copy was read from, as the taker named it.",
+            "description": "Where the copy was read from: relative to the host when it lies inside it, absolute otherwise.",
             "type": "string",
             "minLength": 1
           },

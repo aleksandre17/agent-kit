@@ -70,6 +70,15 @@ def _read(source: Path, plane: dict) -> dict:
         raise TakeError(f"{declaration.as_posix()}: not readable as JSON -- {exc}") from exc
 
 
+def _named(ctx, source: Path) -> str:
+    """Where a take came from, as every clone of this host can read it: relative to the host when
+    it lies inside it (a vendored kit, a submodule), absolute only when it lies outside."""
+    try:
+        return source.relative_to(ctx.workspace.root.resolve()).as_posix()
+    except ValueError:
+        return source.as_posix()
+
+
 def run(ctx, args) -> int:
     hostlock.arrive(ctx, args)
     if not args.path:
@@ -117,7 +126,7 @@ def run(ctx, args) -> int:
     # A row carried from before amendment 1 sheds its digest here: the reading has one home, the pin.
     rows = {row["id"]: {k: v for k, v in row.items() if k != "digest"} for row in current["takes"]}
     for identity, source, files, measured in takes:
-        rows[identity] = {"id": identity, "source": source.as_posix(),
+        rows[identity] = {"id": identity, "source": _named(ctx, source),
                           "taken_by": args.approve, "at": moment}
     document = {"schema_version": current["schema_version"],
                 "takes": [rows[k] for k in sorted(rows)]}

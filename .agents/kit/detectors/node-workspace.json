@@ -1,8 +1,17 @@
 {
   "id": "node-workspace",
+  "summary": "A Node package: a package.json anywhere the repository carries, with the root's workspaces when it declares them.",
   "evidence": [
-    { "kind": "file_exists", "path": "package.json" },
-    { "kind": "json_path", "path": "package.json", "pointer": "workspaces", "optional": true }
+    {
+      "kind": "glob_any",
+      "pattern": "**/package.json"
+    },
+    {
+      "kind": "json_path",
+      "path": "package.json",
+      "pointer": "workspaces",
+      "optional": true
+    }
   ],
   "emits": {
     "stack.node": true,

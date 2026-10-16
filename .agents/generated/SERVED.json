@@ -28,13 +28,13 @@
     {
       "path": "AGENTS.md",
       "runtime": "codex",
-      "sha256": "d26ef21e12073c5a35fe11a52398db88371e7995281e29d2af3a2e4546eba5c0",
+      "sha256": "d9dfd57a29c238f43fe18d6e5a83d767519f113de190ec7b547d63442681c17d",
       "surface": "codex"
     },
     {
       "path": "CLAUDE.md",
       "runtime": "claude-code",
-      "sha256": "1be2c45efe7baa8aa02364615d72c3964f0bfcb7b04da372b34d8a1dfc3fc97c",
+      "sha256": "b3838400edae16c2d2818a9c65cf17f392cee70f55f0b2b5909fbeec874cb3a9",
       "surface": "claude-code"
     },
     {
