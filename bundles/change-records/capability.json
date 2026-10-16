@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "change-records",
+  "version": "1.0.0",
+  "summary": "Opt-in: every change states its scope, its applicability to each catalogued requirement, its tests and its evidence, with source digests, so a stale record and an uncovered path are caught by a machine. `check` holds every record (FF-CHANGE-RECORDS); `review --base --head` holds a review range covered by VERIFIED records, on a clean checkout of its head -- the CI gate. Tri-state: runtime conformance and production readiness are NOT ASSERTED.",
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "evaluation"
+    }
+  ],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [],
+  "installs": [
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/requirements.json",
+      "source": "capabilities/change-records/payload/requirements.json",
+      "validates": "requirements"
+    },
+    {
+      "mode": "space",
+      "class": "binding",
+      "target": "docs/work/changes/",
+      "validates": "change-record",
+      "reads_as": "change_records"
+    }
+  ],
+  "gates": [
+    {
+      "id": "FF-CHANGE-RECORDS",
+      "kind": "change-records-held",
+      "params": {}
+    }
+  ]
+}

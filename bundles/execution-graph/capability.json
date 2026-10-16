@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "id": "execution-graph",
+  "version": "1.0.0",
+  "summary": "Opt-in: a plan of risky work as an execution graph whose units declare only what they do (verb x governed object) while the object registry declares what each verb obliges (backup, rollback class, owner decision, evidence). `check` derives every unit's obligations and holds it to them, and holds the graph acyclic (FF-EXECUTION-GRAPH). A unit cannot declare its way out of a safeguard.",
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "evaluation"
+    }
+  ],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [],
+  "installs": [
+    {
+      "mode": "seed",
+      "class": "binding",
+      "target": ".agents/project/execution-graph.json",
+      "source": "capabilities/execution-graph/payload/execution-graph.json",
+      "validates": "execution-graph"
+    }
+  ],
+  "gates": [
+    {
+      "id": "FF-EXECUTION-GRAPH",
+      "kind": "execution-graph-held",
+      "params": {}
+    }
+  ]
+}

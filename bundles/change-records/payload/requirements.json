@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "summary": "This host's requirement catalogue: every change record answers each row APPLY or NA, with its reason.",
+  "requirements": []
+}

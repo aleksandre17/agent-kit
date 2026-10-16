@@ -185,6 +185,9 @@
     "task-classes": "schemas/task-classes.schema.json",
     "eval": "schemas/eval.schema.json",
     "destructive-commands": "schemas/destructive-commands.schema.json",
-    "spawn-packets": "schemas/spawn-packets.schema.json"
+    "spawn-packets": "schemas/spawn-packets.schema.json",
+    "change-record": "schemas/change-record.schema.json",
+    "requirements": "schemas/requirements.schema.json",
+    "execution-graph": "schemas/execution-graph.schema.json"
   }
 }

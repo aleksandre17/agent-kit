@@ -56,6 +56,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `release` | state what this kit is as a release, or refuse to call a working tree one | nothing |
 | `render` | recompute every projection from VENDOR + BINDING | yes -- `--plan` prints the writes first |
 | `retake` | take this host's reading again, through a door, when its reality has legitimately moved | yes -- `--plan` prints the writes first |
+| `review` | check that a review range is covered by verified change records (tri-state JSON report) | nothing |
 | `spawn` | before a runtime starts a sub-agent: the brief must be a packet under its ceiling (blocking) | nothing |
 | `start` | carry a host from nothing to a served, checked install in one door, by a published starter | yes -- `--plan` prints the writes first |
 | `take` | take a published capability into this host's take plane, beside the pinned kit | yes -- `--plan` prints the writes first |

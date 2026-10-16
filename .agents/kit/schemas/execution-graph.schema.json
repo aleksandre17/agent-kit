@@ -1,0 +1,104 @@
+{
+  "$id": "execution-graph",
+  "title": "AN EXECUTION GRAPH -- units of risky work whose obligations are derived from a registry of governed objects",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "objects",
+    "units"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "obliges"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "says": {
+            "type": "string"
+          },
+          "obliges": {
+            "description": "verb -> the obligations that verb on this object carries.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "operations"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "says": {
+            "type": "string"
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "verb",
+                "object"
+              ],
+              "properties": {
+                "verb": {
+                  "type": "string"
+                },
+                "object": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "satisfies": {
+            "description": "obligation -> the file that satisfies it.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

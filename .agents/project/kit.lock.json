@@ -1,17 +1,17 @@
 {
   "algorithm": "sha256",
-  "count": 298,
+  "count": 305,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "6dee13ac412b98f8f18ece4743eb41a9de3f922dcf5c005e7505de00407f7114",
+      "digest": "6e6961521ea56c4b809fb0515f6cb77bc740467fa2d63e5623c56fd374c11d39",
       "path": "MANIFEST.json"
     },
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "5f27619fdf45336d60e1ca5d9e39f9859bf9ae9287675f78dbc185ac79844571",
+      "digest": "747829e29a548b10d49ded8623626cd1c048817ca6526dcc2b2016bf0ef0b45f",
       "path": "README.md"
     },
     {
@@ -101,7 +101,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "fddf4e5180040517fa16adc0815d5e280e20f9a2cb8302f3ffaed373434a48b8",
+      "digest": "56119440bd09becee5dc142a93b43d20cc3a4581fb84a72833f3eea074ae3a0f",
       "path": "capabilities/evaluation/capability.json"
     },
     {
@@ -527,6 +527,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "a3b06a315a7386c2394025b3c8133b400fcc34f01b7abd94c677099e73e1ee34",
+      "path": "interpreters/changes.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "f69c88d01e4e31359fdecff7f5f6439ebc5ba07eb262f9ddca88e8503d560abe",
       "path": "interpreters/claims.py"
     },
@@ -731,6 +737,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "24f5a4cedc8896ce92d2ef357c2e10d38acd5f76a9176dd473de7c2d14dccee3",
+      "path": "interpreters/gates/obligations.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "0584639ce285b37bf36de1ef6fad058c5fa134101539a164e7f95bc3756ab20c",
       "path": "interpreters/gates/owners.py"
     },
@@ -769,6 +781,12 @@
       "class": "interpreter",
       "digest": "aafc559a718e36a791c898df4327644c99f2ed6fc34299bfa033274c3731943f",
       "path": "interpreters/gates/records.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "a0e8ef1c099409126f990c4b18f530cb2bcb148c67a16365cd783366887a42aa",
+      "path": "interpreters/gates/records_held.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1289,6 +1307,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "1366fc9fb821d531ffad74152b5219f33b15741618f0b9fb9518073d7730499e",
+      "path": "interpreters/verbs/review.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "8f745a2ac6dd65015c097a59a723049aa7dd3bd68667d88ac8c3ed81afb6747f",
       "path": "interpreters/verbs/spawn.py"
     },
@@ -1403,6 +1427,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "793c8a6844fdf4d7eb9e27ceeb9fcaecfe0ff6cf443db9a1f3a308e62cabbc4f",
+      "path": "schemas/change-record.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "de3f0ae2e2b91b988be6c2873ab0d7d0f78cbdcc2214813520a5485fb4ca6153",
       "path": "schemas/claim.schema.json"
     },
@@ -1495,6 +1525,12 @@
       "class": "declaration",
       "digest": "3b4841aecd2835645e1a78c7a33beec400290d59b27872c76e6e28a6352d8a2d",
       "path": "schemas/eviction.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "876f13a32b637553f83b6466cbab6cb77a4cabfacaa10ada16694c4d3e944d47",
+      "path": "schemas/execution-graph.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1655,6 +1691,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "98cf5ef196e0eddbabab70e7ef213c410e68b059afc2d538350837acc752d272",
+      "path": "schemas/requirements.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "320dc3f21ac693f275f468d133d0df94bd355926b0826e5477a904ea732d2381",
       "path": "schemas/residence.schema.json"
     },
@@ -1794,5 +1836,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T12:56:54+00:00"
+  "taken_at": "2026-10-16T13:01:30+00:00"
 }

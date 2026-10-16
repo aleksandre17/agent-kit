@@ -14,7 +14,10 @@
       "quality",
       "judgement",
       "consumption",
-      "eval"
+      "eval",
+      "change-record",
+      "requirements",
+      "execution-graph"
     ]
   },
   "documents": [
