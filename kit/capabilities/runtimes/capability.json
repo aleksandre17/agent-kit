@@ -87,6 +87,22 @@
     {
       "mode": "seed",
       "class": "binding",
+      "target": ".agents/project/briefing.json",
+      "source": "capabilities/runtimes/payload/briefing-local.json",
+      "validates": "briefing-section",
+      "reads_as": "host_briefing",
+      "points": [
+        {
+          "id": "task-router",
+          "purpose": "the always-loaded locator: when this decision arises, read only that pointer",
+          "cardinality": "one",
+          "merges_into": "every always-loaded briefing, after the declared sections"
+        }
+      ]
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
       "target": ".agents/project/mcp-servers.json",
       "source": "capabilities/runtimes/payload/mcp-servers-local.json",
       "validates": "mcp-servers",

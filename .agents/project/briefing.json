@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "summary": "This host's own always-loaded sections: a task router (when X, read Y) and nothing that a pointer could carry instead.",
+  "sections": []
+}

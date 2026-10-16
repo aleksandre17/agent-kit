@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 318,
+  "count": 319,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -425,7 +425,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "0d466d78898a00e03a8ee5f2c0f484c1feae0004960f6e05dfccbb7482544b08",
+      "digest": "3223dda41ac40a230e9f343eb126b304ddd8f44e4673556357c7f341d729e34c",
       "path": "capabilities/runtimes/capability.json"
     },
     {
@@ -439,6 +439,12 @@
       "class": "payload",
       "digest": "8c7472096c1707b25270c21f769b6397734ec6dca70074ee35eeabadcafeb692",
       "path": "capabilities/runtimes/payload/RUNTIMES.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "d2eaf92cfcf0469b09024f5db42f114c45ab894b8d5476bf2db5a641cda6df50",
+      "path": "capabilities/runtimes/payload/briefing-local.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1914,5 +1920,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T13:46:12+00:00"
+  "taken_at": "2026-10-16T13:47:21+00:00"
 }

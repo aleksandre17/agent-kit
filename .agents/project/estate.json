@@ -135,6 +135,13 @@
       "path": ".agents/project/allowed_signers"
     },
     {
+      "capability": "runtimes",
+      "class": "binding",
+      "digest": "d2eaf92cfcf0469b09024f5db42f114c45ab894b8d5476bf2db5a641cda6df50",
+      "mode": "seed",
+      "path": ".agents/project/briefing.json"
+    },
+    {
       "capability": "knowledge",
       "class": "binding",
       "digest": null,
@@ -531,5 +538,5 @@
       "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-10-16T13:29:57+00:00"
+  "taken_at": "2026-10-16T13:50:14+00:00"
 }
