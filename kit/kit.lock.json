@@ -551,7 +551,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1649e44f080229ba40c68d7f18bf60e25b5de270f7611eb1e9626c9c405ebb3a",
+      "digest": "524df3e23a9c6d04fdbe8393befb6528277b74d896374c9a43943922ca0653fc",
       "path": "interpreters/collection.py"
     },
     {
@@ -1584,5 +1584,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T06:43:09+00:00"
+  "taken_at": "2026-10-16T06:47:35+00:00"
 }

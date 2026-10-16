@@ -81,9 +81,14 @@ def _collection(ctx, item, name: str) -> Reading:
             continue
         records.append((rel, _validated(ctx, rel, item.get("validates"))))
 
+    # A record names itself by its `id`; a kind whose schema declares none (an observation) is named
+    # by its file, which its directory already makes unique -- never by an absent value shared by all.
+    def named(rel, value):
+        return value.get(IDENTITY) if isinstance(value, dict) and IDENTITY in value else rel
+
     seen: dict = {}
     for rel, value in records:
-        identity = value.get(IDENTITY)
+        identity = named(rel, value)
         if identity in seen:
             raise CollectionError(
                 f"{root}: {IDENTITY} {identity!r} is declared by two files -- {seen[identity]} and "
@@ -91,7 +96,7 @@ def _collection(ctx, item, name: str) -> Reading:
                 f"and both will go on reading as correct while they disagree. Delete one."
             )
         seen[identity] = rel
-    records.sort(key=lambda pair: pair[1].get(IDENTITY, ""))
+    records.sort(key=lambda pair: str(named(*pair)))
     return Reading(name, "collection", [value for _rel, value in records], records,
                    item.get("validates"))
 

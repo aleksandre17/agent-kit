@@ -29,6 +29,8 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   1.3.1). `test_entry_files` 341b (ADR-023 amendment 2).
 - The edit-gate declaration is not judged by the gates it declares: each carries the text it
   refuses as its `proves`, so a broad gate refused the commit that declared it. `test_enforcement` 289e.
+- A collection record whose kind declares no `id` (a runtime observation) is named by its file: two
+  runtimes' refusal records no longer collide on an absent id and stop every verb. `test_attestation` 383.
 
 **Added — a reading is replaced through a door (ADR-021 amendment 2)**
 - Verb `retake`: names every moved fact; `--plan` writes nothing; unapproved it is a door; approved it

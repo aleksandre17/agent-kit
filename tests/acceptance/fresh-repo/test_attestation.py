@@ -86,6 +86,18 @@ class Attestation(Fixtures, unittest.TestCase):
                          (record["runtime"], record["capability"], record["event"]))
         self.assertIn(OBSERVED, self.proven_section(self.page(host)))
 
+    def test_383_two_runtimes_proven_by_their_refusals_leave_two_records_the_host_still_reads(self):
+        # An observation names no `id`; two records must not collide on the absence of one. The
+        # other runtime's record is the one this kit writes, as it would stand after its refusal.
+        host = self.claiming_host()
+        refused = self.judge(host, HOST_GATE["proves"]["text"])
+        self.assertEqual(self.surface["hands"]["refusal"]["exit"], refused.returncode, refused.stderr)
+        (written,) = list((host / OBSERVATIONS).glob("*.json"))
+        other = {**json.loads(written.read_text(encoding="utf-8")), "runtime": "another"}
+        (host / OBSERVATIONS / f"another.{OBSERVED}.json").write_text(json.dumps(other), encoding="utf-8")
+        rendered = self.run_kit(self.kit, host, "render")
+        self.assertEqual(0, rendered.returncode, rendered.stdout + rendered.stderr)
+
     def test_381_an_admitted_write_proves_nothing_and_leaves_nothing(self):
         host = self.claiming_host()
         admitted = self.judge(host, HOST_GATE["admits"]["text"])
