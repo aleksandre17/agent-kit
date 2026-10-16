@@ -42,6 +42,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `check` | run the declared fitness functions and report | nothing |
 | `claim` | take, list, release or break by name a claim on paths, which the judge holds other writers to | nothing |
 | `dispatch` | hand one act to the dispatch port: start a worker for a task, or carry an operator's answer back into one that asked | yes -- `--plan` prints the writes first |
+| `doctor` | prove every served hook refuses a throwaway violation, and read what each product fired | nothing |
 | `eject` | hand a path the kit shipped to the host, through a signed door | yes -- `--plan` prints the writes first |
 | `evaluate` | open a judgement for every declared pair that has none, and state the measure | yes -- `--plan` prints the writes first |
 | `ground` | record a measured fact with its instrument and paths, or read one back while it still holds | nothing |

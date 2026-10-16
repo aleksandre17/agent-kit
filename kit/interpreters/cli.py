@@ -182,7 +182,8 @@ def _run(args, host: Path, kit_root: Path) -> int:
     finally:
         observation.closed(watching, code, message)
         if posture is not None:
-            hooks.receipt(ctx, args.verb, getattr(args, "surface", None), code, started)
+            hooks.receipt(ctx, args.verb, getattr(args, "surface", None), code, started,
+                          canary=bool(getattr(args, "canary", False)))
 
 
 def _ids(text: str) -> list:

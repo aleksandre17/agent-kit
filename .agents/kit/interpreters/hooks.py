@@ -78,7 +78,7 @@ def failed_exit(ctx, surface_id, posture: str) -> int:
         return CLOSED
 
 
-def receipt(ctx, verb: str, surface_id, code, started: float) -> None:
+def receipt(ctx, verb: str, surface_id, code, started: float, canary: bool = False) -> None:
     """One line, on every exit path. A fault writing it is swallowed: a receipt never changes a verdict."""
     try:
         rel = ephemeral.place(ctx, f"{RECEIPTS}/{surface_id or 'none'}.jsonl")
@@ -86,13 +86,16 @@ def receipt(ctx, verb: str, surface_id, code, started: float) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("a", encoding="utf-8", newline="\n") as out:
             out.write(json.dumps({"at": ctx.clock.now(), "verb": verb, "surface": surface_id, "exit": code,
-                                  "ms": round((time.monotonic() - started) * 1000)}) + "\n")
+                                  "ms": round((time.monotonic() - started) * 1000),
+                                  **({"canary": True} if canary else {})}) + "\n")
     except Exception:  # noqa: BLE001
         pass
 
 
-def receipts(ctx, surface_id) -> list:
+def receipts(ctx, surface_id, fired_only: bool = False) -> list:
+    """Every receipt a surface's hooks left; `fired_only` drops the doctor's own canaries."""
     rel = ephemeral.place(ctx, f"{RECEIPTS}/{surface_id}.jsonl")
     if not ctx.workspace.exists(rel):
         return []
-    return [json.loads(line) for line in ctx.workspace.read_text(rel).splitlines() if line.strip()]
+    rows = [json.loads(line) for line in ctx.workspace.read_text(rel).splitlines() if line.strip()]
+    return [r for r in rows if not (fired_only and r.get("canary"))]

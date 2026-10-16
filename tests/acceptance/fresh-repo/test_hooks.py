@@ -93,6 +93,20 @@ class Hooks(Fixtures, unittest.TestCase):
         self.hook(host, "guard", SURFACE["id"], "{}")
         self.assertEqual(1, len(hooks.receipts(ctx, SURFACE["id"])))
 
+    def test_484_the_doctor_proves_every_served_hook_fires_and_names_a_dead_one(self):
+        host = self.started()
+        ran = self.run_kit(KIT, host, "doctor")
+        self.assertEqual(0, ran.returncode, said(ran))
+        self.assertNotIn("DEAD", ran.stdout)
+        self.assertIn("LIVE", ran.stdout)
+        # A judge the pinned kit cannot run is a dead chain on a surface whose refusal is not the
+        # entry point's own usage error -- named, and the doctor fails.
+        pinned = host / Context(kit_root=KIT, host_root=host).manifest.plane("vendor") / "interpreters" / "verbs" / "judge.py"
+        pinned.unlink()
+        broken = self.run_kit(KIT, host, "doctor")
+        self.assertEqual(1, broken.returncode, said(broken))
+        self.assertIn("DEAD", broken.stdout)
+
     def test_483_the_push_gate_is_served_beside_the_commit_gate(self):
         host = self.started()
         commit = next(r for a in ADAPTERS if a.resolve() in TAKEN for s in surfaces_of(a)

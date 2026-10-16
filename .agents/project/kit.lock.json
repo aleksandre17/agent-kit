@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 297,
+  "count": 298,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -11,7 +11,7 @@
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "54f302c268eb1ee8df77fc72a239861ffb5787eee58a4651ed5a93d5fa43a35c",
+      "digest": "5f27619fdf45336d60e1ca5d9e39f9859bf9ae9287675f78dbc185ac79844571",
       "path": "README.md"
     },
     {
@@ -533,7 +533,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3eda00cffc6bd46f78e7ab3c0dbee63e36ad11902a2d7d86b837034f38dc3236",
+      "digest": "2318d0a8f1619d8175ed8d1d04611879ddd78161aa395748a1e904f017e247e0",
       "path": "interpreters/cli.py"
     },
     {
@@ -803,7 +803,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "133ea631d6709d371654fa4b9cbf6b60d8e1bb47c7de379007cbdec1644fbd9e",
+      "digest": "2d683ac189dc62b732cdae079c8c36032fb2babb98ca55fad57535d4a1b7db6a",
       "path": "interpreters/hooks.py"
     },
     {
@@ -1205,6 +1205,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "de8b1b835b1c6e5698708a13d51da66c711290ea388c44309ac74f444a862d24",
+      "path": "interpreters/verbs/doctor.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "2b6246ddef985e074c1e65cb81c7c8aa52d8f8a97121e69b1d497965be55940c",
       "path": "interpreters/verbs/eject.py"
     },
@@ -1241,7 +1247,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f15fcf7020fb132794ab1c4f3d010694605ceee57dc45adeba36f2210cf91c7b",
+      "digest": "64d8da7cae9ae403e95d967c079601fa1e6206b7e76814e74c1702e76bfffecc",
       "path": "interpreters/verbs/judge.py"
     },
     {
@@ -1788,5 +1794,5 @@
   "kit_version": "0.1.6",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T12:52:07+00:00"
+  "taken_at": "2026-10-16T12:56:54+00:00"
 }

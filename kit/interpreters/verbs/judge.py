@@ -48,6 +48,10 @@ def _hand(ctx, surface_id: "str | None") -> dict:
 
 #: A write this hook cannot judge is not an allowed one: it fails closed (`hooks`, the entry point).
 POSTURE = hooks.BLOCKING
+ARGUMENTS = [
+    ("--canary", {"action": "store_true",
+                  "help": "judge a throwaway violation (`doctor`): decide as always, record no observation or claim"}),
+]
 
 
 #: The event this verb PROVIDES to attestation: a write an edit gate refused, observed at the moment
@@ -140,9 +144,11 @@ def run(ctx, args) -> int:
               file=sys.stderr)
     if refused:
         # A refusal that happened is a record of what this runtime CAN be held to (ADR-022 decision 6).
-        attestation.observe(ctx, getattr(args, "surface", None), REFUSED_WRITE,
-                            _refused([(p, r) for p, r, _b, _i in refused]))
+        if not getattr(args, "canary", False):
+            attestation.observe(ctx, getattr(args, "surface", None), REFUSED_WRITE,
+                                _refused([(p, r) for p, r, _b, _i in refused]))
         return refuse(*(f"judge: REFUSED  {path}  {rule_id} -- {because} Instead: {instead}"
                         for path, rule_id, because, instead in refused))
-    claims.recorded(ctx, principals, [rel for rel, _t in within], ctx.clock.now())
+    if not getattr(args, "canary", False):
+        claims.recorded(ctx, principals, [rel for rel, _t in within], ctx.clock.now())
     return admit(f"judge: {len(within)} edited path(s) pass every edit judgement this host declares")
