@@ -128,6 +128,12 @@
                 "absent": "This host declares no law page, so no runtime is told any project law -- a declared absence, and not a short list."
               },
               {
+                "id": "commands",
+                "heading": "Commands -- how a change is built and proven here",
+                "from": ".agents/generated/evaluation/COMMANDS.md",
+                "absent": "This host serves no command page, so no runtime is told how a change is built or proven here -- a declared absence."
+              },
+              {
                 "id": "conduct-doctrine",
                 "heading": "Conduct doctrine -- as this host takes and qualifies it",
                 "from": ".agents/generated/DOCTRINE.md",

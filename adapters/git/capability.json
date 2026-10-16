@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "git",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "A runtime ADAPTER for git's commit hooks: the one published declaration that carries this product's name. Git is not an agent runtime, and that is the point -- it is the RETURN POINT every runtime, every tool and every human shares: whatever wrote a change, the change is recorded through a commit. Served, it projects a pre-commit hook that hands the STAGED change, as a patch, to the same one judge and the same host-declared edit gates a runtime's write hook uses; activated (the `activate` door sets the setting git reads), an edit made where no pre-write hook exists is still refused before it is recorded. It publishes a second declaration for the same reason: a worker dispatched to another intelligence writes only inside a tree of its own (ADR-017 decision 5), and WHICH program makes such a tree is a product fact -- so `workspaces.json` says how git makes and withdraws one, and the dispatch port names no program. An ordinary capability, taken through the provenance door like any adapter; no interpreter in the kit knows that it exists.",
   "requires": [
     { "kind": "capability", "id": "runtimes" },

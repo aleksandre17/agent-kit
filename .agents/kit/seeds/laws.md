@@ -1,9 +1,2 @@
-# Project laws — BINDING
-
-> SEED. Written once, only if absent. From this moment it is yours: no upgrade will ever
-> read it for writing, diff it, or replace it. Delete the sentence you are reading and
-> write what is true here.
-
-## The laws of this repository
-
-1. _(none declared yet)_
+<!-- Written once by the kit and yours from then on: no upgrade reads it for writing. Number each law; the briefing serves this page as it stands. -->
+_No project law is declared yet._

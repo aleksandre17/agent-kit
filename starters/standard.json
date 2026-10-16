@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "id": "standard",
+  "summary": "Claude Code, Codex (AGENTS.md, read by most other agents too) and git served, the cardinals and the conduct taken, the commit gate active",
+  "takes": ["../adapters/claude-code", "../adapters/codex", "../adapters/git", "../bundles/cardinals", "../bundles/conduct"],
+  "runtimes": [
+    { "id": "claude-code", "class": "an-interactive-session", "surface": "claude-code" },
+    { "id": "codex", "class": "an-interactive-session", "surface": "codex" },
+    { "id": "git", "class": "a-batch-invocation", "surface": "git-commit" }
+  ],
+  "activate": ["git-commit"]
+}

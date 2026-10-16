@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "providers": [
+    {
+      "id": "git-worktree",
+      "says": "git checks a second working tree out of the same repository at a path given to `git worktree add`, on a branch created there by `-b`, and REFUSES rather than reusing a path that already exists or a branch already checked out somewhere -- taken from git-worktree(1) (git 2.5+). The refusal is what makes it usable as isolation: a worker is given a tree that was MADE for it, never one that was found. `git worktree remove --force` withdraws such a tree and its administrative record. The commits a worker makes there are in the same object store, so what it did returns to the host by ordinary git means -- and is judged on return, never admitted because a worker said it was fine (ADR-017 decision 5). UNVERIFIED on this machine through this declaration: taken from the documentation and from git's behaviour as generally established, and not yet observed being run by the dispatch port on host #0. UNVERIFIED in particular: a repository with no commit yet (there is no HEAD to branch from), a path inside an ignored directory, and a worktree made inside the repository's own tree while a hook is active.",
+      "isolate": {
+        "argv": ["git", "worktree", "add", "-b", "{branch}", "{workspace}", "HEAD"]
+      },
+      "returned": {
+        "says": "`git status --porcelain=v1 --untracked-files=all` prints one line per path that differs from the tree's HEAD -- two status characters, a space, then the path, relative to the root of THAT working tree (which for a linked worktree is the worktree itself, not the repository the worktree was cut from). `--porcelain=v1` is documented as a stable, script-readable format that does not change between git versions, which is why it and not the human output is what a declaration may be written against; `core.quotepath=off` stops git re-encoding non-ASCII path bytes into C-style escapes, so a path comes back as the path. Taken from git-status(1). UNVERIFIED on this machine through this declaration: renames (`R  old -> new`, whose grammar below keeps the NEW name and discards the old), paths containing a space or a quote (git quotes such a path, and the quotes are not stripped here), and a tree whose HEAD is unborn.",
+        "argv": ["git", "-c", "core.quotepath=off", "status", "--porcelain=v1", "--untracked-files=all"],
+        "names": "^..[ ](?:.+ -> )?(.+)$"
+      },
+      "withdraw": {
+        "argv": ["git", "worktree", "remove", "--force", "{workspace}"]
+      }
+    }
+  ]
+}

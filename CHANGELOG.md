@@ -3,9 +3,24 @@
 Upstream only. This file is never vendored into a host: an append-only release record grows with
 the framework's age rather than the host's needs. A host's legitimate question is narrower — *what
 changed between the version I have and the version I am moving to* — and it is answered at the
-moment of need by `upgrade`, which is not built yet.
+moment of need by `upgrade --plan`, which names every path that changes between the two.
 
 ## 0.1.6 — unreleased
+
+**Added — a new host starts in one door, served to the field's standards (ADR-023)**
+- Verb `start --path starters/<id>.json --approve <who>`: walks a published starter (take, enable,
+  runtimes, render, activate, init, check) as separate runs, stopping at the first failure. Schema
+  `starter`, `starters/standard.json` (Claude Code, Codex/AGENTS.md, git; cardinals, conduct). KIT0073.
+- The briefing serves the host's build and test commands inline (`COMMANDS.md`); detector
+  `stack-kit-commands` reads `stack-kit.json` `commands.test` / `commands.build`. The laws seed serves
+  no authoring prose.
+- Gate `FF-PLANE-WRITER` (`plane-held-by-its-writer`): an interactive session's edit inside the vendor
+  or projection plane is refused with the verb to run instead; commits and CI are judged by `check`.
+- Claude Code and Codex hooks fail closed when no Python runs (exit 2), as the git hook did.
+- The github-actions template pins `actions/checkout` by commit SHA; the kit's own suites run in CI.
+- `kit/README.md` verb table derived from the verbs (`test_verb_reference`); README rewritten with a
+  quick start and a glossary.
+- `test_start` 407–409, `test_commands` 412, `test_enforcement` 289c–289d.
 
 **Added — a reading is replaced through a door (ADR-021 amendment 2)**
 - Verb `retake`: names every moved fact; `--plan` writes nothing; unapproved it is a door; approved it

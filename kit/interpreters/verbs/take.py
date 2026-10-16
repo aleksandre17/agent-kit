@@ -42,7 +42,7 @@ class TakeError(KitError):
     code = "KIT0045"
 
 
-def _homes(ctx) -> tuple:
+def homes(ctx) -> tuple:
     """(plane install, declaration install, the capability that owns both) -- as governance
     declares them. A release that declares no take plane cannot be taken into, and says so."""
     found = {}
@@ -83,7 +83,7 @@ def run(ctx, args) -> int:
     hostlock.arrive(ctx, args)
     if not args.path:
         raise TakeError("take needs --path <capability-dir>[,<dir>]: the published capability to take")
-    plane, statement, owner = _homes(ctx)
+    plane, statement, owner = homes(ctx)
     issued = {c.id for c in ctx.manifest.capabilities if c.id not in ctx.manifest.taken}
     moment = ctx.clock.now()
 

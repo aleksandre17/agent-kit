@@ -70,6 +70,12 @@
       "class": "projection",
       "target": ".agents/generated/evaluation/VERIFICATION.md",
       "source": "capabilities/evaluation/payload/VERIFICATION.md.mustache"
+    },
+    {
+      "mode": "projection",
+      "class": "projection",
+      "target": ".agents/generated/evaluation/COMMANDS.md",
+      "source": "capabilities/evaluation/payload/COMMANDS.md.mustache"
     }
   ],
   "gates": [

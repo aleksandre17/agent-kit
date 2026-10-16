@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import os
 import sys
 import unittest
 from pathlib import Path
@@ -25,6 +26,7 @@ from harness import KIT, Fixtures
 from manifest import Manifest
 
 import activated
+import planes as planes_gate
 import activation
 import judge as judge_verb
 
@@ -34,6 +36,8 @@ CORE = Manifest(KIT)
 ENFORCEMENT = next(c for c in CORE.capabilities if any(g["kind"] == "edit-gates-calibrated" for g in c.gates))
 GATES_FILE = next(i["target"] for i in ENFORCEMENT.installs if i.get("validates") == "edit-gate")
 GATE_ID = next(g["id"] for g in ENFORCEMENT.gates)
+RUNTIMES = next(c for c in CORE.capabilities if c.raw.get("composes", {}).get("id") == "runtimes")
+CLASSES = next(d for d in RUNTIMES.documents.values() if "classes" in d)["classes"]
 VENDOR = next(p["root"] for p in CORE.planes if p["class"] == "vendor")
 HOST_GATE = {
     "id": "no-privileged-dimension",
@@ -44,6 +48,15 @@ HOST_GATE = {
     "proves": {"path": "src/a.ts", "text": "const y = ctx.year"},
     "admits": {"path": "src/a.ts", "text": "const y = ctx.dims['time']"},
 }
+
+
+def _strings(value) -> list:
+    """Every string anywhere in a JSON document -- a served command is found by what it runs."""
+    if isinstance(value, dict):
+        return [s for v in value.values() for s in _strings(v)]
+    if isinstance(value, list):
+        return [s for v in value for s in _strings(v)]
+    return [value] if isinstance(value, str) else []
 
 
 def _event(hands: dict, path: str, text: str) -> dict:
@@ -157,6 +170,49 @@ class Enforcement(Fixtures, unittest.TestCase):
                 driveless = self.judge(host, surface, _event(hands, "/nowhere/src/a.ts", "let y = ctx.year;"))
                 self.assertEqual(hands["refusal"]["exit"], driveless.returncode, driveless.stdout + driveless.stderr)
                 self.assertNotIn("lies outside this host", driveless.stdout)
+
+    def test_289c_an_interactive_edit_inside_a_writers_plane_is_refused_and_a_batch_one_is_not(self):
+        held = next(g for c in CORE.capabilities for g in c.gates if g["kind"] == planes_gate.KIND)
+        roots = [p["root"] for p in CORE.planes if p["class"] in held["params"]["classes"]]
+        other = next(c["id"] for c in CLASSES if c["id"] not in held["params"]["writers"])
+        host = self.served_host()
+        for surface in self.surfaces:
+            hands = surface["hands"]
+            for root in roots:
+                with self.subTest(surface=surface["id"], plane=root):
+                    edit = _event(hands, str(host / root / "a.md"), "by hand")
+                    refused = self.judge(host, surface, edit)
+                    self.assertEqual(hands["refusal"]["exit"], refused.returncode, refused.stdout + refused.stderr)
+                    self.assertIn(planes_gate.KIND, refused.stderr)
+        for surface in self.surfaces:
+            path = host / DESCRIPTORS / f"{surface['id']}.json"
+            path.write_text(json.dumps({**json.loads(path.read_text(encoding="utf-8")), "class": other}) + "\n",
+                            encoding="utf-8")
+        for surface in self.surfaces:
+            with self.subTest(surface=surface["id"], writer=other):
+                passed = self.judge(host, surface, _event(surface["hands"], str(host / roots[0] / "a.md"), "x"))
+                self.assertEqual(0, passed.returncode, passed.stdout + passed.stderr)
+
+    def test_289d_a_served_hook_with_no_interpreter_it_can_run_refuses(self):
+        host = self.served_host()
+        stubs = self._temp("no-python")
+        for name in ("python3", "python", "py"):
+            (stubs / name).write_text("#!/bin/sh\nexit 1\n", encoding="utf-8", newline="\n")
+            (stubs / name).chmod(0o755)
+        env = {**os.environ, "PATH": f"{stubs}{os.pathsep}{os.environ.get('PATH', '')}"}
+        for surface in self.surfaces:
+            target = next(r["target"] for r in surface["renders"] if r["view"] == "enforcement")
+            if not target.endswith(".json"):
+                continue  # a script hook is judged by its own suite; this is the command a product runs
+            commands = [c for c in _strings(json.loads((host / target).read_text(encoding="utf-8")))
+                        if "judge --root" in c]
+            self.assertTrue(commands, f"{target} serves no judge command")
+            for command in commands:
+                with self.subTest(surface=surface["id"]):
+                    ran = subprocess.run(["sh", "-c", command], input="{}", capture_output=True, text=True,
+                                         cwd=str(host), env=env)
+                    self.assertEqual(surface["hands"]["refusal"]["exit"], ran.returncode, ran.stdout + ran.stderr)
+                    self.assertIn("REFUSED", ran.stderr)
 
     def test_290_check_fails_an_uncalibrated_host_gate(self):
         host = self.served_host([{**HOST_GATE, "admits": HOST_GATE["proves"]}])

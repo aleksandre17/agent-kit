@@ -4,13 +4,13 @@
     {
       "path": ".claude/settings.json",
       "runtime": "claude-code",
-      "sha256": "78af18d4ff21d8084b7dd981ea81f75ab11fc587f98e899df84c462106fb98c1",
+      "sha256": "3740362e68e5fc4cc98330c9c62577c61843c89a98e4818434f4b44ba72d776d",
       "surface": "claude-code"
     },
     {
       "path": ".codex/hooks.json",
       "runtime": "codex",
-      "sha256": "597a19cd287eb3ced1eef9cd9885a480357fd1eb5bfeef7452b9dedb25767350",
+      "sha256": "114d70598cebbb0afcf0d65dd8615ae6ac40eb2ae6c9e61752e742febd054be2",
       "surface": "codex"
     },
     {
@@ -22,31 +22,43 @@
     {
       "path": ".github/workflows/kit-gates.yml",
       "runtime": "github-actions",
-      "sha256": "e1897e98d7d753054a574ba5d21b438c7130eeaccbf42918fd3ebf920394dffd",
+      "sha256": "3ed81dcba2df32802dcf71b8ff31481818403560f31e2ac8afdbbe4cdb506970",
       "surface": "github-actions"
     },
     {
       "path": "AGENTS.md",
       "runtime": "codex",
-      "sha256": "d9dfd57a29c238f43fe18d6e5a83d767519f113de190ec7b547d63442681c17d",
+      "seed_sha256": "e18f9ee17e0e5ca0af5d102229cd023307b36fe5549dbd5d4e20fd79e72e8433",
+      "sha256": "72b69233c472236a4b3746b4d549cc15fab31ea8345d763582f5b0a6ef3de806",
+      "span": "briefing",
+      "span_sha256": "35dc1289b44a325d39a6a9b39479c260ba20b8858a27d47ece5ed1b64cb21b1a",
       "surface": "codex"
     },
     {
       "path": "CLAUDE.md",
       "runtime": "claude-code",
-      "sha256": "b3838400edae16c2d2818a9c65cf17f392cee70f55f0b2b5909fbeec874cb3a9",
+      "seed_sha256": "e18f9ee17e0e5ca0af5d102229cd023307b36fe5549dbd5d4e20fd79e72e8433",
+      "sha256": "bb3b99eda35d73f8aa032c0e79c2368000ef1f5d4f166e18143ae2acd40152da",
+      "span": "briefing",
+      "span_sha256": "58ddbd5866acbdb1c7e96efbdf9c1d0958c432266941e522442996e5e6f31b81",
       "surface": "claude-code"
     },
     {
       "path": "tests/acceptance/fresh-repo/AGENTS.md",
       "runtime": "codex",
-      "sha256": "ddc8ec3c60941a6619a3b6585694a6ef0e7083c04c08c7250abd8c0a0acfc169",
+      "seed_sha256": "358409e3f6ac6fe078528d0d52923fa798266b3aed31f1a3f23f7d9edc53cff1",
+      "sha256": "b2598a46bca811d9d3cf0383c7e0c459e951e4231754cc254210050faba39dd5",
+      "span": "scoped-briefing",
+      "span_sha256": "34ab12123c7cfdbd8cfb1d69b421562f61c4f83338fddae49a78ca5fe218e1aa",
       "surface": "codex"
     },
     {
       "path": "tests/acceptance/fresh-repo/CLAUDE.md",
       "runtime": "claude-code",
-      "sha256": "aa6d5bd38bc1b34319306fb26ac84c91fea9e81498823b34f4fcd7423d3dfef1",
+      "seed_sha256": "358409e3f6ac6fe078528d0d52923fa798266b3aed31f1a3f23f7d9edc53cff1",
+      "sha256": "e7dab4637e160f4371ade91d7ef5a9a7dedb63c496a6c0d23f5c4fb55c75a6d7",
+      "span": "scoped-briefing",
+      "span_sha256": "968e52cc03a670c35c1c377b52965613728b8836f27598ae1799692d69b63d9b",
       "surface": "claude-code"
     }
   ]

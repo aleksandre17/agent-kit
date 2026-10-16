@@ -1,0 +1,32 @@
+{
+  "$id": "starter",
+  "title": "A starter: the walk a new host takes from nothing to a served, checked install (ADR-023)",
+  "description": "Published BESIDE the kit, like an adapter or a bundle, and read by the `start` verb, which holds none of it. A starter decides what a host RUNS -- what it takes, which runtimes it serves, which settings outside the tree it activates -- and never what it HOLDS: no stance, no law, no answer a host owes in its own words.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "summary", "takes", "runtimes", "activate"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "summary": { "type": "string", "minLength": 1 },
+    "takes": {
+      "description": "Each published capability directory to take, relative to this starter's file.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "runtimes": {
+      "description": "Each runtime instance to serve, written as the host's runtime declaration when it has none by that id; validated by the schema that declaration honours, never restated here.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": { "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" } }
+      }
+    },
+    "activate": {
+      "description": "Each served surface whose setting outside the tree is pointed at what it serves, through `activate`.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+    }
+  }
+}

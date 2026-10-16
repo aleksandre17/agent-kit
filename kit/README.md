@@ -34,19 +34,31 @@ back identical — that is gate `FF-KIT-PROJECTION`, and it is what makes the pl
 python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 ```
 
+<!-- verbs:begin -- derived from each verb's SUMMARY and MUTATES -->
 | verb | does | writes |
 | --- | --- | --- |
-| `init` | measure the host, resolve what it chose, draft the answer, seed once, vendor, render, check | the answer first; everything else only once it is approved |
-| `render` | recompute every projection from vendor + binding | projection only |
-| `check` | run the declared gates; report, never repair | nothing |
-| `upgrade` | reconcile kit, lock and host three ways; a cell no steward answers is refused | only cells a steward declared, and nothing at all if any path refuses |
-| `adopt` | read a host this kit never installed into; class every path or name it unaccounted | nothing — adoption reads |
-| `inherit` | read a host's PRIOR agent system inside a declared boundary, measure each path, and print the disposition its migration map (`--map`) assigns; every state counted, an unanswered path `undecided` (ADR-011) | nothing — a roster is carried out at a door, never by this verb |
-| `evaluate` | report the measure this host declared; with none declared, say the measure is zero | nothing |
-| `lock` | re-take `kit.lock.json` from the manifest's own declaration closure | the lock |
-| `move` | move a card to a declared state, recorded by who moved it | the card |
-| `eject` | hand paths the kit shipped to the host, through a door signed by name; the kit never writes them again and every reading names them | the estate row, and nothing at all if any asked path cannot change hands |
-| `takeover` | carry out the migration map at its declared residence: rename each relocated path into a kit space and each removed path aside into the observed plane, at a door that accepts the roster BY ITS DIGEST, re-read at the act; a killed act is reconciled and finished by the next run (ADR-012) | the prior paths the signed roster names, the act record, the estate's account -- and nothing at all if any path is undecided or the roster moved |
+| `activate` | point a setting outside the tree at what a served surface serves -- or withdraw it -- through a door | yes -- `--plan` prints the writes first |
+| `adopt` | read a host this kit has never touched and name every path that has no class | nothing |
+| `check` | run the declared fitness functions and report | nothing |
+| `claim` | take, list, release or break by name a claim on paths, which the judge holds other writers to | nothing |
+| `dispatch` | hand one act to the dispatch port: start a worker for a task, or carry an operator's answer back into one that asked | yes -- `--plan` prints the writes first |
+| `eject` | hand a path the kit shipped to the host, through a signed door | yes -- `--plan` prints the writes first |
+| `evaluate` | open a judgement for every declared pair that has none, and state the measure | yes -- `--plan` prints the writes first |
+| `ground` | record a measured fact with its instrument and paths, or read one back while it still holds | nothing |
+| `inherit` | read a host's prior agent system and state what becomes of every path of it | nothing |
+| `init` | measure, choose, draft the answer, seed, vendor, render, check | yes -- `--plan` prints the writes first |
+| `judge` | judge one edit a runtime hook hands over, against this host's declared edit gates | nothing |
+| `lock` | enumerate what the kit is, measure it, and record the reading | yes -- `--plan` prints the writes first |
+| `move` | move one card across one declared transition | yes -- `--plan` prints the writes first |
+| `propose` | state what this host learned that it says is not its own, as text a person carries | nothing |
+| `release` | state what this kit is as a release, or refuse to call a working tree one | nothing |
+| `render` | recompute every projection from VENDOR + BINDING | yes -- `--plan` prints the writes first |
+| `retake` | take this host's reading again, through a door, when its reality has legitimately moved | yes -- `--plan` prints the writes first |
+| `start` | carry a host from nothing to a served, checked install in one door, by a published starter | yes -- `--plan` prints the writes first |
+| `take` | take a published capability into this host's take plane, beside the pinned kit | yes -- `--plan` prints the writes first |
+| `takeover` | carry out the host's signed migration map, through a door that accepts its roster digest | yes -- `--plan` prints the writes first |
+| `upgrade` | reconcile what was shipped, what the host has, and what this kit ships -- then install | yes -- `--plan` prints the writes first |
+<!-- verbs:end -->
 
 `eject` is granular, one path at a time (ADR-010 rejected the all-or-nothing CRA/`ng eject` shape
 and named this verb `cede`; ADR-015 amendment 1 draws the verb list with the name `eject`, and one

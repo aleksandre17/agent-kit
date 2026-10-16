@@ -11,9 +11,15 @@
 > nothing: the record and the probe are two readings of one reality, and the evidence that
 > anything changed is exactly the fact that neither was overwritten by the other.
 
+## the command this host itself declares for building
+
+**DECLARED GAP — `quality.build.command` was not carried by the reading taken at 2026-10-16T05:58:11+00:00.**
+
+THIS HOST DECLARES NO BUILD COMMAND. The reading was taken and nothing in the tree declares how this host is built. No default is supplied: the cure is the host's -- declare it where this kit's detectors can read it, and the next reading carries it.
+
 ## the command this host itself declares for proving a change
 
-**DECLARED GAP — `quality.tests.command` was not carried by the reading taken at 2026-09-13T13:47:43+00:00.**
+**DECLARED GAP — `quality.tests.command` was not carried by the reading taken at 2026-10-16T05:58:11+00:00.**
 
 THIS HOST DECLARES NO TEST COMMAND. Not "none found" and not an empty profile: the reading was taken, the tree was asked, and nothing in it declares a command that proves a change. No default is supplied here and none ever will be -- a framework that filled this blank would be publishing a way of proving a change into a host that has not chosen one, and every later reader would take the invention for a measurement. The cure is the host's: declare a test command where this kit's detectors can read it, and the next reading carries it.
 

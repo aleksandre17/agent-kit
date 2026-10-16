@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 72,
+  "issued": 73,
   "codes": [
     {
       "code": "KIT0001",
@@ -434,6 +434,12 @@
       "status": "active",
       "title": "a reading retaken where none was taken, or one that would not honour its schema",
       "explanation": "A reading is taken once, by init, and replaced only through the retake door (ADR-021 amendment 2). This host holds no reading to replace, or the reading that would replace it does not honour the profile schema. Nothing was written."
+    },
+    {
+      "code": "KIT0073",
+      "status": "active",
+      "title": "a starter that is not one, or a walk that stopped",
+      "explanation": "A starter is a published document naming what a new host takes, serves and activates (ADR-023). The one given does not honour the starter schema, names a directory that declares no capability, or one act of its walk exited non-zero -- the act and its output are named. What already landed stays; each act is safe to walk again."
     }
   ]
 }

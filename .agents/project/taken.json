@@ -2,28 +2,28 @@
   "schema_version": 1,
   "takes": [
     {
-      "at": "2026-09-17T13:58:27+00:00",
+      "at": "2026-10-16T05:59:13+00:00",
       "id": "claude-code",
-      "source": "C:/Users/Test-User/WebstormProjects/national-accounts/kits/agent-kit/adapters/claude-code",
-      "taken_by": "owner-aleksandre17:explicit-2026-09-17"
+      "source": "adapters/claude-code",
+      "taken_by": "claude(owner-delegated:2026-10-16)"
     },
     {
-      "at": "2026-09-17T13:58:27+00:00",
+      "at": "2026-10-16T05:59:13+00:00",
       "id": "codex",
-      "source": "C:/Users/Test-User/WebstormProjects/national-accounts/kits/agent-kit/adapters/codex",
-      "taken_by": "owner-aleksandre17:explicit-2026-09-17"
+      "source": "adapters/codex",
+      "taken_by": "claude(owner-delegated:2026-10-16)"
     },
     {
-      "at": "2026-09-17T14:58:43+00:00",
+      "at": "2026-10-16T05:59:13+00:00",
       "id": "git",
-      "source": "C:/Users/Test-User/WebstormProjects/national-accounts/kits/agent-kit/adapters/git",
-      "taken_by": "owner-aleksandre17:explicit-2026-09-17"
+      "source": "adapters/git",
+      "taken_by": "claude(owner-delegated:2026-10-16)"
     },
     {
-      "at": "2026-09-17T15:48:31+00:00",
+      "at": "2026-10-16T05:59:13+00:00",
       "id": "github-actions",
-      "source": "C:/Users/Test-User/WebstormProjects/national-accounts/kits/agent-kit/adapters/github-actions",
-      "taken_by": "owner-aleksandre17:explicit-2026-09-17"
+      "source": "adapters/github-actions",
+      "taken_by": "claude(owner-delegated:2026-10-16)"
     }
   ]
 }

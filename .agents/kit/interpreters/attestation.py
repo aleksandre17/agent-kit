@@ -48,6 +48,16 @@ def served_through(ctx, surface_id: str) -> list:
             if isinstance(record, dict) and record.get("surface") == surface_id]
 
 
+def classes_through(ctx, surface_id: str) -> list:
+    """The runtime CLASSES a surface serves -- what kind of writer a hook's event came from."""
+    _owner, descriptors = _install(ctx, DESCRIPTOR)
+    if descriptors is None or not surface_id:
+        return []
+    return sorted({record.get("class") for _rel, record in
+                   collection.read(ctx, descriptors, descriptors["reads_as"]).records
+                   if isinstance(record, dict) and record.get("surface") == surface_id})
+
+
 def observe(ctx, surface_id: str, event: str, detail) -> list:
     """Record `event` for every runtime served through `surface_id`, against every capability whose
     `observed_on` is that event. Returns what was written; never raises."""

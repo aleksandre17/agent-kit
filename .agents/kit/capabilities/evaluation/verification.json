@@ -2,6 +2,12 @@
   "schema_version": 1,
   "readings": [
     {
+      "id": "build-command",
+      "means": "the command this host itself declares for building",
+      "reads": "quality.build.command",
+      "gap": "THIS HOST DECLARES NO BUILD COMMAND. The reading was taken and nothing in the tree declares how this host is built. No default is supplied: the cure is the host's -- declare it where this kit's detectors can read it, and the next reading carries it."
+    },
+    {
       "id": "test-command",
       "means": "the command this host itself declares for proving a change",
       "reads": "quality.tests.command",

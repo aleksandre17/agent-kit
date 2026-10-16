@@ -93,6 +93,9 @@ def run(ctx, args) -> int:
         return no
     # The gates are applied where that application has its one home, so this verb and the dispatch
     # port's admission on return cannot come to hold different rule sets (ADR-017 amendment 6).
+    # What KIND of writer this is, by the classes of the runtimes served through the surface: a gate
+    # may hold one class of writer to a rule another is not held to (`plane-held-by-its-writer`).
+    ctx.writers = attestation.classes_through(ctx, getattr(args, "surface", None))
     refused, unjudged = judgement.refusals(ctx, within)
     for path in outside:
         print(f"judge: {path} lies outside this host; its gates do not reach it")

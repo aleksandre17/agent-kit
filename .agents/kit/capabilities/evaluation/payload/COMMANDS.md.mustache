@@ -1,0 +1,12 @@
+<!-- Generated from this host's reading; declare a command where a detector reads it, never here. -->
+{{#verification}}
+{{#bound}}
+- {{means}}: `{{value}}`
+{{/bound}}
+{{^bound}}
+- {{means}}: **not declared** -- no detector read `{{fact}}` from this tree, and no default is invented.
+{{/bound}}
+{{/verification}}
+{{^verification}}
+- **No command is consumed from this host's reading** -- the set of consumed readings is empty.
+{{/verification}}

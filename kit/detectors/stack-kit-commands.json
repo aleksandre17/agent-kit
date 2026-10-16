@@ -1,0 +1,13 @@
+{
+  "id": "stack-kit-commands",
+  "summary": "The commands a host declares in its stack-kit manifest for proving and building a change, captured as the host spelled them.",
+  "evidence": [
+    { "kind": "json_path", "path": "stack-kit.json", "pointer": "commands.test" },
+    { "kind": "json_path", "path": "stack-kit.json", "pointer": "commands.build", "optional": true }
+  ],
+  "emits": {
+    "quality.tests.declared": true,
+    "quality.tests.command": "$1",
+    "quality.build.command": "$2"
+  }
+}

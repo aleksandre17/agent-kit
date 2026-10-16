@@ -120,7 +120,8 @@
     "detectors/license-file.json",
     "detectors/node-workspace.json",
     "detectors/pnpm-workspace.json",
-    "detectors/python-project.json"
+    "detectors/python-project.json",
+    "detectors/stack-kit-commands.json"
   ],
   "schemas": {
     "manifest": "schemas/manifest.schema.json",
@@ -157,6 +158,7 @@
     "cardinal": "schemas/cardinal.schema.json",
     "diagnostics": "schemas/diagnostics.schema.json",
     "stance": "schemas/stance.schema.json",
+    "starter": "schemas/starter.schema.json",
     "hold": "schemas/hold.schema.json",
     "journal": "schemas/journal.schema.json",
     "provenance": "schemas/provenance.schema.json",

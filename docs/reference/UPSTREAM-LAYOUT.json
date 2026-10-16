@@ -43,6 +43,7 @@
     { "path": "kit/kit.lock.json", "kind": "file", "declared_by": "ADR-016" },
     { "path": "adapters/", "kind": "dir", "declared_by": "ADR-014" },
     { "path": "bundles/", "kind": "dir", "declared_by": "ADR-021 decision 2" },
+    { "path": "starters/", "kind": "dir", "declared_by": "ADR-023" },
     { "path": ".github/", "kind": "dir", "declared_by": "ADR-017 amendment 2 (the CI surface runs the kit gates)" },
     { "path": ".gitattributes", "kind": "file", "declared_by": "ADR-016 decision 8 (the served surfaces stay LF)" },
     { "path": ".gitignore", "kind": "file", "declared_by": "ADR-003 (the observed plane is never tracked)" },

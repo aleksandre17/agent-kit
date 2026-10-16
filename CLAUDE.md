@@ -1,10 +1,13 @@
 # Instructions for this repository
 
-> **Generated. Do not edit.** Served to the runtime `claude-code` at the path its surface
-> `claude-code` reads, and rebuilt from scratch on every render · kit 0.1.6.
-> Every section below is a projection of a declaration this host already owns; the declaration is
-> where a change is made. An edit here is refused by the next render and reported by `check`
-> under `FF-KIT-PROJECTION`.
+Write here what is true of this repository and nowhere else: what it is, how it is built and
+tested, and what a change must respect. This file is yours -- the kit wrote it once and never
+reads it for writing again. The lines between the two markers below are the kit's: they are
+recomputed from this host's declarations on every render, and an edit there is refused.
+
+<!-- kit:begin briefing -- computed from this host's declaration; anything written between these two lines is replaced unread -->
+*Served to the runtime `claude-code` through the surface `claude-code` · kit 0.1.6. Each
+section is a projection of a declaration this host owns -- change the declaration, never this span.*
 
 ## Project laws -- this host's numbered bindings
 
@@ -18,6 +21,12 @@
 
 1. _(none declared yet)_
 
+## Commands -- how a change is built and proven here
+
+<!-- Generated from this host's reading; declare a command where a detector reads it, never here. -->
+- the command this host itself declares for building: **not declared** -- no detector read `quality.build.command` from this tree, and no default is invented.
+- the command this host itself declares for proving a change: **not declared** -- no detector read `quality.tests.command` from this tree, and no default is invented.
+
 ## Conduct doctrine -- as this host takes and qualifies it
 
 Read `.agents/generated/DOCTRINE.md` for which cardinals bind this host, and this host's stance on each -- before a change that a cardinal speaks to.
@@ -26,3 +35,4 @@ Read `.agents/generated/DOCTRINE.md` for which cardinals bind this host, and thi
 
 Read `.agents/generated/ROLES.md` for who this host has hired, before delegating work to a role.
 
+<!-- kit:end briefing -->

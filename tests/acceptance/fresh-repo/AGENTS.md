@@ -1,11 +1,12 @@
 # Instructions for `tests/acceptance/fresh-repo/` and everything below it
 
-> **Generated. Do not edit.** Served to the runtime `codex` at the path its surface
-> `codex` reads for a directory, and rebuilt from scratch on every render · kit 0.1.6.
-> These laws bind ONLY inside `tests/acceptance/fresh-repo/`; the repository-wide instructions still apply here.
-> Declared once, by the scope `fresh-repo-suite` in this host's law-scope declaration -- that
-> declaration and the page it names are where a change is made. An edit here is refused by the
-> next render and reported by `check` under `FF-KIT-PROJECTION`.
+Write here what holds only inside `tests/acceptance/fresh-repo/`. This file is yours; the lines between the two
+markers below are the kit's, recomputed from this host's law-scope declaration on every render.
+
+<!-- kit:begin scoped-briefing -- computed from this host's declaration; anything written between these two lines is replaced unread -->
+*Served to the runtime `codex` through the surface `codex` · kit 0.1.6. These
+laws bind ONLY inside `tests/acceptance/fresh-repo/`, declared by the scope `fresh-repo-suite` in this host's law-scope
+declaration -- that declaration and the page it names are where a change is made.*
 
 The kit's acceptance suite: how a test may know the kit, and what it may never name, bind here and nowhere else.
 
@@ -34,3 +35,4 @@ The kit's acceptance suite: how a test may know the kit, and what it may never n
    lives in the suites.
    *Declared in `harness.py`.*
 
+<!-- kit:end scoped-briefing -->

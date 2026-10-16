@@ -5,12 +5,12 @@
     "line_ending": "lf",
     "os": "windows",
     "path_separator": "/",
-    "root": "C:/Users/Test-User/WebstormProjects/agent-framework"
+    "root": "C:/Users/Test-User/RiderProjects/geostat_in_out/platform/kits/agent-kit"
   },
   "detectors": [
     {
       "id": "ci-workflows",
-      "matched": false
+      "matched": true
     },
     {
       "id": "container-compose",
@@ -22,6 +22,10 @@
     },
     {
       "id": "declared-test-runner",
+      "matched": false
+    },
+    {
+      "id": "dotnet-project",
       "matched": false
     },
     {
@@ -47,11 +51,24 @@
     {
       "id": "python-project",
       "matched": false
+    },
+    {
+      "id": "stack-kit-commands",
+      "matched": false
     }
   ],
   "facts": {
+    "ci.workflows": true,
+    "ci.workflows.files": [
+      "tests.yml"
+    ],
     "vcs.git": true
   },
+  "retaken": {
+    "replaces": "2026-09-13T13:47:43+00:00",
+    "signed_at": "2026-10-16T05:58:11+00:00",
+    "signed_by": "claude(owner-delegated:2026-10-16)"
+  },
   "schema_version": 1,
-  "taken_at": "2026-09-13T13:47:43+00:00"
+  "taken_at": "2026-10-16T05:58:11+00:00"
 }

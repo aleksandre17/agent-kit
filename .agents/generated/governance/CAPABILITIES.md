@@ -35,6 +35,7 @@ Declares the GRAMMAR of judgement and never a judgement. A run's receipt proves 
 | `.agents/runtime/evaluation/judgements/` | ephemeral | space |
 | `.agents/generated/evaluation/QUALITY.md` | projection | projection |
 | `.agents/generated/evaluation/VERIFICATION.md` | projection | projection |
+| `.agents/generated/evaluation/COMMANDS.md` | projection | projection |
 
 Gates declared by this capability:
 
@@ -74,6 +75,7 @@ Gates declared by this capability:
 - **FF-KIT-PROJECTION** — `projection-reproducible`
 - **FF-READING-FRESH** — `reading-current`
 - **FF-PROVENANCE-PINNED** — `provenance-pinned`
+- **FF-PLANE-WRITER** — `plane-held-by-its-writer`
 - **FF-KIT-PINNED** — `pinned-kit-intact`
 - **FF-TAKEN-INTACT** — `taken-intact`
 - **FF-HOST-FLOOR** — `layout-floor-present`
@@ -189,7 +191,7 @@ Gates declared by this capability:
 - **FF-RUNTIME-CLAIM** — `reference-declared-across`
 - **FF-RUNTIME-ACTIVE** — `served-setting-active`
 
-### claude-code 1.1.0
+### claude-code 1.3.0
 
 A runtime ADAPTER for Claude Code: the one published declaration that carries this product's name, and nothing else. It is an ORDINARY capability (ADR-004, ADR-014) -- a host takes it through the provenance door (ADR-008) exactly as it takes a doctrine bundle, and no interpreter in the kit knows that it exists. Its single document keeps the runtime-surface contract, which is how the kit's served projection finds it: by the contract, never by a list of publishers. Remove it and the host serves this product nothing -- and says so.
 
@@ -199,7 +201,7 @@ A runtime ADAPTER for Claude Code: the one published declaration that carries th
 Gates declared by this capability:
 
 
-### codex 1.1.0
+### codex 1.3.0
 
 A runtime ADAPTER for Codex: the one published declaration that carries this product's name, and nothing else. It is an ORDINARY capability (ADR-004, ADR-014) -- a host takes it through the provenance door (ADR-008) exactly as it takes a doctrine bundle, and no interpreter in the kit knows that it exists. Its single document keeps the runtime-surface contract, which is how the kit's served projection finds it: by the contract, never by a list of publishers. Remove it and the host serves this product nothing -- and says so.
 
@@ -221,9 +223,9 @@ Gates declared by this capability:
 
 - **FF-ARROW** — `arrow-held`
 
-### git 1.0.0
+### git 1.1.0
 
-A runtime ADAPTER for git's commit hooks: the one published declaration that carries this product's name. Git is not an agent runtime, and that is the point -- it is the RETURN POINT every runtime, every tool and every human shares: whatever wrote a change, the change is recorded through a commit. Served, it projects a pre-commit hook that hands the STAGED change, as a patch, to the same one judge and the same host-declared edit gates a runtime's write hook uses; activated (the `activate` door sets the setting git reads), an edit made where no pre-write hook exists is still refused before it is recorded. An ordinary capability, taken through the provenance door like any adapter; no interpreter in the kit knows that it exists.
+A runtime ADAPTER for git's commit hooks: the one published declaration that carries this product's name. Git is not an agent runtime, and that is the point -- it is the RETURN POINT every runtime, every tool and every human shares: whatever wrote a change, the change is recorded through a commit. Served, it projects a pre-commit hook that hands the STAGED change, as a patch, to the same one judge and the same host-declared edit gates a runtime's write hook uses; activated (the `activate` door sets the setting git reads), an edit made where no pre-write hook exists is still refused before it is recorded. It publishes a second declaration for the same reason: a worker dispatched to another intelligence writes only inside a tree of its own (ADR-017 decision 5), and WHICH program makes such a tree is a product fact -- so `workspaces.json` says how git makes and withdraws one, and the dispatch port names no program. An ordinary capability, taken through the provenance door like any adapter; no interpreter in the kit knows that it exists.
 
 | path | class | mode |
 | --- | --- | --- |
@@ -231,7 +233,7 @@ A runtime ADAPTER for git's commit hooks: the one published declaration that car
 Gates declared by this capability:
 
 
-### github-actions 1.0.0
+### github-actions 1.1.0
 
 A runtime ADAPTER for GitHub Actions: the one published declaration that carries this product's name. A CI runner is not an agent runtime, and that is the point -- it is the one RETURN POINT nobody at the keyboard can skip: `git commit --no-verify` bypasses every local hook by git's design, but a push or pull request is checked out and judged where no local flag reaches. Served, it projects one workflow file that runs the kit this host CARRIES -- never a fetched one -- as `check` over the tree and as the same one judge, over the pushed or proposed diff, that a runtime's write hook and the commit hook use. An ordinary capability, taken through the provenance door like any adapter; no interpreter in the kit knows that it exists.
 
@@ -243,4 +245,6 @@ Gates declared by this capability:
 
 ## Facts this install was adapted to
 
+- `ci.workflows` = true
+- `ci.workflows.files` = ['tests.yml']
 - `vcs.git` = true
