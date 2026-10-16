@@ -136,10 +136,12 @@ NIST AI RMF rows beyond one `mapping` row (organisational standards). Each is a 
 ## Owed
 
 - Signed releases and a licence (the owner's decisions).
+- Branch protection: an external control only a person with the rights sets; a conformance `gap` row,
+  and `doctor` prints the exact `gh api` command.
 - Codex's session-start, stop and subagent-stop hooks: the event names are a claim (codex-cli 0.154.0 by
   inspection), their payloads and exit semantics unmeasured, so none is served; a session-end token log.
-- Branch protection (an external control a person sets; a conformance `gap` row, `doctor` prints the command).
-- More procedure skills (verify, refactor) beyond kit-skills and the record/review procedures.
 - Codex memory home and Codex hook coverage for pre-exec and pre-spawn (no measured product fact yet).
-- One full acceptance run after the last commit: the last full run was 412/415, the three failures
-  fixed in it and their modules green when run alone.
+- Observed receipts of Claude Code's SessionStart, Stop and SubagentStop hooks firing (served from the
+  documentation; the sub-agent transcript shape is measured) and of stack-kit's `scan` reading the
+  secrets catalogue through `security.secretPatterns` (a claim in the stack-kit adapter).
+- More procedure skills (verify, refactor) beyond kit-skills and the record/review procedures.

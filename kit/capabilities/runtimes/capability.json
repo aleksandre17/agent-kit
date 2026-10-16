@@ -129,7 +129,7 @@
           "id": "owners",
           "purpose": "this host's review owners: path pattern -> owners whose review a change requires",
           "cardinality": "one",
-          "merges_into": "each forge adapter's owners file (a CODEOWNERS span)"
+          "merges_into": "each forge adapter's owners file (a span)"
         }
       ]
     },
