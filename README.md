@@ -1,5 +1,7 @@
 # agent-kit
 
+**Guide:** what the kit does, how, what it generates and how a host extends it -- [docs/guide/](docs/guide/README.md).
+
 A framework that makes a repository ready for AI coding agents and keeps it that way. One command
 installs, into any repository:
 
