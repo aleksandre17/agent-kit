@@ -18,7 +18,23 @@
         "matcher": "Agent|Task",
         "hooks": [{"type": "command", "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" spawn --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; echo 'spawn gate: REFUSED -- no Python interpreter could be run, so the brief was not judged' >&2; exit 2"}]
       }
-    ]
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [{"type": "command", "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" session --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; exit 0"}]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [{"type": "command", "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" ledger --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; exit 0"}]
+      }
+    ]{{#takes.continuity_capsule}},
+    "Stop": [
+      {
+        "hooks": [{"type": "command", "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" stop --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; echo 'stop gate: REFUSED -- no Python interpreter could be run, so the handoff was not judged' >&2; exit 2"}]
+      }
+    ]{{/takes.continuity_capsule}}
   },
   "permissions": {
     "allow": [{{#mcp.allowed}}"mcp__{{server}}__{{tool}}"{{^last}}, {{/last}}{{/mcp.allowed}}],

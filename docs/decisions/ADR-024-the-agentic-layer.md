@@ -75,6 +75,18 @@ declaration, never a kit edit, proven by a fixture the kit does not ship.
 14. **The conformance map** (`conformance`, `FF-CONFORMANCE`): every standard clause is a row with evidence
     and a status; a conformant row without existing evidence is refused; gaps and non-goals are rows.
 
+15. **A product's own session lifecycle** is three more hook verbs on the same posture and receipts:
+    `session` (session-start, advisory) hands one context line -- the kit, how a change is proven, the
+    capsule's handoff -- in the form the surface declares (`hands.context`); `stop` (blocking) refuses a
+    stop over a continuity capsule that breaks its contract, served only where the host takes one (the
+    `contracts` resolver lets a setting test what the host installs); `ledger` (subagent-stop, advisory)
+    reads the finished sub-agent's own transcript through `hands.ledger` -- one turn per declared key,
+    the last line winning -- into one row of requested vs verified model and tokens, a mismatch named.
+    Claude Code's events are from its documentation, its transcript shape measured on this machine;
+    Codex's are a claim and not served. *Rejected:* a stop hook served to every host (a process per turn
+    for nothing to hold); reading the model from the event (the product puts none there); estimating
+    tokens from text.
+
 ## Cuts (the result did not outweigh the cost)
 
 Operating modes; a separate knowledge store; a growth-ladder ceremony beyond the lesson schema; a
@@ -83,10 +95,9 @@ NIST AI RMF rows beyond one `mapping` row (organisational standards). Each is a 
 
 ## Owed
 
-Signed releases and a licence (the owner's decisions); a product's own session-start, stop and
-subagent-stop hooks (served when a host needs them); unmeasured product facts stay claims
-in their adapters.
-- A product's own session-start, stop and subagent-stop hooks; the continuity capsule's stop gate.
+- Signed releases and a licence (the owner's decisions).
+- Codex's session-start, stop and subagent-stop hooks: the event names are a claim (codex-cli 0.154.0 by
+  inspection), their payloads and exit semantics unmeasured, so none is served; a session-end token log.
 - CODEOWNERS and branch protection (external controls; a conformance `gap` row).
 - More procedure skills (verify, refactor) beyond kit-skills and the record/review procedures.
 - Codex memory home and Codex hook coverage for pre-exec and pre-spawn (no measured product fact yet).

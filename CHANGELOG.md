@@ -20,6 +20,10 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - The normative tree (FF-NORMS) and bundle `engineering`; role profiles; extension points (shared
   `extension-points` schema, FF-EXTENSIONS); bundles `change-records`, `execution-graph`, `shared-tree`;
   the conformance map (FF-CONFORMANCE).
+- A product's own session lifecycle: verbs `session` (session-start context line), `stop` (the
+  continuity capsule's stop gate, served only with the capsule; resolver `contracts`) and `ledger`
+  (subagent-stop: requested vs verified model, tokens); hands `context` and `ledger`; claude-code
+  1.10.0 serves SessionStart, SubagentStop and Stop; codex 1.7.1 states its events as a claim.
 
 
 **Changed — every dispatch table is a discovered registry; the core reaches ports only through the root (ADR-023 amendment 5)**

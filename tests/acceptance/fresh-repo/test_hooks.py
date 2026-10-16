@@ -8,7 +8,12 @@ kit, the product's event on stdin, read through the surface's declared hands):
      silent, an oversized one is refused (blocking);
   3. a blocking hook that cannot decide -- a surface nobody declares -- FAILS CLOSED, and every
      invocation leaves one receipt;
-  4. the push gate is served beside the commit gate.
+  4. the push gate is served beside the commit gate;
+  5. a session starts with one context line, in the form the surface declares;
+  6. the stop gate is served only where the host takes a continuity capsule, and there refuses a stop
+     over a capsule that breaks its contract;
+  7. a product's own sub-agent leaves a ledger row -- requested vs verified model, tokens -- read
+     through the surface's declared `hands.ledger`, a mismatch named.
 
 Every key, label, ref and code is read from the declarations and the module that owns it.
 """
@@ -26,13 +31,17 @@ import hooks
 from context import Context
 from test_adapters import ADAPTERS, documents_of, surfaces_of
 from test_pinned_kit import said
-from verbs import guard, spawn
+from verbs import capsule, guard, ledger, session, spawn, stop
 
 STARTER = REPO / "starters" / "standard.json"
 TAKEN = [(STARTER.parent / rel).resolve() for rel in json.loads(STARTER.read_text(encoding="utf-8"))["takes"]]
 SURFACE = next(s for a in ADAPTERS if a.resolve() in TAKEN for s in surfaces_of(a)
                if s.get("hands", {}).get("commands") and s["hands"].get("prompts"))
 COMMAND = next(r for d in TAKEN for doc in documents_of(d, guard.PATTERNS[0]["validates"]) for r in doc["commands"])
+CAPSULE = REPO / "bundles" / "shared-tree"
+SEAT = next(i["target"] for i in json.loads((CAPSULE / "capability.json").read_text(encoding="utf-8"))["installs"]
+            if i.get("validates") == capsule.CONTRACT)
+SETTINGS = next(r["target"] for r in SURFACE["renders"] if r["view"] == "enforcement")
 PACKET = next(p for d in TAKEN for doc in documents_of(d, spawn.PACKETS[0]["validates"]) for p in doc["packets"])
 
 
@@ -52,6 +61,16 @@ class Hooks(Fixtures, unittest.TestCase):
     def started(self):
         host = self.host()
         ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
+        self.assertEqual(0, ran.returncode, said(ran))
+        return host
+
+    def started_with_capsule(self):
+        host = self.host()
+        starter = json.loads(STARTER.read_text(encoding="utf-8"))
+        starter["takes"] = [str((STARTER.parent / t).resolve()) for t in starter["takes"]] + [str(CAPSULE)]
+        written = self._temp("starter-") / "starter.json"
+        written.write_text(json.dumps(starter), encoding="utf-8")
+        ran = self.run_kit(KIT, host, "start", "--path", str(written), "--approve", "acceptance-suite")
         self.assertEqual(0, ran.returncode, said(ran))
         return host
 
@@ -112,6 +131,70 @@ class Hooks(Fixtures, unittest.TestCase):
         commit = next(r for a in ADAPTERS if a.resolve() in TAKEN for s in surfaces_of(a)
                       for r in s["renders"] if r["target"].endswith("pre-commit"))
         self.assertTrue((host / commit["target"].replace("pre-commit", "pre-push")).is_file())
+
+    def test_485_a_session_starts_with_one_context_line_in_the_declared_form(self):
+        host = self.started()
+        served = (host / SETTINGS).read_text(encoding="utf-8")
+        json.loads(served)
+        for module in (session, ledger):
+            self.assertIn(f" {module.__name__.rpartition('.')[2]} --root ", served)
+        ran = self.hook(host, session.__name__.rpartition(".")[2], SURFACE["id"], "{}")
+        self.assertEqual(0, ran.returncode, said(ran))
+        shape = SURFACE["hands"]["context"]["stdout"]
+        head, _, tail = shape.partition("{context}")
+        out = ran.stdout.strip()
+        self.assertTrue(out.startswith(head) and out.endswith(tail), out)
+        self.assertIn(Context(kit_root=KIT, host_root=host).manifest.version, out)
+        self.assertEqual(1, out.count("\n") + 1)
+
+    def test_486_the_stop_gate_is_served_with_the_capsule_and_refuses_a_broken_one(self):
+        name = stop.__name__.rpartition(".")[2]
+        plain = self.started()
+        self.assertNotIn(f" {name} --root ", (plain / SETTINGS).read_text(encoding="utf-8"))
+        self.assertEqual(0, self.hook(plain, name, SURFACE["id"], "{}").returncode)
+        host = self.started_with_capsule()
+        self.assertIn(f" {name} --root ", json.dumps(json.loads((host / SETTINGS).read_text(encoding="utf-8"))))
+        kept = self.hook(host, name, SURFACE["id"], "{}")
+        self.assertEqual(0, kept.returncode, said(kept))
+        value = json.loads((host / SEAT).read_text(encoding="utf-8"))
+        (host / SEAT).write_text(json.dumps({**value, "wip": ["one", "two"]}), encoding="utf-8")
+        broken = self.hook(host, name, SURFACE["id"], "{}")
+        self.assertEqual(SURFACE["hands"]["refusal"]["exit"], broken.returncode, said(broken))
+        self.assertIn(capsule.CapsuleRefused.code, broken.stderr)
+        (host / SEAT).unlink()
+        self.assertEqual(SURFACE["hands"]["refusal"]["exit"], self.hook(host, name, SURFACE["id"], "{}").returncode)
+
+    def test_487_a_products_own_sub_agent_leaves_a_ledger_row_and_a_mismatch_is_named(self):
+        host = self.started()
+        spec = SURFACE["hands"]["ledger"]
+        fields = spec["entries"]["fields"]
+
+        def line(key, asked, ran, spent):
+            row = dict(spec["entries"].get("where") or {})
+            for name, value in ((spec["entries"]["key"], key), (fields[ledger.REQUESTED], asked),
+                                (fields[ledger.RESPONDED], ran), (fields["gen_ai.usage.output_tokens"], spent)):
+                here, parts = row, name.split(".")
+                for part in parts[:-1]:
+                    here = here.setdefault(part, {})
+                here[parts[-1]] = value
+            return json.dumps(row)
+
+        transcript = self._temp("transcript-") / "agent.jsonl"
+        transcript.write_text("\n".join([line("t1", "model-a", "model-a", 3), line("t1", "model-a", "model-a", 7),
+                                         line("t2", "model-a", "model-b", 5)]) + "\n", encoding="utf-8")
+        event = json.loads(_event(spec["transcript"], str(transcript)))
+        event.update(json.loads(_event(spec["agent"], "agent-1")))
+        name = ledger.__name__.rpartition(".")[2]
+        ran = self.hook(host, name, SURFACE["id"], json.dumps(event))
+        self.assertEqual(0, ran.returncode, said(ran))
+        self.assertIn("model-b", ran.stderr)
+        rows = [json.loads(r) for p in host.glob(f"**/{ledger.LEDGER}/{SURFACE['id']}.jsonl")
+                for r in p.read_text(encoding="utf-8").splitlines()]
+        self.assertEqual(1, len(rows))
+        self.assertEqual((2, 12, True), (rows[0]["turns"], rows[0]["gen_ai.usage.output_tokens"], rows[0]["mismatch"]))
+        summary = self.run_kit(KIT, host, name)
+        self.assertEqual(0, summary.returncode, said(summary))
+        self.assertIn("1 run(s), 1 on a model other than the one requested", summary.stdout)
 
 
 if __name__ == "__main__":

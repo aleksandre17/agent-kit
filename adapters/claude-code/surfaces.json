@@ -3,7 +3,7 @@
   "surfaces": [
     {
       "id": "claude-code",
-      "says": "Claude Code reads CLAUDE.md at the repository root as project instructions, and one sub-agent definition per Markdown file under .claude/agents/ -- YAML front-matter carrying name and description, the body as the agent's instructions. Taken from the product's documentation; a claim until a run of the product is observed reading what was served. It reads project settings at .claude/settings.json, whose PreToolUse hooks receive the tool event as JSON on stdin (tool_input.file_path, and content / new_string / edits[].new_string) and refuse the tool call when the command exits 2, its stderr shown to the model. Hook payload keys and the exit-2 refusal are measured on a prior hand-built system on this machine (pre_write_context, post_write_block, pre_exec_block proven by receipt); served by THIS kit, not yet observed. Scoped law: it also reads a CLAUDE.md in a subdirectory when it works on files there (nested memory, loaded on demand) -- taken from the product's memory documentation; UNVERIFIED on this machine until a session is observed citing a served scoped file. Skills: one directory per skill under .claude/skills/ holding SKILL.md (front matter `name`, `description`, optional `allowed-tools`) and its supporting files -- taken from the product's skills documentation (fetched 2026-10-16); a claim until a run is observed loading a served skill. MCP: project servers in .mcp.json (`mcpServers`; stdio `command`/`args`/`env`, http `type`/`url`/`headers`; `${VAR}` expanded in command, args, env, url and headers), approved by `enabledMcpjsonServers` in .claude/settings.json (ignored until the workspace is trusted), tools named `mcp__<server>__<tool>` in `permissions.allow`/`deny` -- taken from the product's MCP and settings documentation (fetched 2026-10-16); a claim until a run is observed. An untrusted server's undeclared tools are ASKED about, not denied: deny outranks allow, so this product cannot deny all but a list -- the strongest it can say is said. Pre-exec and pre-spawn: PreToolUse hooks matching `Bash` (tool_input.command) and `Agent|Task` (tool_input.prompt, tool_input.subagent_type) run `guard` and `spawn` -- taken from the product's hooks documentation; a claim until a receipt shows them fired.",
+      "says": "Claude Code reads CLAUDE.md at the repository root as project instructions, and one sub-agent definition per Markdown file under .claude/agents/ -- YAML front-matter carrying name and description, the body as the agent's instructions. Taken from the product's documentation; a claim until a run of the product is observed reading what was served. It reads project settings at .claude/settings.json, whose PreToolUse hooks receive the tool event as JSON on stdin (tool_input.file_path, and content / new_string / edits[].new_string) and refuse the tool call when the command exits 2, its stderr shown to the model. Hook payload keys and the exit-2 refusal are measured on a prior hand-built system on this machine (pre_write_context, post_write_block, pre_exec_block proven by receipt); served by THIS kit, not yet observed. Scoped law: it also reads a CLAUDE.md in a subdirectory when it works on files there (nested memory, loaded on demand) -- taken from the product's memory documentation; UNVERIFIED on this machine until a session is observed citing a served scoped file. Skills: one directory per skill under .claude/skills/ holding SKILL.md (front matter `name`, `description`, optional `allowed-tools`) and its supporting files -- taken from the product's skills documentation (fetched 2026-10-16); a claim until a run is observed loading a served skill. MCP: project servers in .mcp.json (`mcpServers`; stdio `command`/`args`/`env`, http `type`/`url`/`headers`; `${VAR}` expanded in command, args, env, url and headers), approved by `enabledMcpjsonServers` in .claude/settings.json (ignored until the workspace is trusted), tools named `mcp__<server>__<tool>` in `permissions.allow`/`deny` -- taken from the product's MCP and settings documentation (fetched 2026-10-16); a claim until a run is observed. An untrusted server's undeclared tools are ASKED about, not denied: deny outranks allow, so this product cannot deny all but a list -- the strongest it can say is said. Pre-exec and pre-spawn: PreToolUse hooks matching `Bash` (tool_input.command) and `Agent|Task` (tool_input.prompt, tool_input.subagent_type) run `guard` and `spawn` -- taken from the product's hooks documentation; a claim until a receipt shows them fired. Session lifecycle: SessionStart (matcher startup|resume|clear|compact; plain stdout, or hookSpecificOutput.additionalContext with hookEventName SessionStart, is added to the model's context; exit 2 blocks nothing), Stop (no matcher; exit 2 refuses the stop and its stderr becomes the model's reason to continue; stop_hook_active is true while a stop hook keeps the turn going, and the product ends the turn after 8 consecutive refusals) and SubagentStop (agent_id, agent_type, agent_transcript_path, last_assistant_message; no model and no token field) -- taken from the product's hooks documentation (fetched 2026-10-16); a claim until a receipt shows them fired. The sub-agent transcript's shape is MEASURED on this machine (Claude Code 2.1.301, 2026-10-16, five sub-agent transcripts): lines of type `assistant` carry the top-level `requestedModel`, `message.model`, `message.id` and `message.usage` (input_tokens, output_tokens, cache_read_input_tokens, cache_creation_input_tokens), and one turn is written as several lines sharing a message.id whose usage can differ, the last holding the turn's final count -- so the ledger keeps the last line per id. The stop gate is served only where the host takes a continuity capsule.",
       "renders": [
         {
           "view": "briefing",
@@ -65,7 +65,36 @@
         ],
         "prompts": [
           "tool_input.prompt"
-        ]
+        ],
+        "context": {
+          "stdout": "{\"hookSpecificOutput\": {\"hookEventName\": \"SessionStart\", \"additionalContext\": \"{context}\"}}"
+        },
+        "ledger": {
+          "agent": [
+            "agent_id"
+          ],
+          "name": [
+            "agent_type"
+          ],
+          "transcript": [
+            "agent_transcript_path"
+          ],
+          "provider": "anthropic",
+          "entries": {
+            "where": {
+              "type": "assistant"
+            },
+            "key": "message.id",
+            "fields": {
+              "gen_ai.request.model": "requestedModel",
+              "gen_ai.response.model": "message.model",
+              "gen_ai.usage.input_tokens": "message.usage.input_tokens",
+              "gen_ai.usage.output_tokens": "message.usage.output_tokens",
+              "gen_ai.usage.cache_read.input_tokens": "message.usage.cache_read_input_tokens",
+              "gen_ai.usage.cache_creation.input_tokens": "message.usage.cache_creation_input_tokens"
+            }
+          }
+        }
       },
       "limits": [
         {

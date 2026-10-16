@@ -267,6 +267,11 @@
                 "as": "mcp",
                 "kind": "mcp-servers",
                 "params": {}
+              },
+              {
+                "as": "takes",
+                "kind": "contracts",
+                "params": {}
               }
             ]
           },

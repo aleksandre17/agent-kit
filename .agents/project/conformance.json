@@ -326,10 +326,13 @@
       "id": "h-hook-lifecycle",
       "standard": "harvested: national-accounts",
       "clause": "session-start, stop, subagent ledger, session-end token log",
-      "mechanism": "pre-write, pre-exec, pre-spawn, commit, push hooks; dispatch telemetry is the ledger for dispatched workers",
-      "evidence": [],
+      "mechanism": "pre-write, pre-exec, pre-spawn, commit and push hooks; the product's own session-start (verb session: one context line), stop (verb stop: the continuity capsule's gate, served only with the capsule) and subagent-stop (verb ledger)",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_485",
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_486"
+      ],
       "status": "partial",
-      "why": "session-start/stop/subagent-stop hooks of the product are not served; cost exceeds benefit until a host needs them"
+      "why": "served for Claude Code from its documented events; Codex's event names are a claim (codex-cli 0.154.0 by inspection) and not served; no session-end token log"
     },
     {
       "id": "h-change-coverage",
@@ -476,12 +479,14 @@
       "id": "h-subagent-ledger",
       "standard": "harvested: national-accounts",
       "clause": "subagent ledger: requested vs verified model, tokens",
-      "mechanism": "dispatch telemetry: gen_ai.request.model vs gen_ai.response.model, usage",
+      "mechanism": "dispatch telemetry for dispatched workers; verb ledger on a product's subagent-stop reads the sub-agent's transcript through hands.ledger: gen_ai.request.model vs gen_ai.response.model, usage, a mismatch named",
       "evidence": [
-        "test:tests/acceptance/fresh-repo/test_trial.py::test_470"
+        "test:tests/acceptance/fresh-repo/test_trial.py::test_470",
+        "test:tests/acceptance/fresh-repo/test_hooks.py::test_487",
+        "test:tests/unit/test_subagent_ledger.py::test_a_requested_model_the_turns_did_not_run_on_is_named"
       ],
-      "status": "partial",
-      "why": "for dispatched workers; a product's in-session subagents are not read"
+      "status": "conformant",
+      "why": "both kinds of sub-agent leave a row; the transcript shape is measured on Claude Code 2.1.301"
     },
     {
       "id": "h-spawn-gate",
