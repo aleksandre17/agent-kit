@@ -44,6 +44,10 @@ python .agents/kit/interpreters/cli.py render --root .     # rebuild every gener
 python platform/kits/agent-kit/kit/interpreters/cli.py upgrade --root . --plan   # take a newer kit
 ```
 
+A host that keeps the kit as a submodule need not carry a second copy of it: `python
+platform/kits/agent-kit/kit/interpreters/cli.py upgrade --root . --mode referenced --approve "<you>"` runs it
+from the submodule at its pinned commit, and removes `.agents/kit/` once `check` is green.
+
 A kit can also be read straight from where it is published, at an exact revision, instead of a
 submodule: `--kit "git+https://github.com/aleksandre17/agent-kit.git@<tag>#subdirectory=kit"` (it is
 cloned into a scratch outside the host, read with `git archive`, and refused unless it equals its lock).

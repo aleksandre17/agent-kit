@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"{{vendor}}/interpreters/cli.py\" judge --root . --surface {{surface}}; fi; done; echo 'edit gate: REFUSED -- no Python interpreter could be run, so the change was not judged' >&2; exit 2"
+            "command": "[ -f \"{{vendor}}/interpreters/cli.py\" ] || { echo 'edit gate: REFUSED -- the kit this host runs is absent at {{vendor}}/{{#referenced}}; run: git submodule update --init {{repository}}{{/referenced}}' >&2; exit 2; }; for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"{{vendor}}/interpreters/cli.py\" judge --root . --surface {{surface}}; fi; done; echo 'edit gate: REFUSED -- no Python interpreter could be run, so the change was not judged' >&2; exit 2"
           }
         ]
       }

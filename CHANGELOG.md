@@ -24,11 +24,16 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   continuity capsule's stop gate, served only with the capsule; resolver `contracts`) and `ledger`
   (subagent-stop: requested vs verified model, tokens); hands `context` and `ledger`; claude-code
   1.10.0 serves SessionStart, SubagentStop and Stop; codex 1.7.1 states its events as a claim.
-- Review owners: contract `owners`, resolver `declared`, view `owners`; github-actions 1.3.0 seeds
-  `.agents/project/owners.json` (extension point) and serves a span of `.github/CODEOWNERS`; surface
+- Review owners: contract `owners`, resolver `declared`, view `owners`; the core seeds
+  `.agents/project/owners.json` (extension point); github-actions serves a span of `.github/CODEOWNERS`; surface
   `controls` -- `doctor` names branch protection NOT ASSERTED with the exact `gh api` command.
 - Commit messages: contract `message-rules`, gate FF-MESSAGE-RULE (calibrated), verb `message`
   (KIT0082); git 1.3.0 serves `.githooks/commit-msg`; policy `conventional-commits` 1.0.0 (opt-in).
+- Referenced install mode: a host holding the kit in its own tree (a submodule) runs it from there with
+  no copy -- lock `reference` (path, repository, commit, takes); `upgrade --mode referenced`; module
+  `reference`; check, the entry point and every served hook refuse an absent, moved or edited kit
+  (KIT0083, with the restoring command); a hook whose host cannot be read keeps its posture. The owners
+  seed moved to the core (`runtimes`), beside `mcp-servers`.
 
 
 **Changed — every dispatch table is a discovered registry; the core reaches ports only through the root (ADR-023 amendment 5)**

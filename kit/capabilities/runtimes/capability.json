@@ -120,6 +120,22 @@
     {
       "mode": "seed",
       "class": "binding",
+      "target": ".agents/project/owners.json",
+      "source": "capabilities/runtimes/payload/owners-local.json",
+      "validates": "owners",
+      "reads_as": "host_owners",
+      "points": [
+        {
+          "id": "owners",
+          "purpose": "this host's review owners: path pattern -> owners whose review a change requires",
+          "cardinality": "one",
+          "merges_into": "each forge adapter's owners file (a CODEOWNERS span)"
+        }
+      ]
+    },
+    {
+      "mode": "seed",
+      "class": "binding",
       "target": ".agents/project/skills.json",
       "source": "capabilities/runtimes/payload/skills-local.json",
       "validates": "skills",

@@ -6,33 +6,33 @@
         "hooks": [
           {
             "type": "command",
-            "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" judge --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; echo 'edit gate: REFUSED -- no Python interpreter could be run, so the edit was not judged' >&2; exit 2"
+            "command": "[ -f \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" ] || { echo 'edit gate: REFUSED: the kit this host runs is absent at {{vendor}}/{{#referenced}} -- run: git submodule update --init {{repository}}{{/referenced}}' >&2; exit 2; }; for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" judge --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; echo 'edit gate: REFUSED -- no Python interpreter could be run, so the edit was not judged' >&2; exit 2"
           }
         ]
       },
       {
         "matcher": "Bash",
-        "hooks": [{"type": "command", "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" guard --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; exit 0"}]
+        "hooks": [{"type": "command", "command": "[ -f \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" ] || { echo 'guard: not run: the kit this host runs is absent at {{vendor}}/{{#referenced}} -- run: git submodule update --init {{repository}}{{/referenced}}' >&2; exit 0; }; for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" guard --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; exit 0"}]
       },
       {
         "matcher": "Agent|Task",
-        "hooks": [{"type": "command", "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" spawn --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; echo 'spawn gate: REFUSED -- no Python interpreter could be run, so the brief was not judged' >&2; exit 2"}]
+        "hooks": [{"type": "command", "command": "[ -f \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" ] || { echo 'spawn gate: REFUSED: the kit this host runs is absent at {{vendor}}/{{#referenced}} -- run: git submodule update --init {{repository}}{{/referenced}}' >&2; exit 2; }; for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" spawn --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; echo 'spawn gate: REFUSED -- no Python interpreter could be run, so the brief was not judged' >&2; exit 2"}]
       }
     ],
     "SessionStart": [
       {
         "matcher": "startup|resume|clear|compact",
-        "hooks": [{"type": "command", "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" session --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; exit 0"}]
+        "hooks": [{"type": "command", "command": "[ -f \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" ] || { echo 'session: not run: the kit this host runs is absent at {{vendor}}/{{#referenced}} -- run: git submodule update --init {{repository}}{{/referenced}}' >&2; exit 0; }; for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" session --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; exit 0"}]
       }
     ],
     "SubagentStop": [
       {
-        "hooks": [{"type": "command", "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" ledger --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; exit 0"}]
+        "hooks": [{"type": "command", "command": "[ -f \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" ] || { echo 'ledger: not run: the kit this host runs is absent at {{vendor}}/{{#referenced}} -- run: git submodule update --init {{repository}}{{/referenced}}' >&2; exit 0; }; for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" ledger --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; exit 0"}]
       }
     ]{{#takes.continuity_capsule}},
     "Stop": [
       {
-        "hooks": [{"type": "command", "command": "for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" stop --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; echo 'stop gate: REFUSED -- no Python interpreter could be run, so the handoff was not judged' >&2; exit 2"}]
+        "hooks": [{"type": "command", "command": "[ -f \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" ] || { echo 'stop gate: REFUSED: the kit this host runs is absent at {{vendor}}/{{#referenced}} -- run: git submodule update --init {{repository}}{{/referenced}}' >&2; exit 2; }; for p in python3 python py; do if \"$p\" -c 'import sys' >/dev/null 2>&1; then exec \"$p\" \"$CLAUDE_PROJECT_DIR/{{vendor}}/interpreters/cli.py\" stop --root \"$CLAUDE_PROJECT_DIR\" --surface {{surface}}; fi; done; echo 'stop gate: REFUSED -- no Python interpreter could be run, so the handoff was not judged' >&2; exit 2"}]
       }
     ]{{/takes.continuity_capsule}}
   },

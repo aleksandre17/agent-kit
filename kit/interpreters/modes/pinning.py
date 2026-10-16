@@ -6,20 +6,26 @@ Decided by `pin`, which owns what a release is.
 from __future__ import annotations
 
 import pin
+import reference
 from installmodes import Mode
 
 
 def _foresee_tree(ws, item, state):
     """The kit itself: created where nothing is pinned, KEPT where the host already holds exactly
     this kit intact, replaced otherwise -- and refused here, in the plan, where it cannot be done
-    honestly (ADR-016)."""
+    honestly (ADR-016). A REFERENCED host is given no copy: the kit it holds in its own tree is the
+    pinned one, and only `upgrade --mode referenced` pins another commit (ADR-024 decision 18)."""
     tree, lock = pin.seats(state["manifest"])
+    if reference.of_host(state["manifest"], ws.root) is not None:
+        return "keep"
     return pin.foresee(state["manifest"], ws, tree, lock)
 
 
 def _foresee_lock(ws, item, state):
     """The seat of the lock the host was given: one act with the tree, so one decision."""
     tree, lock = pin.seats(state["manifest"])
+    if reference.of_host(state["manifest"], ws.root) is not None:
+        return "keep"
     return pin.foresee_lock(state["manifest"], ws, tree, lock)
 
 

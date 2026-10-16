@@ -15,6 +15,7 @@ import sys
 
 import capsule  # the verb that owns the capsule: its seat, its contract, its refusal
 import hooks
+import reference
 
 SUMMARY = "at a session's start: one context line -- the kit, how a change is proven, the capsule's handoff (advisory)"
 MUTATES = False
@@ -24,7 +25,7 @@ STDOUT_IS_THE_PRODUCTS = True
 
 
 def line(ctx) -> str:
-    vendor = ctx.manifest.plane("vendor")
+    vendor = reference.runs_from(ctx)
     said = [f"kit {ctx.manifest.version} governs this tree: the briefing carries its laws and commands; "
             f"`python {vendor}/interpreters/cli.py check --root .` proves a change"]
     seat = next((i["target"] for c in ctx.enabled_capabilities() for i in c.installs

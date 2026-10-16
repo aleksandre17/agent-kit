@@ -15,6 +15,29 @@
     "newline": { "type": "string", "minLength": 1 },
     "taken_at": { "type": "string", "minLength": 1 },
     "count": { "type": "integer" },
+    "reference": {
+      "description": "Present only in a REFERENCED host's lock (ADR-024 decision 18): the host holds the kit in its own tree at a pinned commit and keeps no copy. `path` is the host-relative directory of the kit's payload, `repository` the host-relative top level of the repository holding it (a submodule), `commit` the commit pinned; `takes` says where each taken capability is read from -- its digest's one home stays the provenance pin. The kit at `path` is judged against `files`, exactly as a vendored copy is.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "repository", "commit", "takes"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^[^/].*[^/]$" },
+        "repository": { "type": "string", "minLength": 1 },
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$" },
+        "takes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "path"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "path": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
     "files": {
       "type": "array",
       "items": {

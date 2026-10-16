@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import reference
 import validation
 from errors import KitError
 
@@ -57,8 +58,7 @@ class TakeShadows(ManifestError):
 #: The install modes through which governance DECLARES where a host's takes live: the plane that
 #: holds each verbatim copy, and the one document that states what was taken (ADR-018). Named here
 #: as `pin` names its own modes -- the targets, file names and namespace are the declaration's.
-TAKEN_MODE = "taken"
-TAKEN_DECLARATION_MODE = "taken-declaration"
+TAKEN_MODE, TAKEN_DECLARATION_MODE = reference.TAKEN, reference.TAKEN_DECLARATION
 
 
 def composed(kit_root: Path, host_root: Path) -> "Manifest":
@@ -81,12 +81,21 @@ def composed(kit_root: Path, host_root: Path) -> "Manifest":
     issued._require_valid(document, statement["validates"], statement["target"])
     if not document["takes"]:
         return issued
+    # A REFERENCED host reads a take from where its lock says the host holds it, and keeps no copy
+    # (ADR-024 decision 18); a vendored host reads its take plane. Absent where referenced is refused
+    # with the command that restores it -- never read as a host that took nothing.
+    held = reference.of_host(issued, host_root)
+    referenced = reference.homes(held, host_root)
     takes = []
     for row in document["takes"]:
         prefix = f"{plane['namespace']}{row['id']}/"
+        home = referenced.get(row["id"], Path(host_root) / plane["target"] / row["id"])
+        if row["id"] in referenced and not home.is_dir():
+            raise reference.ReferenceRefused(reference.absent(held, f"{row['id']}: no capability at "
+                                                                     f"{home.as_posix()}"))
         takes.append({"id": row["id"], "prefix": prefix,
                       "declaration": prefix + plane["declaration"],
-                      "home": Path(host_root) / plane["target"] / row["id"],
+                      "home": home,
                       "row": row})
     return Manifest(kit_root, takes)
 

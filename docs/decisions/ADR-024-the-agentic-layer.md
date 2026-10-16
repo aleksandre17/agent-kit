@@ -87,11 +87,12 @@ declaration, never a kit edit, proven by a fixture the kit does not ship.
     for nothing to hold); reading the model from the event (the product puts none there); estimating
     tokens from text.
 
-16. **Review owners are declared once** (`owners`: pattern -> owners), an extension point the CI adapter
-    seeds and serves into a span of the host's own `.github/CODEOWNERS` through a generic `declared`
+16. **Review owners are declared once** (`owners`: pattern -> owners), an extension point the core seeds
+    (beside `mcp-servers`) and the CI adapter serves into a span of the host's own `.github/CODEOWNERS` through a generic `declared`
     resolver (a view of any contract's rows). What only a person can set outside the tree -- branch
     protection -- is a surface `controls` row: `doctor` names it NOT ASSERTED with the exact command, and
-    the kit never runs it. *Rejected:* a CODEOWNERS file the kit owns whole (a host's own owners would be
+    the kit never runs it. *Rejected:* the adapter seeding the list (a taken adapter's seed is absent until its `init`, and a second
+    forge would seed it twice); a CODEOWNERS file the kit owns whole (a host's own owners would be
     shadowed); setting protection through the API (a credential and a remote, irreversible act); a
     resolver per contract.
 
@@ -102,6 +103,21 @@ declaration, never a kit edit, proven by a fixture the kit does not ship.
     A host that takes no rule is held to nothing; an uncalibrated rule is named and never applied.
     *Rejected:* a message check in the edit judge (a message is not an edit and has no path); a hard-wired
     Conventional Commits regex in the hook (a policy, not a mechanism).
+
+18. **A host that holds the kit in its own tree is REFERENCED, never given a copy** (owner's request: no
+    duplicated sources). Its lock keeps `files` -- the digest of every kit path -- and gains `reference`:
+    the payload's path, the repository holding it (a submodule) and the commit pinned, and where each
+    take is read from (a take's digest keeps its one home, the provenance pin). Served settings run the
+    kit from that path; `check` holds it present, at the commit and byte for byte the lock; the entry
+    point refuses a referenced kit that differs from the lock before any verb runs (KIT0083), save the
+    verbs that pin a new state (`upgrade`, `lock`); a missing kit fails closed with `git submodule update
+    --init <repo>`, in `check` and in every served hook (which now also refuses an absent kit instead of
+    letting a product read a missing file as a non-blocking error). `upgrade --mode referenced` migrates
+    a vendored host -- refused for a kit outside the host, with uncommitted changes, or a take whose source
+    is not the pinned bytes -- and removes the copies only after the referenced host checks green.
+    Vendored stays the default. *Rejected:* copying the take digests into the lock (two homes); a symlink
+    from `.agents/kit` (a second path to one tree, unportable on Windows); trusting the submodule's commit
+    alone (a working tree can differ from its commit).
 
 ## Cuts (the result did not outweigh the cost)
 

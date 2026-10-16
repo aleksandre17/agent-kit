@@ -3,6 +3,10 @@
 # git runs this before a push, once core.hooksPath names this directory. It runs this host's `check`:
 # a red check blocks the push, so what leaves the machine is what the host's gates hold. It fails
 # CLOSED: a check it cannot run blocks the push too.
+[ -f "{{vendor}}/interpreters/cli.py" ] || {
+  echo "push gate: REFUSED -- the kit this host runs is absent at {{vendor}}/{{#referenced}}; run: git submodule update --init {{repository}}{{/referenced}}" >&2
+  exit 1
+}
 for candidate in python3 python py; do
   if "$candidate" -c "import sys" >/dev/null 2>&1; then
     "$candidate" "{{vendor}}/interpreters/cli.py" check --root . >/dev/null || {

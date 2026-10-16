@@ -39,6 +39,19 @@
       "why": "integrity pinned; authenticity not established until releases are signed (owner's decision)"
     },
     {
+      "id": "one-pinned-source",
+      "standard": "harvested: owner request (2026-10-16)",
+      "clause": "one source for the pinned kit: no vendored copy beside a submodule",
+      "mechanism": "referenced install mode: the lock references the kit in the host's tree at a commit; check, the entry point and the served hooks hold it to the lock",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_referenced.py::test_560",
+        "test:tests/acceptance/fresh-repo/test_referenced.py::test_561",
+        "test:tests/acceptance/fresh-repo/test_referenced.py::test_562"
+      ],
+      "status": "conformant",
+      "why": "a referenced host carries one copy of the kit, and an edited, moved or missing one is refused"
+    },
+    {
       "id": "llm05-output-handling",
       "standard": "OWASP Top 10 for LLM Applications (2025)",
       "clause": "LLM05 Improper output handling",
@@ -414,7 +427,7 @@
       "id": "h-codeowners",
       "standard": "harvested: gesotat-system",
       "clause": "CODEOWNERS",
-      "mechanism": "contract owners (a host extension point seeded by the github-actions adapter), served into a span of the host's .github/CODEOWNERS by the generic `declared` resolver",
+      "mechanism": "contract owners (a host extension point the core seeds), served into a span of the host's .github/CODEOWNERS by the github-actions adapter through the generic `declared` resolver",
       "evidence": [
         "test:tests/acceptance/fresh-repo/test_ci_projection.py::test_298"
       ],

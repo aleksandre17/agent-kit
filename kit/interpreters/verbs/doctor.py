@@ -18,6 +18,7 @@ import sys
 
 import declared
 import hooks
+import reference
 import serving
 
 SUMMARY = "prove every served hook refuses a throwaway violation, and read what each product fired"
@@ -57,7 +58,7 @@ def run(ctx, args) -> int:
         print("doctor: this host declares no edit gate, so there is nothing a hook could refuse")
         _controls(ctx, served)
         return 0
-    cli = ctx.workspace.path(ctx.manifest.plane("vendor")) / "interpreters" / "cli.py"
+    cli = ctx.workspace.path(reference.runs_from(ctx)) / "interpreters" / "cli.py"
     dead = 0
     for surface in declared.rules(ctx, *hooks.SURFACES):
         hand = surface.get("hands")

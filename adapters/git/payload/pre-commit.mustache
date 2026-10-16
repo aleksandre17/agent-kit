@@ -8,6 +8,10 @@ staged=$(git -c core.quotepath=off diff --cached --no-color --no-ext-diff --no-r
   echo "commit gate: REFUSED -- the staged change could not be read, so it was not judged" >&2
   exit 1
 }
+[ -f "{{vendor}}/interpreters/cli.py" ] || {
+  echo "commit gate: REFUSED -- the kit this host runs is absent at {{vendor}}/{{#referenced}}; run: git submodule update --init {{repository}}{{/referenced}}" >&2
+  exit 1
+}
 for candidate in python3 python py; do
   if "$candidate" -c "import sys" >/dev/null 2>&1; then
     printf '%s\n' "$staged" | "$candidate" "{{vendor}}/interpreters/cli.py" judge --root . --surface {{surface}}

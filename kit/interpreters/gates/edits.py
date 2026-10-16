@@ -18,6 +18,7 @@ from __future__ import annotations
 import re
 
 import declared
+import reference
 
 #: The field by which an edit-gate document carries its rows -- the schema's word, one home.
 RULES = "gates"
@@ -136,7 +137,8 @@ def _published_roots(ctx) -> list:
     roots = [ctx.manifest.plane("vendor") + "/"]
     roots += [i["target"] for c in ctx.manifest.capabilities for i in c.installs
               if i["mode"] == "taken"]
-    return roots
+    # A referenced host holds the publisher's bytes in its own tree instead (ADR-024 decision 18).
+    return roots + reference.roots(ctx)
 
 
 def _judged(ctx, params, edits):

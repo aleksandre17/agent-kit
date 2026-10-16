@@ -35,6 +35,8 @@ from pathlib import Path
 
 import activated
 import ephemeral
+import pin
+import reference
 import validation
 
 _SCHEMA_PATH = Path(__file__).resolve().parents[2] / "schemas" / "layout.schema.json"
@@ -156,6 +158,19 @@ def observed(rows, roots) -> tuple:
     return [r for r in rows if r not in inside], inside
 
 
+def referenced(ctx, rows) -> list:
+    """A REFERENCED host keeps no pinned copy: the drawn copy is REALISED as the kit the host holds in
+    its own tree, by the decision that made it so (ADR-024 decision 18) -- and is held present there."""
+    held = reference.of(ctx)
+    seats = pin.seats(ctx.manifest)
+    if not held or seats is None:
+        return rows
+    realised = {"path": held["path"].rstrip("/") + "/",
+                "decision": "ADR-024 decision 18 (a referenced host holds the kit in its own tree)"}
+    return [{**row, "realised_as": realised} if row["path"] == seats[0] and "pending" not in row else row
+            for row in rows]
+
+
 def _layout_floor_present(ctx, params):
     capabilities = ctx.enabled_capabilities()
     rows, errors = host_rows(ctx.manifest.capabilities, params["document"], params.get("side"))
@@ -163,6 +178,7 @@ def _layout_floor_present(ctx, params):
         return [f"no enabled capability ships a layout document named {params['document']!r}"]
     through = getattr(ctx, "through", None) or {}
     rows, unmeasured = observed(rows, [ctx.manifest.plane(ephemeral.OBSERVED)])
+    rows = referenced(ctx, rows)
     for entry in unmeasured:
         print(f"        NOT MEASURED  {entry['path']}  (observed state, which no version control carries"
               + (f"; this check runs through {through['id']}, whose clone is declared "

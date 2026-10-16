@@ -20,6 +20,7 @@ import json
 import collection
 import declared
 import derivation
+import reference
 import resolution
 import serving
 import template
@@ -199,11 +200,14 @@ def _targets(ctx, item: dict, view: dict, produced: dict, capabilities) -> list:
     views = _views(spec)
     found, owner = [], {}
     for row, surface in _served(ctx, spec, view):
-        # `vendor` is where this host carries its pinned kit -- the manifest's own plane, so a
-        # served setting that runs a vendored interpreter never spells that path a second time.
+        # `vendor` is where this host's hooks run the kit from -- the manifest's own vendor plane,
+        # or the kit a REFERENCED host holds in its own tree (ADR-024 decision 18) -- so a served
+        # setting never spells that path a second time. `referenced` names the repository holding it.
+        held = reference.of(ctx)
         base = {"kit_version": view["kit_version"], "runtime": row[collection.IDENTITY],
                 "surface": surface[collection.IDENTITY],
-                "vendor": ctx.manifest.plane("vendor"),
+                "vendor": reference.runs_from(ctx),
+                "referenced": {"repository": held["repository"]} if held else False,
                 # The two characters a template cannot write next to a tag (`${{{name}}}` would read
                 # as a triple stache): a product's own reference syntax is spelled with these.
                 "lbrace": "{", "rbrace": "}"}
