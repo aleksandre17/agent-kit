@@ -1,7 +1,7 @@
 # Verification — how a change is proven in this host
 
 > **Generated. Do not edit.** Recomputed from what this host's own tree declared and what this
-> kit consumes of it. Kit 0.1.6.
+> kit consumes of it. Kit 0.2.0.
 >
 > Nothing on this page was authored for this host. Every value below was READ from the host's
 > tree by a declared detector, recorded in the reading, and is reprinted here with the moment it

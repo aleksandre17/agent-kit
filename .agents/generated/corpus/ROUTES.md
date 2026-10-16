@@ -1,7 +1,7 @@
 # Routes — how a reader reaches what they need
 
 > **Generated. Do not edit.** Rebuilt from scratch on every render, from the corpus map's own rows
-> and from the route graph those rows imply. Kit 0.1.6. An edit here is erased by the next
+> and from the route graph those rows imply. Kit 0.2.0. An edit here is erased by the next
 > render and reported by `check` under `FF-KIT-PROJECTION`.
 >
 > The triggers below are quoted from the `read_when` field the map rows already carry. No question
@@ -11,7 +11,7 @@
 
 ## The walk
 
-35 node(s) joined by 1 edge(s) -- 1 written as a link one document resolves to another, the rest conferred by an index on the place it answers for -- walked from 3 document(s) resident in 3 declared entry place(s); 1 link(s) named nothing this reading reaches.
+36 node(s) joined by 1 edge(s) -- 1 written as a link one document resolves to another, the rest conferred by an index on the place it answers for -- walked from 3 document(s) resident in 3 declared entry place(s); 1 link(s) named nothing this reading reaches.
 
 An entry is a place a row of the map MARKS as one. A graph whose roots are everything has no
 unreachable node and measures nothing, so the roots are the host's declaration and never this
@@ -54,7 +54,7 @@ No index answers for this place.
 - read when: how does a runtime adapter work
 - read when: what lives outside the kit
 
-### `docs/decisions/` — 24 document(s), holding `decision`
+### `docs/decisions/` — 25 document(s), holding `decision`
 
 - read when: what binds
 - read when: why was this decided
@@ -75,8 +75,8 @@ No index answers for this place.
 
 - **0 hop(s) from an entry** — 3 document(s)
 
-3 of 35 document(s) are reachable from a declared entry;
-32 are reached by nothing. 1 link(s) named nothing this
+3 of 36 document(s) are reachable from a declared entry;
+33 are reached by nothing. 1 link(s) named nothing this
 reading reaches.
 
 A depth is a distance and never a verdict. The number that would turn a distance into a verdict

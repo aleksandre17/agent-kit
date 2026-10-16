@@ -163,27 +163,33 @@ def _run(args, host: Path, kit_root: Path) -> int:
             ctx.require_approved()
         code = module.run(ctx, args)
         return code
-    except BaseException as failed:
-        if posture is None or isinstance(failed, (SystemExit, KeyboardInterrupt)):
-            raise
-        code = hooks.failed_exit(ctx, getattr(args, "surface", None), posture)
-        message = f"{type(failed).__name__}: {failed}"
-        print(f"kit: {args.verb} could not decide ({message}); its posture is {posture}, so it exits {code}",
-              file=sys.stderr)
-        return code
     except KitError as refusal:
         # A refusal is an ENDING. The run was turned away, said why, and did not vanish -- and a
         # record unable to tell those two apart would be the one lie this exists to prevent.
         code, message = refusal.exit_code, str(refusal)
-        raise
+        if posture is None:
+            raise
+        code = _undecided(ctx, args, posture, refusal)
+        return code
     except BaseException as unforeseen:  # noqa: BLE001 -- re-raised; only the record is added
         message = f"{type(unforeseen).__name__}: {unforeseen}"
-        raise
+        if posture is None or isinstance(unforeseen, (SystemExit, KeyboardInterrupt)):
+            raise
+        code = _undecided(ctx, args, posture, unforeseen)
+        return code
     finally:
         observation.closed(watching, code, message)
         if posture is not None:
             hooks.receipt(ctx, args.verb, getattr(args, "surface", None), code, started,
                           canary=bool(getattr(args, "canary", False)))
+
+
+def _undecided(ctx, args, posture, failed) -> int:
+    """What a hook verb that could not decide exits with: its declared posture, applied here."""
+    code = hooks.failed_exit(ctx, getattr(args, "surface", None), posture)
+    print(f"kit: {args.verb} could not decide ({type(failed).__name__}: {failed}); its posture is {posture}, "
+          f"so it exits {code}", file=sys.stderr)
+    return code
 
 
 def _ids(text: str) -> list:

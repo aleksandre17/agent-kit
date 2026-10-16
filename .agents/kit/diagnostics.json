@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 73,
+  "issued": 81,
   "codes": [
     {
       "code": "KIT0001",
@@ -440,6 +440,54 @@
       "status": "active",
       "title": "a starter that is not one, or a walk that stopped",
       "explanation": "A starter is a published document naming what a new host takes, serves and activates (ADR-023). The one given does not honour the starter schema, names a directory that declares no capability, or one act of its walk exited non-zero -- the act and its output are named. What already landed stays; each act is safe to walk again."
+    },
+    {
+      "code": "KIT0074",
+      "status": "active",
+      "title": "a skill that leaves its directory, or a name two skills hold",
+      "explanation": "A skill's body, files and chapters lie inside the directory of the document that declares it, and one name is one skill (ADR-024)."
+    },
+    {
+      "code": "KIT0075",
+      "status": "active",
+      "title": "an MCP server at a trust level nobody declares",
+      "explanation": "A server's trust names a level of a declared trust vocabulary; a tool is declared once (ADR-024)."
+    },
+    {
+      "code": "KIT0076",
+      "status": "active",
+      "title": "the context document missing, or a layer nobody measures",
+      "explanation": "Exactly one document keeps the context contract, and every served layer is one the context gate measures (ADR-024)."
+    },
+    {
+      "code": "KIT0077",
+      "status": "active",
+      "title": "an eval that is not one, or a fixture that could not be made",
+      "explanation": "An eval keeps the eval contract and names capabilities this host has taken; its fixture is started by the kit's own verbs (ADR-024)."
+    },
+    {
+      "code": "KIT0078",
+      "status": "active",
+      "title": "a hook through a surface that declares no hands",
+      "explanation": "A hook acts only through a surface whose adapter says where its product puts the act (ADR-024)."
+    },
+    {
+      "code": "KIT0079",
+      "status": "active",
+      "title": "a review range that cannot be read honestly",
+      "explanation": "Give both --base and --head, on a clean checkout of the head (ADR-024)."
+    },
+    {
+      "code": "KIT0080",
+      "status": "active",
+      "title": "an extension point nobody declares, or a member name that is not one",
+      "explanation": "A host extends the kit only at a declared point, with a name of lowercase letters, digits and hyphens (ADR-024)."
+    },
+    {
+      "code": "KIT0081",
+      "status": "active",
+      "title": "a continuity capsule that breaks its contract, or a stale write",
+      "explanation": "A capsule write lands only as the next revision over the one on disk, with one item in progress (ADR-024)."
     }
   ]
 }

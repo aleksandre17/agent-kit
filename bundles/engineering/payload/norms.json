@@ -539,7 +539,7 @@
     "id": "engineering@1.0.0#proactive-review",
     "genre": "rule",
     "title": "Proactive review",
-    "says": "Each case starts and ends with a search for defects and opportunities along the whole chain it touches; every finding is registered in the same session with priority, owner and status.",
+    "says": "Each case starts and ends with a search for defects and opportunities along the whole chain it touches; every finding is registered in the same session with priority, owner and status (whole-system integrity, cardinal E6).",
     "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
     "derives_from": "engineering@1.0.0#review",
     "modality": "SHOULD",
@@ -657,5 +657,98 @@
     "derives_from": "engineering@1.0.0#economy",
     "modality": "SHOULD",
     "subject": "cache-order"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#whole-system-integrity",
+    "genre": "cardinal",
+    "title": "Cardinal E6 — No change is made in isolation",
+    "says": "A part is correct only as part of the whole: before and after a change, its full path is traced -- upstream producers, downstream consumers and every boundary it crosses (contract, data, permission, configuration, deployment, documentation, tests, operations). Defects live in the seams; a narrow view is how they are made.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#integration",
+    "genre": "doctrine",
+    "title": "Doctrine — Integration",
+    "says": "The rules about the seams between parts and the communication across them.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#whole-system-integrity"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#consumers-named-and-proven",
+    "genre": "rule",
+    "title": "Consumers named and proven",
+    "says": "A change to a published element (an API, a schema, an event, a config key, a file contract, a CLI verb) names every consumer and proves each one still holds.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#integration",
+    "modality": "MUST",
+    "subject": "consumers",
+    "procedure": "engineering-standards",
+    "enforced_by": [
+      "gate:FF-VERIFICATION-MEASURABLE",
+      "gate:FF-CHANGE-RECORDS"
+    ]
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#fix-at-the-owner",
+    "genre": "rule",
+    "title": "Fix at the owner",
+    "says": "A defect is fixed where it is owned -- its root cause -- never patched at a consumer to hide it.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#integration",
+    "modality": "SHOULD",
+    "subject": "fix-location",
+    "procedure": "engineering-standards"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#seam-tests",
+    "genre": "rule",
+    "title": "Every seam is tested",
+    "says": "Every boundary a change crosses carries a contract or integration test; a green unit suite with an untested seam is NOT_ASSERTED for that seam.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#integration",
+    "modality": "SHOULD",
+    "subject": "seam-tests",
+    "procedure": "engineering-standards"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#done-end-to-end",
+    "genre": "rule",
+    "title": "Done end to end",
+    "says": "A change is done when its whole path is green, not when its own file is.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#integration",
+    "modality": "SHOULD",
+    "subject": "done",
+    "procedure": "engineering-standards"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#handoff-states-the-contract",
+    "genre": "rule",
+    "title": "A handoff states its contract",
+    "says": "Work handed to another person or agent states its assumptions, the interfaces it touched and what each consumer must do -- in the return packet, the card or the ADR; silence is not agreement.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#integration",
+    "modality": "SHOULD",
+    "subject": "handoff",
+    "procedure": "engineering-standards"
+  },
+  {
+    "schema_version": 1,
+    "id": "engineering@1.0.0#impact-before-change",
+    "genre": "rule",
+    "title": "Impact before change",
+    "says": "A non-trivial change starts with an impact map -- what reads it, what it reads, what breaks if it changes -- recorded with the change.",
+    "publisher": "agent-kit (generic engineering doctrine, distilled from GeoStat's engineering quality doctrine)",
+    "derives_from": "engineering@1.0.0#integration",
+    "modality": "SHOULD",
+    "subject": "impact",
+    "procedure": "engineering-standards"
   }
 ]

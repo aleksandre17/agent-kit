@@ -21,11 +21,13 @@ from pathlib import Path
 
 import doors
 import extensions
+import hostlock
 import validation
 
 SUMMARY = "scaffold a host extension from its declared point, list the points, or merge a newer template"
 MUTATES = True
-REQUIRES_APPROVED_HOST = True
+#: The hold is read first (a host another run holds is named as the cause), then the approval.
+REQUIRES_APPROVED_HOST = False
 ARGUMENTS = [
     ("--list", {"action": "store_true", "help": "list every extension point, where it goes and its status"}),
     ("--json", {"action": "store_true", "help": "with --list: print the registry in the shared extension-points shape"}),
@@ -67,7 +69,7 @@ def _merged(base: str, new: str, host: str):
 def _list(ctx, args) -> int:
     rows = extensions.registry(ctx)
     if getattr(args, "json", False):
-        document = {"schema_version": 1, "points": [{k: v for k, v in r.items() if k not in ("capability", "root")}
+        document = {"schema_version": ctx.manifest.version_of("extension-points"), "points": [{k: v for k, v in r.items() if k not in ("capability", "root")}
                                                      for r in rows]}
         errors = validation.validate(document, ctx.manifest.schema("extension-points"))
         if errors:
@@ -128,6 +130,8 @@ def merge(ctx, args) -> int:
 
 
 def run(ctx, args) -> int:
+    hostlock.arrive(ctx, args)
+    ctx.require_approved()
     if getattr(args, "list", False):
         return _list(ctx, args)
     if getattr(args, "merge", False):

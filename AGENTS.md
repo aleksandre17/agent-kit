@@ -6,7 +6,7 @@ reads it for writing again. The lines between the two markers below are the kit'
 recomputed from this host's declarations on every render, and an edit there is refused.
 
 <!-- kit:begin briefing -- computed from this host's declaration; anything written between these two lines is replaced unread -->
-*Served to the runtime `codex` through the surface `codex` · kit 0.1.6. Each
+*Served to the runtime `codex` through the surface `codex` · kit 0.2.0. Each
 section is a projection of a declaration this host owns -- change the declaration, never this span.*
 
 ## Project laws -- this host's numbered bindings

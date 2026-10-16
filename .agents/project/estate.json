@@ -408,7 +408,7 @@
       "path": "docs/work/evidence/"
     }
   ],
-  "kit_version": "0.1.6",
+  "kit_version": "0.2.0",
   "newline": "lf",
   "relocated": [
     {
@@ -545,5 +545,5 @@
       "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-10-16T13:53:03+00:00"
+  "taken_at": "2026-10-16T14:16:30+00:00"
 }

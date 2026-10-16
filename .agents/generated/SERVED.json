@@ -16,13 +16,13 @@
     {
       "path": ".githooks/pre-commit",
       "runtime": "git-commit",
-      "sha256": "f007fa28088e93b3b547968d74d5bb5dfdeedefd7f69c5cf1997eec9f92e9790",
+      "sha256": "766b4f3c8a6a565364fef5c37740e15b94e6a8943fc241bfc6ea6a21a00b8960",
       "surface": "git-commit"
     },
     {
       "path": ".github/workflows/kit-gates.yml",
       "runtime": "github-actions",
-      "sha256": "3ed81dcba2df32802dcf71b8ff31481818403560f31e2ac8afdbbe4cdb506970",
+      "sha256": "4531fc1a464f99692a464dd670627df5de449b4c73a9d93b8d41974e71b0c15d",
       "surface": "github-actions"
     },
     {
@@ -30,7 +30,7 @@
       "runtime": "codex",
       "seed_sha256": "19d5827da319c1a4a75940e859424e227c01ec1261ab6829f83a427f23e8ba9a",
       "span": "briefing",
-      "span_sha256": "35dc1289b44a325d39a6a9b39479c260ba20b8858a27d47ece5ed1b64cb21b1a",
+      "span_sha256": "0b27c2c7f4d8ef9e38f5dc8c14361cf90526441faae1590ba95215f99eb37107",
       "surface": "codex"
     },
     {
@@ -38,7 +38,7 @@
       "runtime": "claude-code",
       "seed_sha256": "19d5827da319c1a4a75940e859424e227c01ec1261ab6829f83a427f23e8ba9a",
       "span": "briefing",
-      "span_sha256": "58ddbd5866acbdb1c7e96efbdf9c1d0958c432266941e522442996e5e6f31b81",
+      "span_sha256": "2fcb840727caddc87259561130dc80c9ad64586250aa57e86a4494444937e3d9",
       "surface": "claude-code"
     },
     {
@@ -46,7 +46,7 @@
       "runtime": "codex",
       "seed_sha256": "358409e3f6ac6fe078528d0d52923fa798266b3aed31f1a3f23f7d9edc53cff1",
       "span": "scoped-briefing",
-      "span_sha256": "34ab12123c7cfdbd8cfb1d69b421562f61c4f83338fddae49a78ca5fe218e1aa",
+      "span_sha256": "3641a11ddf51aca97628ba6e0b0e2774fce73e421fd2d61dd305ce196d9ae084",
       "surface": "codex"
     },
     {
@@ -54,7 +54,7 @@
       "runtime": "claude-code",
       "seed_sha256": "358409e3f6ac6fe078528d0d52923fa798266b3aed31f1a3f23f7d9edc53cff1",
       "span": "scoped-briefing",
-      "span_sha256": "968e52cc03a670c35c1c377b52965613728b8836f27598ae1799692d69b63d9b",
+      "span_sha256": "f76767a0d60d3aebd9cb7172c6c1af457ccd18734e24db2333e7c97ddf29f317",
       "surface": "claude-code"
     }
   ]

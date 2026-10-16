@@ -1,7 +1,7 @@
 # Agent framework — installed surface
 
 > PROJECTION. Do not edit: delete this whole plane and run `render`, and it comes back byte-identical.
-> Kit version 0.1.6 · project status accepted.
+> Kit version 0.2.0 · project status accepted.
 
 ## Capabilities installed here
 

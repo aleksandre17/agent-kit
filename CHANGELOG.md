@@ -7,6 +7,21 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 
 ## 0.2.0 — unreleased
 
+**Added — the agentic layer: every token serves the result (ADR-024)**
+- Skills (`skills`, served per product, extended by hosts with chapters); bundles `kit-skills`,
+  `engineering-standards` (16 chapters).
+- MCP servers by trust (`mcp-servers`, `mcp-trust`), served to `.mcp.json` / `.codex/config.toml`.
+- Context measured per layer (FF-CONTEXT), stable-first order, task router seed.
+- Policies `untrusted-content`, `memory`, `recovery-points`, `spawn-packets`; `secrets` 1.1.0.
+- Task classes, route cells with actor/model/effort/caps/escalation, adapter `options`; stop conditions.
+- Verbs `trial` (agent evals; bundle `agent-evals`), `guard`, `spawn`, `doctor`, `extend`, `review`,
+  `capsule`; hook posture and receipts; git pre-push; CI `git diff --check`.
+- GenAI telemetry names in run records; FF-FRONTIER (tokens per accepted change, script candidates).
+- The normative tree (FF-NORMS) and bundle `engineering`; role profiles; extension points (shared
+  `extension-points` schema, FF-EXTENSIONS); bundles `change-records`, `execution-graph`, `shared-tree`;
+  the conformance map (FF-CONFORMANCE).
+
+
 **Changed — every dispatch table is a discovered registry; the core reaches ports only through the root (ADR-023 amendment 5)**
 - Families `modes/`, `shapes/`, `readers/`, `resolvers/`; `installmodes`, `shaping`, `serving`,
   `dispatching`, `taskrecord`, `routegraph`; `ports/sources.py`; `ports/runtime.py` and `accepted.py`

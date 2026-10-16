@@ -128,7 +128,8 @@ def _fixture(ctx, value, scratch: Path) -> Path:
                    if i.get("validates") == dispatching.ROUTES["validates"]), None)
     if routes:
         cell = {"id": WHO, **value["route"]}
-        (host / routes).write_text(json.dumps({"schema_version": 1, "cells": [cell], "profiles": []}) + "\n",
+        (host / routes).write_text(json.dumps({"schema_version": fixture.manifest.version_of(dispatching.ROUTES["validates"]),
+                                               "cells": [cell], "profiles": []}) + "\n",
                                    encoding="utf-8")
     for rel, text in value.get("files", {}).items():
         (host / rel).parent.mkdir(parents=True, exist_ok=True)
@@ -200,7 +201,7 @@ def run(ctx, args) -> int:
             found = _judged(ctx, value, host)
         finally:
             shutil.rmtree(scratch, ignore_errors=True)
-        found.update({"schema_version": 1, "id": value["id"], "adapter": value["adapter"],
+        found.update({"id": value["id"], "adapter": value["adapter"],
                       "at": ctx.clock.now(), "inputs": digest(ctx, value.get("inputs", []))})
         ctx.workspace.scoped((ephemeral.place(ctx, SUBJECT) + "/",)).write_json(_record(ctx, value["id"]), found)
         print(f"  {found['verdict'].upper()}  tempted={found['tempted']} refused_by={found['refused_by']} "

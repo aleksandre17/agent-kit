@@ -1,7 +1,7 @@
 # Quality — what this host declared it judges, and what has never been judged
 
 > PROJECTION. Do not edit: delete this whole plane and run `render`, and it comes back byte-identical.
-> Kit version 0.1.6 · project status accepted.
+> Kit version 0.2.0 · project status accepted.
 
 **No judgement is listed on this page, and that is deliberate.** A judgement changes after it is
 written — it is opened `UNJUDGED` and rewritten when something judges — so a page that listed
