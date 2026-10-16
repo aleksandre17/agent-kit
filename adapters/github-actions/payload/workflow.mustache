@@ -57,3 +57,9 @@ jobs:
             exit 1
           }
           printf '%s\n' "$change" | "$python" "{{vendor}}/interpreters/cli.py" judge --root . --surface {{surface}}
+          # Whitespace errors the change introduces (trailing blanks, a conflict marker left behind):
+          # git's own check over the same range (a first push has no range to check).
+          [ "$base" = "$(git hash-object -t tree /dev/null)" ] || git diff --check "$base" HEAD || {
+            echo "kit gates: REFUSED -- the change introduces whitespace errors or a conflict marker (git diff --check)" >&2
+            exit 1
+          }
