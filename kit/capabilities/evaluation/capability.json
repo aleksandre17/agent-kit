@@ -5,10 +5,17 @@
   "summary": "Declares the GRAMMAR of judgement and never a judgement. A run's receipt proves that it fired; this is the other half -- whether it HIT -- and that question is domain, so the framework ships the shape of a rubric, the verb that evaluates, the schema of a quality receipt and the vocabulary of a verdict, while every case, every criterion and every threshold belongs to the host. What it therefore ships is a ZERO MEASURE: the declaration arrives with no rubric, no case and no judge in it, and the surface says so in those words. An evaluation page that reports nothing because nothing was declared reads exactly like one reporting that everything is fine, and this capability exists so that the two can never be confused. The blank is materialised rather than implied: a judgement is opened UNJUDGED the moment a case and a rubric are known to need each other, so `never judged` is a record that can be counted instead of an absence that cannot.",
   "doctrine": "capabilities/evaluation/payload/evaluation.md",
   "requires": [],
-  "provides": ["evaluation"],
+  "provides": [
+    "evaluation"
+  ],
   "conflicts": [],
   "declares": {
-    "schemas": ["quality", "judgement", "consumption"]
+    "schemas": [
+      "quality",
+      "judgement",
+      "consumption",
+      "eval"
+    ]
   },
   "documents": [
     {
@@ -24,7 +31,9 @@
   ],
   "consumes": {
     "id": "verification",
-    "sources": ["verification_readings"],
+    "sources": [
+      "verification_readings"
+    ],
     "list": "readings",
     "names": "reads"
   },
@@ -83,7 +92,9 @@
       "id": "FF-VERIFICATION-MEASURABLE",
       "kind": "consumed-fact-declared",
       "params": {
-        "sources": ["verification_readings"],
+        "sources": [
+          "verification_readings"
+        ],
         "list": "readings",
         "names": "reads",
         "because": "no reading of any host can ever bind this row, so its declared gap is printed on every tree in the world and reads exactly like an honest measurement of a host that declares nothing. A renamed fact, a withdrawn detector and a typo are indistinguishable from here.",
@@ -95,7 +106,10 @@
       "kind": "record-disposition",
       "params": {
         "over": "judgements",
-        "sources": ["judgement_dispositions", "judgement_readings"]
+        "sources": [
+          "judgement_dispositions",
+          "judgement_readings"
+        ]
       }
     },
     {
@@ -107,28 +121,43 @@
           {
             "id": "a-verdict-about-a-case-nobody-declared",
             "field": "case",
-            "among": { "source": "evaluation_local", "list": "cases" },
+            "among": {
+              "source": "evaluation_local",
+              "list": "cases"
+            },
             "because": "the case this judgement is about is not one this host declares. Either it was renamed and this record now certifies a subject that no longer exists, or it was judged against something the declaration never carried -- and both read, from here, exactly like a case that passed.",
             "instead": "declared before it is judged, and re-judged when it is renamed. A verdict outlives the thing it was about, which is what makes a stale one so persuasive.",
-            "proves": { "case": "a-case-this-host-does-not-declare" },
+            "proves": {
+              "case": "a-case-this-host-does-not-declare"
+            },
             "admits": {}
           },
           {
             "id": "a-verdict-against-a-rubric-nobody-declared",
             "field": "rubric",
-            "among": { "source": "evaluation_local", "list": "rubrics" },
+            "among": {
+              "source": "evaluation_local",
+              "list": "rubrics"
+            },
             "because": "the question this verdict answers is not a question this host asks. Two rubrics can reach opposite verdicts on one case and both be right, so a verdict whose rubric cannot be found is not a reading at all.",
             "instead": "declared as a rubric first, so that whoever disagrees with the verdict can read what was asked.",
-            "proves": { "rubric": "a-rubric-this-host-does-not-declare" },
+            "proves": {
+              "rubric": "a-rubric-this-host-does-not-declare"
+            },
             "admits": {}
           },
           {
             "id": "a-verdict-by-a-judge-nobody-declared",
             "field": "judge",
-            "among": { "source": "evaluation_local", "list": "judges" },
+            "among": {
+              "source": "evaluation_local",
+              "list": "judges"
+            },
             "because": "a verdict with an unknown author cannot be questioned, only believed -- and nothing in this kit measures a judge against anything, so the roster is the whole of what a host knows about who is judging it.",
             "instead": "declared on the roster, with the reason this host trusts it, before its verdicts are read as evidence.",
-            "proves": { "judge": "a-judge-this-host-does-not-declare" },
+            "proves": {
+              "judge": "a-judge-this-host-does-not-declare"
+            },
             "admits": {}
           }
         ]

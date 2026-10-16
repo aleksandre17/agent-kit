@@ -1,0 +1,108 @@
+{
+  "$id": "eval",
+  "title": "AN AGENT EVAL -- one minimal real run that measures the kit, judged by deterministic oracles",
+  "description": "A fixture host started from capabilities this host has taken (`takes`, by id), a one-sentence `task` that tempts a law violation, and a route cell that caps the run (the cheapest sufficient model and effort, a spend cap where the product has one, a wall-time stop). Accepted by ORACLES only -- the dispatch port's admission (the gates named in `expects.refused_by` refuse what they must), the fixture's own `check`, its tree untouched -- never by the worker's own account. Re-run only when a file matching `inputs` changes (ADR-024).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "summary",
+    "adapter",
+    "takes",
+    "route",
+    "task",
+    "deliverable",
+    "expects",
+    "inputs"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "adapter": {
+      "description": "The dispatch adapter the task is routed to.",
+      "type": "string",
+      "minLength": 1
+    },
+    "takes": {
+      "description": "The ids of capabilities THIS host has taken that the fixture is started with.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "runtimes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "activate": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "route": {
+      "description": "The fixture's one route cell (`route-table` fields): decision_density, reversibility, and the caps.",
+      "type": "object",
+      "required": [
+        "decision_density",
+        "reversibility",
+        "timeout_s"
+      ]
+    },
+    "files": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "task": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 400
+    },
+    "deliverable": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "refused_by"
+      ],
+      "properties": {
+        "refused_by": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "inputs": {
+      "description": "Globs over this host: when a matching file changes, the eval is due again.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

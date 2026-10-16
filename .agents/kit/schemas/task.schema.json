@@ -309,6 +309,10 @@
           "minLength": 1
         }
       }
+    },
+    "telemetry": {
+      "description": "The run's cost and identity under OpenTelemetry GenAI semantic-convention attribute names (gen_ai.operation.name, gen_ai.provider.name, gen_ai.request.model, gen_ai.response.model, gen_ai.usage.input_tokens, gen_ai.usage.output_tokens), read from what the adapter declares its product reports; `reported: false` where it reports nothing. Names only -- no exporter (ADR-024).",
+      "type": "object"
     }
   }
 }

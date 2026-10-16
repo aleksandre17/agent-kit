@@ -58,6 +58,7 @@ worker started with a silently blank instruction is the most expensive silence t
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import uuid
 
@@ -278,6 +279,8 @@ def _turn(ctx, packet, adapter, workspaces, record, tree_rel, block, values, run
 
     artifacts = [_artifact(part, worker, ctx.workspace.path(dispatching.home(ctx, packet["id"], dispatching.ARTIFACT)))
                  for part in adapter["returns"]]
+    # What the run cost, under the GenAI semantic conventions' names, from what the product reports.
+    record.value["telemetry"] = dispatching.telemetry(adapter, artifacts, record.value.get("route") or {})
 
     # The other half of the isolation (ADR-017 decision 5). It is read whatever the worker's own
     # ending was: a worker that failed still wrote, one that only asked a question still wrote, and
@@ -439,9 +442,14 @@ def _ran(argv, cwd, stdin, timeout=None):
     """The one boundary this port crosses to start anything. No shell: the declaration is a fixed
     argv and stays one. A program that is absent is a REFUSAL, never a worker that quietly did
     nothing -- what is not observed is declared, never fabricated."""
+    parts = [str(part) for part in argv]
+    # The program is LOCATED the way the machine's own shell would find it -- on Windows that is by
+    # PATHEXT, so a product installed as a `.cmd` shim (an npm package) is found -- and still run with
+    # no shell: the argv stays fixed.
+    parts[0] = shutil.which(parts[0]) or parts[0]
     try:
-        return subprocess.run([str(part) for part in argv], cwd=str(cwd), input=stdin,
-                              capture_output=True, text=True, timeout=timeout)
+        return subprocess.run(parts, cwd=str(cwd), input=stdin, capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", timeout=timeout)
     except subprocess.TimeoutExpired as exc:
         # A declared bound that passed is an ending, stated: never a hang, never a silent success.
         return subprocess.CompletedProcess(exc.cmd, 124, exc.stdout or "", f"timed out after {timeout}s")

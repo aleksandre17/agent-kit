@@ -88,7 +88,7 @@ def _index(chapters: list, stances: list) -> str:
 
 def _skills(ctx, params) -> list:
     members, owners, extensions = {}, {}, []
-    for name, document, base, read in origins(ctx, params.get("contract", CONTRACT)):
+    for name, document, base, read in origins(ctx, CONTRACT):
         extensions += [(name, base, read, row) for row in document.get(EXTENDS, [])]
         for skill in document.get(LIST, []):
             where = f"{name}: skill {skill['id']!r}"

@@ -204,6 +204,40 @@
                 }
               }
             }
+          },
+          "usage": {
+            "description": "What this product reports about a run's cost, read out of one of its declared artifacts into the run record under OpenTelemetry GenAI semantic-convention attribute names (`gen_ai.*`). `fields` maps an attribute to a dotted key into the artifact's JSON (`.@keys` takes an object's first key); `jsonl` reads a JSON-lines artifact, taking the LAST line whose fields equal `where`. A product that reports nothing declares nothing, and the record says the usage was not reported. A claim until a run is observed.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "from",
+              "provider",
+              "fields"
+            ],
+            "properties": {
+              "from": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provider": {
+                "description": "`gen_ai.provider.name`, in the semantic conventions' own vocabulary.",
+                "type": "string",
+                "minLength": 1
+              },
+              "jsonl": {
+                "type": "boolean"
+              },
+              "where": {
+                "type": "object"
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
           }
         }
       }

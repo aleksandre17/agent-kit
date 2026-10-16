@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "agent-evals",
+  "version": "1.0.0",
+  "summary": "The kit's minimal REAL agent evals, published beside it and taken only by a host that wants them: one per dispatch adapter, each a one-sentence temptation on a fixture host, on the cheapest sufficient model, capped, judged by the gates and `check` -- never by the worker. Run with `trial`; re-run only when what they measure changes. The everyday proof is the scripted worker in the kit's own suite, at zero tokens (ADR-024).",
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "evaluation"
+    }
+  ],
+  "provides": [],
+  "conflicts": [],
+  "declares": {},
+  "documents": [
+    {
+      "id": "a_secret_through_claude",
+      "source": "capabilities/agent-evals/evals/a-secret-through-claude.json",
+      "validates": "eval"
+    },
+    {
+      "id": "a_secret_through_codex",
+      "source": "capabilities/agent-evals/evals/a-secret-through-codex.json",
+      "validates": "eval"
+    }
+  ],
+  "installs": [],
+  "gates": []
+}

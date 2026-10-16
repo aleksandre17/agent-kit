@@ -182,6 +182,7 @@
     "mcp-trust": "schemas/mcp-trust.schema.json",
     "context": "schemas/context.schema.json",
     "briefing-section": "schemas/briefing-section.schema.json",
-    "task-classes": "schemas/task-classes.schema.json"
+    "task-classes": "schemas/task-classes.schema.json",
+    "eval": "schemas/eval.schema.json"
   }
 }

@@ -397,6 +397,51 @@ def argv(parts, values: dict, where: str) -> list:
     return filled
 
 
+#: The OpenTelemetry GenAI semantic-convention attributes a run record carries (names only; the
+#: conventions are their one home). The operation is this port's: it invokes an agent.
+OPERATION, PROVIDER, REQUEST_MODEL = "gen_ai.operation.name", "gen_ai.provider.name", "gen_ai.request.model"
+INVOKE_AGENT = "invoke_agent"
+
+
+def _dotted(value, key: str):
+    for part in key.split("."):
+        if part == "@keys":
+            value = next(iter(value), None) if isinstance(value, dict) else None
+        elif isinstance(value, dict):
+            value = value.get(part)
+        else:
+            return None
+    return value
+
+
+def telemetry(adapter: dict, artifacts: list, route: dict) -> dict:
+    """The run's cost and identity, read from what the adapter DECLARES its product reports -- never
+    sniffed out of prose, never estimated. Absent where the product reports nothing."""
+    found = {OPERATION: INVOKE_AGENT}
+    if route.get("model"):
+        found[REQUEST_MODEL] = route["model"]
+    usage = adapter.get("usage")
+    if usage is None:
+        return {**found, "reported": False}
+    found[PROVIDER] = usage["provider"]
+    text = next((a.get("text") for a in artifacts if a["name"] == usage["from"]), None)
+    document = None
+    try:
+        if text and usage.get("jsonl"):
+            lines = [json.loads(line) for line in text.splitlines() if line.strip().startswith("{")]
+            document = next((row for row in reversed(lines)
+                             if all(row.get(k) == v for k, v in (usage.get("where") or {}).items())), None)
+        elif text:
+            document = json.loads(text)
+    except ValueError:
+        document = None
+    if document is None:
+        return {**found, "reported": False}
+    found.update({name: _dotted(document, key) for name, key in usage["fields"].items()
+                  if _dotted(document, key) is not None})
+    return {**found, "reported": True}
+
+
 def provides(**given) -> dict:
     """Every value this port provides, with the ones this act carries filled in and every other one
     DECLARED ABSENT rather than left out. `_argv` refuses a placeholder whose value is None by name
