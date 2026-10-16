@@ -1,11 +1,11 @@
 {
   "algorithm": "sha256",
-  "count": 340,
+  "count": 341,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "62a846c3ac298009b9987f408f913d342dceb8d7c3375e67dbef2512f4aa269f",
+      "digest": "f9c45c5be8e3e39f1b276ab67d2b112a77d30a134d124a177fced8bd417b9d46",
       "path": "MANIFEST.json"
     },
     {
@@ -833,7 +833,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "67bdabbfb4e808406e741ced6ed2318f048a05922d35c55b20a278a634fa5d31",
+      "digest": "9b864e647b1714e8b176375ee6c27b84feecd26161f273f88ea81e30e96a5871",
       "path": "interpreters/gates/norms.py"
     },
     {
@@ -1175,7 +1175,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "704230659a99d180d984756b9984fa46d13c9f1c82b63d2e72e068e0b9c70042",
+      "digest": "92a2e6257db858d6391560cf03f1797fd96706dfb03d3279c64a4bd549cf7372",
       "path": "interpreters/reference.py"
     },
     {
@@ -1517,7 +1517,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "10d35de83947ce91cfe7401e1df7131bc782f6b1ba52eccb89c5ff08bc72e807",
+      "digest": "09480c23e48f59afc7e680caa3de3361815523ada8a035da764f048ef19ee5d5",
       "path": "interpreters/verbs/upgrade.py"
     },
     {
@@ -1595,7 +1595,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "c7ef53d3cdbf6e3714baa5e9a619ca15e08521f9a6e3dde5acc7f46eab1b7cd4",
+      "digest": "c6aaf00763571e701c29a988cc88ec6f7d83e17c6f663db85615531e0bd28fa3",
       "path": "schemas/cardinal.schema.json"
     },
     {
@@ -1693,6 +1693,12 @@
       "class": "declaration",
       "digest": "e98e775403817cbca0da770ddf652ca350c7f5ceafbbcd1806693a6c1ef4d581",
       "path": "schemas/edit-gate.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "cdb225661e2c76051ecadda5e8a510f6660563650f7e4fee2fd26f03fba167b6",
+      "path": "schemas/enforcers.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -2046,5 +2052,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T18:26:25+00:00"
+  "taken_at": "2026-10-16T19:19:58+00:00"
 }

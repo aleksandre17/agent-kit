@@ -45,6 +45,12 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   the briefing's law list is rendered from them (`.agents/generated/LAWS.md`, resolver `numbered`); the
   law page `.agents/project/doctrine/laws.md` is deprecated -- no longer seeded, served while present, FF-LAWS
   fails both authored or a gap in the numbers; `upgrade --mode laws` moves each numbered law into a rule.
+- A referenced host stays referenced: a plain `upgrade` is `--mode referenced`; `--mode vendored` returns it to
+  copies by name. A take re-released at a newer version in the submodule is taken again in the same walk;
+  changed bytes under one version stay KIT0032 (ADR-024 decision 22).
+- Enforcers an adapter vouches for (contract `enforcers`): adapter `stack-kit` 1.2.0 vouches for each
+  `commands.<name>` the host's `stack-kit.json` declares as `stack-kit:<name>`, so a MUST may name it
+  (ADR-024 decision 23).
 
 
 **Changed — every dispatch table is a discovered registry; the core reaches ports only through the root (ADR-023 amendment 5)**

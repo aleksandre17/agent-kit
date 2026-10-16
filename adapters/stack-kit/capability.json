@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "id": "stack-kit",
-  "version": "1.1.0",
-  "summary": "An ADAPTER for stack-kit, the manifest-driven build and delivery kit: the one published declaration that carries its name. It brings a detector that reads the commands a host declares in `stack-kit.json` (`commands.test`, `commands.build`), so the briefing every runtime reads says how a change is built and proven. An ordinary capability, taken like any adapter; no interpreter in the kit knows that it exists. It is also the BRIDGE for secrets (one catalogue, two judges): stack-kit's `scan` (tree and history, in CI) reads the secrets policy's calibrated edit-gate document by the path a host declares in `stack-kit.json` under `security.secretPatterns` -- `policies/secrets/payload/edit-gates.json` as published (`.agents/taken/secrets/payload/edit-gates.json` in a vendored host), contract `kit/schemas/edit-gate.schema.json` (gates[].paths, forbids, proves, admits) -- so the edit hook, the commit gate and the scan judge one list. A claim about stack-kit until a scan is observed reading it.",
+  "version": "1.2.0",
+  "summary": "An ADAPTER for stack-kit, the manifest-driven build and delivery kit: the one published declaration that carries its name. It brings a detector that reads the commands a host declares in `stack-kit.json` (`commands.test`, `commands.build`), so the briefing every runtime reads says how a change is built and proven -- and it VOUCHES for each command the host's manifest declares under `commands` as an enforcer a MUST may name (`stack-kit:test`, `stack-kit:build`, `stack-kit:validate`; ADR-024), read from that manifest by path, so a law the host's build tool holds can be a MUST. An ordinary capability, taken like any adapter; no interpreter in the kit knows that it exists. It is also the BRIDGE for secrets (one catalogue, two judges): stack-kit's `scan` (tree and history, in CI) reads the secrets policy's calibrated edit-gate document by the path a host declares in `stack-kit.json` under `security.secretPatterns` -- `policies/secrets/payload/edit-gates.json` as published (`.agents/taken/secrets/payload/edit-gates.json` in a vendored host), contract `kit/schemas/edit-gate.schema.json` (gates[].paths, forbids, proves, admits) -- so the edit hook, the commit gate and the scan judge one list. A claim about stack-kit until a scan is observed reading it.",
   "requires": [],
   "provides": [],
   "conflicts": [],
@@ -12,6 +12,11 @@
       "id": "stack_kit_commands",
       "source": "capabilities/stack-kit/stack-kit-commands.json",
       "validates": "detector"
+    },
+    {
+      "id": "stack_kit_enforcers",
+      "source": "capabilities/stack-kit/stack-kit-enforcers.json",
+      "validates": "enforcers"
     }
   ],
   "installs": [],

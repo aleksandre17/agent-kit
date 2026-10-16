@@ -9,7 +9,7 @@ genre (ADR-024):
 L0 cardinal     a principle, never waived
 L1 doctrine     a concern area (architecture, contract, data, security, testing, delivery, ...)
 L2 rule         an RFC 2119 modality: MUST (needs an enforcer), SHOULD (deviation needs a recorded reason), MAY
-L3 enforcement  an edit gate, a gate or a verb that holds a MUST (`enforced_by`)
+L3 enforcement  an edit gate, a gate, a verb, or an adapter's enforcer that holds a MUST (`enforced_by`)
 L4 procedure    a skill that says how to apply a doctrine
 ```
 
@@ -34,6 +34,22 @@ The cardinals are:
 - E6: whole-system integrity.
 
 Addresses carry the release, for example `engineering@1.1.0#fail-closed`.
+
+## Enforcers a MUST may name
+
+| Form | Accepted when |
+|---|---|
+| `gate:<id>` | a gate of an enabled capability has that id |
+| `edit-gate:<id>` | an edit gate in force has that id |
+| `verb:<name>` | the kit has that verb |
+| `<prefix>:<name>` | a taken adapter vouches for it, and the host declares it |
+
+An adapter vouches by shipping a document of contract `enforcers`: a `prefix`, a host JSON file
+(`path`) and a `pointer` into it. Each key under the pointer with a non-empty value is an enforcer.
+The stack-kit adapter vouches for every command in the host's `stack-kit.json` `commands` block:
+`stack-kit:test`, `stack-kit:build`, `stack-kit:validate`. A host whose manifest does not declare
+`commands.test` gets NT-UNENFORCED for a MUST that names only `stack-kit:test`. The core names no
+product (ADR-024 decision 23).
 
 ## A host's laws
 

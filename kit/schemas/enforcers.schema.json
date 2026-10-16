@@ -1,0 +1,16 @@
+{
+  "$id": "enforcers",
+  "title": "Enforcers an adapter vouches for in a host (data, never code)",
+  "description": "A taken adapter's declaration of the enforcers a MUST may name that the adapter can find in the host (ADR-024): every key of the object at `pointer` in the host's JSON file `path` whose value is not empty is accepted as `<prefix>:<key>`. A key the host does not declare is no enforcer. The kit's core names no product; the product's name is this document's `prefix`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "prefix", "path", "pointer"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "summary": { "type": "string" },
+    "prefix": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "path": { "type": "string", "minLength": 1 },
+    "pointer": { "type": "string", "minLength": 1 }
+  }
+}

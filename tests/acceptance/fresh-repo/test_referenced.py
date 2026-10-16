@@ -28,6 +28,7 @@ from harness import KIT, REPO, Fixtures, ship
 
 import hooks
 import pin
+import provenance
 import reference
 from manifest import Manifest
 from test_adapters import RECORD
@@ -149,6 +150,70 @@ class Referenced(Fixtures, unittest.TestCase):
         self.assertIn(f"[{reference.ReferenceRefused.code}]", dirty.stderr)
         self.assertTrue((host / TREE).is_dir(), "a refused reference removed the vendored kit")
 
+
+    def assertReferenced(self, host, source):
+        held = json.loads((host / SEAT).read_text(encoding="utf-8")).get(reference.FIELD)
+        self.assertIsNotNone(held, "the lock lost its reference block")
+        self.assertEqual(git(source, "rev-parse", "HEAD").stdout.strip(), held["commit"])
+        self.assertFalse((host / TREE).exists(), "the vendored kit was re-created")
+        for take in held["takes"]:
+            self.assertFalse((host / TAKEN_PLANE / take["id"]).exists(), f"{take['id']} was copied again")
+        self.assertEqual(0, self.kit(source, host, "check").returncode)
+        return held
+
+    def bump(self, source, capability="stack-kit"):
+        """The submodule advances: a taken capability is re-released at a newer version."""
+        declaration = source / "adapters" / capability / "capability.json"
+        raw = json.loads(declaration.read_text(encoding="utf-8"))
+        major, minor, patch = (int(n) for n in raw["version"].split("."))
+        raw["version"] = f"{major}.{minor}.{patch + 1}"
+        raw["summary"] += " Re-released."
+        declaration.write_text(json.dumps(raw, indent=2) + "\n", encoding="utf-8")
+        git(source, "commit", "--quiet", "-am", f"{capability} {raw['version']}")
+        return raw["version"]
+
+    def test_564_a_plain_upgrade_on_a_referenced_host_keeps_it_referenced(self):
+        host, source = self.referenced()
+        plain = self.kit(source, host, "upgrade", "--approve", "acceptance-suite")
+        self.assertEqual(0, plain.returncode, said(plain))
+        self.assertReferenced(host, source)
+
+    def test_565_an_advanced_submodule_with_a_newer_take_is_carried_in_one_walk(self):
+        host, source = self.referenced()
+        version = self.bump(source)
+        unapproved = self.kit(source, host, "upgrade", "--mode", "referenced")
+        self.assertNotEqual(0, unapproved.returncode)
+        self.assertIn(f"stack-kit@{version}", unapproved.stdout + unapproved.stderr)
+        carried = self.kit(source, host, "upgrade", "--mode", "referenced", "--approve", "acceptance-suite")
+        self.assertEqual(0, carried.returncode, said(carried))
+        self.assertReferenced(host, source)
+        estate = next(p for p in (host / ".agents").rglob("*.json") if '"taken"' in p.read_text(encoding="utf-8")
+                      and '"pinned_by"' in p.read_text(encoding="utf-8"))
+        pins = {p["capability"]: p for p in json.loads(estate.read_text(encoding="utf-8"))["taken"]}
+        self.assertEqual(version, pins["stack-kit"]["version"])
+        self.assertIn("supersedes", pins["stack-kit"])
+        self.assertEqual(0, self.kit(source, host, "start", "--path", str(source / "starters" / "standard.json"),
+                                     "--approve", "acceptance-suite").returncode)
+
+    def test_566_changed_bytes_under_the_same_version_stay_drift(self):
+        host, source = self.referenced()
+        declaration = source / "adapters" / "stack-kit" / "capability.json"
+        declaration.write_bytes(declaration.read_bytes() + b"\n")
+        git(source, "commit", "--quiet", "-am", "same version, other bytes")
+        drift = self.kit(source, host, "upgrade", "--mode", "referenced", "--approve", "acceptance-suite")
+        self.assertNotEqual(0, drift.returncode)
+        self.assertIn(f"[{provenance.ProvenanceRefused.code}]", drift.stderr)
+
+    def test_567_only_a_vendored_mode_asked_by_name_returns_the_copies(self):
+        host, source = self.referenced()
+        held = json.loads((host / SEAT).read_text(encoding="utf-8"))[reference.FIELD]
+        back = self.kit(source, host, "upgrade", "--mode", "vendored", "--approve", "acceptance-suite")
+        self.assertEqual(0, back.returncode, said(back))
+        self.assertNotIn(reference.FIELD, json.loads((host / SEAT).read_text(encoding="utf-8")))
+        self.assertTrue((host / TREE).is_dir(), "the vendored kit was not delivered")
+        for take in held["takes"]:
+            self.assertTrue((host / TAKEN_PLANE / take["id"]).is_dir(), f"{take['id']} was not copied")
+        self.assertEqual(0, self.run_kit(host / TREE, host, "check").returncode)
 
 if __name__ == "__main__":
     unittest.main()

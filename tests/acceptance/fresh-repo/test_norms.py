@@ -6,7 +6,9 @@ Held here, on a started host:
   2. a host extends the tree with its own doctrine and rule, deriving from a published cardinal, by
      declaration alone, and stays green;
   3. an orphan, a contradiction and an unenforced MUST in the host's norms are refused, each by its code;
-  4. a host stance that narrows a rule without an exception is refused, and one whose exception expired.
+  4. a host stance that narrows a rule without an exception is refused, and one whose exception expired;
+  5. a MUST may name an enforcer a taken adapter vouches for -- held while the host declares it, and
+     NT-UNENFORCED once the host declares it no more.
 
 Every address, genre and code is read from the declarations and the module that owns them.
 """
@@ -88,6 +90,31 @@ class Norms(Fixtures, unittest.TestCase):
         (host / HOST_DOCTRINE).write_text(json.dumps(doctrine, indent=2) + "\n", encoding="utf-8", newline="\n")
         self.assertIn("NT-EXPIRED", self.run_kit(KIT, host, "check").stdout)
 
+
+    def test_503_a_must_may_name_an_enforcer_a_taken_adapter_finds_in_the_host(self):
+        vouching = next(doc for d in TAKEN for doc in documents_of(d, norms.VOUCHED["validates"]))
+        must = _norm("our-must", DERIVES[1], derives_from=RULE["derives_from"], modality="MUST",
+                     subject="held-by-the-build-tool", enforced_by=[f"{vouching['prefix']}:test"])
+
+        def checked(commands):
+            host = self.host()
+            value = into = {}
+            *steps, last = vouching["pointer"].split(".")
+            for step in steps:
+                into = into.setdefault(step, {})
+            into[last] = commands
+            (host / vouching["path"]).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
+            ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
+            self.assertEqual(0, ran.returncode, said(ran))
+            self.write_norms(host, [must])
+            return self.run_kit(KIT, host, "check")
+
+        held = checked({"test": "run the suite", "build": "build it"})
+        self.assertNotIn("NT-UNENFORCED", held.stdout, said(held))
+        self.assertEqual(0, held.returncode, said(held))
+        unheld = checked({"build": "build it"})
+        self.assertNotEqual(0, unheld.returncode)
+        self.assertIn(f"NT-UNENFORCED {must['id']}", unheld.stdout)
 
 if __name__ == "__main__":
     unittest.main()

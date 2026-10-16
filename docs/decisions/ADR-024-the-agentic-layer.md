@@ -160,6 +160,39 @@ declaration, never a kit edit, proven by a fixture the kit does not ship.
     derived (the tree `check` holds coherent would follow the prose, not the reverse); deleting the page
     in an ordinary upgrade (an upgrade cannot delete what the host wrote).
 
+22. **A referenced host stays referenced, and its submodule's re-releases are taken in the same walk**
+    (found on a real host: a plain `upgrade` rewrote the lock without its `reference` block and vendored
+    the kit again, and the host broke with KIT0015). An `upgrade` with no `--mode` on a host whose lock
+    carries `reference` IS `upgrade --mode referenced`: the same door, the same pin. Only `--mode
+    vendored`, asked for by name and approved, returns it to copies -- each referenced take copied into
+    the take plane, the block dropped, and the ordinary upgrade then delivers the kit. When the submodule
+    advanced and a taken capability's referenced source now declares a NEWER version, `upgrade --mode
+    referenced --approve <who>` takes it again in that walk: the provenance pin is re-written (its
+    `supersedes` naming the old version and digest, attested by the approver at arrival, a refuted
+    signature refused) and the take statement's row re-stamped -- what `take` writes, less the copy a
+    referenced host never keeps. The same version with other bytes, or an older version, stays refused by
+    the one judge of a pin (KIT0032, `provenance.arrival`), and no name opens it; a take with no pin at
+    all stays KIT0083. *Rejected:* keeping the refusal and sending the host to `take --path` (it vendors a
+    copy beside the reference -- two sources for one pin -- and `start` is blocked meanwhile by the
+    kit/lock mismatch); a plain upgrade that silently vendors (a host's choice of where it runs the kit,
+    reversed by a verb that did not say so); re-pinning on any changed digest (a drift could then be
+    walked through a door, and a pin that can be re-taken pins nothing).
+
+23. **A MUST may name an enforcer a taken adapter vouches for in the host** (found on a real host: a law
+    held by its own build tool -- its test suite run by another kit -- could only be a SHOULD). An adapter
+    ships a document of contract `enforcers` (`prefix`, `path`, `pointer`): every key of the object at
+    `pointer` in the host's JSON file `path` whose value is not empty is an enforcer `<prefix>:<key>`.
+    The stack-kit adapter (1.2.0) declares `stack-kit` over `stack-kit.json` / `commands`, so a host that
+    declares `commands.test` may hold a MUST with `stack-kit:test` (likewise `stack-kit:build`,
+    `stack-kit:validate`). FF-NORMS reads every `enforcers` document of the enabled capabilities by its
+    contract; the core names no product, and an enforcer the host does not declare (the command absent,
+    the file absent or unreadable) is not accepted -- NT-UNENFORCED, as before. The `cardinal` contract's
+    `enforced_by` pattern widens from `gate|edit-gate|verb` to any `<prefix>:<name>`. *Rejected:* a
+    `stack-kit:` (or `command:`) word in the norms gate (product knowledge in the core); accepting every
+    `<prefix>:` a taken adapter names whatever the host declares (an enforcer the host does not run would
+    hold a MUST on paper); running the command from `check` to prove it (the build tool's run is its own
+    gate, and a check that runs a host's suite is a second runner of it).
+
 ## Cuts (the result did not outweigh the cost)
 
 Operating modes; a separate knowledge store; a growth-ladder ceremony beyond the lesson schema; a

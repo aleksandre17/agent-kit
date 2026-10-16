@@ -34,7 +34,12 @@ drift. A publisher who changes bytes releases a new version.
   runs it from there, with no copy. The lock records the kit's path, commit and tree. Every hook and
   `check` refuse a kit that is missing, at another commit, or edited (KIT0083).
   `upgrade --mode referenced` moves a vendored host to referenced, and re-pins a referenced host
-  after its submodule moves.
+  after its submodule moves. On a referenced host a plain `upgrade` does the same: the host stays
+  referenced. Only `upgrade --mode vendored --approve <who>` returns it to copies.
+- **A take re-released in the submodule.** When the submodule advanced and a taken capability now
+  has a newer version at its referenced source, `upgrade --mode referenced --approve <who>` takes it
+  again in the same walk: the pin moves to the new version, and no copy is made. Bytes changed under
+  the same version stay refused as drift (KIT0032) (ADR-024 decision 22).
 
 ## The CLI
 

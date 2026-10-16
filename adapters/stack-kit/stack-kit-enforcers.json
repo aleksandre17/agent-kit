@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "id": "stack-kit-enforcers",
+  "summary": "Every command a host declares in its stack-kit manifest is an enforcer a MUST may name -- `stack-kit:test`, `stack-kit:build`, `stack-kit:validate` -- because stack-kit runs it and fails red. A command the host's manifest does not declare is no enforcer.",
+  "prefix": "stack-kit",
+  "path": "stack-kit.json",
+  "pointer": "commands"
+}

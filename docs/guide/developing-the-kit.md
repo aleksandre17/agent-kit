@@ -23,5 +23,8 @@ that changes under a host blocks every edit in that host, by design.
 ## How a host takes the change
 
 1. Fast-forward the host's submodule.
-2. If a capability has a new version, take it again with `take --path <dir>`.
-3. Run `upgrade --mode referenced`.
+2. Run `upgrade --root . --mode referenced --approve <who>` with the kit in the submodule (a plain
+   `upgrade` on a referenced host does the same). A capability with a new version at its referenced
+   source is taken again in that walk; one whose bytes changed under the same version is refused
+   (KIT0032) until its publisher releases a new version.
+3. A vendored host takes a new version with `take --path <dir>` and then `upgrade`.
