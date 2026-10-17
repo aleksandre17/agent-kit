@@ -66,6 +66,12 @@
       "target": "docs/work/evidence/"
     },
     {
+      "mode": "space",
+      "class": "binding",
+      "target": "docs/work/archive/",
+      "validates": "card"
+    },
+    {
       "mode": "projection",
       "class": "projection",
       "target": "docs/work/BOARD.md",
@@ -113,6 +119,16 @@
     {
       "id": "FF-WORK-ORDER",
       "kind": "order-held",
+      "params": {}
+    },
+    {
+      "id": "FF-WORK-EMERGENCY",
+      "kind": "emergencies-repaid",
+      "params": {}
+    },
+    {
+      "id": "FF-WORK-CEREMONY",
+      "kind": "ceremony-reported",
       "params": {}
     },
     {

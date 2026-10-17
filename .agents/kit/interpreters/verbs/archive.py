@@ -1,0 +1,85 @@
+"""archive -- finished cards past the host's declared age leave the working set for the archive (ADR-025 d. 13).
+
+    python .agents/kit/interpreters/cli.py archive --root . --by <who> [--plan]
+
+A card in a state the lifecycle marks closed, which entered it more than the host's
+`archive_after_days` ago, is moved -- byte for byte -- into the archive space beside the card space,
+where no board, gate or reading looks again: dead by location (ADR-019), never deleted. A card some
+working card still names (`after`, `parent`) stays where it is, because an order that pointed into
+the archive would point at nothing. With no declared age nothing moves: when work leaves the surface
+is the host's decision, and a kit that picked a number would be deciding it.
+"""
+
+from __future__ import annotations
+
+import collection
+import hostlock
+import lifecycle as lifecycle_module
+import plan as plan_module
+import render as render_verb
+from errors import KitError
+
+SUMMARY = "move finished cards past the host's declared age into the archive, where nothing reads them"
+MUTATES = True
+REQUIRES_APPROVED_HOST = True
+
+#: The card fields that name another card -- the edges a working card may hold into a finished one.
+EDGES = ("after", "parent")
+
+
+class ArchiveError(KitError):
+    """An archive asked for with no mover, or on a delivery that declares no archive space."""
+
+    code = "KIT0089"
+
+
+def run(ctx, args) -> int:
+    hostlock.arrive(ctx, args)
+    by = getattr(args, "by", None)
+    if not by:
+        raise ArchiveError("archive needs --by <who>: a move nobody made is a state change nobody owns")
+    capabilities = ctx.enabled_capabilities()
+    governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
+    days = governed.policy.get("archive_after_days")
+    if days is None:
+        print("archive: this host declares no archive_after_days -- nothing leaves the working set")
+        return 0
+    # The archive is found by DECLARATION: the space that keeps the cards' own contract and that no
+    # reading is declared over -- cards, by shape; read, by nothing. Never by a name or a path.
+    card_install = next(i for i in governed.capability.installs if i.get("reads_as") == governed.spec["collection"])
+    archive_space = next((i["target"] for i in governed.capability.installs
+                          if i.get("mode") == "space" and i.get("validates") == card_install.get("validates")
+                          and not i.get("reads_as")), None)
+    if archive_space is None:
+        raise ArchiveError("the delivery capability declares no archive space: a space keeping the cards' "
+                           "contract that no reading is declared over")
+    closed = {s["id"] for s in governed.states if s.get("closed")}
+    now = ctx.clock.now()
+    named = {target for c in governed.members.value if c.get(governed.state_field) not in closed
+             for edge in EDGES for target in ([c[edge]] if isinstance(c.get(edge), str) else c.get(edge) or [])}
+    leaving = []
+    for rel, card in sorted(governed.members.records):
+        if card.get(governed.state_field) not in closed or card["id"] in named:
+            continue
+        if lifecycle_module.days_between(lifecycle_module.entered_at(card), now) > days:
+            leaving.append((rel, card))
+    writes = []
+    for rel, card in leaving:
+        moved_to = archive_space.rstrip("/") + "/" + rel.split("/")[-1]
+        writes += [plan_module.Write("create", "binding", "space", governed.capability.id, moved_to),
+                   plan_module.Write("remove", "binding", "space", governed.capability.id, rel)]
+    if getattr(args, "plan", False) or not writes:
+        print(plan_module.report("archive", writes) if writes else
+              f"archive: no finished card is older than {days} day(s) -- nothing leaves")
+        return 0
+
+    def write() -> int:
+        scoped = ctx.workspace.scoped(governed.capability.targets())
+        for rel, card in leaving:
+            moved_to = archive_space.rstrip("/") + "/" + rel.split("/")[-1]
+            scoped.write_json(moved_to, card)
+            scoped.remove_file(rel)
+            print(f"  archived  {card['id']}  {rel} -> {moved_to}  by {by}")
+        return render_verb.run(ctx, args, capabilities)
+
+    return hostlock.held(ctx, args, write)

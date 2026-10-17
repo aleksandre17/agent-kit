@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 88,
+  "issued": 89,
   "codes": [
     {
       "code": "KIT0001",
@@ -530,6 +530,12 @@
       "status": "active",
       "title": "a captured finding that cannot be written honestly",
       "explanation": "A finding is written as a NEW card with an id, a title and its author; an id already taken, or an origin card that does not exist, is refused rather than merged into another record (ADR-025)."
+    },
+    {
+      "code": "KIT0089",
+      "status": "active",
+      "title": "an archive that cannot be taken honestly",
+      "explanation": "Archiving moves finished cards out of the working set by a named mover, into the space delivery declares for them; with no mover, or no such space, nothing is moved (ADR-025)."
     }
   ]
 }

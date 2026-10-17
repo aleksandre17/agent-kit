@@ -11,6 +11,7 @@ Reached only through the CLI, on a host that walked the door.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import unittest
 
@@ -193,6 +194,74 @@ class Weigh(Fixtures, unittest.TestCase):
         card("a", "shaped", after=["b"])
         card("b", "shaped", after=["a"])
         self.assertIn("the order is a cycle", self._failed(host))
+
+    def test_97_an_emergency_is_a_debt_with_a_clock_and_a_card_repays_it(self):
+        host = self.installed()
+        policy = host / install_target("delivery", reads_as="policy")
+        body = json.loads(policy.read_text(encoding="utf-8"))
+        policy.write_text(json.dumps({**body, "emergency_debt_days": 3}, indent=2) + "\n", encoding="utf-8", newline="\n")
+        env = dict(os.environ, GIT_AUTHOR_NAME="f", GIT_AUTHOR_EMAIL="f@example.invalid", GIT_COMMITTER_NAME="f",
+                   GIT_COMMITTER_EMAIL="f@example.invalid", GIT_COMMITTER_DATE="2026-01-01T00:00:00+00:00")
+        git = lambda *a: subprocess.run(["git", "-C", str(host), *a], check=True, capture_output=True, text=True, env=env)
+        git("add", "-A")
+        git("commit", "-q", "--no-verify", "-m", "fix: restore service\n\nWork-Class: emergency")
+        sha = git("rev-parse", "HEAD").stdout.strip()
+        self.assertIn(f"{sha[:12]}: an emergency change", self._failed(host))
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        (cards / "postmortem.json").write_text(json.dumps(
+            {"schema_version": 1, "id": "postmortem", "title": "pay the restore", "state": "intake",
+             "created_at": "2026-10-17T00:00:00+00:00", "repays": [sha[:10]]}, indent=2) + "\n",
+            encoding="utf-8", newline="\n")
+        self.assertIn("PASS  FF-WORK-EMERGENCY", self._failed(host))
+
+    def test_98_the_board_counts_finished_work_whole_and_lists_only_its_newest(self):
+        host = self.installed()
+        policy = host / install_target("delivery", reads_as="policy")
+        body = json.loads(policy.read_text(encoding="utf-8"))
+        policy.write_text(json.dumps({**body, "board_recent": 1}, indent=2) + "\n", encoding="utf-8", newline="\n")
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        for n in range(3):
+            (cards / f"done-{n}.json").write_text(json.dumps(
+                {"schema_version": 1, "id": f"done-{n}", "title": f"done {n}", "state": "landed",
+                 "created_at": f"2026-10-1{n}T00:00:00+00:00"}, indent=2) + "\n", encoding="utf-8", newline="\n")
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+        board = (host / install_target("delivery", mode="projection")).read_text(encoding="utf-8")
+        self.assertIn("3 card(s)", board)
+        self.assertIn("2 older finished card(s) are counted here and not listed", board)
+        self.assertIn("**done-2**", board)
+        self.assertNotIn("**done-0**", board)
+
+    def test_99_finished_cards_past_the_declared_age_leave_for_the_archive_unless_working_cards_name_them(self):
+        host = self.installed()
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+
+        def card(identity, state, created, **fields):
+            (cards / f"{identity}.json").write_text(json.dumps(
+                {"schema_version": 1, "id": identity, "title": identity, "state": state, "created_at": created,
+                 **fields}, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+        card("old-done", "landed", "2026-01-01T00:00:00+00:00")
+        card("old-needed", "landed", "2026-01-01T00:00:00+00:00")
+        card("new-done", "landed", "2099-01-01T00:00:00+00:00")
+        card("next", "shaped", "2026-10-17T00:00:00+00:00", after=["old-needed"])
+        nothing = self.run_kit(KIT, host, "archive", "--by", "dev")
+        self.assertIn("declares no archive_after_days", nothing.stdout)
+        policy = host / install_target("delivery", reads_as="policy")
+        body = json.loads(policy.read_text(encoding="utf-8"))
+        policy.write_text(json.dumps({**body, "archive_after_days": 30}, indent=2) + "\n", encoding="utf-8", newline="\n")
+        planned = self.run_kit(KIT, host, "archive", "--by", "dev", "--plan")
+        self.assertEqual(0, planned.returncode, planned.stderr)
+        self.assertTrue((cards / "old-done.json").exists(), "--plan moved a card")
+        moved = self.run_kit(KIT, host, "archive", "--by", "dev")
+        self.assertEqual(0, moved.returncode, moved.stdout + moved.stderr)
+        self.assertFalse((cards / "old-done.json").exists())
+        self.assertTrue((host / "docs" / "work" / "archive" / "old-done.json").exists())
+        self.assertTrue((cards / "old-needed.json").exists(), "a card a working card names was archived")
+        self.assertTrue((cards / "new-done.json").exists())
+        self.assertIn("PASS  FF-WORK-ORDER", self._failed(host))
 
     def _failed(self, host) -> str:
         said = self.run_kit(KIT, host, "check")

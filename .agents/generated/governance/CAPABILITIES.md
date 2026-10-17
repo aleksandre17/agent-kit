@@ -15,6 +15,7 @@ Declares the task lifecycle as data: cards are BINDING and carry exactly one sta
 | `.agents/project/delivery/areas.json` | binding | seed |
 | `docs/work/cards/` | binding | space |
 | `docs/work/evidence/` | binding | space |
+| `docs/work/archive/` | binding | space |
 | `docs/work/BOARD.md` | projection | projection |
 
 Gates declared by this capability:
@@ -25,6 +26,8 @@ Gates declared by this capability:
 - **FF-WORK-CLASSES** — `work-classes-held`
 - **FF-WORK-DEFERRALS** — `deferrals-held`
 - **FF-WORK-ORDER** — `order-held`
+- **FF-WORK-EMERGENCY** — `emergencies-repaid`
+- **FF-WORK-CEREMONY** — `ceremony-reported`
 - **FF-DELIVERY-APPETITE** — `appetite-within-limit`
 - **FF-DELIVERY-RESTATED** — `section-restating-a-record`
 

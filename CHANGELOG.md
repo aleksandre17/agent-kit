@@ -30,6 +30,15 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   cycle or a dangling name and reports finished work that stops holding as REGRESSED.
 - Lifecycle states may be marked `defers` and `closed`.
 
+**Added — the emergency debt, the ceremony reading, a bounded surface (ADR-025 S6, S8)**
+- FF-WORK-EMERGENCY: every `Work-Class: emergency` commit is owed a card that `repays` it; past the
+  host's `emergency_debt_days` an unpaid one fails, before them it is reported.
+- FF-WORK-CEREMONY: finished cards per class, their criteria and median lead time (DORA), read
+  from the cards alone and never failed.
+- The board lists closed states by their newest `board_recent` and counts the rest out loud; verb
+  `archive` moves finished cards past `archive_after_days` into `docs/work/archive/` unless a
+  working card still names them (KIT0089). A cost test holds weighing under a second.
+
 ## 0.2.0 — 2026-10-17
 
 **Added — the agentic layer: every token serves the result (ADR-024)**

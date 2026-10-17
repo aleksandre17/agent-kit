@@ -128,6 +128,18 @@ class Workspace:
             self._tracked = vcs.tracked(self._root)
         return self._tracked
 
+    def commits_trailed(self, key: str, value: str) -> tuple:
+        """`(commits, None)` -- every commit on HEAD's history whose message carries the trailer
+        `key: value`, newest first, each as `(sha, committed-at ISO date)` -- or `(None, why)`. Found by
+        git's own search over messages, so the cost stays git's however long the history grows."""
+        import vcs
+        pattern = f"^{key}:[[:space:]]*{value}[[:space:]]*$"
+        said, why = vcs.run(self._root, ["log", "-i", "--extended-regexp", f"--grep={pattern}",
+                                         "--format=%H %cI"])
+        if said is None:
+            return None, why
+        return [tuple(line.split(" ", 1)) for line in said.splitlines() if " " in line], None
+
     def accepted_listing(self, space: str) -> tuple:
         """(the file names under `space` at HEAD, None) or (None, why) -- the previous ACCEPTED state
         of a place, what HEAD holds and never what the tree holds now (ADR-019)."""

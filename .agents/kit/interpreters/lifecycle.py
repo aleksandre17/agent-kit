@@ -155,7 +155,13 @@ def columns(governed: Governed, counted=None) -> list:
                  **(counted(card) if counted else {}))
             for card in governed.members.value if card[field] == state["id"]
         ]
-        built.append(dict(state, items=items, count=len(items),
+        count, recent = len(items), governed.policy.get("board_recent")
+        if state.get("closed") and recent is not None and count > recent:
+            # Finished work is COUNTED whole and LISTED by its newest few (ADR-025 decision 13): the
+            # board a project reads to work stays one size however old the project grows, and the
+            # count says out loud how many it does not list -- nothing is dropped in silence.
+            items = sorted(items, key=lambda c: c["entered_at"], reverse=True)[:recent]
+        built.append(dict(state, items=items, count=count, hidden=count - len(items),
                           limit=limits.get(state["id"], "-")))
     return built
 

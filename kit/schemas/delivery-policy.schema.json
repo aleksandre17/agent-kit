@@ -14,6 +14,21 @@
     "max_age_days": {
       "description": "state id -> how long a card may sit in it before the surface says so.",
       "type": "object"
+    },
+    "emergency_debt_days": {
+      "description": "How many days an emergency change may stand before a card repays it (ADR-025 decision 6). The host's number; absent means the debt is reported and never comes due.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "archive_after_days": {
+      "description": "How many days a card stands in a closed state before `archive` moves it out of the working set (ADR-025 decision 13). Absent: nothing is archived.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "board_recent": {
+      "description": "How many of the most recently finished cards each closed state shows on the board (ADR-025 decision 13). Absent shows all of them.",
+      "type": "integer",
+      "minimum": 0
     }
   }
 }

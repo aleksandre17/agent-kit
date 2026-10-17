@@ -39,6 +39,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | --- | --- | --- |
 | `activate` | point a setting outside the tree at what a served surface serves -- or withdraw it -- through a door | yes -- `--plan` prints the writes first |
 | `adopt` | read a host this kit has never touched and name every path that has no class | nothing |
+| `archive` | move finished cards past the host's declared age into the archive, where nothing reads them | yes -- `--plan` prints the writes first |
 | `audit` | every edit gate in force over every tracked file: violations already in the tree, known ones by declaration | nothing |
 | `capsule` | show the continuity capsule, or replace one revision of it by compare-and-swap | yes -- `--plan` prints the writes first |
 | `capture` | write a finding met on the way as a card in the initial state, in one act | yes -- `--plan` prints the writes first |

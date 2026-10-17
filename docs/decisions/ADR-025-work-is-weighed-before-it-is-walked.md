@@ -158,6 +158,14 @@ asserts it.
     hot surface keeps its ceiling (FF-CONTEXT); one decision is one file, one card's evidence is one
     place. Growth goes into the record, which is append-only and never read whole.
 
+14. **The machinery keeps to a time budget, and the budget does not grow with the project.** A
+    question runs nothing. A commit runs one weighing -- the staged paths against the areas, no
+    network, no history -- held under a second by a test over ten thousand paths and fifty areas
+    (measured on the kit's own host: the message hook 0.4 s, `weigh` 0.5 s). Everything that reads
+    across the history or across all cards runs at push and in CI (`check`, 3.5 s on the kit's own
+    host), and what it reads is bounded by the archive (decision 13). Fast path and slow path, as an
+    SLO-minded system splits them: the hot path is cheap by construction, never by hoping.
+
 ## What the prior system's control plane becomes here
 
 Its `docs/project/` was the best part of it: one entry point, a small current-state file, a

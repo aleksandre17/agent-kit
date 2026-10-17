@@ -36,6 +36,11 @@
       "type": "array",
       "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" }
     },
+    "repays": {
+      "description": "The emergency commits this card pays the debt of (ADR-025 decision 6): each by its commit id, seven hex characters or more. An emergency lands at any weight; the card that names it here carries the records its weight owed.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" }
+    },
     "owner": { "type": "string", "minLength": 1 },
     "created_at": { "type": "string", "minLength": 1 },
     "history": {

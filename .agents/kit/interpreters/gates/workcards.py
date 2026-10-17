@@ -18,6 +18,8 @@ the card declares one that needs its class -- the verified passage then proves i
 
 from __future__ import annotations
 
+from datetime import datetime
+
 import collection
 import criteria
 import lifecycle as lifecycle_module
@@ -174,4 +176,77 @@ def _order_held(ctx, params):
     return failures
 
 
-KINDS = {"work-classes-held": _work_classes_held, "deferrals-held": _deferrals_held, "order-held": _order_held}
+def _days_between(earlier: str, later: str):
+    try:
+        return (datetime.fromisoformat(later) - datetime.fromisoformat(earlier)).total_seconds() / 86400
+    except (TypeError, ValueError):
+        return None
+
+
+def _emergencies_repaid(ctx, params):
+    """Every emergency commit is a debt with a clock: a card naming it in `repays` pays it; past the
+    host's declared days an unpaid one fails, before them it is reported with what is left. A host
+    that declares no days is told what it owes and is never failed (ADR-025 decision 6)."""
+    found = workclass.declarations(ctx)
+    if found is None:
+        return []
+    classes_doc, _areas = found
+    expedite = [row["id"] for row in classes_doc["classes"] if row.get("expedite")]
+    if not expedite:
+        return []
+    capabilities = ctx.enabled_capabilities()
+    governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
+    repaid = {sha for card in governed.members.value for sha in card.get("repays") or []}
+    limit = (governed.policy or {}).get("emergency_debt_days")
+    now = ctx.clock.now()
+    failures = []
+    for identity in expedite:
+        commits, why = ctx.workspace.commits_trailed(classes_doc["trailers"]["class"], identity)
+        if commits is None:
+            print(f"        emergencies: NOT MEASURED -- git could not list them: {why}")
+            return []
+        for sha, at in commits:
+            if any(sha.startswith(prefix) for prefix in repaid):
+                continue
+            age = _days_between(at, now)
+            if limit is not None and age is not None and age > limit:
+                failures.append(f"{sha[:12]}: an {identity} change {age:.0f} day(s) old, past the {limit} this "
+                                f"host declares, and no card repays it -- name it in a card's `repays`")
+            else:
+                left = "" if limit is None or age is None else f", {max(0, limit - age):.0f} day(s) left"
+                print(f"        owed: {sha[:12]} ({identity}, {at}{left}) -- no card repays it yet")
+    return failures
+
+
+def _ceremony_reported(ctx, params):
+    """What each class of finished work cost, read from the cards alone: how many, how many records
+    they carry, and their lead time from created to finished -- DORA's lead time, per class. A
+    reading, never a verdict: whether a class costs too much is the owner's to judge (ADR-025
+    decision 11)."""
+    capabilities = ctx.enabled_capabilities()
+    if not any(getattr(c, "governs", None) for c in capabilities):
+        return []
+    governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
+    closed = {s["id"] for s in governed.states if s.get("closed")}
+    by_class: dict = {}
+    for card in governed.members.value:
+        if card.get(governed.state_field) not in closed:
+            continue
+        entered = next((p.get("at") for p in reversed(card.get(lifecycle_module.HISTORY, []))
+                        if p.get("to") in closed), None)
+        days = _days_between(card.get(lifecycle_module.CREATED_AT), entered) if entered else None
+        row = by_class.setdefault(card.get("class", "unclassed"), {"cards": 0, "criteria": 0, "days": []})
+        row["cards"] += 1
+        row["criteria"] += len(card.get(governed.spec["criteria"]) or [])
+        if days is not None:
+            row["days"].append(days)
+    for identity, row in sorted(by_class.items()):
+        lead = sorted(row["days"])
+        median = f"{lead[len(lead) // 2]:.1f} day(s)" if lead else "unknown"
+        print(f"        ceremony: {identity}: {row['cards']} finished, {row['criteria']} criteria, "
+              f"median lead time {median}")
+    return []
+
+
+KINDS = {"work-classes-held": _work_classes_held, "deferrals-held": _deferrals_held, "order-held": _order_held,
+         "emergencies-repaid": _emergencies_repaid, "ceremony-reported": _ceremony_reported}
