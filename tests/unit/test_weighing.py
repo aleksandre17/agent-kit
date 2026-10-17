@@ -398,3 +398,9 @@ def test_a_hosts_areas_are_drafted_from_the_modules_its_build_tool_declares():
     deploy = weighing.weigh(["ops/deploy/targets.json"], CLASSES, host)[1]["class"]["id"]
     assert ui != deploy, "a UI string and the deploy manifest no longer weigh the same"
     assert weighing.proof_for(["web/src/main.tsx"], CLASSES, host)[0] == ["tool:test-web"]
+
+
+def test_a_dropped_feed_is_loosening():
+    before = areas(("api", r"^api/", "costly", {"feeds": ["web"]}), ("web", r"^web/", "reversible"))
+    after = areas(("api", r"^api/", "costly"), ("web", r"^web/", "reversible"))
+    assert weighing.loosened(CLASSES, before, after) == ["area api no longer feeds web"]

@@ -204,6 +204,9 @@ def loosened(classes_doc: dict, before, after) -> list:
         dropped = sorted(set(area.get("requires", [])) - set(kept.get("requires", [])))
         if dropped:
             said.append(f"area {identity} no longer requires {', '.join(dropped)}")
+        unfed = sorted(set(area.get("feeds", [])) - set(kept.get("feeds", [])))
+        if unfed:  # a consumer no longer named is a consumer a change no longer reaches
+            said.append(f"area {identity} no longer feeds {', '.join(unfed)}")
     return said
 
 

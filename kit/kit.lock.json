@@ -1619,7 +1619,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a34cb417ef9027a6cb11aac4229200367b9a11115e08c3752acae61c9b271872",
+      "digest": "85234d8e1bdec45f62293701ed3b22eb7913b3f96bacdbfe1b7c7ceaf4ef3ffe",
       "path": "interpreters/weighing.py"
     },
     {
@@ -2178,5 +2178,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T14:57:08+00:00"
+  "taken_at": "2026-10-17T15:00:43+00:00"
 }

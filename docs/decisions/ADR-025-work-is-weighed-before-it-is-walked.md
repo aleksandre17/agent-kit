@@ -466,3 +466,10 @@ not run again while both are the same: a second push of what was proved, a retry
 The key is the exact bytes -- any change at all, a dirty tree, a command that wrote into the tree, or
 `--full` runs it again -- so the cache cannot be wrong where the command is deterministic, and a red run
 is never remembered.
+
+**Closed after Amendment 2's limits were re-read** (2026-10-17): a dropped `feeds` is loosening -- a consumer no
+longer named is one a change no longer reaches -- and is weighed as one. An `appetite` held by any declared
+value is BY DESIGN, not a limit: the bet records the budget the owner declared, in the owner's unit, and
+whether that unit can be measured here is FF-DELIVERY-APPETITE's to say, by name (a unit nothing reads is
+reported, never passed silently) -- the two propositions are kept apart as ADR-020 decision 9 keeps them.
+
