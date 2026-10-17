@@ -52,6 +52,7 @@ import check as check_verb
 import doors
 import estate as estate_module
 import hostlock
+import installmodes
 import extend as extend_verb
 import init as init_verb
 import pin
@@ -117,6 +118,25 @@ def _refuse(rows) -> None:
     )
 
 
+def _introduced(ctx, apply: bool = True) -> list:
+    """Create every host-owned install (`binding` class) an enabled capability declares and the host
+    does not yet hold -- through its install mode, foreseen first, applied only where it would CREATE."""
+    created = []
+    for capability in ctx.enabled_capabilities():
+        scoped = ctx.workspace.scoped(capability.targets())
+        for item in capability.installs:
+            if item.get("class") != "binding":
+                continue
+            mode = installmodes.mode_of(capability, item)
+            state = {"manifest": ctx.manifest}
+            if mode.phase != "install" or mode.foresee is None or mode.foresee(scoped, item, state) != "create":
+                continue
+            if apply:
+                mode.apply(ctx, scoped, item, state)
+            created.append(item["target"])
+    return created
+
+
 def _referenced(ctx, args) -> int:
     """Pin the kit this run IS, in the host's own tree, as the host's kit -- and drop the copies once
     the referenced host checks green. Nothing is removed on a red check: the copies stay, and say why."""
@@ -130,6 +150,8 @@ def _referenced(ctx, args) -> int:
         print(f"upgrade: take again {row['id']}@{row['version']} {row['digest']} (pinned {row['prior']['version']} "
               f"{row['prior']['digest']} by {row['prior']['pinned_by']}) -- a newer version at its referenced source")
     if getattr(args, "plan", False):
+        for target in _introduced(ctx, apply=False):
+            print(f"upgrade: create {target} -- a host truth this kit introduces, created once")
         return 0
     if not args.approve:
         doors.refuse("this host would run the kit it holds in its own tree and drop its vendored copies"
@@ -146,6 +168,12 @@ def _referenced(ctx, args) -> int:
         ctx.workspace.scoped((seat,)).write_text(seat, json_text(lock))
         # The host read again: its takes are now read where its lock says it holds them.
         ctx.reread()
+        # A newer capability may declare a host truth this host was never given -- a seed or a space.
+        # Each is created ONCE, by its own install mode, exactly as `init` would; nothing the host
+        # already holds is touched. Without this a referenced host could not read its own declarations
+        # after the upgrade that introduced one.
+        for created in _introduced(ctx):
+            print(f"  created    {created}  (introduced by this kit)")
         code = render_verb.run(ctx, args)
         if code == 0:
             code = check_verb.run(ctx, args)

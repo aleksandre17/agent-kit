@@ -57,6 +57,8 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - FF-RESIDENCE judges the files the repository carries: what it ignores -- the runtime plane, a
   dispatched worker's copy of the host -- is not a resident, so a host with an `archive/` directory
   no longer fails once a worker has run.
+- A referenced `upgrade` creates, once and through its install mode, every host-owned seed or space a
+  newer capability introduces; before, the host could not read its own declarations afterwards.
 
 ## 0.2.0 — 2026-10-17
 

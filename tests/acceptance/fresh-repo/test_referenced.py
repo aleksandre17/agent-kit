@@ -195,6 +195,26 @@ class Referenced(Fixtures, unittest.TestCase):
         self.assertEqual(0, self.kit(source, host, "start", "--path", str(source / "starters" / "standard.json"),
                                      "--approve", "acceptance-suite").returncode)
 
+    def test_568_a_host_truth_the_kit_introduces_is_created_once_by_a_referenced_upgrade(self):
+        """A host given its kit before a capability declared a seed has no such file: the referenced
+        upgrade that brings the declaration creates it -- once, through its install mode -- and leaves
+        every truth the host already holds untouched."""
+        host, source = self.referenced()
+        seeds = [i["target"] for c in CORE.capabilities for i in c.installs
+                 if i.get("mode") == "seed" and i.get("class") == "binding" and (host / i["target"]).is_file()]
+        self.assertTrue(len(seeds) > 1, "no host-owned seed to withhold -- this would pass on nothing")
+        withheld, kept = seeds[0], seeds[-1]
+        (host / withheld).unlink()
+        marker = (host / kept).read_text(encoding="utf-8")
+        planned = self.kit(source, host, "upgrade", "--mode", "referenced", "--plan")
+        self.assertEqual(0, planned.returncode, said(planned))
+        self.assertIn(f"create {withheld}", planned.stdout)
+        carried = self.kit(source, host, "upgrade", "--mode", "referenced", "--approve", "acceptance-suite")
+        self.assertEqual(0, carried.returncode, said(carried))
+        self.assertTrue((host / withheld).is_file(), f"{withheld} was not created")
+        self.assertEqual(marker, (host / kept).read_text(encoding="utf-8"), "a held truth was rewritten")
+        self.assertEqual(0, self.kit(source, host, "check").returncode)
+
     def test_566_changed_bytes_under_the_same_version_stay_drift(self):
         host, source = self.referenced()
         declaration = source / "adapters" / "stack-kit" / "capability.json"

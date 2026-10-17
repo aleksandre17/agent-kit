@@ -1571,7 +1571,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "09480c23e48f59afc7e680caa3de3361815523ada8a035da764f048ef19ee5d5",
+      "digest": "dce1345fcd247e3a7ac29d1c737b64bf34b4e1418f599f83ca1af8b4303c56de",
       "path": "interpreters/verbs/upgrade.py"
     },
     {
@@ -2142,5 +2142,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T06:48:48+00:00"
+  "taken_at": "2026-10-17T07:02:41+00:00"
 }
