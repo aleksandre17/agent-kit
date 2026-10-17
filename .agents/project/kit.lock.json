@@ -5,7 +5,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "0a1cc3e91cb769c9e500a3672bb15d78792f7410a04ce0943ff940b34e41ecb9",
+      "digest": "2a29f3baf15f5e37aaf939d7584c6a5dd3b4b116140a4e930c8ae8f38fa3ad6c",
       "path": "MANIFEST.json"
     },
     {
@@ -17,7 +17,7 @@
     {
       "accounted_by": "version",
       "class": "declaration",
-      "digest": "1f930dd1f133c1f97a94fe3acb8db34372cf4c01ffdb2b3ff4ca72f9494121e9",
+      "digest": "79e3f22ca37c7fdf4c29ae3648d6b008c3cb6547260a453409275470919dc674",
       "path": "VERSION"
     },
     {
@@ -1103,13 +1103,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "bafd20f827390f53058d7b637f878f7d872f1af77dcfceee7d1fa0066e3c557f",
+      "digest": "ffa19e16f57eebd31ad8d0f684481924d9e251760fad2e7ba7f9014462f76d39",
       "path": "interpreters/ports/sources.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a8230789514abd23b93cfbe9de77f3f001ad541217b391452bcd475f4336d70e",
+      "digest": "a9c63f5a7cc21091295e9b167b5854f954ef827e85e8fc6470974401cff83121",
       "path": "interpreters/ports/vcs.py"
     },
     {
@@ -2175,8 +2175,8 @@
       "path": "seeds/taken.json"
     }
   ],
-  "kit_version": "0.3.0",
+  "kit_version": "0.3.1",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T18:08:10+00:00"
+  "taken_at": "2026-10-17T18:33:30+00:00"
 }

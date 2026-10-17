@@ -15,15 +15,30 @@ guessing past it.
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 from pathlib import Path
+
+# What git exports to a hook and calls repository-local (`git rev-parse --local-env-vars`): inherited,
+# it names the repository the hook runs for, and `-C` into any other one -- a submodule, a kit --
+# would read that repository instead. Git's own submodule code clears the same set.
+LOCAL_ENV = ("GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_CONFIG", "GIT_CONFIG_PARAMETERS", "GIT_CONFIG_COUNT",
+             "GIT_OBJECT_DIRECTORY", "GIT_DIR", "GIT_WORK_TREE", "GIT_IMPLICIT_WORK_TREE", "GIT_GRAFT_FILE",
+             "GIT_INDEX_FILE", "GIT_NO_REPLACE_OBJECTS", "GIT_REPLACE_REF_BASE", "GIT_PREFIX",
+             "GIT_INTERNAL_SUPER_PREFIX", "GIT_SHALLOW_FILE", "GIT_COMMON_DIR")
+
+
+def env() -> dict:
+    """The environment a git call runs in: this process's, less what binds git to one repository,
+    so the repository a call names is the one that answers."""
+    return {k: v for k, v in os.environ.items() if k.upper() not in LOCAL_ENV}
 
 
 def run(root, argv: list) -> tuple:
     """`(what version control said, None)` or `(None, why it could not say it)`."""
     try:
-        done = subprocess.run(["git", "-C", str(root), *argv], capture_output=True)
+        done = subprocess.run(["git", "-C", str(root), *argv], capture_output=True, env=env())
     except (OSError, ValueError) as exc:
         return None, f"git could not be run over this tree -- {exc}"
     if done.returncode != 0:

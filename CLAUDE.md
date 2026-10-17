@@ -6,7 +6,7 @@ reads it for writing again. The lines between the two markers below are the kit'
 recomputed from this host's declarations on every render, and an edit there is refused.
 
 <!-- kit:begin briefing -- computed from this host's declaration; anything written between these two lines is replaced unread -->
-*Served to the runtime `claude-code` through the surface `claude-code` · kit 0.3.0. Each
+*Served to the runtime `claude-code` through the surface `claude-code` · kit 0.3.1. Each
 section is a projection of a declaration this host owns -- change the declaration, never this span.*
 
 ## Project laws -- this host's numbered bindings

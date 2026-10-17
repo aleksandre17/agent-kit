@@ -1,7 +1,7 @@
 # Doctrine — what binds this host, and what this kit has to say about it
 
 > **Generated. Do not edit.** Recomputed from what the bundles this host took have published and
-> what this host has declared about them. Kit 0.3.0. There is no clock in this page: it
+> what this host has declared about them. Kit 0.3.1. There is no clock in this page: it
 > is a projection of two declarations and nothing else, so it is byte-reproducible, and *when* it
 > was last written is a question for the estate rather than for a line of prose here.
 

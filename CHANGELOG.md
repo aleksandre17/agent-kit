@@ -5,6 +5,16 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade --plan`, which names every path that changes between the two.
 
+## 0.3.1 — 2026-10-17
+
+**Fixed — a hook's git environment no longer redirects the kit's reading of another repository**
+- The version-control port runs git without the variables git calls repository-local
+  (`git rev-parse --local-env-vars`: `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE` and their kin), as git's
+  own submodule code does. Git exports them to a hook run from a linked worktree, and `-C` into the kit's
+  submodule then read the superproject: FF-KIT-PINNED saw the host's HEAD where the kit's stood, and the
+  push gate refused a clean push. `sources` (a release read at a revision) runs git the same way.
+- `kit/VERSION` states 0.3.1 again; 0.3.0 shipped it at 0.2.0 beside a manifest at 0.3.0.
+
 ## 0.3.0 — 2026-10-17
 
 **Fixed — a re-audit's four logic defects; the trust model said as it is (ADR-025 amendment 5)**

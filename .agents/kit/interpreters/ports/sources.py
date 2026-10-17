@@ -20,6 +20,7 @@ import tempfile
 from pathlib import Path
 
 import pin
+import vcs as vcs_port
 from manifest import Manifest
 
 #: A release source naming a revision of a repository, in the form the Python packaging field
@@ -49,14 +50,14 @@ def fetch(source: str, into: Path) -> Path:
         # and what is read is still exactly the named revision, never a working tree.
         local = into / "source.git"
         cloned = subprocess.run(["git", "clone", "--bare", "--quiet", repo, str(local)],
-                                capture_output=True, text=True)
+                                capture_output=True, text=True, env=vcs_port.env())
         if cloned.returncode != 0:
             raise pin.ReleaseError(f"release source {source!r}: the repository could not be cloned -- "
                                f"{cloned.stderr.strip()}")
         repo = str(local)
     archive = into / "release.tar"
     done = subprocess.run(["git", "-C", repo, "archive", "--format=tar", "-o", str(archive),
-                           rev, sub], capture_output=True, text=True)
+                           rev, sub], capture_output=True, text=True, env=vcs_port.env())
     if Path(repo) == into / "source.git":
         remove_tree(into / "source.git")  # read: only the named revision's bytes go on
     if done.returncode != 0:

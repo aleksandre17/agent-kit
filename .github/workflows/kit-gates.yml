@@ -1,4 +1,4 @@
-# Generated. Do not edit. Served to the runtime github-actions through the surface github-actions - kit 0.3.0.
+# Generated. Do not edit. Served to the runtime github-actions through the surface github-actions - kit 0.3.1.
 # The one projection of this host's gates nobody skips with `--no-verify`: on every push and pull
 # request the runner checks out the change and runs the kit THIS HOST CARRIES at .agents/kit -- it
 # never fetches one -- three times: `check` over the whole tree, `prove --full` (every command a MUST or
