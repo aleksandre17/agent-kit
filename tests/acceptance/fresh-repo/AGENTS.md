@@ -4,7 +4,7 @@ Write here what holds only inside `tests/acceptance/fresh-repo/`. This file is y
 markers below are the kit's, recomputed from this host's law-scope declaration on every render.
 
 <!-- kit:begin scoped-briefing -- computed from this host's declaration; anything written between these two lines is replaced unread -->
-*Served to the runtime `codex` through the surface `codex` · kit 0.2.0. These
+*Served to the runtime `codex` through the surface `codex` · kit 0.3.0. These
 laws bind ONLY inside `tests/acceptance/fresh-repo/`, declared by the scope `fresh-repo-suite` in this host's law-scope
 declaration -- that declaration and the page it names are where a change is made.*
 

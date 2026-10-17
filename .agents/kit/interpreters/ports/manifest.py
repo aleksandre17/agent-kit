@@ -123,6 +123,10 @@ def _stated(instance, schema: dict) -> list:
     return found
 
 
+#: The file a kit is known by, at its root -- wherever it is vendored.
+MANIFEST = "MANIFEST.json"
+
+
 class Capability:
     """A capability declaration, read-only. It declares; it never acts."""
 

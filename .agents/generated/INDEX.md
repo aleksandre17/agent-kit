@@ -1,7 +1,7 @@
 # The records map — where everything lives
 
 > PROJECTION. Do not edit: delete this whole plane and run `render`, and it comes back byte-identical.
-> Kit version 0.2.0. Projected from governance's `host_layout` declaration and its
+> Kit version 0.3.0. Projected from governance's `host_layout` declaration and its
 > `record_keeping` vocabulary (ADR-015 amendment 8).
 
 Consult this map INSTEAD of searching the tree. Find the row whose **read when** matches the task in

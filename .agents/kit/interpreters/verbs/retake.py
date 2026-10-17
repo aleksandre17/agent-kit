@@ -85,6 +85,10 @@ def run(ctx, args) -> int:
         ctx.workspace.scoped(owner.targets()).write_json(item["target"], document)
         print(f"  RETAKEN  {item['target']}  by {args.approve} at {fresh['taken_at']}, replacing the "
               f"reading of {recorded['taken_at']}; `upgrade --plan` names what the new facts admit")
-        return 0
+        # What is served is rendered from the reading, as `init` renders it: a retake that left the served
+        # files stale would leave `check` red until somebody remembered `render`.
+        ctx.reread()
+        import render as render_verb
+        return render_verb.run(ctx, args)
 
     return hostlock.held(ctx, args, write)

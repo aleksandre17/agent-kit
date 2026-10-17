@@ -26,7 +26,7 @@ kit {{kit_version}}
 _empty_
 {{/items}}
 {{#items}}
-- **{{id}}** — {{title}} · owner {{owner}} · class {{class}} · criteria {{criteria_held}}/{{criteria_declared}} proved · entered {{entered_at}} by {{last_by}}
+- **{{id}}** — {{title}}{{#parent}} · part of **{{.}}**{{/parent}} · owner {{owner}} · class {{class}} · criteria {{criteria_held}}/{{criteria_declared}} proved · entered {{entered_at}} by {{last_by}}
 {{/items}}
 
 {{/columns}}

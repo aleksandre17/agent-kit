@@ -16,7 +16,7 @@
     {
       "path": ".githooks/pre-commit",
       "runtime": "git-commit",
-      "sha256": "766b4f3c8a6a565364fef5c37740e15b94e6a8943fc241bfc6ea6a21a00b8960",
+      "sha256": "5ed7cc533857c9c2f55a2dc8eca9c6cb4ee0c24043a331b88cd7ae3a00a82880",
       "surface": "git-commit"
     },
     {
@@ -28,13 +28,13 @@
       "runtime": "github-actions",
       "seed_sha256": "08bfe61a6770bd6c698c4fa3fa42471f1af9ed94adde7aa9f5dc924df5f16cc4",
       "span": "owners",
-      "span_sha256": "a0761e906f8713738b4fe571ee3ebdfc3a11344953773d6b6e93722b39cf7ca5",
+      "span_sha256": "36d2c3c090cd5a263aa5777ee1836096748d55163a048c3045eacc91d3356233",
       "surface": "github-actions"
     },
     {
       "path": ".github/workflows/kit-gates.yml",
       "runtime": "github-actions",
-      "sha256": "95d6ddcf99b3819a8f17e54621a28107d2b9f9890af1ebf2e29e67d614199aaf",
+      "sha256": "230007d49f3a8d2d59736e98bdc747e00bf95381ed7e629307322d1b554002a8",
       "surface": "github-actions"
     },
     {
@@ -42,7 +42,7 @@
       "runtime": "codex",
       "seed_sha256": "19d5827da319c1a4a75940e859424e227c01ec1261ab6829f83a427f23e8ba9a",
       "span": "briefing",
-      "span_sha256": "ee3b30efdc5003649148028a09349858791c4f9dcf02ec25bfb865c4d4c55b83",
+      "span_sha256": "cb1c0a873d740031079ee72af7f41ad0d4c62afe915d9e8ed3acc269ed69c6d2",
       "surface": "codex"
     },
     {
@@ -50,7 +50,7 @@
       "runtime": "claude-code",
       "seed_sha256": "19d5827da319c1a4a75940e859424e227c01ec1261ab6829f83a427f23e8ba9a",
       "span": "briefing",
-      "span_sha256": "c475f4f777c8adec1fcd2d12a851d0c29be02cdff1e0dabf90e537335ba09a33",
+      "span_sha256": "e41953c53b6c9c95471d4e31aa453ce6c79e5b32d5f0f81a1beaea691e4bf1d5",
       "surface": "claude-code"
     },
     {
@@ -58,7 +58,7 @@
       "runtime": "codex",
       "seed_sha256": "358409e3f6ac6fe078528d0d52923fa798266b3aed31f1a3f23f7d9edc53cff1",
       "span": "scoped-briefing",
-      "span_sha256": "3641a11ddf51aca97628ba6e0b0e2774fce73e421fd2d61dd305ce196d9ae084",
+      "span_sha256": "227d1fd7f006bd4a6878cadaee07361ef94ccebda1deb140faac3c2010b28ee0",
       "surface": "codex"
     },
     {
@@ -66,7 +66,7 @@
       "runtime": "claude-code",
       "seed_sha256": "358409e3f6ac6fe078528d0d52923fa798266b3aed31f1a3f23f7d9edc53cff1",
       "span": "scoped-briefing",
-      "span_sha256": "f76767a0d60d3aebd9cb7172c6c1af457ccd18734e24db2333e7c97ddf29f317",
+      "span_sha256": "8609e635b5af25f40b02772029de55731720118eaef0a39ca740cbc128d3167e",
       "surface": "claude-code"
     }
   ]

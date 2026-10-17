@@ -4,7 +4,9 @@
 
 A card in a state the lifecycle marks closed, which entered it more than the host's
 `archive_after_days` ago, is moved -- byte for byte -- into the archive space beside the card space,
-where no board, gate or reading looks again: dead by location (ADR-019), never deleted. A card some
+where no board, gate or reading looks again: dead by location (ADR-019), never deleted -- in the folder
+of the year it closed in (`<archive>/2026/`), the one thing about a finished card that never changes,
+so the archive stays a set of bounded folders however many years the project runs. A card some
 working card still names (`after`, `parent`) stays where it is, because an order that pointed into
 the archive would point at nothing. With no declared age nothing moves: when work leaves the surface
 is the host's decision, and a kit that picked a number would be deciding it.
@@ -61,24 +63,35 @@ def run(ctx, args) -> int:
     old = {c["id"] for c in governed.members.value if c.get(governed.state_field) in closed
            and lifecycle_module.days_between(lifecycle_module.entered_at(c), now) > days}
     # A card any STAYING card names stays too -- closed or not -- and so on, to a fixed point: an order
-    # or a parent that pointed into the archive would point at nothing.
+    # or a parent that pointed into the archive would point at nothing. And a part of a staying card
+    # stays with it: a program's card tree is read from the parts that name it, so a finished part
+    # that left would leave a working program with no tree.
     while True:
-        named = {t for c in governed.members.value if c["id"] not in old for t in names(c)}
-        kept = old & named
+        staying = [c for c in governed.members.value if c["id"] not in old]
+        named = {t for c in staying for t in names(c)}
+        ids = {c["id"] for c in staying}
+        under = {c["id"] for c in governed.members.value if c["id"] in old
+                 and any(t in ids for t in ([c["parent"]] if isinstance(c.get("parent"), str) else []))}
+        kept = old & (named | under)
         if not kept:
             break
         old -= kept
+    archived = {rel.split("/")[-1]: rel for rel in ctx.workspace.files_under(archive_space.rstrip("/"))}
+
+    def home(rel, card) -> str:
+        return f"{archive_space.rstrip('/')}/{lifecycle_module.entered_at(card)[:4]}/{rel.split('/')[-1]}"
+
     leaving = []
     for rel, card in sorted(governed.members.records):
         if card["id"] in old:
-            moved_to = archive_space.rstrip("/") + "/" + rel.split("/")[-1]
-            if ctx.workspace.exists(moved_to):
-                print(f"archive: {card['id']} stays -- {moved_to} already holds an archived card; one id, one home")
+            held = archived.get(rel.split("/")[-1])
+            if held:
+                print(f"archive: {card['id']} stays -- {held} already holds an archived card; one id, one home")
                 continue
             leaving.append((rel, card))
     writes = []
     for rel, card in leaving:
-        moved_to = archive_space.rstrip("/") + "/" + rel.split("/")[-1]
+        moved_to = home(rel, card)
         writes += [plan_module.Write("create", "binding", "space", governed.capability.id, moved_to),
                    plan_module.Write("remove", "binding", "space", governed.capability.id, rel)]
     if getattr(args, "plan", False) or not writes:
@@ -89,7 +102,7 @@ def run(ctx, args) -> int:
     def write() -> int:
         scoped = ctx.workspace.scoped(governed.capability.targets())
         for rel, card in leaving:
-            moved_to = archive_space.rstrip("/") + "/" + rel.split("/")[-1]
+            moved_to = home(rel, card)
             scoped.write_json(moved_to, card)
             scoped.remove_file(rel)
             print(f"  archived  {card['id']}  {rel} -> {moved_to}  by {by}")

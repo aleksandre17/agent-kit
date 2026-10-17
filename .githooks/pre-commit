@@ -1,5 +1,5 @@
 #!/bin/sh
-# Generated. Do not edit. Served to the runtime git-commit through the surface git-commit - kit 0.2.0.
+# Generated. Do not edit. Served to the runtime git-commit through the surface git-commit - kit 0.3.0.
 # git runs this before it records a commit, once core.hooksPath names this directory (the
 # `activate` door). It hands the STAGED change, as a patch, to the one judge in this host's pinned
 # kit, which applies the edit gates this host declares. It holds no policy of its own, and it fails

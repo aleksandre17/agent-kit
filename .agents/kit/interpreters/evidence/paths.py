@@ -4,7 +4,9 @@ of evidence is a module here and never an edit to the probe."""
 
 from __future__ import annotations
 
+import os
 import re
+from pathlib import Path
 
 
 def _dir_exists(ws, spec, ours):
@@ -29,7 +31,8 @@ def _path_exists(ws, spec, ours):
 
 def _pattern(pattern: str):
     """A glob as a regular expression over `/`-separated paths: `**/` is any number of whole
-    directories (none included), `*` and `?` never cross a `/`."""
+    directories (none included), `*` and `?` never cross a `/`, and `[...]` (`[!...]` negated) is one
+    character of a class, never a `/`."""
     out, i = "", 0
     while i < len(pattern):
         if pattern.startswith("**/", i):
@@ -40,18 +43,42 @@ def _pattern(pattern: str):
             out, i = out + "[^/]*", i + 1
         elif pattern[i] == "?":
             out, i = out + "[^/]", i + 1
+        elif pattern[i] == "[" and "]" in pattern[i + 2:]:
+            end = pattern.index("]", i + 2)
+            body = pattern[i + 1:end]
+            negated = body.startswith("!")
+            body = body[1:] if negated else body
+            klass = "".join("\\" + c if c in "\\^[]" else c for c in body)
+            out, i = out + (f"(?!/)[^{klass}]" if negated else f"[{klass}]"), end + 1
         else:
             out, i = out + re.escape(pattern[i]), i + 1
     return re.compile(out + r"\Z")
 
 
+def _walked(ws, prune: dict) -> list:
+    """Every file under the host root, as a walk finds it where no repository answers -- never inside
+    the kit's own planes (`roots`), a directory an adapter names to prune (`names`), a directory holding
+    a vendored kit's manifest (`markers`), or a repository's own store or a repository of its own."""
+    names = set(prune.get("names") or ())
+    roots = {str(r).strip("/") for r in prune.get("roots") or ()}
+    markers = tuple(prune.get("markers") or ())
+    out = []
+    for here, dirs, files in os.walk(ws.root):
+        rel = Path(here).relative_to(ws.root).as_posix()
+        prefix = "" if rel == "." else rel + "/"
+        dirs[:] = sorted(d for d in dirs if d not in names and prefix + d not in roots
+                         and not ws.outside_tree(prefix + d)
+                         and not any((Path(here) / d / m).is_file() for m in markers))
+        out += [prefix + f for f in files]
+    return sorted(out)
+
+
 def _glob_any(ws, spec, ours):
     carried = ws.carried()
     if carried is None:
-        found = [p.relative_to(ws.root).as_posix() for p in ws.root.glob(spec["pattern"])]
-    else:
-        shape = _pattern(spec["pattern"])
-        found = [rel for rel in carried if shape.match(rel)]
+        carried = _walked(ws, spec.get("prune") or {})
+    shape = _pattern(spec["pattern"])
+    found = [rel for rel in carried if shape.match(rel)]
     matches = sorted(rel.rsplit("/", 1)[-1] for rel in found if rel not in ours)
     return bool(matches), matches or None
 

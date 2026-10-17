@@ -1,0 +1,7 @@
+# Review owners for this repository. Yours: the kit writes only the span between the two markers
+# below (the owners this host declares in .agents/project/owners.json) and never reads the rest.
+# The last matching line wins, so the declared owners, served last, are the ones a change requires.
+
+# kit:begin owners -- computed from this host's declaration; anything written between these two lines is replaced unread
+# Generated from .agents/project/owners.json -- kit 0.3.0. Change the declaration, then render.
+# kit:end owners

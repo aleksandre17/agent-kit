@@ -289,6 +289,11 @@ def _argv(template: list, values: dict) -> list:
     return out
 
 
+def filled(template: list, values: dict) -> list:
+    """A declared verifier's argv, filled -- the one way any reader runs it (`_argv`)."""
+    return _argv(template, values)
+
+
 def authenticate(ctx, capability, measured: str, moment: str) -> dict:
     """Attempt authenticity, DELEGATED; return what was established, in a declared word. Every
     path out of here that is not `verified` is a named absence -- except `refuted`, which is

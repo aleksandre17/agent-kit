@@ -4,16 +4,27 @@
   "description": "A detector emits a fact; this is the other half -- a capability declaring that one named fact MEANS something to it, and what its absence is to be called. Both halves are data: which fact feeds what, and the words an absence is stated in, are declared here and nowhere in any interpreter. A host that emits a fact no row names is not an error -- nobody declared a use for it, which is a smaller statement than a defect. The rows carry no command, no default and no fallback: what a reading says is the host's, and the only thing this document adds to it is a meaning and the sentence to print when the host said nothing.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "readings"],
+  "required": [
+    "schema_version",
+    "readings"
+  ],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
     "readings": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "means", "reads", "gap"],
+        "required": [
+          "id",
+          "means",
+          "reads",
+          "gap"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -33,6 +44,10 @@
             "description": "The words the surface states when the fact is absent, written as a DECLARED GAP and never as an empty value, a zero or a silence. It is authored here rather than composed by an interpreter because an absence is a statement about this host, and the sentence that states it is the declaration's to make.",
             "type": "string",
             "minLength": 1
+          },
+          "proves_a_change": {
+            "description": "This reading is the command the host declares for proving a change: what `prove` runs when no area declares a proof and no MUST names a command. At most one reading says so.",
+            "type": "boolean"
           }
         }
       }

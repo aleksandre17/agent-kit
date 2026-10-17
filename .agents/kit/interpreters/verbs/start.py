@@ -90,7 +90,10 @@ def run(ctx, args) -> int:
             ("enable", taken), ("runtimes", [r["id"] for r in starter["runtimes"]]),
             # A take may bring a detector (a product's adapter reads that product's file), so the
             # reading the first `init` took can be stale now: the walk re-reads it through its door.
-            ("retake", ["--approve", who or "<who>"]), ("render", [])]
+            ("retake", ["--approve", who or "<who>"]), ("render", []),
+            # From the first day a change is weighed by where it lands and proved by what proves that place:
+            # the areas are drafted from the modules a build tool declares (only added, never rewritten).
+            ("areas", ["--approve", who or "<who>"])]
     # Activation precedes the attesting init: that init ends in `check`, and a served setting not
     # yet pointed at what it serves is a failure `check` must report, not one to walk past.
     walk += [("activate", ["--surface", s, "--approve", who or "<who>"]) for s in starter["activate"]]

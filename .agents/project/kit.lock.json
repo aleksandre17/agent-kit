@@ -1,17 +1,17 @@
 {
   "algorithm": "sha256",
-  "count": 357,
+  "count": 362,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "654746fbebbec247c32679792fbb459a946a1abb33ba5db312781ce57175fdf6",
+      "digest": "0a1cc3e91cb769c9e500a3672bb15d78792f7410a04ce0943ff940b34e41ecb9",
       "path": "MANIFEST.json"
     },
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "075a11f3d3b4e9f429be5564cb2f53d712028fb0787fa2a396764c4cf0fabead",
+      "digest": "89a6b1b3d8a87deaa616327b97d67ce6c4996a56f914cea9b65eb28094f0a8c6",
       "path": "README.md"
     },
     {
@@ -23,8 +23,14 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "85332ac1b69f7fecc7db5e5e35d34fa6d9b0950b7595b6680ccde2ae085407e6",
+      "digest": "520738bc0551092c488b009a87d5bf653892f821c18a8364e7d8a443400ccf6b",
       "path": "capabilities/delivery/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "247de355cb30aa1969080c15d0250f07cd9442165ea9f994442d2297c2f3b404",
+      "path": "capabilities/delivery/commands-enforcers.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -41,7 +47,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "payload",
-      "digest": "2db6e41caf487b2f0c07bc9330121f04e055e9866eb34f8f096b60147657532d",
+      "digest": "012595a41c06666959ab85932efe4e241a44cbc49f912142e884fea79d7d8751",
       "path": "capabilities/delivery/payload/BOARD.md.mustache"
     },
     {
@@ -65,7 +71,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "401f3edf12539f90187ae3c6c49caaddb134540f711170891e8e8f28ee4496ed",
+      "digest": "887a3cfa482eea7c2d67e977d93a65a9a781573a5f2555456b8a67c0c60aa046",
       "path": "capabilities/delivery/work-classes.json"
     },
     {
@@ -179,7 +185,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "18375aa9a389a0b8e863b406684c23c675c5047c7a1d71c3a08eea83ce872b6b",
+      "digest": "826ebbd8f164640193bc03e7296fb254ff5bcad2d9b8d02581fbd45b88d46bb5",
       "path": "capabilities/evaluation/verification.json"
     },
     {
@@ -563,7 +569,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "f0577e6e2712eac93960cbcf908012f37fcd3fc9bb3dd8221257648c832780d3",
+      "digest": "eda7515d593226aa2d72732f6a52a2ab0e7015c79e943f2de93c32b5b5926434",
       "path": "diagnostics.json"
     },
     {
@@ -635,7 +641,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d40f3368545652a6ea45291477db189f8e0ec7db0b04afaad1f785165c4d526e",
+      "digest": "513bdb9b83f0c2ee141c8411d3eff0de9f853888200f27561465ef56ee8d81b7",
       "path": "interpreters/context.py"
     },
     {
@@ -653,13 +659,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "11b6563cb44f2eb555723a01d171a6c025372a59fc05a7be95e374d2c6df94a5",
+      "digest": "7d544fe0504bad05f9f7b0b68294fbf76394d43f1411db82c5629070220f5b96",
       "path": "interpreters/criteria.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "514ec29e1dce1761171233fb90d98d84b31de988706777bc545042d3f9645915",
+      "digest": "be74cc308ebd9a655858694ce8188a29f2820517498cfe81d0dc24781670931d",
       "path": "interpreters/declared.py"
     },
     {
@@ -713,7 +719,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "804a07a233008b1374f2c32755255b50848ab632de13d351db050d7142db6365",
+      "digest": "0f1f82d6ceff1da661903043e9b6a3e0886eb58ea146ccd2b947b1bbb9d13a9e",
       "path": "interpreters/evidence/paths.py"
     },
     {
@@ -737,7 +743,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "202dd3a30ad62f5f93f4ba1d6901ed2b55cf0d689a4f5f16ccd090ae93f51418",
+      "digest": "3c757936cae5a6465b2e95d6f769845ceb228d0dae666ae01d4b5458d73ff76f",
       "path": "interpreters/gates/ancestry.py"
     },
     {
@@ -785,13 +791,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "8ddb2e6e095ae8923e3646b1ec1a519051b54bc95b25bbe6c5f9e070b51d0116",
+      "digest": "57a5f365442e5579273f02c32fd33e6164e5b3603d39de807e7ccfc11c218e83",
       "path": "interpreters/gates/core.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a24f3d7b910758e2addf5a472abe35264efa7e699f7a27b24c4e6f8795014994",
+      "digest": "54d8d3ee294e55e3def5cca3181177ddbe0654ad83a22b5afac0b88a43459bc4",
       "path": "interpreters/gates/delivery.py"
     },
     {
@@ -845,7 +851,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "60577edfaa66ba93ee6d05870b0f9781ed6abc4006120e9a4cf50f953a8098bd",
+      "digest": "d2ecbf2cb0c151681af67a125bd773b7e558eee7ab4161bb83027df699687a73",
       "path": "interpreters/gates/norms.py"
     },
     {
@@ -911,7 +917,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ebd92bc86fe492c49be19fca0c3a8bb57d717d794ef91b44c166fc534b6eb11b",
+      "digest": "d78635553bf2a015932390b5fdef9fd773c5aa00192686c849602e7304f0363f",
       "path": "interpreters/gates/restatement.py"
     },
     {
@@ -941,7 +947,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "e968df96e5384f29001184953211df997dffb550d3d5d7864a3ac5e83f27d1c5",
+      "digest": "1bdaf0d1389a80186151a6c68ff3788ab79ba74397dd783e95b7d31aaaa2a50f",
       "path": "interpreters/gates/workcards.py"
     },
     {
@@ -995,7 +1001,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1b95f6c829409a64f471f5513c88f921bb8d80565b646848b34e872d9944a69e",
+      "digest": "dbc7ff0af85ef06f8bec396ac6162ec45d29e382f55a195b610427c2ba91ce5f",
       "path": "interpreters/lifecycle.py"
     },
     {
@@ -1085,13 +1091,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "746d36d9c8bbfbef6053b412a4d19cffcd47dd739910762bb8c47af61f576a4c",
+      "digest": "082551cc01ff15422ba0fcaf67841ec186f8fc8029ca490f232b08979d27d103",
       "path": "interpreters/ports/manifest.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "aa5a64229ba69de01f637af47fbdbd155796637ed0047f990b35e91f43db3cdb",
+      "digest": "99a0a16c76084c752a1dcd723edd29d742ff9b1a8be93fe9317b1f0e01b9023c",
       "path": "interpreters/ports/probe.py"
     },
     {
@@ -1103,13 +1109,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "97854f531bcf32f6daa1af05806d312242282984a9f9409641841e20da3a903d",
+      "digest": "a8230789514abd23b93cfbe9de77f3f001ad541217b391452bcd475f4336d70e",
       "path": "interpreters/ports/vcs.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "fa4bfd18107f410a74269850dd6095d1ecc68f05f783dbb1e05bb3750220a484",
+      "digest": "a90f2f9411299b588f340c87fc5b1c5ece5b9513943081989d6cfe1a8a8491b6",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1145,7 +1151,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "10d88a71a59252199296d0e620a3570389891702a366cb4ffcd496c3fd237bad",
+      "digest": "427307be5d7e0f3c33c1a71410c61fba16625e42119235fde080c1a1159ce857",
       "path": "interpreters/proofs/card_criteria.py"
     },
     {
@@ -1157,19 +1163,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4a86019332d61b31befc8ecf15a04dbac0e15d274bbfa0881bdcb81698069a44",
+      "digest": "9cc5e633af42730099c49b95a3f4d0941d460570631e72a938c3a791e8552be4",
       "path": "interpreters/proofs/review_record.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "c95cc8f48bb3576d6df33f85361c06d3eeb53febcc021093d8de58e32b685db3",
+      "digest": "c0cbdfb6b9d122529a1106140b28de322683d5647fe8606b534872f0af68ebce",
       "path": "interpreters/proofs/rule_verdict.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4fa8e3bd65c987983582ba63e7d5bbd2ce336c847e0d538ef1e4e8af829f0b74",
+      "digest": "d6ee8f34a62be3c20473488e83e0a598c9d96ba6ebe3d98430de822a0e70ad9c",
       "path": "interpreters/proofs/suite_report.py"
     },
     {
@@ -1181,7 +1187,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "dc7dcb40598701c8ddeb0bc2e7b8afeb7ed4e0d2d85fb84278cdaeb272afe3ab",
+      "digest": "560eb0073a5e6d37036058ff09cfd52529fb1862be211716009ff3c4ea401c0b",
       "path": "interpreters/provenance.py"
     },
     {
@@ -1307,6 +1313,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "0718e69a967c3ea432659962a04a33591aca3a5b28d6e18d2f99db9a8a2fd34f",
+      "path": "interpreters/signing.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "aff187d90e6c72e9e27a952870a7b61d0587a6ea4710ccd68f720d9d966f18b5",
       "path": "interpreters/space.py"
     },
@@ -1373,8 +1385,14 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "470b8f016d0a46f9e58af9c5a6e87c7770afbac02d2b0ea300124c6beab32901",
+      "digest": "1887fc9c33148a392d5f7108463372596c3603c4cd85f7a0bed2b8881c31f00b",
       "path": "interpreters/verbs/archive.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "69743952729c89c60fb814890d87244ec75e337c48820b092811accb5b074d5d",
+      "path": "interpreters/verbs/areas.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1397,7 +1415,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1611f4356dec30c93786e47b688e95be8f5ec1db9ebcb0a19adf4eefb23de0a3",
+      "digest": "5b27c484fb1e37e06471c52bc4819afe3e87281b8f8b174f9ffd9ace3c647953",
       "path": "interpreters/verbs/check.py"
     },
     {
@@ -1481,7 +1499,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "43e2317e8e58702805bbf9d282d8ab7e69151dbe79311b893c04408f1a06c470",
+      "digest": "b600775f03191151f5b43c3274a371782d9105c6d55f6632520db716b600ad39",
       "path": "interpreters/verbs/message.py"
     },
     {
@@ -1499,7 +1517,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "baefa0f871fc7501014e186936dc2665ab198e4a6be33991e0018c6972a3ec08",
+      "digest": "58b812ffc4af2bc2fe5c539a8ca3edb8682939962c6cbbfca5ceb4b87a20a5df",
       "path": "interpreters/verbs/prove.py"
     },
     {
@@ -1523,7 +1541,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "88705f6e6e644b6301be0c1b60a43983b12ce75df50da7fab430b11bf04a4d9f",
+      "digest": "d293f6b8cd3b3b545251fb906d27ef196c5405c1a237afdd832034873fd2e91d",
       "path": "interpreters/verbs/retake.py"
     },
     {
@@ -1541,13 +1559,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "c0896e6f072c979c720304e62df32b8103cba0654a011cc7f014ca1db846b84c",
+      "path": "interpreters/verbs/signer.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "8f745a2ac6dd65015c097a59a723049aa7dd3bd68667d88ac8c3ed81afb6747f",
       "path": "interpreters/verbs/spawn.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b8b319eaf93d8ed2636638b37803478b8673d9aabd36bdd23c276c375d23c4fa",
+      "digest": "caebdc59c1202bb7eed687b2198efa404ab235b437dac8435efbfa0f06312378",
       "path": "interpreters/verbs/start.py"
     },
     {
@@ -1577,13 +1601,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "dce1345fcd247e3a7ac29d1c737b64bf34b4e1418f599f83ca1af8b4303c56de",
+      "digest": "73e5b810e566c36c6bf3fead5b9dba0b6cb0135b06586f25a27d8ca8a747ff90",
       "path": "interpreters/verbs/upgrade.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4670bde6dc96468f29a5c4b6cebb993236bd6842a496beb2a83ad974091e1995",
+      "digest": "a825546c7eff3f1b2e5bf9e4992990f47ca564dc651b3c8aafd2f70ed875ed39",
       "path": "interpreters/verbs/weigh.py"
     },
     {
@@ -1595,13 +1619,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f06d3de67e5c64c6e0f1c98349be469fa07b157f93e80fb6ab649b6d6d33163c",
+      "digest": "b73c61148c15b3f7a4c0a16c5c292423f6a6c90d67803a46724179c4e47072fc",
       "path": "interpreters/weighing.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "9eb2e14cafe51b897f5084f41836929a324a0f27ec67bee6c06d9034d34d0a34",
+      "digest": "5611837dded91205a1f8fadb40604d47104e0c34b884ed6099ae4a25aad94b67",
       "path": "interpreters/workclass.py"
     },
     {
@@ -1697,7 +1721,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "3ab0bcdea3f2d479d4b6e61814670be3316cd57326b92fb00905327a4ac85a6d",
+      "digest": "927c951d2111aadf0b21a03aa8838dc8ac379b54aa494c518a3fff96480b489f",
       "path": "schemas/consumption.schema.json"
     },
     {
@@ -1721,13 +1745,13 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "9ba9010447f06407453a14de78a4789dde455fbee196494f0e30bf791bb763ca",
+      "digest": "582950d3407bc6dfef6900d8b1107284855fe4d7e6c7776de012b659f0c7bb30",
       "path": "schemas/delivery-areas.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "245ced744e0352dc963fa732490b677face32c332031191469365d00ee787c33",
+      "digest": "deb05136dc77186f6c284bfa45a363691769470eaf3909a86410b302927e8a0d",
       "path": "schemas/delivery-policy.schema.json"
     },
     {
@@ -1739,7 +1763,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "e5c288cb7cfcb08c7145e0f5090ebca3c90d259759c0c1a63403dbc5bef23843",
+      "digest": "c89e788177712eb64f32544e5ce5c6accc1a6246b4e468268d0c72894bdaa4a6",
       "path": "schemas/detector.schema.json"
     },
     {
@@ -1915,6 +1939,12 @@
       "class": "declaration",
       "digest": "7e67d51da212ff8ba7624a38f25bd932629acb09b05fc38952fd34ff9198d3ce",
       "path": "schemas/migration-map.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "2ca9ddb247aa05f42088aa52941b087082a0913f650ec38d387fb22726409baf",
+      "path": "schemas/module-map.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -2105,7 +2135,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "23a32fc536aa9e4b25ae9bd3f7b7757c7e1079028a70916e659b77145ec9354c",
+      "digest": "e9c70a221f850993b980da00c3a9e5afba5016e157b6c82365f94de1107fcd74",
       "path": "schemas/work-classes.schema.json"
     },
     {
@@ -2129,7 +2159,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "payload",
-      "digest": "8dbec916c20deafb56c9b2c47decc68a477191310910ce200023249d668446db",
+      "digest": "92f49d1e847a41673a32612fb99286162986889bdfbeb3d677a891f9d08bd0f1",
       "path": "seeds/allowed_signers"
     },
     {
@@ -2145,8 +2175,8 @@
       "path": "seeds/taken.json"
     }
   ],
-  "kit_version": "0.2.0",
+  "kit_version": "0.3.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T08:55:20+00:00"
+  "taken_at": "2026-10-17T18:08:10+00:00"
 }

@@ -28,7 +28,7 @@ import criteria
 def _criteria_all_hold(request) -> criteria.Verdict:
     items = request.subject.get(request.ref) or []
     scale = criteria.scale_of(request.ctx) if any(criteria.NEEDS in item for item in items) else None
-    readings = [(item, criteria.needed(scale, item, request.about(item.get(criteria.PROOF))))
+    readings = [(item, criteria.needed(scale, item, request.about(item.get(criteria.PROOF), proving=True)))
                 for item in items]
     if not readings:
         return criteria.Verdict(

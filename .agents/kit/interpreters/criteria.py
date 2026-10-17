@@ -96,10 +96,11 @@ class Request:
     def params(self) -> dict:
         return self.proof.get(PARAMS) or {}
 
-    def about(self, proof: dict, subject=None) -> Verdict:
-        """One more reference, resolved from inside this one, with the trail carried forward."""
-        return resolve(self.ctx, proof,
-                       self.subject if subject is None else subject, self.seen)
+    def about(self, proof: dict, subject=None, proving: bool = False) -> Verdict:
+        """One more reference, resolved from inside this one, with the trail carried forward --
+        marked as the proof of its subject when it is one of the subject's own criteria."""
+        return resolve(self.ctx, proof, self.subject if subject is None else subject,
+                       self.seen | {PROVING} if proving else self.seen)
 
 
 def _trail(proof: dict, subject) -> tuple:
@@ -187,6 +188,11 @@ def needed(scale, item: dict, verdict: Verdict) -> Verdict:
     return verdict
 
 
+#: The mark a reading carries when it is the PROOF of the record it reads about: a judge whose verdict
+#: is read from the governed records themselves may not be that proof (ADR-025 decision 16).
+PROVING = ("proof-of-the-record",)
+
+
 def read(ctx, record: dict, field: str) -> list:
     """Every criterion the record declares in `field`, each with the verdict its own proof
     resolved to -- held to the evidence it needs, against `scale`. A record that declares none
@@ -194,7 +200,8 @@ def read(ctx, record: dict, field: str) -> list:
     nothing is proved."""
     items = record.get(field) or []
     scale = scale_of(ctx) if any(NEEDS in item for item in items) else None
-    return [(item, needed(scale, item, resolve(ctx, item.get(PROOF), record))) for item in items]
+    return [(item, needed(scale, item, resolve(ctx, item.get(PROOF), record, frozenset({PROVING}))))
+            for item in items]
 
 
 #: What a surface may COUNT about the criteria a record declares, and the names it counts under.

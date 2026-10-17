@@ -15,7 +15,9 @@ guessing past it.
 
 from __future__ import annotations
 
+import re
 import subprocess
+from pathlib import Path
 
 
 def run(root, argv: list) -> tuple:
@@ -102,6 +104,17 @@ def commits_between(root, base, head: str) -> tuple:
     return (None, why) if said is None else (said.split(), None)
 
 
+def commits_unpublished(root, head: str, published_as: str) -> tuple:
+    """`(shas, None)` oldest first -- every commit reachable from `head` that no remote-tracking ref
+    carries other than `published_as` (the ref `head` is being pushed as) and the remotes' HEAD -- or
+    `(None, why)`. What a first push of a branch brings that the remote did not already hold."""
+    name = published_as[len("refs/remotes/"):] if published_as.startswith("refs/remotes/") else published_as
+    remote = name.split("/", 1)[0]
+    said, why = run(root, ["rev-list", "--reverse", head, f"--exclude={name}", f"--exclude={remote}/HEAD",
+                           "--not", "--remotes"])
+    return (None, why) if said is None else (said.split(), None)
+
+
 def commit_paths(root, sha: str) -> tuple:
     """`(paths, None)` one commit changed -- against its parent, against nothing for a root, and for a
     merge only what differs from EVERY parent (`--cc`), which is what the merge itself introduced."""
@@ -110,6 +123,131 @@ def commit_paths(root, sha: str) -> tuple:
 
 def commit_message(root, sha: str) -> tuple:
     return run(root, ["log", "-1", "--format=%B", sha])
+
+
+def history(root, rel: str, follow: bool = False) -> tuple:
+    """`([(sha, path)], None)` -- every commit on HEAD's history that touched `rel`, OLDEST first, with the
+    path the file had in that commit (renames followed when `follow`) -- or `(None, why)`."""
+    said, why = run(root, ["log", *(["--follow"] if follow else []), "--format=%x01%H", "--name-only", "--", rel])
+    if said is None:
+        return None, why
+    out, sha = [], None
+    for line in said.splitlines():
+        if line.startswith("\x01"):
+            sha = line[1:].strip()
+        elif line.strip() and sha:
+            out.append((sha, line.strip()))
+            sha = None
+    return list(reversed(out)), None
+
+
+def parent(root, sha: str) -> str:
+    """The first parent of a commit, or "" for a root commit."""
+    said, _why = run(root, ["rev-parse", "--verify", "-q", f"{sha}^"])
+    return (said or "").strip()
+
+
+def order(root) -> dict:
+    """{sha: position} of every commit on HEAD's history, oldest first and every parent before its
+    children -- what came before what."""
+    said, _why = run(root, ["rev-list", "--topo-order", "--reverse", "HEAD"])
+    return {sha: index for index, sha in enumerate((said or "").split())}
+
+
+def verdict(root, sha: str, signers_text: str) -> tuple:
+    """(git's verdict on one commit's signature, the principal it names), read against an allowed-signers
+    TEXT -- the trust root as it stood where the caller says, never the one the tree holds now. `G` is
+    good; anything else is not one. git verifies; nothing here does."""
+    import os
+    import tempfile
+    handle, held = tempfile.mkstemp(prefix="kit-signers-")
+    try:
+        with os.fdopen(handle, "w", encoding="utf-8", newline="\n") as out:
+            out.write(signers_text or "")
+        said, _why = run(root, ["-c", "gpg.format=ssh", "-c", f"gpg.ssh.allowedSignersFile={Path(held).as_posix()}",
+                                "log", "-1", "--format=%G?%x09%GS", sha])
+    finally:
+        os.unlink(held)
+    verdict_, _, principal = (said or "").strip().partition("\t")
+    return verdict_, principal
+
+
+def global_setting(root, name: str) -> str:
+    """A setting of the user's own git configuration, "" where it is unset."""
+    said, _why = run(root, ["config", "--global", "--get", name])
+    return (said or "").strip()
+
+
+def version(root) -> tuple:
+    """(major, minor) of the version control on this machine, (0, 0) where none answers."""
+    said, _why = run(root, ["version"])
+    found = re.search(r"(\d+)\.(\d+)", said or "")
+    return (int(found.group(1)), int(found.group(2))) if found else (0, 0)
+
+
+def configure(root, settings: dict) -> tuple:
+    """Write each setting into this repository's own configuration (never the user's); `(True, None)`
+    or `(None, why)`."""
+    for name, value in settings.items():
+        said, why = run(root, ["config", "--local", name, value])
+        if said is None:
+            return None, why
+    return True, None
+
+
+def unpushed_paths(root) -> tuple:
+    """`(paths, None)` every commit on HEAD brings that its upstream does not hold -- or, with no upstream,
+    that no remote holds -- or `(None, why)`. What a push carries, and so what it has to prove."""
+    upstream, _ = run(root, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"])
+    if upstream:
+        base, why = run(root, ["merge-base", upstream.strip(), "HEAD"])
+        if base is None:
+            return None, why
+        return range_paths(root, base.strip(), "HEAD")
+    shas, why = run(root, ["rev-list", "HEAD", "--not", "--remotes"])
+    if shas is None:
+        return None, why
+    paths = set()
+    for sha in shas.split():
+        said, why = commit_paths(root, sha)
+        if said is None:
+            return None, why
+        paths |= set(said)
+    return sorted(paths), None
+
+
+def clean_tree(root) -> "str | None":
+    """The id of the tree HEAD holds, when the working tree holds exactly it -- nothing staged, changed
+    or untracked-and-not-ignored -- else None: the bytes a command just read have one name only then."""
+    said, _why = run(root, ["status", "--porcelain", "--untracked-files=normal"])
+    if said is None or said.strip():
+        return None
+    tree, _why = run(root, ["rev-parse", "HEAD^{tree}"])
+    return tree.strip() if tree else None
+
+
+def shallow(root) -> bool:
+    """Whether this clone holds only part of its history -- where a commit a reading needs may be absent."""
+    said, _why = run(root, ["rev-parse", "--is-shallow-repository"])
+    return (said or "").strip() == "true"
+
+
+#: The files a repository keeps about itself in its own tree: how it is assembled, attributed and ignored.
+OWN_FILES = (".gitattributes", ".gitignore", ".gitmodules")
+#: Where a repository keeps its own store -- the marker of a repository of its own.
+MARKER = ".git"
+
+
+def own_files(root) -> list:
+    """The repository's own metadata files the tree at `root` holds at its top, sorted."""
+    return [name for name in OWN_FILES if (Path(root) / name).is_file()]
+
+
+def outside_tree(directory) -> bool:
+    """Whether a walk of a host's tree stops at `directory`: the repository's own store, or a repository
+    of its own nested within -- what the host's tree does not carry."""
+    directory = Path(directory)
+    return directory.name == MARKER or (directory / MARKER).exists()
 
 
 def file_at(root, sha: str, rel: str) -> tuple:

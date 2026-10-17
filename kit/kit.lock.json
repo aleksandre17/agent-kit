@@ -5,7 +5,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "c07538475a1028ee3159c08877cb5de33873864deea221b9973321dccff7bed3",
+      "digest": "0a1cc3e91cb769c9e500a3672bb15d78792f7410a04ce0943ff940b34e41ecb9",
       "path": "MANIFEST.json"
     },
     {
@@ -2175,8 +2175,8 @@
       "path": "seeds/taken.json"
     }
   ],
-  "kit_version": "0.2.0",
+  "kit_version": "0.3.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T18:00:49+00:00"
+  "taken_at": "2026-10-17T18:08:10+00:00"
 }

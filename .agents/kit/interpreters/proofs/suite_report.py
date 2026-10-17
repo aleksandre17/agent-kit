@@ -28,22 +28,42 @@ def _int(element, name: str) -> int:
         return 0
 
 
+def _suite(suite) -> tuple:
+    """(ran, failed, errored) of one suite: its test cases where it lists them -- a case with a
+    <skipped/> did not run -- else its counting attributes."""
+    cases = [e for e in suite if _local(e.tag) == "testcase"]
+    if cases:
+        marks = [{_local(x.tag) for x in case} for case in cases]
+        return (sum(1 for m in marks if "skipped" not in m), sum(1 for m in marks if "failure" in m),
+                sum(1 for m in marks if "error" in m))
+    return _int(suite, "tests") - _int(suite, "skipped"), _int(suite, "failures"), _int(suite, "errors")
+
+
 def _junit(root) -> tuple:
+    """(ran, failed, errored), read the way that proves the least: the suites summed, and a root's own
+    totals only ever LOWER what ran or RAISE what failed -- a root that counts tests and says nothing of
+    the skipped (jest-junit's) never outvotes children that say all of them were."""
     suites = [root] if _local(root.tag) == "testsuite" else [e for e in root if _local(e.tag) == "testsuite"]
-    keys = ("tests", "failures", "errors", "skipped")
-    totals = [sum(_int(s, k) for s in suites) for k in keys]
+    ran, failed, errored = (sum(column) for column in zip(*[_suite(s) for s in suites])) if suites else (0, 0, 0)
     if _local(root.tag) == "testsuites" and root.get("tests") is not None:
-        totals = [_int(root, k) for k in keys]
-    tests, failures, errors, skipped = totals
-    return tests - skipped, failures, errors  # a skipped test was not run, and proves nothing
+        skipped = _int(root, "skipped") if root.get("skipped") is not None else _int(root, "tests") - ran
+        ran = min(ran, _int(root, "tests") - skipped) if suites else _int(root, "tests") - skipped
+        failed, errored = max(failed, _int(root, "failures")), max(errored, _int(root, "errors"))
+    return ran, failed, errored  # a skipped test was not run, and proves nothing
 
 
 def _trx(root) -> tuple:
+    """(executed, not passed, errored): a TRX run holds only where every executed test PASSED -- a
+    timeout, an inconclusive or a not-executed-yet-counted test is not a pass."""
     counters = next((e for e in root.iter() if _local(e.tag) == "Counters"), None)
     if counters is None:
         return 0, 0, 0
     executed = _int(counters, "executed") if counters.get("executed") is not None else _int(counters, "total")
-    return executed, _int(counters, "failed"), _int(counters, "error") + _int(counters, "aborted")
+    errored = _int(counters, "error") + _int(counters, "aborted") + _int(counters, "timeout")
+    failed = _int(counters, "failed")
+    if counters.get("passed") is not None:
+        failed = max(failed, executed - _int(counters, "passed") - errored)
+    return executed, failed, errored
 
 
 READERS = {"testsuites": _junit, "testsuite": _junit, "TestRun": _trx}

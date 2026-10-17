@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import stat
 import shutil
 import time
 from pathlib import Path, PurePosixPath
@@ -27,6 +28,14 @@ _REPLACE_PAUSE = 0.02
 
 
 def _replace(source: Path, target: Path) -> None:
+    # A replacement keeps the mode of what it replaces: a served hook made executable by its
+    # activation stays executable when it is rendered again (a fresh temporary file is 0644, and a
+    # hook without its execute bit is one the product silently skips).
+    if target.exists():
+        try:
+            os.chmod(source, stat.S_IMODE(target.stat().st_mode))
+        except OSError:
+            pass
     for attempt in range(_REPLACE_ATTEMPTS):
         try:
             os.replace(source, target)
@@ -139,6 +148,68 @@ class Workspace:
         if said is None:
             return None, why
         return [tuple(line.split(" ", 1)) for line in said.splitlines() if " " in line], None
+
+    def commit_paths(self, sha: str) -> tuple:
+        """(the paths one commit changed, None) or (None, why) -- a merge by what it itself introduced."""
+        import vcs
+        return vcs.commit_paths(self._root, sha)
+
+    def vcs_version(self) -> tuple:
+        import vcs
+        return vcs.version(self._root)
+
+    def configure_vcs(self, settings: dict) -> tuple:
+        import vcs
+        return vcs.configure(self._root, settings)
+
+    def unpushed_paths(self) -> tuple:
+        import vcs
+        return vcs.unpushed_paths(self._root)
+
+    def clean_tree(self) -> "str | None":
+        import vcs
+        return vcs.clean_tree(self._root)
+
+    def history(self, rel: str, follow: bool = False) -> tuple:
+        """Every commit that touched `rel`, oldest first, with the path it had there -- see `vcs.history`."""
+        import vcs
+        return vcs.history(self._root, rel, follow)
+
+    def parent(self, sha: str) -> str:
+        import vcs
+        return vcs.parent(self._root, sha)
+
+    def commit_order(self) -> dict:
+        import vcs
+        return vcs.order(self._root)
+
+    def signature(self, sha: str, signers_text: str) -> tuple:
+        """(verdict, principal) of one commit, against an allowed-signers TEXT -- see `vcs.verdict`."""
+        import vcs
+        return vcs.verdict(self._root, sha, signers_text)
+
+    def global_vcs_setting(self, name: str) -> str:
+        import vcs
+        return vcs.global_setting(self._root, name)
+
+    def shallow(self) -> bool:
+        import vcs
+        return vcs.shallow(self._root)
+
+    def vcs_files(self) -> list:
+        """The repository's own metadata files this tree holds -- see `vcs.own_files`."""
+        import vcs
+        return vcs.own_files(self._root)
+
+    def outside_tree(self, rel: str) -> bool:
+        """Whether a walk stops at directory `rel` -- see `vcs.outside_tree`."""
+        import vcs
+        return vcs.outside_tree(self._root / rel)
+
+    def file_at(self, sha: str, rel: str) -> tuple:
+        """(the text of `rel` as a commit holds it, None) or (None, why) where it holds none."""
+        import vcs
+        return vcs.file_at(self._root, sha, rel)
 
     def accepted_listing(self, space: str) -> tuple:
         """(the file names under `space` at HEAD, None) or (None, why) -- the previous ACCEPTED state

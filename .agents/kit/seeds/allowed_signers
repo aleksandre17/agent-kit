@@ -1,5 +1,8 @@
-# This host's trust root for signed capabilities (ADR-008). The HOST authors it; the kit reads
-# it and never writes it again. One line per signer, in OpenSSH allowed_signers form:
-#   <principal> <key-type> <public-key>
-# As seeded it names nobody, so no signature can be established on this host -- and every
-# taken capability says so, as `no-trust-root`, rather than being called verified.
+# This host's trust root for signatures (ADR-008; ADR-025 amendment 3). The HOST authors it -- by hand,
+# or through `signer --setup`, which only the owner runs, in their own terminal; no other act of the kit
+# writes it. One line per signer, in OpenSSH allowed_signers form:
+#   <principal> [namespaces="<n>,..."] <key-type> <public-key>
+# `agent-kit-capability` is the namespace a capability's publisher signs in; `git` is the one an owner's
+# commits are signed in -- a line restricted to one is never a signer in the other. As seeded it names
+# nobody, so no signature can be established on this host -- and every taken capability says so, as
+# `no-trust-root`, rather than being called verified.

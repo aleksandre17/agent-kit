@@ -123,6 +123,25 @@ def days_between(earlier: str, later: str) -> float:
 
 
 # -- the board: a projection, and one that may never quietly drop a card -----------------------
+def _with_their_programs(items: list, every: list) -> list:
+    """A column's cards with each program's parts right after it (a `parent` chain, read over every card,
+    so a part whose program sits in another column still keeps its program's place): grouping is a
+    view, never a folder -- a card moved to group it would be a card whose links and history moved too."""
+    by_id = {card["id"]: card for card in every}
+
+    def chain(card) -> list:
+        seen, out = set(), [card["id"]]
+        while isinstance(by_id.get(out[0], {}).get("parent"), str) and out[0] not in seen:
+            seen.add(out[0])
+            out.insert(0, by_id[out[0]]["parent"])
+        return out
+
+    first = {}
+    for index, card in enumerate(items):
+        first.setdefault(chain(card)[0], index)
+    return sorted(items, key=lambda card: (first[chain(card)[0]], len(chain(card))))
+
+
 def columns(governed: Governed, counted=None) -> list:
     """The board, computed. `counted` is a function from one record to whatever NUMBERS a surface
     may show about it beyond its own fields, or None where nothing counts anything.
@@ -149,6 +168,7 @@ def columns(governed: Governed, counted=None) -> list:
         items = [
             dict(card,
                  owner=card.get("owner", "-"),
+                 parent=card["parent"] if isinstance(card.get("parent"), str) else "",
                  **{"class": card.get("class", "-")},
                  entered_at=entered_at(card),
                  last_by=last_mover(card),
@@ -161,6 +181,7 @@ def columns(governed: Governed, counted=None) -> list:
             # board a project reads to work stays one size however old the project grows, and the
             # count says out loud how many it does not list -- nothing is dropped in silence.
             items = sorted(items, key=lambda c: _moment(c["entered_at"]), reverse=True)[:recent]
+        items = _with_their_programs(items, governed.members.value)
         built.append(dict(state, items=items, count=count, hidden=count - len(items),
                           limit=limits.get(state["id"], "-")))
     return built

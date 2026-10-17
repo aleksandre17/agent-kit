@@ -67,10 +67,45 @@ def _install(ctx, contract: dict):
                  if item.get(declared.CONTRACT) == contract[declared.CONTRACT] and item.get("mode") == "seed"), None)
 
 
+def catalogue_home(ctx):
+    """The repository-relative path the work-class catalogue is read from, or None where this repository
+    does not carry it (a kit run from outside the host): an install that reads it back, else the shipped
+    document under the kit or a take this host vendors."""
+    names = declared.named(ctx.enabled_capabilities(), CATALOGUE)
+    for capability in ctx.enabled_capabilities():
+        for item in capability.installs:
+            if item.get("reads_as") in names:
+                return item["target"]
+        for document in capability.raw.get("documents", []):
+            if document["id"] in names:
+                try:
+                    return ctx.manifest.path(document["source"]).resolve().relative_to(
+                        ctx.workspace.root.resolve()).as_posix()
+                except ValueError:
+                    return None
+    return None
+
+
 def areas_target(ctx):
     """The host path the areas are declared at, or None -- the install that seeds them says where."""
     item = _install(ctx, AREAS)
     return None if item is None else item["target"]
+
+
+def commands_at(ctx, text_of) -> dict:
+    """`<prefix>:<key>` -> the command, for every key a vouching document (the `enforcers` contract)
+    declares as `text_of(rel)` -- the text a path holds on one side of a change, or None -- reads it: the
+    proof commands a change is weighed by on that side (`weighing.loosened`). A side that holds no such
+    document declares no command."""
+    found = {}
+    for document in declared.sources(ctx, declared.ENFORCERS).values():
+        value = _parsed_any(text_of(document["path"]))
+        for step in document["pointer"].split("."):
+            value = value.get(step) if isinstance(value, dict) else None
+        if isinstance(value, dict):
+            found.update({f"{document['prefix']}:{key}": given for key, given in value.items()
+                          if isinstance(given, str) and given.strip()})
+    return found
 
 
 def accepted_areas(ctx, fallback: dict) -> dict:
@@ -180,16 +215,44 @@ def lifecycle_flags(ctx) -> tuple:
     return doors, closed
 
 
+def places_holding(capabilities, kind: str) -> list:
+    """The places a capability's layout declares hold records of `kind` (`holds`), as path prefixes --
+    found by what a place holds, never by its name."""
+    out = []
+    for capability in capabilities:
+        for doc in capability.documents.values():
+            for row in (doc.get("entries") if isinstance(doc, dict) else None) or []:
+                if isinstance(row, dict) and row.get("holds") == kind and row.get("path"):
+                    out.append(str(row["path"]))
+    return out
+
+
 def decided(ctx):
-    """A reader of whether a card's reference is the KIND of record its row requires: a reference to a
-    document whose front matter declares that kind (`kind: decision`). Any non-empty pointer -- the card
-    a finding was captured from -- is not a decision."""
+    """A reader of whether a card's reference is the KIND of record its row requires: a document IN A
+    PLACE THE HOST'S LAYOUT SAYS HOLDS THAT KIND, whose front matter declares it (`kind: decision`). A
+    decision some other repository made -- a vendored kit's own ADR -- is that repository's, not this
+    host's (ADR-025 amendment 3). Any non-empty pointer -- the card a finding was captured from -- is not
+    a decision. Where no place declares the kind, the front matter alone is read, and that is said."""
+    places = {}
+
+    def held_in(kind: str) -> list:
+        if kind not in places:
+            places[kind] = places_holding(ctx.enabled_capabilities(), kind)
+        return places[kind]
+
     def read(card, holder):
         reference = card.get(holder["field"]) or {}
         ref = reference.get("ref") if isinstance(reference, dict) else None
         if not ref or not ctx.workspace.exists(ref):
             return False
-        head = ctx.workspace.read_text(ref)[:400].splitlines()
-        return bool(head) and head[0].strip() == "---" and any(
-            line.strip() == f"kind: {holder['kind_of_record']}" for line in head[1:12])
+        where = held_in(holder["kind_of_record"])
+        if where and not any(ref == p.rstrip("/") or ref.startswith(p if p.endswith("/") else p + "/") for p in where):
+            return False
+        lines = ctx.workspace.read_text(ref).splitlines()
+        if not lines or lines[0].strip() != "---":
+            return False
+        end = next((i for i, line in enumerate(lines[1:], 1) if line.strip() == "---"), None)
+        # Only the front matter -- between its two fences -- says what a document is: a body line that
+        # reads `kind: decision` is prose about one.
+        return end is not None and any(line.strip() == f"kind: {holder['kind_of_record']}" for line in lines[1:end])
     return read

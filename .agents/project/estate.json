@@ -436,7 +436,7 @@
       "path": "docs/work/evidence/"
     }
   ],
-  "kit_version": "0.2.0",
+  "kit_version": "0.3.0",
   "newline": "lf",
   "relocated": [
     {
@@ -554,8 +554,8 @@
     },
     {
       "authenticity": {
-        "state": "not-yet-read",
-        "taken_at": "2026-10-17T17:32:57+00:00"
+        "state": "unsigned",
+        "taken_at": "2026-10-17T18:08:34+00:00"
       },
       "capability": "github-actions",
       "digest": "h1:a+ieCabEMuUBIM8AyWr7/NW6HlW3xjwTlZfe0wF5viE=",
@@ -566,10 +566,12 @@
         "version": "1.1.0"
       },
       "trust": {
-        "basis": "trust-on-first-use"
+        "attested_at": "2026-10-17T18:08:34+00:00",
+        "attested_by": "claude(owner-delegated:2026-10-17)",
+        "basis": "attested"
       },
       "version": "1.6.1"
     }
   ],
-  "taken_at": "2026-10-17T06:14:50+00:00"
+  "taken_at": "2026-10-17T18:08:34+00:00"
 }

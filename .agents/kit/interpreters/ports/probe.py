@@ -45,15 +45,20 @@ EVIDENCE_KINDS = kinds.registry(Path(__file__).resolve().parents[1] / "evidence"
 class Probe:
     """Evaluates detector declarations against a workspace. Reads only."""
 
-    def __init__(self, workspace, ours=None) -> None:
+    def __init__(self, workspace, ours=None, planes=None) -> None:
         self._ws = workspace
         #: A callable answering which host-relative paths the kit served -- read once per run.
         self._ours = ours or (lambda: set())
+        #: A callable answering (the kit's own plane roots, the file a vendored kit is known by): where a
+        #: walk of the host's tree does not go when no repository answers what it carries.
+        self._planes = planes or (lambda: ((), ()))
 
     def run(self, detectors: list) -> tuple[dict, list]:
         facts: dict = {}
         results: list = []
         self._served = set(self._ours())
+        roots, markers = self._planes()
+        self._skip = {"roots": list(roots), "markers": list(markers)}
         for detector in sorted(detectors, key=lambda d: d["id"]):
             matched, captures = self._evaluate(detector)
             results.append({"id": detector["id"], "matched": matched})
@@ -71,7 +76,8 @@ class Probe:
                     f"detector {detector['id']!r}: unknown evidence kind {kind!r}; "
                     f"declared kinds are {sorted(EVIDENCE_KINDS)}"
                 )
-            ok, captured = EVIDENCE_KINDS[kind](self._ws, spec, self._served)
+            walk = {**self._skip, "names": list(detector.get("prune") or ())}
+            ok, captured = EVIDENCE_KINDS[kind](self._ws, {**spec, "prune": walk}, self._served)
             captures.append(captured if ok else None)
             if not ok and not spec.get("optional", False):
                 matched = False

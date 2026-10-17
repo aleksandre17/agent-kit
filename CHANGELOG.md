@@ -5,7 +5,7 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade --plan`, which names every path that changes between the two.
 
-## 0.3.0 — unreleased
+## 0.3.0 — 2026-10-17
 
 **Fixed — a re-audit's four logic defects; the trust model said as it is (ADR-025 amendment 5)**
 - FF-WORK-SIGNED: a door walked twice is held by its LATEST mark (`signing.holds`), never by an earlier

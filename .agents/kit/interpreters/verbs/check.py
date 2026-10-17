@@ -12,6 +12,10 @@ must be modified to admit a new capability is not open, however generic its eval
 
 from __future__ import annotations
 
+import contextlib
+import io
+import time
+
 import declared
 import gatekinds
 import maturation
@@ -51,6 +55,9 @@ def _through(ctx, surface_id: "str | None") -> "dict | None":
     return surfaces[surface_id]
 
 
+ARGUMENTS = [("--brief", {"action": "store_true",
+                          "help": "print what fails and the summary only -- the listing an agent reads (Cardinal IX)"})]
+
 def run(ctx, args) -> int:
     """Every gate runs and every failure is printed, whatever its stance. The stance decides one
     thing only -- whether that failure fails this verb -- and it is printed beside the verdict with
@@ -64,8 +71,10 @@ def run(ctx, args) -> int:
     stances, unbound = stance_of.resolve(ctx.manifest, ctx.host_answers(), enabled, matured)
     failed = 0
     observed, clean = [], []
+    timed, began = [], time.perf_counter()
     for capability in enabled:
         for gate in capability.gates:
+            started = time.perf_counter()
             kind = gate["kind"]
             if kind not in kinds:
                 raise GateError(
@@ -74,8 +83,10 @@ def run(ctx, args) -> int:
                 )
             held = stances[(capability.id, gate["id"])]
             crashed = False
+            said = io.StringIO()  # a gate's own lines are shown with its header, never without it
             try:
-                failures = kinds[kind](ctx, gate.get("params", {}))
+                with contextlib.redirect_stdout(said):
+                    failures = kinds[kind](ctx, gate.get("params", {}))
             except KitError:
                 raise  # a refusal by name is the kit speaking, and it is reported as itself
             except Exception as exc:  # noqa: BLE001 -- a gate that crashed decided nothing
@@ -85,15 +96,19 @@ def run(ctx, args) -> int:
                 crashed = True
                 failures = [f"the gate kind {kind!r} crashed ({type(exc).__name__}: {exc}) -- an "
                             f"unjudged gate is not a passed one"]
-            print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})  {held.label()}")
-            for failure in failures:
-                print(f"        {failure}")
-            if kind in reports and not crashed:
-                print(f"        {reports[kind](ctx, gate.get('params', {}))}")
+            if failures or not getattr(args, "brief", False):
+                print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})  {held.label()}")
+                if said.getvalue():
+                    print(said.getvalue().rstrip("\n"))
+                for failure in failures:
+                    print(f"        {failure}")
+                if kind in reports and not crashed:
+                    print(f"        {reports[kind](ctx, gate.get('params', {}))}")
             if held.fails:
                 failed += 1 if failures else 0
             else:
                 (observed if failures else clean).append(f"{gate['id']} [{held.stance}]")
+            timed.append((time.perf_counter() - started, gate["id"]))
     for sentence in idle:
         print(f"  MATURED {sentence}")
     for entry in unbound:
@@ -106,5 +121,8 @@ def run(ctx, args) -> int:
         print(f"check: {len(clean)} gate(s) held under a stance that does not fail check are "
               f"clean: {', '.join(clean)} -- no failure stands between them and a stance that "
               f"fails; raising one is a declaration only the host makes")
+    # What judging cost, every time (Cardinal IX): a check that grows slow says which gates made it so.
+    slowest = ", ".join(f"{gid} {spent:.1f} s" for spent, gid in sorted(timed, reverse=True)[:3])
+    print(f"check: {len(timed)} gate(s) judged in {time.perf_counter() - began:.1f} s -- the slowest: {slowest}")
     print(f"check: {failed} gate(s) failed")
     return 1 if failed else 0

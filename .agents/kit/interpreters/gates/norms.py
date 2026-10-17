@@ -20,6 +20,9 @@ This gate checks, deterministically, and names each finding by its code:
 
 from __future__ import annotations
 
+import json
+import re
+
 import declared
 
 KIND = "norms-coherent"
@@ -29,20 +32,47 @@ GENRES = ({declared.CONTRACT: "doctrine"}, "genres")
 MODALITIES = {"MUST": (1, 3), "SHOULD": (1, 2), "MAY": (0, 1), "SHOULD NOT": (-1, 2), "MUST NOT": (-1, 3)}
 VOCABULARY = ({declared.CONTRACT: "doctrine"}, "stance_vocabulary")
 #: The enforcers a taken ADAPTER vouches for: found by their contract, never by a product's name.
-VOUCHED = {declared.CONTRACT: "enforcers"}
+VOUCHED = declared.ENFORCERS
 
 
 def norms_of(ctx) -> list:
     """Every norm the host's declared sources carry -- read by `check` and by `prove`."""
-    return _norms(ctx)
+    return _norms(ctx)[0]
 
 
-def _norms(ctx) -> list:
-    found = []
-    for name in declared.named(ctx.enabled_capabilities(), NORMS[0]):
+def norms_held(ctx, text_of) -> tuple:
+    """(every norm, as `text_of(rel)` -- the text a path held at a revision, or None -- reads each source
+    the HOST authored; the authored targets it held none of, read as they stand now). A source a
+    capability SHIPS is read as the kit that speaks carries it. `prove` reads the MUSTs so, at the
+    published base: a push cannot drop the enforcer that would prove it."""
+    return _norms(ctx, text_of)
+
+
+def _as_held(text_of, target: str):
+    if target.endswith("/"):  # a collection is many records; a revision is read one document at a time
+        return None
+    try:
+        value = json.loads(text_of(target) or "null")
+    except ValueError:
+        return None
+    return value if isinstance(value, list) else None
+
+
+def _norms(ctx, text_of=None) -> tuple:
+    found, unheld = [], []
+    names = declared.named(ctx.enabled_capabilities(), NORMS[0])
+    authored = {item["reads_as"]: item["target"] for capability in ctx.enabled_capabilities()
+                for item in capability.installs if item.get("reads_as") in names}
+    for name in names:
         for value in declared.sources(ctx, [name]).values():
+            if text_of is not None and name in authored:
+                stood = _as_held(text_of, authored[name])
+                if stood is None:
+                    unheld.append(authored[name])
+                else:
+                    value = stood
             found += value if isinstance(value, list) else []
-    return found
+    return found, unheld
 
 
 def _enforcers(ctx) -> set:
@@ -69,6 +99,31 @@ def _vouched(ctx) -> set:
         if isinstance(value, dict):
             known |= {f"{document['prefix']}:{key}" for key, given in value.items() if given}
     return known
+
+
+_ADDRESS = re.compile(r"^([^@#]+)@[^#]+#(.+)$")
+
+
+def readdressed(norms: list, stances: list) -> dict:
+    """{old address: new}: every stance whose address no norm in force publishes, where exactly one norm in
+    force has the same publisher and name at another version -- a stance a new version of its bundle left
+    answering nothing. Ambiguous or unrelated addresses are not guessed at."""
+    in_force = {n["id"] for n in norms}
+    by_name = {}
+    for identity in in_force:
+        found = _ADDRESS.match(identity)
+        if found:
+            by_name.setdefault(found.groups(), []).append(identity)
+    moves = {}
+    for stance in stances:
+        identity = str(stance.get("id") or "")
+        found = _ADDRESS.match(identity)
+        if identity in in_force or not found:
+            continue
+        candidates = by_name.get(found.groups(), [])
+        if len(candidates) == 1:
+            moves[identity] = candidates[0]
+    return moves
 
 
 def judged(norms: list, stances: list, enforcers: set, today: str, deriving: set, loosening: set) -> list:
@@ -107,11 +162,14 @@ def judged(norms: list, stances: list, enforcers: set, today: str, deriving: set
                             f"and compensating control)")
         if exception and exception["expires"] < today:
             failures.append(f"NT-EXPIRED {stance['id']}: its exception expired on {exception['expires']}")
+    for old, new in sorted(readdressed(norms, stances).items()):
+        failures.append(f"NT-READDRESS {old}: no norm in force has this address, {new} does -- the stance answers "
+                        f"nothing until it is re-addressed (upgrade --mode addresses)")
     return failures
 
 
 def _held(ctx, params) -> list:
-    norms = _norms(ctx)
+    norms = _norms(ctx)[0]
     local = next((i for c in ctx.enabled_capabilities() for i in c.installs if i.get("validates") == "doctrine"), None)
     stances = []
     if local and ctx.workspace.exists(local["target"]):
