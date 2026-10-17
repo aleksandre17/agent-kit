@@ -404,6 +404,35 @@ def card_floor(classes_doc: dict, card: dict, fallback: str) -> tuple:
     return shaped, why
 
 
+def proof_for(paths, classes_doc: dict, areas_doc: dict) -> tuple:
+    """(the commands that prove this change, why) -- or (None, why) when it is proved by EVERY command a
+    MUST names (ADR-025 amendment 4). Proof is weighed as the work is: a change is proved by what proves
+    the areas it touches, and only a change heavy enough to owe a decision, or one touching an area that
+    declares no proof, is proved by everything. No paths: nothing new, nothing to prove."""
+    paths = list(paths)
+    if not paths:
+        return [], "nothing new to prove"
+    sig, verdict = weigh(paths, classes_doc, areas_doc)
+    heavy = lightest_with(classes_doc, "decision")
+    if heavier_or_equal(classes_doc, verdict["class"]["id"], heavy):
+        return None, f"the change weighs {verdict['class']['id']}: what owes a decision is proved by everything"
+    commands, unproved = [], []
+    for hit in sig["touched"].values():
+        declared = hit["area"].get("proved_by")
+        if declared is None:
+            unproved.append(hit["area"]["id"])
+        commands += [c for c in declared or [] if c not in commands]
+    if sig["unclaimed"]:
+        declared = areas_doc.get("default_proved_by")
+        if declared is None:
+            unproved.append("(no area)")
+        commands += [c for c in declared or [] if c not in commands]
+    if unproved:
+        return None, f"{', '.join(sorted(unproved))} declare(s) no proof (proved_by): proved by everything"
+    touched = ", ".join(sorted(sig["touched"])) or "no area"
+    return commands, f"the change touches {touched}, weighs {verdict['class']['id']}"
+
+
 def lightest_with(classes_doc: dict, record: str) -> str:
     """The lightest computed class that owes a record: what a card with no class is read as."""
     return next(row["id"] for row in classes_doc["classes"]

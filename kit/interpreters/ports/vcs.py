@@ -152,6 +152,37 @@ def configure(root, settings: dict) -> tuple:
     return True, None
 
 
+def unpushed_paths(root) -> tuple:
+    """`(paths, None)` every commit on HEAD brings that its upstream does not hold -- or, with no upstream,
+    that no remote holds -- or `(None, why)`. What a push carries, and so what it has to prove."""
+    upstream, _ = run(root, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"])
+    if upstream:
+        base, why = run(root, ["merge-base", upstream.strip(), "HEAD"])
+        if base is None:
+            return None, why
+        return range_paths(root, base.strip(), "HEAD")
+    shas, why = run(root, ["rev-list", "HEAD", "--not", "--remotes"])
+    if shas is None:
+        return None, why
+    paths = set()
+    for sha in shas.split():
+        said, why = commit_paths(root, sha)
+        if said is None:
+            return None, why
+        paths |= set(said)
+    return sorted(paths), None
+
+
+def clean_tree(root) -> "str | None":
+    """The id of the tree HEAD holds, when the working tree holds exactly it -- nothing staged, changed
+    or untracked-and-not-ignored -- else None: the bytes a command just read have one name only then."""
+    said, _why = run(root, ["status", "--porcelain", "--untracked-files=normal"])
+    if said is None or said.strip():
+        return None
+    tree, _why = run(root, ["rev-parse", "HEAD^{tree}"])
+    return tree.strip() if tree else None
+
+
 def shallow(root) -> bool:
     """Whether this clone holds only part of its history -- where a commit a reading needs may be absent."""
     said, _why = run(root, ["rev-parse", "--is-shallow-repository"])

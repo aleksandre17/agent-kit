@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "id": "cardinals",
-  "version": "1.0.0",
-  "summary": "The GeoStat cardinals — eight project-agnostic identities, owner-decreed — published as a doctrine bundle BESIDE the kit (ADR-021 decision 2), never inside it (ADR-004): a host holds them only by taking them, and answers each by address with a stance in its own law plane. An ordinary capability declaration; no interpreter in the kit knows that any of it is doctrine.",
+  "version": "1.1.0",
+  "summary": "The GeoStat cardinals — nine project-agnostic identities, owner-decreed — published as a doctrine bundle BESIDE the kit (ADR-021 decision 2), never inside it (ADR-004): a host holds them only by taking them, and answers each by address with a stance in its own law plane. An ordinary capability declaration; no interpreter in the kit knows that any of it is doctrine.",
   "doctrine": "capabilities/cardinals/payload/bundle.md",
   "requires": [
     {

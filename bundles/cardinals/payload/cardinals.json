@@ -1,7 +1,7 @@
 [
   {
     "schema_version": 1,
-    "id": "cardinals@1.0.0#primacy-of-the-idea",
+    "id": "cardinals@1.1.0#primacy-of-the-idea",
     "genre": "cardinal",
     "title": "Cardinal I — The Primacy Of The Idea",
     "says": "The starting point and the measure of any mechanism is the best form known to the field; what already exists adapts to it, and the cost of change is never an argument.",
@@ -9,7 +9,7 @@
   },
   {
     "schema_version": 1,
-    "id": "cardinals@1.0.0#growth-oriented-and-open",
+    "id": "cardinals@1.1.0#growth-oriented-and-open",
     "genre": "cardinal",
     "title": "Cardinal II — Every Mechanism Is Growth-Oriented & Open",
     "says": "Every mechanism grows by declaration and is never narrowed, hardcoded or closed; a closed enumeration or a privileged rung is a defect.",
@@ -17,7 +17,7 @@
   },
   {
     "schema_version": 1,
-    "id": "cardinals@1.0.0#one-truth-one-home",
+    "id": "cardinals@1.1.0#one-truth-one-home",
     "genre": "cardinal",
     "title": "Cardinal III — One Truth Has One Home",
     "says": "Every truth is declared in exactly one place and everything else is a projection of it; a copy is removed, never synchronised.",
@@ -25,7 +25,7 @@
   },
   {
     "schema_version": 1,
-    "id": "cardinals@1.0.0#declaration-never-executes",
+    "id": "cardinals@1.1.0#declaration-never-executes",
     "genre": "cardinal",
     "title": "Cardinal IV — A Declaration Never Executes; An Interpreter Never Decides",
     "says": "A declaration states what is true and carries no behaviour; an interpreter states how anything is done and holds no policy.",
@@ -33,7 +33,7 @@
   },
   {
     "schema_version": 1,
-    "id": "cardinals@1.0.0#the-surface-never-lies",
+    "id": "cardinals@1.1.0#the-surface-never-lies",
     "genre": "cardinal",
     "title": "Cardinal V — The Surface Never Lies",
     "says": "What is shown is what is true or an honestly declared absence, never a fabricated zero, a silent blank or a success that was not observed.",
@@ -41,7 +41,7 @@
   },
   {
     "schema_version": 1,
-    "id": "cardinals@1.0.0#the-law-set-grows-by-declaration",
+    "id": "cardinals@1.1.0#the-law-set-grows-by-declaration",
     "genre": "cardinal",
     "title": "Cardinal VI — The Law Set Grows By Declaration",
     "says": "The law set grows by declaration in two directions: a concept seen twice is promoted to its home, and a question the doctrine cannot answer is declared as a gap where it is met.",
@@ -49,7 +49,7 @@
   },
   {
     "schema_version": 1,
-    "id": "cardinals@1.0.0#a-name-is-not-a-referent",
+    "id": "cardinals@1.1.0#a-name-is-not-a-referent",
     "genre": "cardinal",
     "title": "Cardinal VII — A Name Is Not A Referent; The Boundary Is Measured, Never Assumed",
     "says": "A name is not a referent; a boundary is measured once before it is trusted, never assumed.",
@@ -57,10 +57,18 @@
   },
   {
     "schema_version": 1,
-    "id": "cardinals@1.0.0#a-seam-carries-one-responsibility",
+    "id": "cardinals@1.1.0#a-seam-carries-one-responsibility",
     "genre": "cardinal",
     "title": "Cardinal VIII — A Seam Carries One Responsibility And Promises Only What It Keeps",
     "says": "A seam carries one responsibility and promises only what it keeps; it grows by extension, and every implementation behind it is substitutable without the caller asking which one it got.",
+    "publisher": "GeoStat (owner-decreed cardinals)"
+  },
+  {
+    "schema_version": 1,
+    "id": "cardinals@1.1.0#cost-follows-the-change",
+    "genre": "cardinal",
+    "title": "Cardinal IX — Every Cost Follows The Change It Serves",
+    "says": "Every cost a mechanism imposes — ceremony, proof, review, context, waiting — is computed from the change it serves and grows only with that change's risk; nothing runs that the change cannot affect, the heavy path is kept for what is heavy, and a mechanism that costs more than the failure it prevents is a defect.",
     "publisher": "GeoStat (owner-decreed cardinals)"
   }
 ]

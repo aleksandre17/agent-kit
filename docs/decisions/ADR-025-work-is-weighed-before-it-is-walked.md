@@ -407,3 +407,32 @@ as the owner's user can read the key file: it cannot open it.
 or the key would be left open for it. *A token or a password the kit checks*: a second credential
 store, held where the agent runs. *GPG*: a second toolchain where SSH keys already are. *Verify in the
 commit-msg hook*: the signature does not exist yet. *A kit-made key*: whatever made it knows it.
+
+## Amendment 4 — proof is weighed as the work is (2026-10-17, owner-decided)
+
+**Context.** The owner: a one-line change must not run every suite the repository has; the system must
+not hold its users hostage to their own process. The work was weighed (a standard change is one
+commit), and its proof was not: `prove`, on every push, ran every command a MUST names.
+
+**Decision.** An area declares what proves it (`proved_by`: commands a vouching declaration runs;
+`default_proved_by` for paths no area claims). `prove` weighs what the push carries -- through `weigh`,
+the one weigher -- and runs what the touched areas declare: the web app's tests for the web app, `check`
+alone for prose. Everything runs when the change owes a decision (major and heavier), when an area it
+touches declares no proof (the safe default, said by name), when the host weighs nothing, or on `--full`;
+CI and a release run everything as they did. It aligns with change-based test selection (test impact
+analysis, as Google's TAP and the affected-target builds of Bazel and Nx run it), risk-based testing
+(ISO/IEC/IEEE 29119) and DORA's fast feedback.
+
+**Rejected.** *The agent picks the tests*: a judgement where a computation exists, and an agent wrong
+once is a push unproved. *Coverage-derived impact maps* (a test is selected by the lines it ran): a
+second tool, a cache to keep honest, and a map that is wrong after every refactor; the areas are the
+map the host already keeps. *Skip a test whose declared inputs did not change* (a digest over the files
+a test is said to read): a declaration of dependencies is a guess that goes stale after a refactor, and
+a cache that lies is a red change pushed green.
+
+**Decision 2 -- nothing is proved twice on the same bytes** (Cardinal IX). A command that went green on
+a clean tree is remembered in the observed plane by that tree's id and its own command string, and is
+not run again while both are the same: a second push of what was proved, a retry after a refused push.
+The key is the exact bytes -- any change at all, a dirty tree, a command that wrote into the tree, or
+`--full` runs it again -- so the cache cannot be wrong where the command is deterministic, and a red run
+is never remembered.

@@ -159,6 +159,14 @@ class Workspace:
         import vcs
         return vcs.configure(self._root, settings)
 
+    def unpushed_paths(self) -> tuple:
+        import vcs
+        return vcs.unpushed_paths(self._root)
+
+    def clean_tree(self) -> "str | None":
+        import vcs
+        return vcs.clean_tree(self._root)
+
     def shallow(self) -> bool:
         import vcs
         return vcs.shallow(self._root)

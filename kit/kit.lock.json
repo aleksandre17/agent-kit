@@ -1103,13 +1103,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7e376d59a83fdb25054e2edbe965e818b988bbc1817ed16df22a52d22e727d98",
+      "digest": "3cfab16c51ec74f6eff833db0adbdbf9f4fcd392ce72885a556ddae04d84d926",
       "path": "interpreters/ports/vcs.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7cd5304606fe3a2e25b9edc0caa90982ce5455176512265de1f11152a928695a",
+      "digest": "8445779e98cbd7e4efa9d9f7c46f4185a9c7e1376c78ac1b4492bfdddfa1315b",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1505,7 +1505,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7f50e5857ad9ece8735d1259697a12022cf4275adcc796f727a686e5799f008e",
+      "digest": "113b1791b9efcd87095d4afdd8bc4fa284abe72f01b1f89d58a75746db80ba0a",
       "path": "interpreters/verbs/prove.py"
     },
     {
@@ -1607,7 +1607,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ae516e202b9271ea8067d436f3c5755701210aad8d6593e55a06ba2d4c69a3ef",
+      "digest": "a34cb417ef9027a6cb11aac4229200367b9a11115e08c3752acae61c9b271872",
       "path": "interpreters/weighing.py"
     },
     {
@@ -1733,7 +1733,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "9ba9010447f06407453a14de78a4789dde455fbee196494f0e30bf791bb763ca",
+      "digest": "3788ba364dac0043578d9a7bc26192e8740347ffd60f716945fc681dfbc85b76",
       "path": "schemas/delivery-areas.schema.json"
     },
     {
@@ -2160,5 +2160,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T12:15:20+00:00"
+  "taken_at": "2026-10-17T12:32:11+00:00"
 }

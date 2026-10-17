@@ -348,3 +348,26 @@ def test_a_decision_is_the_hosts_own_never_a_vendored_kits():
     assert decided({"origin": {"ref": "docs/decisions/ADR-001.md"}}, holder)
     assert not decided({"origin": {"ref": "platform/kits/agent-kit/docs/decisions/ADR-025.md"}}, holder), \
         "another repository's decision is not this host's"
+
+
+def test_proof_is_weighed_as_the_work_is():
+    # The owner: a one-line change must not run every suite the repository has.
+    host = areas(("migrations", r"^db/migrations/", "irreversible", {"proved_by": ["kit:test-db"]}),
+                 ("web", r"^web/", "reversible", {"proved_by": ["kit:test-web"]}),
+                 ("docs", r"^docs/", "reversible", {"proved_by": []}))
+    assert weighing.proof_for(["web/app.ts"], CLASSES, host)[0] == ["kit:test-web"], "the web app's tests, no other"
+    assert weighing.proof_for(["docs/guide.md"], CLASSES, host)[0] == [], "prose is proved by check alone"
+    assert weighing.proof_for([], CLASSES, host) == ([], "nothing new to prove")
+    heavy, why = weighing.proof_for(["db/migrations/1.sql"], CLASSES, host)
+    assert heavy is None and "owes a decision is proved by everything" in why
+
+
+def test_an_area_that_declares_no_proof_is_proved_by_everything_and_says_so():
+    host = areas(("web", r"^web/", "reversible", {"proved_by": ["kit:test-web"]}), ("loose", r"^loose/", "reversible"))
+    commands, why = weighing.proof_for(["loose/x.txt"], CLASSES, host)
+    assert commands is None and "loose declare(s) no proof" in why
+    commands, why = weighing.proof_for(["nowhere/x.txt"], CLASSES, host)
+    assert commands is None and "(no area)" in why
+    host["default_proved_by"] = []
+    assert weighing.proof_for(["nowhere/x.txt", "web/a.ts"], CLASSES, host)[0] == ["kit:test-web"], \
+        "a path no area claims is proved by the default"

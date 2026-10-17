@@ -14,6 +14,11 @@
       "type": "integer",
       "const": 1
     },
+    "default_proved_by": {
+      "description": "What proves a path no area claims; absent, every command a MUST names (ADR-025 amendment 4).",
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*:[A-Za-z0-9._-]+$"}
+    },
     "default_undo": {
       "description": "The undo cost of a path no area claims, by its id on the work classes' scale.",
       "type": "string",
@@ -73,6 +78,11 @@
             "description": "Who answers for this area -- a role or a team, never a guess. Named on weighing, so a change reaches the people it affects.",
             "type": "string",
             "minLength": 1
+          },
+          "proved_by": {
+            "description": "The commands that prove a change to this area, as `<prefix>:<key>` a vouching declaration runs (ADR-025 amendment 4). Absent: a change here is proved by every command a MUST names -- the safe default, said when it is used. Empty: nothing beyond `check` proves it (prose, say).",
+            "type": "array",
+            "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*:[A-Za-z0-9._-]+$"}
           },
           "feeds": {
             "description": "The areas downstream of this one: its consumers, that must move with a change to it. Weighing a change names every area it feeds, transitively -- impact read from the map, never written as an essay per change (ADR-025 decision 12).",
