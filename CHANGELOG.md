@@ -59,6 +59,9 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   no longer fails once a worker has run.
 - A referenced `upgrade` creates, once and through its install mode, every host-owned seed or space a
   newer capability introduces; before, the host could not read its own declarations afterwards.
+- `declared-rule-holds` refuses to follow a rule into its own evaluation: a finished card proved by
+  FF-WORK-ORDER (which re-reads finished cards) recursed without end in `check` and on the board.
+- The commit floor names a `Card:` line written outside the final trailer block.
 
 ## 0.2.0 — 2026-10-17
 

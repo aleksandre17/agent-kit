@@ -177,3 +177,11 @@ def test_lowering_a_card_needs_the_owners_door_on_record():
     approved = {"id": "o", "class": "normal",
                 "reshaped": [{"from": "major", "to": "normal", "at": "t", "by": "dev", "approved_by": "owner"}]}
     assert weighing.demotions(CLASSES, before, {"o": approved}) == []
+
+
+def test_a_card_line_outside_the_trailer_block_is_named_not_silently_missed():
+    said = refusals(["api/contracts/o.json"], "feat: o\n\nCard: orders\n\nCo-Authored-By: x <x@y>\n",
+                    {"orders": CARD})
+    assert "not in its LAST paragraph" in said[0]
+    assert refusals(["api/contracts/o.json"], "feat: o\n\nCard: orders\nCo-Authored-By: x <x@y>\n",
+                    {"orders": CARD}) == []

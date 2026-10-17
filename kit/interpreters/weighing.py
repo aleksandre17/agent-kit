@@ -282,8 +282,11 @@ def commit_refusals(classes_doc: dict, verdict: dict, message: str, cards: dict)
         return refusals
     named = said.get(keys["card"].lower())
     if named is None:
+        stray = re.search(rf"^{re.escape(keys['card'])}\s*:", message, re.M | re.I)
+        hint = (" -- a `" + keys["card"] + ":` line is in the message, but not in its LAST paragraph, the one "
+                "block git reads trailers from; put it beside the other trailers") if stray else ""
         return refusals + [f"the change computes {computed_id} ({verdict['why']}), which owes a card: "
-                           f"name it with a trailer `{keys['card']}: <card id>`"]
+                           f"name it with a trailer `{keys['card']}: <card id>`{hint}"]
     card = cards.get(named)
     if card is None:
         return refusals + [f"{keys['card']}: {named} names no card this host holds"]

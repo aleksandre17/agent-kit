@@ -23,6 +23,12 @@ import gatekinds
 OF_KIND = "kind"
 WITH = "params"
 
+#: The rules being evaluated right now, in this process. A rule that reads the records whose criteria
+#: name it -- a gate over cards, proved by a card -- would otherwise evaluate itself forever: the
+#: reference trail of `criteria` cannot see through a judge it does not call. The second reading of a
+#: rule inside its own evaluation is a reading that stands on itself, and it proves nothing.
+_EVALUATING: set = set()
+
 
 def _declared_rule_holds(request) -> criteria.Verdict:
     named = [
@@ -48,7 +54,15 @@ def _declared_rule_holds(request) -> criteria.Verdict:
             f"{request.ref!r} is declared by {capability.id!r} as kind {rule[OF_KIND]!r}, and no "
             f"module installed here evaluates that kind; the reading could not be taken"
         )
-    findings = judges[rule[OF_KIND]](request.ctx, rule.get(WITH, {}))
+    if request.ref in _EVALUATING:
+        return criteria.Verdict.unreadable(
+            f"{request.ref!r} is being evaluated already, and this reading is part of that evaluation; "
+            f"a rule that stands on its own reading proves nothing and is not followed")
+    _EVALUATING.add(request.ref)
+    try:
+        findings = judges[rule[OF_KIND]](request.ctx, rule.get(WITH, {}))
+    finally:
+        _EVALUATING.discard(request.ref)
     if findings:
         return criteria.Verdict(False, f"{request.ref} was evaluated and did not hold: "
                                        + "; ".join(str(f) for f in findings))

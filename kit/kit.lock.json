@@ -1163,7 +1163,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b3175a01f7c9f9eb5a929181c1d330d11b481a8cebb73620ce25e605105a7d6e",
+      "digest": "c95cc8f48bb3576d6df33f85361c06d3eeb53febcc021093d8de58e32b685db3",
       "path": "interpreters/proofs/rule_verdict.py"
     },
     {
@@ -1589,7 +1589,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "76df940698e12f3589f96dea691bbcd180ece48a9c9bb6158ee4f6fab4a6b607",
+      "digest": "dd48f522f30f201d9416f8ae5d71815c88e1049dc5e7333405ec95a5ce2a44f0",
       "path": "interpreters/weighing.py"
     },
     {
@@ -2142,5 +2142,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T07:02:41+00:00"
+  "taken_at": "2026-10-17T07:24:14+00:00"
 }

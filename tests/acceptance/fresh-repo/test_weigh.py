@@ -320,6 +320,24 @@ class Weigh(Fixtures, unittest.TestCase):
         self.assertIn("feeds e2e", said.stdout)
         self.assertIn("lesson (renamed-field, contracts): a renamed field breaks the web client", said.stdout)
 
+    def test_a3_a_card_proved_by_the_gate_that_reads_it_does_not_evaluate_itself_forever(self):
+        """Met adopting this kit on a real host: a finished card whose criterion is FF-WORK-ORDER -- the
+        gate that re-reads finished cards' criteria -- made check and the board recurse without end."""
+        host = self.installed()
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        (cards / "adopted.json").write_text(json.dumps(
+            {"schema_version": 1, "id": "adopted", "title": "adopted", "state": "landed",
+             "created_at": "2026-10-17T00:00:00+00:00",
+             "criteria": [{"id": "order", "statement": "the order holds",
+                           "proof": {"kind": "declared-rule-holds", "ref": "FF-WORK-ORDER"}}]},
+            indent=2) + "\n", encoding="utf-8", newline="\n")
+        rendered = self.run_kit(KIT, host, "render")
+        self.assertEqual(0, rendered.returncode, rendered.stdout + rendered.stderr)
+        said = self._failed(host)
+        self.assertIn("PASS  FF-WORK-ORDER", said)
+        self.assertNotIn("RecursionError", said)
+
     def _failed(self, host) -> str:
         said = self.run_kit(KIT, host, "check")
         return said.stdout + said.stderr
