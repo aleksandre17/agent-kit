@@ -380,19 +380,28 @@ ISO/IEC 42001 ask that accountability be attributable. The owner decided it is c
    SIGNED). git verifies the signature -- SSH signing, against the host's allowed-signers file in
    OpenSSH's format (`gpg.ssh.allowedSignersFile`); the kit holds no key and verifies nothing itself.
    The principal a signature names is the name the mark carries. A door is held when one of its marks
-   is signed: an agent may PREPARE a mark, and it opens nothing until the owner signs a commit that
-   carries it; a door whose only mark is unsigned is walked again in a signed commit -- history is
-   never rewritten. A mark not yet committed is reported, never failed; marks that stood before
-   signing was set up hold as they were.
-2. *Who may sign changes only by a signature.* Every commit after the first that changes the
-   allowed-signers file holds only if an allowed signer signed it. A key is retired, keeping what it
-   signed, with OpenSSH's own `valid-before`.
+   was INTRODUCED by a commit its principal signed -- the record diffed against that commit's parent,
+   and only the marks the commit brought credited: a signed commit never vouches for a mark that was
+   already standing, forged or not. An agent may PREPARE a mark, and it opens nothing until the owner
+   signs a commit that brings it; a door whose only mark is unsigned is walked again in a signed
+   commit -- history is never rewritten. A mark not yet committed is reported, never failed.
+2. *Who may sign changes only by a signature, read as of the parent.* Every signature -- on a commit
+   that changes the allowed-signers file and on a commit that brings a mark -- is verified against the
+   trust root as it was ACCEPTED at that commit's parent (the text handed to git as its
+   `gpg.ssh.allowedSignersFile`), never against the file the tree holds now: a key a commit adds
+   cannot vouch for that commit, or for anything signed with it afterwards. The first version of the
+   file that names a principal in the `git` namespace is the bootstrap, trusted on first use; a later
+   change is accepted only when a signer the accepted root allowed signed it, and a refused change is
+   reported for as long as it stands. A key is retired, keeping what it signed, with OpenSSH's own
+   `valid-before`.
 3. *The setup is the owner's own act* (`signer --setup`, the delivery capability seeding the file):
    refused without an interactive terminal; the passphrase asked by `ssh-keygen` itself, never seen,
    stored or passed by the kit; a key that opens with an empty passphrase refused; git's config told
    the format, the file and the key, and never `commit.gpgsign` -- an agent's commits go on unsigned,
    and only the owner's carry marks; a round trip (sign, then verify against the file) before anything
-   leans on it; the fingerprint printed to compare once. It declares `owner_signing` in the host's
+   leans on it; the fingerprint printed to compare once; a warning when the owner's GLOBAL git
+   configuration signs every commit (`commit.gpgsign=true`) or names this key as `user.signingkey` --
+   either would sign an agent's commits on that machine as the owner. It declares `owner_signing` in the host's
    policy itself: the opt-in is the owner's act, and from then on the gate is the setup rule -- a host
    that declares it and names no key is told the exact command.
 4. *The commit floor does not judge signatures*: git signs a commit after its message hook runs, so
@@ -409,9 +418,29 @@ ISO/IEC 42001 ask that accountability be attributable. The owner decided it is c
    only when the document stands in a place the host's layout declares holds decisions (`holds:
    decision`) -- a vendored kit's ADR is the kit's, and a card that bet on it bet on nobody's ruling
    here -- and only its front matter, between the two fences, says what it is.
+8. *A mark is where it stands, who made it and when* -- its place in the record (the JSON path), its
+   principal and its moment, with the door it opens: the same name and moment copied onto another
+   door, or a door changed under a signed mark, is a new mark no signature covered.
+9. *Signing begins where it was set up*: marks that stood at the later of the first commit whose
+   trust root names a `git` principal and the first commit whose policy declares `owner_signing` hold
+   as they were. The commit that laid the empty seed at install is not that point -- turning signing
+   on leaves an existing host as green as it was.
+10. *A record keeps its history when it moves*: the history is followed across renames, so a card the
+   archive moved byte for byte keeps the signatures it had.
+11. *The declaration, once signed, is undone only by a signer.* When `owner_signing` has stood in a
+   commit an allowed signer signed, removing it or repointing its `signers` holds only in a commit a
+   signer the declared root allowed at the parent signed; otherwise the change is reported for as
+   long as it stands, and the signed declaration goes on binding.
 
 **Limits, said.** The first registration is trusted on first use, as an SSH host key is: the printed
-fingerprint is the owner's one check. The terminal test guards against accident, not against an agent
+fingerprint is the owner's one check -- and the bootstrap commit, and every mark standing where signing
+began (decision 9), are what they were: what came before signing was set up is not provable after it.
+"The parent" is a merge's first parent and the order is git's topological one; a mark merged in from a
+branch holds through the branch commit that brought it. Renames are followed, copies are not: a mark
+copied into a new record is judged there as new. A mark covers its door and its place, not every byte
+of the record around it: an acceptance at the top of a record vouches for the acceptance, and the rest
+of the record is held by its own gates. The gate reads the history HEAD has: a rewritten history is
+read as rewritten -- protecting the published branch from force-pushes is the forge's to do. The terminal test guards against accident, not against an agent
 that fakes a terminal -- what an agent cannot fake is the passphrase only the owner knows (a hardware
 key that asks for a touch is stronger still, and works the same way). A machine where the agent runs
 as the owner's user can read the key file: it cannot open it.
@@ -420,6 +449,11 @@ as the owner's user can read the key file: it cannot open it.
 or the key would be left open for it. *A token or a password the kit checks*: a second credential
 store, held where the agent runs. *GPG*: a second toolchain where SSH keys already are. *Verify in the
 commit-msg hook*: the signature does not exist yet. *A kit-made key*: whatever made it knows it.
+*Verify against the file the tree holds now*: an agent appends its own key under the owner's name, and
+its own commits verify. *Key a mark by name and moment only*: a signed mark replays onto any door.
+*Credit every mark a signed commit's file holds*: a forged mark rides the owner's next signed commit.
+*Match a moved card by its id*: following the rename reads the history git already holds, and an id is
+text the mover could change.
 
 ## Amendment 4 — proof is weighed as the work is (2026-10-17, owner-decided)
 

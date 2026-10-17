@@ -36,11 +36,19 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   git and ssh-keygen checked, the key made by `ssh-keygen` (which alone asks for the passphrase),
   refused if it opens without one, registered in the host's allowed-signers file (seeded by
   `delivery`), git told how to sign, a sign-and-verify round trip, the fingerprint to compare.
-- FF-WORK-SIGNED: where the host declares `owner_signing`, a door's mark holds only in a commit the
-  principal it names signed, verified by git; a change to who may sign holds only when an allowed
-  signer signed it. Marks from before the setup hold; marks not yet committed are reported. It reads
+- FF-WORK-SIGNED: where the host declares `owner_signing`, a door's mark holds only where a commit
+  the principal it names signed INTRODUCED it (the record diffed against the commit's parent),
+  verified by git against the trust root as accepted at that parent -- never the file the tree holds
+  now; the first root naming a principal is the bootstrap, trusted on first use, and a change to who
+  may sign holds only when a signer the parent allowed signed it. A mark is keyed by its place in the
+  record, who and when, so a replay onto another door is a new mark. Marks standing where signing
+  began -- the later of the first root naming a principal and the first policy declaring it -- hold;
+  marks not yet committed are reported; an archived card's history is followed across the move. Once
+  signed, removing `owner_signing` or repointing its `signers` holds only in a signed commit. It reads
   every record in the binding places -- an install's or upgrade's acceptance, and a review in the
   name of someone who signs, as well as a card's doors -- and a shallow clone is not measured.
+- `signer --setup` warns when the owner's global git configuration signs every commit or already names
+  the key as its `user.signingkey`.
 - A card's `origin` holds `decision` only in a place the host's layout declares holds decisions: a
   vendored kit's own ADR no longer counts as the host's ruling.
 
