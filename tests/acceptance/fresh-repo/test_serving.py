@@ -24,7 +24,10 @@ from __future__ import annotations
 
 import json
 import re
-import tomllib
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10: no TOML reader in the standard library
+    tomllib = None
 import unittest
 from pathlib import Path
 
@@ -178,6 +181,8 @@ class Serving(Fixtures, unittest.TestCase):
                     rel = f"{rendered['target']}{AN_ARCHETYPE['id']}{rendered.get('suffix', '')}"
                     text = (host / rel).read_text(encoding="utf-8")
                     # Parsed as the product parses it -- a file the product cannot read serves nothing.
+                    if rel.endswith(".toml") and tomllib is None:
+                        raise unittest.SkipTest("Python 3.10 has no tomllib: the TOML a product reads is proven on 3.11+, never assumed here")
                     fields = tomllib.loads(text) if rel.endswith(".toml") else front_matter(text)
                     self.assertEqual(AN_ARCHETYPE["id"], fields["name"])
                     self.assertEqual(AN_ARCHETYPE[next(v for v in SPEC["views"]

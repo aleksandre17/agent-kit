@@ -16,7 +16,10 @@ Every path, view, level and code is read from the declarations and the module th
 from __future__ import annotations
 
 import json
-import tomllib
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10: no TOML reader in the standard library
+    tomllib = None
 import unittest
 
 from harness import KIT, REPO, Fixtures
@@ -63,7 +66,11 @@ def _keys(value) -> set:
 def _parsed(text: str, target: str, span, comment):
     if span:
         text = derivation.span(text, span, list(comment) or None)
-    return tomllib.loads(text) if target.endswith(".toml") else json.loads(text)
+    if target.endswith(".toml"):
+        if tomllib is None:
+            raise unittest.SkipTest("Python 3.10 has no tomllib: the TOML a product reads is proven on 3.11+, never assumed here")
+        return tomllib.loads(text)
+    return json.loads(text)
 
 
 class Mcp(Fixtures, unittest.TestCase):
