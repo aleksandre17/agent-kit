@@ -11,6 +11,18 @@ its own tests where that command is vouched -- one for the tool's own declaratio
 host is built and delivered), and its prose (proved by `check` alone). A module at the repository root
 claims what no other area claims. An area the host already declares is
 never touched: the draft only ADDS. Writing it is a door (`--approve`).
+
+A module map takes one of two forms. The MANIFEST form names the file and the pointer where a build tool
+declares its modules. The MARKER form is for a host with no such manifest: a module is every directory
+the repository carries that holds one of its `markers` (a build script, a package manifest -- with a value
+at `marker_pointer` when one is named), and its proof is the map's `command` template; drafting such an
+area also drafts the policy command it is proved by (`commands.test-<id>`), at the same door.
+
+The KIT PLANES -- every directory an enabled capability installs, projects or floors into, and the
+directory the kit itself is vendored in -- are drafted as one costly area proved by `check` alone: how the
+host is governed is not the root module's reversible code. It is drafted only once the areas declaration
+is committed: the install commit right after `start` carries every plane, and a scale that made it owe a
+card would be the ceremony a fresh host cannot walk yet.
 """
 
 from __future__ import annotations
@@ -39,17 +51,51 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", str(text).lower()).strip("-") or "root"
 
 
-def drafted(maps: list, vouched: set) -> list:
+PLANES_ID = "kit-planes"
+
+
+def _excluding(patterns) -> str:
+    """A pattern claiming every path NONE of `patterns` claims, as `re.search` reads each: inside a
+    start-anchored lookahead an unanchored pattern must be free to start anywhere (`.*?`), and a pattern
+    is kept whole -- never stripped of its own anchors or groups."""
+    return "^(?!" + "|".join(f"(?:.*?(?:{p}))" for p in patterns) + ").+"
+
+
+def planes(capabilities, kit_dir=None) -> list:
+    """The top-level directories the enabled capabilities write into (installs, projections, floors) and
+    the directory the kit is vendored in -- pure over what the declarations say. Only a hidden directory
+    is a plane: a capability that seeds into a visible one (`docs/`) writes into the host's own tree."""
+    found = set()
+    for capability in capabilities:
+        rows = [i.get("target") for i in capability.installs] + [f.get("path") for f in capability.raw.get("floor") or []]
+        for rel in rows:
+            rel = str(rel or "")
+            rel = rel[2:] if rel.startswith("./") else rel
+            top = rel.split("/", 1)[0] + "/" if "/" in rel else ""
+            if top.startswith(".") and top != "./":  # a tool's own plane; a visible directory is the host's
+                found.add(top)
+    if kit_dir:
+        found.add(kit_dir.strip("/").split("/", 1)[0] + "/")
+    return sorted(found)
+
+
+def drafted(maps: list, vouched: set, plane_dirs=()) -> list:
     """The areas the module maps imply -- pure: `maps` is [(map document, {module id: module})]."""
     out, roots = [], []
+    if plane_dirs:
+        out.append({"id": PLANES_ID, "paths": "^(" + "|".join(re.escape(d) for d in plane_dirs) + ")",
+                    "undo": "costly", "because": "the kit's planes: how this host is governed and served",
+                    "proved_by": []})
     for doc, modules in maps:
         for mid, module in sorted(modules.items()):
-            path = str((module or {}).get(doc["path_field"]) or "").strip("/")
+            path = str((module or {}).get(doc.get("path_field", "path")) or "").strip("/")
             proof = doc["proof"].replace("{id}", str(mid))
             area = {"id": f"module-{_slug(mid)}", "undo": "reversible",
-                    "because": f"the {mid} module, as {doc['path']} declares it"}
+                    "because": f"the {mid} module, as {doc.get('path') or 'its marker'} declares it"}
             if proof in vouched:
                 area["proved_by"] = [proof]
+            if any(a["id"] == area["id"] for a in out + roots):
+                continue  # two maps that find one module draft it once: the first map's reading stands
             if path in ("", "."):
                 roots.append(area)
             else:
@@ -67,17 +113,73 @@ def drafted(maps: list, vouched: set) -> list:
              "because": "prose changes nothing that runs; check reads its structure", "proved_by": []})
     claimed = [a["paths"] for a in out]
     for area in roots:  # the repository root claims what no other area claims
-        area["paths"] = "^(?!(?:" + "|".join(p.lstrip("^").strip("()") for p in claimed) + r")).+"
+        area["paths"] = _excluding(claimed)
         out.append(area)
     return out
+
+
+def marked(doc: dict, carried: list, read_json, excluded=()) -> tuple:
+    """({module id: {"path": dir}}, {command key: command}) for a MARKER map -- every carried directory
+    holding one of its markers (with a value at `marker_pointer`, when named), outside the kit planes."""
+    modules, commands = {}, {}
+    names = set(doc["markers"])
+    for rel in sorted(carried):
+        head, _, name = rel.rpartition("/")
+        if name not in names or any(rel.startswith(d) for d in excluded):
+            continue
+        if doc.get("marker_pointer"):
+            try:
+                value = read_json(rel)
+            except (OSError, ValueError):
+                continue
+            for step in doc["marker_pointer"].split("."):
+                value = value.get(step) if isinstance(value, dict) else None
+            if not value:
+                continue
+        mid = _slug(head or "root")
+        if mid in modules:
+            continue
+        modules[mid] = {"path": head or "."}
+        commands[doc["proof"].replace("{id}", mid).split(":", 1)[1]] = doc["command"].replace("{path}", head or ".")
+    return modules, commands
 
 
 def run(ctx, args) -> int:
     hostlock.arrive(ctx, args)
     import prove  # the vouched commands are prove's reading, held once
     vouched, _unread = prove._commands(ctx)
-    maps = []
+    capabilities = ctx.enabled_capabilities()
+    try:
+        kit_dir = ctx.manifest.root.resolve().relative_to(ctx.workspace.root.resolve()).as_posix()
+    except ValueError:
+        kit_dir = None
+    plane_dirs = planes(capabilities, kit_dir)
+    governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
+    install = next((i for i in governed.capability.installs if i.get("reads_as") == "areas"), None)
+    if install is None:
+        raise AreasError("the delivery capability declares no areas to draft into")
+    committed, _why = ctx.workspace.accepted_text(install["target"])
+    if committed is None:
+        print(f"areas: the areas declaration is not committed yet -- the kit planes ({', '.join(plane_dirs)}) are "
+              f"drafted once it is: the install commit carries every plane, and must not owe a card for it")
+        plane_dirs = []
+    maps, new_commands = [], {}
+    carried = None
     for document in declared.sources(ctx, MAPS).values():
+        if document.get("markers"):
+            if not document.get("command"):
+                raise AreasError(f"the module map {document['id']} names markers and no command to prove a module")
+            carried = ctx.workspace.carried() if carried is None else carried
+            if carried is None:
+                print(f"areas: {document['id']} finds modules by what the repository carries, and that cannot be "
+                      f"read here -- not drafted")
+                continue
+            modules, commands = marked(document, carried, ctx.workspace.read_json, plane_dirs or planes(capabilities, kit_dir))
+            fresh = {k: v for k, v in commands.items() if f"{document['proof'].split(':', 1)[0]}:{k}" not in vouched}
+            new_commands.update(fresh)
+            vouched.update({f"{document['proof'].split(':', 1)[0]}:{k}": v for k, v in commands.items()})
+            maps.append((dict(document, path_field="path"), modules))
+            continue
         if not ctx.workspace.exists(document["path"]):
             continue
         value = ctx.workspace.read_json(document["path"])
@@ -85,20 +187,19 @@ def run(ctx, args) -> int:
             value = value.get(step) if isinstance(value, dict) else None
         if isinstance(value, dict):
             maps.append((document, value))
-    capabilities = ctx.enabled_capabilities()
-    governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
-    install = next((i for i in governed.capability.installs if i.get("reads_as") == "areas"), None)
-    if install is None:
-        raise AreasError("the delivery capability declares no areas to draft into")
     areas_doc = ctx.workspace.read_json(install["target"])
     have = {a["id"] for a in areas_doc.get("areas") or []}
-    adding = [a for a in drafted(maps, set(vouched)) if a["id"] not in have]
+    adding = [a for a in drafted(maps, set(vouched), plane_dirs) if a["id"] not in have]
+    wanted = {p.split(":", 1)[1] for a in adding for p in a.get("proved_by", [])}
+    new_commands = {k: v for k, v in new_commands.items() if k in wanted}
     if not maps:
         print("areas: no enabled capability publishes a module map, or its manifest is not here -- only the "
               "areas every host has are drafted")
     for area in adding:
         proof = ", ".join(area["proved_by"]) if "proved_by" in area else "everything (no vouched command proves it)"
-        print(f"  + {area['id']}  {area['paths']}  [{area['undo']}]  proved by {proof}")
+        print(f"  + {area['id']}  {area['paths']}  [{area['undo']}]  proved by {proof or 'check alone'}")
+    for key, command in sorted(new_commands.items()):
+        print(f"  + command {key}: {command}  (the delivery policy's `commands`)")
     if not adding:
         print("areas: nothing to add -- every drafted area is declared")
         return 0
@@ -109,8 +210,15 @@ def run(ctx, args) -> int:
         return 0
 
     def write() -> int:
-        ctx.workspace.scoped(governed.capability.targets()).write_json(
-            install["target"], dict(areas_doc, areas=list(areas_doc.get("areas") or []) + adding))
+        scoped = ctx.workspace.scoped(governed.capability.targets())
+        scoped.write_json(install["target"], dict(areas_doc, areas=list(areas_doc.get("areas") or []) + adding))
+        if new_commands:
+            policy = next((i for i in governed.capability.installs if i.get("reads_as") == "policy"), None)
+            if policy is None:
+                raise AreasError("the delivery capability declares no policy to draft the module commands into")
+            body = ctx.workspace.read_json(policy["target"]) if ctx.workspace.exists(policy["target"]) else {}
+            scoped.write_json(policy["target"], dict(body, commands={**new_commands, **(body.get("commands") or {})}))
+            print(f"areas: {len(new_commands)} command(s) written into {policy['target']}")
         print(f"areas: {len(adding)} area(s) written by {who}")
         return 0
 

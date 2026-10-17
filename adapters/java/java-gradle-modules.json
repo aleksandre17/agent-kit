@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "java-gradle-modules",
+  "summary": "A Gradle module is every directory holding a build script; it is proved by its own tests.",
+  "markers": [
+    "build.gradle",
+    "build.gradle.kts"
+  ],
+  "proof": "host:test-{id}",
+  "command": "gradle -p {path} test"
+}

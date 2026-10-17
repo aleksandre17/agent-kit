@@ -7,6 +7,12 @@
   echo "push gate: REFUSED -- the kit this host runs is absent at {{vendor}}/{{#referenced}}; run: git submodule update --init {{repository}}{{/referenced}}" >&2
   exit 1
 }
+# git hands the hook the refs it pushes on stdin, one per line: <local ref> <local sha> <remote ref> <remote sha>.
+# prove weighs exactly those ranges -- never HEAD's upstream, which a push of another ref leaves untouched.
+pushed=""
+while read -r _local_ref local_sha _remote_ref remote_sha; do
+  pushed="$pushed $local_sha:$remote_sha"
+done
 for candidate in python3 python py; do
   if "$candidate" -c "import sys" >/dev/null 2>&1; then
     "$candidate" "{{vendor}}/interpreters/cli.py" check --root . >/dev/null || {
@@ -15,7 +21,7 @@ for candidate in python3 python py; do
     }
     # The commands this host's MUST norms name as their enforcers (its test suite, its validate) run
     # here: a MUST is enforced only where something runs its enforcer.
-    "$candidate" "{{vendor}}/interpreters/cli.py" prove --root . || {
+    "$candidate" "{{vendor}}/interpreters/cli.py" prove --root . --pushed "$pushed" || {
       echo "push gate: REFUSED -- a command a MUST names as its enforcer is red; fix it, push again" >&2
       exit 1
     }

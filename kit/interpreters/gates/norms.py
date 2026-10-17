@@ -20,6 +20,8 @@ This gate checks, deterministically, and names each finding by its code:
 
 from __future__ import annotations
 
+import re
+
 import declared
 
 KIND = "norms-coherent"
@@ -71,6 +73,31 @@ def _vouched(ctx) -> set:
     return known
 
 
+_ADDRESS = re.compile(r"^([^@#]+)@[^#]+#(.+)$")
+
+
+def readdressed(norms: list, stances: list) -> dict:
+    """{old address: new}: every stance whose address no norm in force publishes, where exactly one norm in
+    force has the same publisher and name at another version -- a stance a new version of its bundle left
+    answering nothing. Ambiguous or unrelated addresses are not guessed at."""
+    in_force = {n["id"] for n in norms}
+    by_name = {}
+    for identity in in_force:
+        found = _ADDRESS.match(identity)
+        if found:
+            by_name.setdefault(found.groups(), []).append(identity)
+    moves = {}
+    for stance in stances:
+        identity = str(stance.get("id") or "")
+        found = _ADDRESS.match(identity)
+        if identity in in_force or not found:
+            continue
+        candidates = by_name.get(found.groups(), [])
+        if len(candidates) == 1:
+            moves[identity] = candidates[0]
+    return moves
+
+
 def judged(norms: list, stances: list, enforcers: set, today: str, deriving: set, loosening: set) -> list:
     """`deriving`: the genres the grammar declares stand below a parent; `loosening`: the stance words
     it declares loosen what they answer."""
@@ -107,6 +134,9 @@ def judged(norms: list, stances: list, enforcers: set, today: str, deriving: set
                             f"and compensating control)")
         if exception and exception["expires"] < today:
             failures.append(f"NT-EXPIRED {stance['id']}: its exception expired on {exception['expires']}")
+    for old, new in sorted(readdressed(norms, stances).items()):
+        failures.append(f"NT-READDRESS {old}: no norm in force has this address, {new} does -- the stance answers "
+                        f"nothing until it is re-addressed (upgrade --mode addresses)")
     return failures
 
 

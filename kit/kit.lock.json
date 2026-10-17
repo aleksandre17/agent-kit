@@ -851,7 +851,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "60577edfaa66ba93ee6d05870b0f9781ed6abc4006120e9a4cf50f953a8098bd",
+      "digest": "95514676fc4b9a9aae86745808d9e0d14e3233d3a8286d98013b6ffa8dfc608c",
       "path": "interpreters/gates/norms.py"
     },
     {
@@ -1391,7 +1391,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "9d15e0d93e59ccecd5681aa023bb2f1cfdb5adafb3b775e66f543b46ccfb92a2",
+      "digest": "ac12fd2e0d1507be31d0d5aaeec5d60c132a3a79cd7abba03809e0cf041fa30c",
       "path": "interpreters/verbs/areas.py"
     },
     {
@@ -1415,7 +1415,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "fca192facd322d144c851b772c705585cb3b8e48075f5b90440c9fd6a617d7e2",
+      "digest": "5b27c484fb1e37e06471c52bc4819afe3e87281b8f8b174f9ffd9ace3c647953",
       "path": "interpreters/verbs/check.py"
     },
     {
@@ -1517,7 +1517,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1472046a38a4c9bf762472143c89d2110d08fff59afa16101f0c7ba884064180",
+      "digest": "e157a47298957b9a3d269c93b39da68d47cee73a7de6353ff21ae74d2df27b80",
       "path": "interpreters/verbs/prove.py"
     },
     {
@@ -1541,7 +1541,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "88705f6e6e644b6301be0c1b60a43983b12ce75df50da7fab430b11bf04a4d9f",
+      "digest": "d293f6b8cd3b3b545251fb906d27ef196c5405c1a237afdd832034873fd2e91d",
       "path": "interpreters/verbs/retake.py"
     },
     {
@@ -1601,7 +1601,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "dce1345fcd247e3a7ac29d1c737b64bf34b4e1418f599f83ca1af8b4303c56de",
+      "digest": "73e5b810e566c36c6bf3fead5b9dba0b6cb0135b06586f25a27d8ca8a747ff90",
       "path": "interpreters/verbs/upgrade.py"
     },
     {
@@ -1619,7 +1619,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "85234d8e1bdec45f62293701ed3b22eb7913b3f96bacdbfe1b7c7ceaf4ef3ffe",
+      "digest": "b73c61148c15b3f7a4c0a16c5c292423f6a6c90d67803a46724179c4e47072fc",
       "path": "interpreters/weighing.py"
     },
     {
@@ -1943,7 +1943,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "940dfc9a999655973f4b7a9795e98f2235b748baaf5f9889b5a28e84b0929e71",
+      "digest": "2ca9ddb247aa05f42088aa52941b087082a0913f650ec38d387fb22726409baf",
       "path": "schemas/module-map.schema.json"
     },
     {
@@ -2178,5 +2178,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T15:04:42+00:00"
+  "taken_at": "2026-10-17T16:09:04+00:00"
 }

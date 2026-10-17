@@ -5,10 +5,19 @@
   "areas": [
     {
       "id": "prose",
-      "paths": "(^docs/|\\.md$|^CHANGELOG)",
+      "paths": "(^docs/|^(?!kit/).*\\.md$|^CHANGELOG)",
       "undo": "reversible",
-      "because": "prose changes nothing that runs; check reads its structure",
+      "because": "prose changes nothing that runs; check reads its structure -- the kit's own prose is served, and stands with the kit",
       "proved_by": []
+    },
+    {
+      "id": "asserted-prose",
+      "paths": "^(docs/guide/setup\\.md|docs/reference/|kit/README\\.md)",
+      "undo": "reversible",
+      "because": "prose the unit tests assert byte for byte: the setup blueprint, the upstream layout, the verb table",
+      "proved_by": [
+        "host:unit"
+      ]
     },
     {
       "id": "work",

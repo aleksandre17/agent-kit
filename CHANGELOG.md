@@ -7,6 +7,22 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 
 ## 0.3.0 — unreleased
 
+**Fixed — a push can no longer go out green with a red or unproved change (ADR-025 amendment 4, review)**
+- `prove` reads areas and commands as the published side holds them; a narrowed `proved_by` /
+  `default_proved_by` or a removed or rewritten command is loosening (`weighing.loosened`).
+- Downstream areas (`feeds`) are proved with the change; a MUST holds only where its own enforcer ran.
+- The pre-push hook passes the pushed refs (`prove --pushed`, git adapter 1.6.0); a pushed sha that is
+  not HEAD, or an unreadable range, is proved by everything.
+- A proof record is honoured only when it names the same command, tree, kit version and declarations.
+- `proof_for` no longer raises when no class owes a decision; it proves by everything and says so.
+- `areas`: the root module excludes claimed paths whole; the kit planes are one costly area (drafted once
+  the areas are committed); marker module maps (java 1.1.0, node 1.1.0) draft modules and their commands.
+- `check --brief`: a gate's own lines appear only with its header.
+- `retake --approve` renders what it serves, as `init` does.
+- FF-NORMS reports a stance a new bundle version orphaned (`NT-READDRESS`); `upgrade --mode addresses`
+  re-addresses it at the owner's door.
+- The kit's own asserted prose (setup blueprint, upstream layout, verb table) is proved by `host:unit`.
+
 **Added — proof is weighed as the work is (ADR-025 amendment 4)**
 - An area declares what proves it (`proved_by`, and `default_proved_by` for paths no area claims).
   `prove` weighs what the push carries and runs only what the touched areas declare -- `check` alone for

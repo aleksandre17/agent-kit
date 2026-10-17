@@ -165,15 +165,37 @@ def computed(sig: dict, classes_doc: dict, areas_doc: dict) -> dict:
     return {"class": row, "why": why, "requires": owed}
 
 
-def loosened(classes_doc: dict, before, after) -> list:
+def _narrower(was, now) -> bool:
+    """Whether a proof (`proved_by`) is narrower than the one it replaces. No proof declared is proof by
+    EVERYTHING -- the strictest; a list is proof by those commands alone, and `[]` by `check` alone."""
+    if now is None:
+        return False
+    return was is None or bool(set(was) - set(now))
+
+
+def loosened(classes_doc: dict, before, after, commands=None) -> list:
     """How the areas a change leaves are LOOSER than the areas that stood before it -- empty when they
     are as strict or stricter. Tightening is anyone's act; loosening the scale a change is weighed by
     is a change of its own that owes a named record. With nothing before, nothing is loosened: no
-    areas at all is the loosest a host can be."""
-    if not before or not after:
-        return [] if not before else ["the areas declaration is removed"]
-    scale, rank = _scale(classes_doc), _rank(classes_doc)
+    areas at all is the loosest a host can be.
+
+    The PROOF is part of the scale: an area's or the default's `proved_by` narrowed, and -- given
+    `commands`, the (before, after) command maps the proofs name -- a command removed or rewritten, are
+    loosenings too. A command's text cannot be judged stronger or weaker, so any rewrite counts."""
     said = []
+    if commands is not None:
+        was_run, now_run = commands
+        for key in sorted(was_run or {}):
+            if key not in (now_run or {}):
+                said.append(f"command {key} removed")
+            elif now_run[key] != was_run[key]:
+                said.append(f"command {key} rewritten ({was_run[key]!r} -> {now_run[key]!r})")
+    if not before or not after:
+        return said + ([] if not before else ["the areas declaration is removed"])
+    scale, rank = _scale(classes_doc), _rank(classes_doc)
+    if _narrower(before.get("default_proved_by"), after.get("default_proved_by")):
+        said.append(f"default_proved_by {before.get('default_proved_by', 'everything')} -> "
+                    f"{after.get('default_proved_by')}")
 
     def lower(a, b, order):  # a word the scale does not declare is read as the cheapest: fail closed
         return a in order and (b not in order or order[b] < order[a])
@@ -190,6 +212,9 @@ def loosened(classes_doc: dict, before, after) -> list:
         if identity not in old_areas and lower(before["default_undo"], area["undo"], scale):
             said.append(f"area {identity} added at {area['undo']}, cheaper than the {before['default_undo']} its "
                         f"paths stood at")
+        if identity not in old_areas and _narrower(before.get("default_proved_by"), area.get("proved_by")):
+            said.append(f"area {identity} added proved by {area.get('proved_by')}, narrower than the default "
+                        f"proof its paths stood at ({before.get('default_proved_by', 'everything')})")
     for identity, area in sorted(old_areas.items()):
         kept = new_areas.get(identity)
         if kept is None:
@@ -199,6 +224,8 @@ def loosened(classes_doc: dict, before, after) -> list:
             said.append(f"area {identity} paths {area['paths']!r} -> {kept['paths']!r}")
         if lower(area["undo"], kept["undo"], scale):
             said.append(f"area {identity} undo {area['undo']} -> {kept['undo']}")
+        if _narrower(area.get("proved_by"), kept.get("proved_by")):
+            said.append(f"area {identity} proved_by {area.get('proved_by', 'everything')} -> {kept.get('proved_by')}")
         if "at_least" in area and ("at_least" not in kept or lower(area["at_least"], kept["at_least"], rank)):
             said.append(f"area {identity} at_least {area['at_least']} -> {kept.get('at_least', 'none')}")
         dropped = sorted(set(area.get("requires", [])) - set(kept.get("requires", [])))
@@ -407,16 +434,22 @@ def card_floor(classes_doc: dict, card: dict, fallback: str) -> tuple:
     return shaped, why
 
 
-def proof_for(paths, classes_doc: dict, areas_doc: dict) -> tuple:
+def proof_for(paths, classes_doc: dict, areas_doc: dict, *rest) -> tuple:
     """(the commands that prove this change, why) -- or (None, why) when it is proved by EVERY command a
     MUST names (ADR-025 amendment 4). Proof is weighed as the work is: a change is proved by what proves
     the areas it touches, and only a change heavy enough to owe a decision, or one touching an area that
-    declares no proof, is proved by everything. No paths: nothing new, nothing to prove."""
+    declares no proof, is proved by everything. An area downstream of a touched one (`feeds`) moves with
+    the change, so its proof is added -- and one that declares none proves by everything. A catalogue in
+    which no class owes a decision cannot say what is heavy, so it proves by everything. No paths: nothing
+    new, nothing to prove."""
     paths = list(paths)
     if not paths:
         return [], "nothing new to prove"
-    sig, verdict = weigh(paths, classes_doc, areas_doc)
-    heavy = lightest_with(classes_doc, "decision")
+    sig, verdict = weigh(paths, classes_doc, areas_doc, *rest)
+    heavy = next((row["id"] for row in classes_doc["classes"]
+                  if not row.get("expedite") and "decision" in row["requires"]), None)
+    if heavy is None:
+        return None, "no class of this catalogue owes a decision, so none can be told apart as heavy: proved by everything"
     if heavier_or_equal(classes_doc, verdict["class"]["id"], heavy):
         return None, f"the change weighs {verdict['class']['id']}: what owes a decision is proved by everything"
     commands, unproved = [], []
@@ -430,10 +463,17 @@ def proof_for(paths, classes_doc: dict, areas_doc: dict) -> tuple:
         if declared is None:
             unproved.append("(no area)")
         commands += [c for c in declared or [] if c not in commands]
+    by_id = {area["id"]: area for area in areas_doc.get("areas", [])}
+    for identity in sig.get("downstream", []):
+        declared = by_id[identity].get("proved_by")
+        if declared is None:
+            unproved.append(f"{identity} (downstream)")
+        commands += [c for c in declared or [] if c not in commands]
     if unproved:
         return None, f"{', '.join(sorted(unproved))} declare(s) no proof (proved_by): proved by everything"
     touched = ", ".join(sorted(sig["touched"])) or "no area"
-    return commands, f"the change touches {touched}, weighs {verdict['class']['id']}"
+    fed = f", feeds {', '.join(sig['downstream'])}" if sig.get("downstream") else ""
+    return commands, f"the change touches {touched}{fed}, weighs {verdict['class']['id']}"
 
 
 def lightest_with(classes_doc: dict, record: str) -> str:

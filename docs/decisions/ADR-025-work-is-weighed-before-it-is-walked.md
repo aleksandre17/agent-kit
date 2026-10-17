@@ -467,6 +467,28 @@ The key is the exact bytes -- any change at all, a dirty tree, a command that wr
 `--full` runs it again -- so the cache cannot be wrong where the command is deterministic, and a red run
 is never remembered.
 
+**Closed by a review of the scoped proof** (2026-10-17). A push could switch off or rewrite its own proof;
+it now cannot. `prove` reads the areas and the commands that prove a push as they stood on the PUBLISHED
+side (the merge-base with what the remote holds; areas absent there prove by everything), and the pushed
+side only adds a command the published side lacked; `loosened` counts a narrowed `proved_by`, a narrowed
+`default_proved_by`, an added area proved more narrowly than the default, and a command removed or
+rewritten. The proof follows `feeds`: a downstream area's proof is added, and one that declares none proves
+by everything. A MUST is said to hold only when its own enforcer ran. The pre-push hook hands `prove` the
+refs git pushes (git adapter 1.6.0), and exactly those ranges are weighed -- `remote..local`, or what no
+remote holds for a new ref; a pushed sha that is not HEAD, or a range that cannot be read, is proved by
+everything. A proof record is honoured only when its content names the same command, tree, kit version and
+proof declarations -- and it is a speed-up, never a security boundary: whoever can write the observed plane
+can forge one, as they could edit the hook; what holds the line is the remote's own checks. A catalogue in
+which no class owes a decision proves by everything and says so. `areas` excludes the claimed paths whole
+from the root module (an unanchored pattern inside the lookahead may start anywhere), drafts the KIT PLANES
+(every hidden directory an enabled capability writes into, and the kit's own directory) as one costly area
+proved by `check` alone -- once the areas declaration is committed, so the install commit after `start`
+does not owe a card -- and reads a MARKER module map (java 1.1.0: pom.xml, build.gradle*; node 1.1.0:
+package.json with scripts.test), drafting the policy command (`host:test-<id>`) each module is proved by,
+at the same door. Rejected: one area per plane -- the install commit would cross every breadth limit. Not
+yet closed: the commit floor's own `loosened` call does not yet pass the command maps (only `prove` reads
+them), and a MUST's `enforced_by` rewritten in the pushed tree is read from the pushed tree.
+
 **Closed after Amendment 2's limits were re-read** (2026-10-17): a dropped `feeds` is loosening -- a consumer no
 longer named is one a change no longer reaches -- and is weighed as one. An `appetite` held by any declared
 value is BY DESIGN, not a limit: the bet records the budget the owner declared, in the owner's unit, and

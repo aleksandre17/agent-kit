@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "node-package-modules",
+  "summary": "A Node module is every directory holding a package.json that declares scripts.test; it is proved by it.",
+  "markers": [
+    "package.json"
+  ],
+  "marker_pointer": "scripts.test",
+  "proof": "host:test-{id}",
+  "command": "npm --prefix {path} test"
+}

@@ -47,6 +47,7 @@ import json
 import declared
 import laws
 import lawsource
+import norms as norms_gate
 
 import check as check_verb
 import doors
@@ -70,12 +71,13 @@ REQUIRES_APPROVED_HOST = True
 #: not stand in front of it (ADR-024 decision 18).
 REPINS = True
 ARGUMENTS = [
-    ("--mode", {"default": None, "choices": ["referenced", "vendored", "laws"],
+    ("--mode", {"default": None, "choices": ["referenced", "vendored", "laws", "addresses"],
                 "help": "referenced: run the kit this host holds in its own tree (a submodule) at its "
                         "commit, and remove the vendored copies once check is green (a referenced host "
                         "upgrades so by default); vendored: return a referenced host to vendored copies; "
                         "laws: move each numbered law of the deprecated law page into a rule in the "
-                        "host's norms"}),
+                        "host's norms; addresses: re-address each doctrine stance a new version of its "
+                        "bundle left answering nothing (NT-READDRESS)"}),
 ]
 
 
@@ -300,6 +302,36 @@ def _laws(ctx, args) -> int:
     return hostlock.held(ctx, args, write)
 
 
+def _addresses(ctx, args) -> int:
+    """Re-address every host stance a new version of its bundle left answering nothing (`NT-READDRESS`)."""
+    local = next((i for c in ctx.enabled_capabilities() for i in c.installs if i.get("validates") == "doctrine"), None)
+    if local is None or not ctx.workspace.exists(local["target"]):
+        print("upgrade: this host declares no doctrine stances; nothing to re-address")
+        return 0
+    body = ctx.workspace.read_json(local["target"])
+    moves = norms_gate.readdressed(norms_gate.norms_of(ctx), body.get("stances", []))
+    if not moves:
+        print(f"upgrade: every stance in {local['target']} answers a norm in force; nothing to re-address")
+        return 0
+    for old, new in sorted(moves.items()):
+        print(f"upgrade: stance {old} -> {new}")
+    if getattr(args, "plan", False):
+        return 0
+    if not args.approve:
+        doors.refuse(f"{len(moves)} stance(s) in {local['target']} would answer the version of the norm now in force",
+                     "person who owns this host", "upgrade --root <host> --mode addresses --approve <who>",
+                     "A stance is the host's answer; moving it to a new version of the question is the host's act.")
+
+    def write() -> int:
+        body["stances"] = [dict(s, id=moves.get(s.get("id"), s.get("id"))) for s in body.get("stances", [])]
+        ctx.workspace.scoped((local["target"],)).write_text(local["target"],
+                                                            json.dumps(body, indent=2, ensure_ascii=False) + "\n")
+        ctx.reread()
+        return render_verb.run(ctx, args)
+
+    return hostlock.held(ctx, args, write)
+
+
 def json_text(value) -> str:
     """A lock as every lock is written: sorted keys, two-space indent, one trailing newline."""
     return json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
@@ -309,6 +341,9 @@ def run(ctx, args) -> int:
     if getattr(args, "mode", None) == "laws":
         hostlock.arrive(ctx, args)
         return _laws(ctx, args)
+    if getattr(args, "mode", None) == "addresses":
+        hostlock.arrive(ctx, args)
+        return _addresses(ctx, args)
     mode = getattr(args, "mode", None)
     if mode is None and reference.of(ctx):
         # A referenced host stays referenced: only `--mode vendored`, asked for by name, gives it copies.

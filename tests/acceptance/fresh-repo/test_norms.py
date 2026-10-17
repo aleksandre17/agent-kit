@@ -342,5 +342,97 @@ class Norms(Fixtures, unittest.TestCase):
         self.assertIn("proved by the test command this host declares", proved.stdout)
         self.assertTrue((ran / "all").exists(), "the host's declared test command ran")
 
+    def test_510_a_push_is_proved_as_published_by_the_refs_it_carries_and_a_record_must_match(self):
+        """Found by review: a push could switch off or rewrite its own proof, a push of another ref proved
+        nothing, a MUST was said to hold where its enforcer never ran, and a cache record was honoured
+        because it existed."""
+        import subprocess
+        from harness import install_target
+
+        ran = self._temp("ran-")
+        host = self.started()
+        policy = host / install_target("delivery", reads_as="policy")
+        body = json.loads(policy.read_text(encoding="utf-8"))
+        body["commands"] = {"lib": self._counting(ran, "lib"), "all": self._counting(ran, "all")}
+        policy.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+        areas = host / install_target("delivery", reads_as="areas")
+        shape = json.loads(areas.read_text(encoding="utf-8"))
+        shape["areas"] = [{"id": "lib", "paths": "^lib/", "undo": "reversible", "because": "a fixture",
+                           "proved_by": ["host:lib"]}]
+        shape["default_proved_by"] = []
+        areas.write_text(json.dumps(shape, indent=2) + "\n", encoding="utf-8", newline="\n")
+        self.write_norms(host, [_norm("our-must", DERIVES[1], derives_from=RULE["derives_from"], modality="MUST",
+                                      subject="held-by-the-whole-suite", enforced_by=["host:all"])])
+
+        def git(*argv):
+            done = subprocess.run(["git", "-C", str(host), "-c", "user.email=s@invalid", "-c", "user.name=suite",
+                                   "-c", "core.hooksPath=/dev/null", *argv], capture_output=True, text=True)
+            self.assertEqual(0, done.returncode, done.stdout + done.stderr)
+            return done.stdout.strip()
+
+        def count(name):
+            return len((ran / name).read_text()) if (ran / name).exists() else 0
+
+        remote = self._temp("remote-")
+        subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+        git("add", "-A")
+        git("commit", "-qm", "the host")
+        git("remote", "add", "origin", str(remote))
+        git("push", "-q", "-u", "origin", "HEAD")
+        hook = (host / ".githooks" / "pre-push").read_text(encoding="utf-8")
+        self.assertIn("read -r", hook, "the hook reads the refs git pushes")
+        self.assertIn('--pushed "$pushed"', hook)
+
+        brief = self.run_kit(KIT, host, "check", "--brief")
+        lines = brief.stdout.splitlines()
+        for i, line in enumerate(lines):
+            if "READ the normative tree" in line:
+                self.assertIn("FF-NORMS", lines[i - 1], "a gate's own lines appear only with its header")
+
+        (host / "lib").mkdir()
+        (host / "lib" / "a.py").write_text("A = 1\n", encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-qm", "a library change")
+        proved = self.run_kit(KIT, host, "prove")
+        self.assertEqual(0, proved.returncode, said(proved))
+        self.assertEqual((1, 0), (count("lib"), count("all")))
+        self.assertIn("host:all not run", proved.stdout, "a MUST holds only where its own enforcer ran")
+        self.assertNotIn("it holds host@1.0.0#our-must", proved.stdout)
+
+        records = [p for p in host.rglob("*.json") if p.parent.name == "proofs"]
+        self.assertEqual(1, len(records), "the green proof is recorded")
+        forged = json.loads(records[0].read_text(encoding="utf-8"))
+        forged["kit_version"] = "0.0.0"
+        records[0].write_text(json.dumps(forged), encoding="utf-8")
+        again = self.run_kit(KIT, host, "prove")
+        self.assertEqual(0, again.returncode, said(again))
+        self.assertEqual(2, count("lib"), "a record whose content does not match is not honoured")
+
+        git("push", "-q")
+        shape["areas"][0]["proved_by"] = []
+        areas.write_text(json.dumps(shape, indent=2) + "\n", encoding="utf-8", newline="\n")
+        body["commands"]["lib"] = "exit 0"
+        policy.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+        (host / "lib" / "b.py").write_text("B = 1\n", encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-qm", "a change that switches off its own proof")
+        loosening = self.run_kit(KIT, host, "prove")
+        self.assertEqual(0, loosening.returncode, said(loosening))
+        self.assertIn("loosens its own proof", loosening.stdout)
+        self.assertEqual(3, count("lib"), "the proof runs as the published side declares it")
+
+        git("push", "-q")
+        published = git("rev-parse", "HEAD")
+        git("checkout", "-q", "-b", "other")
+        (host / "lib" / "c.py").write_text("C = 1\n", encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-qm", "on another branch")
+        other = git("rev-parse", "HEAD")
+        git("checkout", "-q", "-")
+        pushed = self.run_kit(KIT, host, "prove", "--pushed", f"{other}:{published}")
+        self.assertEqual(0, pushed.returncode, said(pushed))
+        self.assertIn("is not HEAD", pushed.stdout)
+        self.assertEqual(1, count("all"), "a pushed ref that is not HEAD is proved by everything")
+
 if __name__ == "__main__":
     unittest.main()

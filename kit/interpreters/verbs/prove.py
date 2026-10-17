@@ -14,11 +14,23 @@ to the web app runs the web app's tests, not every suite the repository has. A c
 owe a decision, one touching an area that declares no proof, a host that weighs nothing, or `--full`, is
 proved by every command a MUST names. Which it was, and why, is printed.
 
+A push cannot rewrite its own proof: the areas and the commands that prove it are read as they stood
+on the PUBLISHED side -- the merge-base of what is pushed with what the remote holds -- and the pushed
+side only adds a command the published side did not have. A push that narrows a `proved_by`, the
+default's, or rewrites a command is told so, and is proved as the published side says. What is pushed
+is what git hands the hook (`--pushed "<local sha>:<remote sha> ..."`): exactly those ranges are
+weighed -- `remote..local`, or what no remote holds for a new ref. A pushed sha that is not HEAD (the
+tree the commands run over), or a range that cannot be read, is proved by everything. An area
+downstream of a touched one is proved with it; a MUST is said to hold only when its own enforcer ran.
+
 Nothing is proved twice on the same bytes (Cardinal IX): a command that went green on a clean tree is
 recorded in the observed plane with that tree's id, and is not run again while the tree is the same --
 a second push of what was proved, a retry after a refused push. The key is the exact bytes, never a
 guess at what a command depends on: any change at all, a dirty tree, `--full`, or another command
-string runs it again. A red run is never recorded. A MUST whose
+string runs it again. A record is honoured only when its content names the same command, tree, kit
+version and proof declarations (the areas and commands it was proved under). A red run is never
+recorded. The record is a SPEED-UP, not a security boundary: whoever can write the observed plane can
+forge one, as they could edit the hook; what holds the line is the remote's own checks. A MUST whose
 enforcer an adapter vouches for, but whose command cannot be read -- the host's declaration missing,
 unreadable, or silent on that key -- is refused, never read as nothing to run: an enforcer nobody can
 run does not hold.
@@ -26,25 +38,50 @@ run does not hold.
 
 from __future__ import annotations
 
-import subprocess
-
 import hashlib
+import json
+import subprocess
 
 import declared
 import ephemeral
 import norms as norms_gate
+import vcs
 import weighing
 import workclass
 
 SUMMARY = "run every command a MUST norm names as its enforcer -- the pre-push proof (blocking on red)"
 MUTATES = False
 REQUIRES_APPROVED_HOST = True
-ARGUMENTS = [("--full", {"action": "store_true", "help": "prove with every command a MUST names, whatever the change"})]
+ARGUMENTS = [("--full", {"action": "store_true", "help": "prove with every command a MUST names, whatever the change"}),
+             ("--pushed", {"default": None, "help": "the refs a push carries, as git hands them to the hook: "
+                                                    "'<local sha>:<remote sha> ...'"})]
+
+ZERO = set("0")
 
 
-def _commands(ctx) -> tuple:
+def _at(ctx, base, rel):
+    """The JSON `rel` holds at `base` -- or None where it holds none, or none can be read."""
+    if not base:
+        return None
+    text, _why = vcs.file_at(ctx.workspace.root, base, rel)
+    if text is None:
+        return None
+    try:
+        return json.loads(text)
+    except ValueError:
+        return None
+
+
+def _pointed(value, pointer: str):
+    for step in pointer.split("."):
+        value = value.get(step) if isinstance(value, dict) else None
+    return value
+
+
+def _commands(ctx, base=None) -> tuple:
     """(`<prefix>:<key>` -> the command string for every key a vouching document finds in the host,
-    `<prefix>` -> why its declaration could not be read)."""
+    `<prefix>` -> why its declaration could not be read). With `base`, a key the published side declares
+    is run as the published side declares it: a push does not rewrite its own proof."""
     found, unread = {}, {}
     for document in declared.sources(ctx, norms_gate.VOUCHED).values():
         if not ctx.workspace.exists(document["path"]):
@@ -56,11 +93,12 @@ def _commands(ctx) -> tuple:
             unread[document["prefix"]] = f"{document['path']} is not readable JSON -- {exc}"
             continue
         unread.setdefault(document["prefix"], f"{document['path']} declares no such command at {document['pointer']}")
-        for step in document["pointer"].split("."):
-            value = value.get(step) if isinstance(value, dict) else None
-        if isinstance(value, dict):
-            found.update({f"{document['prefix']}:{key}": given for key, given in value.items()
-                          if isinstance(given, str) and given.strip()})
+        value = _pointed(value, document["pointer"])
+        published = _pointed(_at(ctx, base, document["path"]), document["pointer"]) if base else None
+        for source in (value, published):
+            if isinstance(source, dict):
+                found.update({f"{document['prefix']}:{key}": given for key, given in source.items()
+                              if isinstance(given, str) and given.strip()})
     return found, unread
 
 
@@ -73,22 +111,126 @@ def _record(ctx, command: str, tree: str) -> str:
     return ephemeral.place(ctx, f"{SUBJECT}/{key}.json")
 
 
+def _honoured(ctx, record: str, expected: dict) -> bool:
+    """A record is honoured only when it names the same command, tree, kit version and declarations --
+    never merely because a file with its name exists."""
+    try:
+        said = ctx.workspace.read_json(record)
+    except (OSError, ValueError):
+        return False
+    return isinstance(said, dict) and said.get("green") is True and all(said.get(k) == v for k, v in expected.items())
+
+
+def _zero(sha: str) -> bool:
+    return not sha or set(sha) <= ZERO
+
+
+def _boundary(root, local: str) -> tuple:
+    """(the commits `local` brings that no remote holds, the published commit they rest on or None)."""
+    shas, why = vcs.run(root, ["rev-list", local, "--not", "--remotes"])
+    if shas is None:
+        return None, None, why
+    edge, _why = vcs.run(root, ["rev-list", "--boundary", local, "--not", "--remotes"])
+    bases = [line[1:] for line in (edge or "").split() if line.startswith("-")]
+    if len(bases) > 1:
+        said, _why = vcs.run(root, ["merge-base", "--octopus", *bases])
+        bases = [said.strip()] if said else []
+    return shas.split(), (bases[0] if bases else None), None
+
+
+def _ranges(ctx, args) -> tuple:
+    """(paths, the published base or None, None) -- or (None, None, why): every command."""
+    root = ctx.workspace.root
+    pushed = [pair for pair in str(getattr(args, "pushed", None) or "").split() if pair.strip()]
+    if not pushed:
+        upstream, _ = vcs.run(root, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"])
+        if upstream:
+            pushed = [f"HEAD:{upstream.strip()}"]
+        else:
+            pushed = ["HEAD:"]
+    head, why = vcs.run(root, ["rev-parse", "HEAD"])
+    if head is None:
+        return None, None, f"HEAD cannot be read ({why})"
+    head = head.strip()
+    paths, bases = set(), []
+    for pair in pushed:
+        local, _, remote = pair.partition(":")
+        if _zero(local):
+            continue  # a ref deleted carries nothing to prove
+        said, why = vcs.run(root, ["rev-parse", local])
+        if said is None:
+            return None, None, f"the pushed {local} cannot be read ({why})"
+        if said.strip() != head:
+            return None, None, (f"the pushed {local[:12]} is not HEAD ({head[:12]}), the tree the commands run "
+                                f"over")
+        if _zero(remote):
+            shas, base, why = _boundary(root, head)
+            if shas is None:
+                return None, None, f"what the new ref carries cannot be read ({why})"
+            for sha in shas:
+                got, why = vcs.commit_paths(root, sha)
+                if got is None:
+                    return None, None, f"commit {sha[:12]} cannot be read ({why})"
+                paths |= set(got)
+        else:
+            base, why = vcs.run(root, ["merge-base", remote, head])
+            if base is None:
+                return None, None, f"the range {remote[:12]}..{head[:12]} cannot be read ({why})"
+            base = base.strip()
+            got, why = vcs.range_paths(root, base, head)
+            if got is None:
+                return None, None, f"the range {remote[:12]}..{head[:12]} cannot be read ({why})"
+            paths |= set(got)
+        if base:
+            bases.append(base)
+    if len(set(bases)) > 1:
+        said, _why = vcs.run(root, ["merge-base", "--octopus", *sorted(set(bases))])
+        bases = [said.strip()] if said else []
+        if not bases:
+            return None, None, "the pushed ranges share no published base"
+    return sorted(paths), (bases[0] if bases else None), None
+
+
+def _published_areas(ctx, base, catalogue, working):
+    """The areas as the published side holds them; absent there, no area at all -- every path at the
+    default, proved by everything. With nothing published, the working declaration."""
+    if base is None:
+        return working
+    target = workclass.areas_target(ctx)
+    stood = _at(ctx, base, target) if target else None
+    return stood if isinstance(stood, dict) else {"default_undo": catalogue["undo"][0]["id"], "max_areas": {},
+                                                  "areas": []}
+
+
 def _scope(ctx, args) -> tuple:
-    """(the commands that prove what this push carries, why) -- or (None, why): every command."""
+    """(the commands that prove what this push carries or None for every command, why, the published base,
+    the areas it was weighed by, whether the tree the commands read is the tree pushed)."""
     if getattr(args, "full", False):
-        return None, "--full: every command a MUST names"
+        return None, "--full: every command a MUST names", None, None, False
+    paths, base, why = _ranges(ctx, args)
+    if paths is None:
+        return None, f"{why}: every command a MUST names", None, None, not why.startswith("the pushed")
     found = workclass.declarations(ctx)
     if found is None:
-        return None, "this host weighs nothing (no work classes): every command a MUST names"
-    paths, why = ctx.workspace.unpushed_paths()
-    if paths is None:
-        return None, f"what this push carries could not be read ({why}): every command a MUST names"
-    commands, why = weighing.proof_for(paths, *found)
-    return commands, (why if commands is None else f"{why}: proved by {', '.join(commands) or 'check alone'}")
+        return None, "this host weighs nothing (no work classes): every command a MUST names", base, None, True
+    catalogue, working = found
+    areas = _published_areas(ctx, base, catalogue, working)
+    commands, why = weighing.proof_for(paths, catalogue, areas)
+    return (commands, (why if commands is None else f"{why}: proved by {', '.join(commands) or 'check alone'}"),
+            base, areas, True)
 
 
 def run(ctx, args) -> int:
-    commands, unread = _commands(ctx)
+    scoped, why, base, areas, same_tree = _scope(ctx, args)
+    commands, unread = _commands(ctx, base)
+    if base is not None:
+        working = workclass.declarations(ctx)
+        pushed_commands, _ = _commands(ctx)
+        loosening = weighing.loosened(working[0], areas, working[1], (commands, pushed_commands)) if working and areas \
+            else []
+        if loosening:
+            print(f"prove: this push loosens its own proof ({'; '.join(loosening)}) -- it is proved as the published "
+                  f"side declares it; the loosening is a change of its own, weighed at commit")
     wanted, missing = {}, {}
     for norm in norms_gate.norms_of(ctx):
         if str(norm.get("modality", "")).upper() != "MUST":
@@ -108,7 +250,6 @@ def run(ctx, args) -> int:
         return 1
     # An area's `proved_by` is the host's own declaration of what proves it, so a scoped proof runs with
     # or without a MUST; everything -- the unscoped path -- is what the MUSTs name.
-    scoped, why = _scope(ctx, args)
     if scoped is not None:
         print(f"prove: {why}")
         unknown = [c for c in scoped if c not in commands]
@@ -116,21 +257,24 @@ def run(ctx, args) -> int:
             print(f"prove: REFUSED -- an area names {', '.join(unknown)} as its proof, which no vouching declaration "
                   f"runs")
             return 1
-        musts = [h for held in wanted.values() for h in held]
-        wanted = {c: musts or ["the areas the change touches"] for c in scoped}
+        for enforcer, held in sorted(wanted.items()):
+            if enforcer not in scoped:  # a MUST holds only where its own enforcer ran
+                print(f"prove: {enforcer} not run -- this push touches nothing it proves; "
+                      f"{', '.join(map(str, held))} not proved by this push")
+        wanted = {c: wanted.get(c) or ["the areas the change touches"] for c in scoped}
         if not wanted:
             print("prove: nothing beyond `check` proves this change")
             return 0
     elif not wanted:
         declared_test = (ctx.take_reading().get("facts") or {}).get("quality.tests.command")
         if not declared_test:
-            print("prove: no MUST names a command, no area declares a proof, and this host's reading declares no test "
-                  "command -- nothing to run")
+            print(f"prove: {why}; no MUST names a command, and this host's reading declares no test command -- "
+                  f"nothing to run")
             return 0
         # From the first day: what the host's briefing already says proves a change is what proves it here
         # (`areas` refines it by module).
-        print(f"prove: no MUST names a command and no area declares a proof -- proved by the test command this "
-              f"host declares: {declared_test}")
+        print(f"prove: {why}; no MUST names a command -- proved by the test command this host declares: "
+              f"{declared_test}")
         commands = {**commands, "declared:test": declared_test}
         wanted = {"declared:test": ["the host's declared test command"]}
     else:
@@ -140,11 +284,14 @@ def run(ctx, args) -> int:
             print(f"  would run  {commands[enforcer]}  ({enforcer}, for {', '.join(map(str, held))})")
         return 0
     red = []
-    tree = None if getattr(args, "full", False) else ctx.workspace.clean_tree()
+    tree = ctx.workspace.clean_tree() if same_tree and not getattr(args, "full", False) else None
+    digest = hashlib.sha256(json.dumps({"areas": areas, "commands": commands}, sort_keys=True,
+                                       default=str).encode("utf-8")).hexdigest()
     for enforcer, held in sorted(wanted.items()):
         command = commands[enforcer]
         record = _record(ctx, command, tree) if tree else None
-        if record and ctx.workspace.exists(record):
+        expected = {"command": command, "tree": tree, "kit_version": ctx.manifest.version, "declarations": digest}
+        if record and ctx.workspace.exists(record) and _honoured(ctx, record, expected):
             print(f"prove: {enforcer} already went green on these exact bytes (tree {tree[:12]}) -- not run again; "
                   f"it holds {', '.join(map(str, held))}", flush=True)
             continue
@@ -156,7 +303,7 @@ def run(ctx, args) -> int:
             red.append(enforcer)
         elif record and ctx.workspace.clean_tree() == tree:  # a command that wrote into the tree proved other bytes
             ctx.workspace.scoped((ephemeral.place(ctx, SUBJECT) + "/",)).write_json(
-                record, {"command": command, "tree": tree, "green": True})
+                record, dict(expected, green=True))
     if red:
         print(f"prove: REFUSED -- {', '.join(red)} red; a MUST whose enforcer is red does not hold")
         return 1

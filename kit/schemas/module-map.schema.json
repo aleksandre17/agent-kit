@@ -1,15 +1,12 @@
 {
   "$id": "module-map",
   "title": "Where a build tool's modules are declared, and what proves each (ADR-025 amendment 4)",
-  "description": "Published by a build tool's adapter. `areas` reads it to draft one area per module the host's manifest declares -- its path, and the vouched command that proves it -- and one area for the tool's own declarations; the owner approves the draft.",
+  "description": "Published by a build tool's adapter. `areas` reads it to draft one area per module the host's manifest declares -- its path, and the vouched command that proves it -- and one area for the tool's own declarations; the owner approves the draft. Two forms: the MANIFEST form (`path`, `pointer`, `path_field`) names where a build tool declares its modules; the MARKER form (`markers`, `command`) finds a module in every carried directory holding a marker file, and `areas` drafts the policy command (`command`, `{path}` the module's directory) its `proof` names.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
     "id",
-    "path",
-    "pointer",
-    "path_field",
     "proof"
   ],
   "properties": {
@@ -55,6 +52,26 @@
     "declarations_proof": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9-]*:[A-Za-z0-9._-]+$"
+    },
+    "markers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[^/]+$"
+      },
+      "description": "file names whose directory is a module"
+    },
+    "marker_pointer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "a module only where the marker (JSON) holds a value here"
+    },
+    "command": {
+      "type": "string",
+      "minLength": 1,
+      "description": "the command proving a module, `{path}` its directory"
     }
   }
 }

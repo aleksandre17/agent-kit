@@ -12,6 +12,8 @@ must be modified to admit a new capability is not open, however generic its eval
 
 from __future__ import annotations
 
+import contextlib
+import io
 import time
 
 import declared
@@ -81,8 +83,10 @@ def run(ctx, args) -> int:
                 )
             held = stances[(capability.id, gate["id"])]
             crashed = False
+            said = io.StringIO()  # a gate's own lines are shown with its header, never without it
             try:
-                failures = kinds[kind](ctx, gate.get("params", {}))
+                with contextlib.redirect_stdout(said):
+                    failures = kinds[kind](ctx, gate.get("params", {}))
             except KitError:
                 raise  # a refusal by name is the kit speaking, and it is reported as itself
             except Exception as exc:  # noqa: BLE001 -- a gate that crashed decided nothing
@@ -94,6 +98,8 @@ def run(ctx, args) -> int:
                             f"unjudged gate is not a passed one"]
             if failures or not getattr(args, "brief", False):
                 print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})  {held.label()}")
+                if said.getvalue():
+                    print(said.getvalue().rstrip("\n"))
                 for failure in failures:
                     print(f"        {failure}")
                 if kind in reports and not crashed:

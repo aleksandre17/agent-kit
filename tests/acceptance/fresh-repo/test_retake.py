@@ -101,7 +101,9 @@ class Retake(Fixtures, unittest.TestCase):
         self.assertIs(True, fresh["facts"][FACT])
         self.assertEqual("acceptance-suite", fresh["retaken"]["signed_by"])
         self.assertEqual(recorded["taken_at"], fresh["retaken"]["replaces"])
-        self.assertIn(f"PASS  {GATE}", pinned_cli(host, "check").stdout)
+        after = pinned_cli(host, "check").stdout
+        self.assertIn(f"PASS  {GATE}", after)
+        self.assertNotIn("FAIL  FF-KIT-PROJECTION", after, "a retake renders what it serves, as init does")
 
 
 class TakeSource(Fixtures, unittest.TestCase):
