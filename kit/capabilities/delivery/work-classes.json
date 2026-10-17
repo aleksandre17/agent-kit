@@ -36,6 +36,54 @@
       "at_least": "emergency"
     }
   ],
+  "evidence": [
+    {
+      "id": "static",
+      "says": "read from the tree as it stands: a file present, a declared rule holding",
+      "ladder": true,
+      "yielded_by": [
+        "artifact-present",
+        "declared-rule-holds",
+        "appetite-spent",
+        "waited-longer-than",
+        "predecessors-closed"
+      ]
+    },
+    {
+      "id": "test",
+      "says": "a test suite ran and its report, kept as evidence, records no failure",
+      "ladder": true,
+      "yielded_by": [
+        "test-report-passed"
+      ]
+    },
+    {
+      "id": "runtime",
+      "says": "observed on a running system that is not production",
+      "ladder": true,
+      "yielded_by": []
+    },
+    {
+      "id": "production",
+      "says": "observed in production",
+      "ladder": true,
+      "yielded_by": []
+    },
+    {
+      "id": "review",
+      "says": "judged by a principal who is not the work's author",
+      "ladder": false,
+      "yielded_by": [
+        "review-approved"
+      ]
+    },
+    {
+      "id": "owner",
+      "says": "ruled by the owner, on the record",
+      "ladder": false,
+      "yielded_by": []
+    }
+  ],
   "records": [
     {
       "id": "commit",
@@ -71,7 +119,11 @@
     },
     {
       "id": "review",
-      "says": "a review by a principal who is not the work's author"
+      "says": "a review by a principal who is not the work's author",
+      "held_by": {
+        "criterion_needs": "review",
+        "from": "in-flight"
+      }
     },
     {
       "id": "card-tree",

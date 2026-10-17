@@ -8,7 +8,7 @@
   "provides": ["delivery"],
   "conflicts": [],
   "declares": {
-    "schemas": ["lifecycle", "card", "delivery-policy", "lesson", "work-classes", "delivery-areas"]
+    "schemas": ["lifecycle", "card", "delivery-policy", "lesson", "work-classes", "delivery-areas", "review-record"]
   },
   "documents": [
     {
@@ -103,6 +103,16 @@
     {
       "id": "FF-WORK-CLASSES",
       "kind": "work-classes-held",
+      "params": {}
+    },
+    {
+      "id": "FF-WORK-DEFERRALS",
+      "kind": "deferrals-held",
+      "params": {}
+    },
+    {
+      "id": "FF-WORK-ORDER",
+      "kind": "order-held",
       "params": {}
     },
     {

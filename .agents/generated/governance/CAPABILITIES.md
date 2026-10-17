@@ -23,6 +23,8 @@ Gates declared by this capability:
 - **FF-DELIVERY-AGE** — `state-age-within-limit`
 - **FF-DELIVERY-LINEAGE** — `lineage-resolves`
 - **FF-WORK-CLASSES** — `work-classes-held`
+- **FF-WORK-DEFERRALS** — `deferrals-held`
+- **FF-WORK-ORDER** — `order-held`
 - **FF-DELIVERY-APPETITE** — `appetite-within-limit`
 - **FF-DELIVERY-RESTATED** — `section-restating-a-record`
 

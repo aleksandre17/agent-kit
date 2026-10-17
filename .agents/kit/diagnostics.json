@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 87,
+  "issued": 88,
   "codes": [
     {
       "code": "KIT0001",
@@ -524,6 +524,12 @@
       "status": "active",
       "title": "work classes that cannot be read honestly",
       "explanation": "Two sources keep the work-class or the areas contract -- one question, two answers -- or git could not say what a change touches. Keep one source of each, and weigh inside the repository (ADR-025)."
+    },
+    {
+      "code": "KIT0088",
+      "status": "active",
+      "title": "a captured finding that cannot be written honestly",
+      "explanation": "A finding is written as a NEW card with an id, a title and its author; an id already taken, or an origin card that does not exist, is refused rather than merged into another record (ADR-025)."
     }
   ]
 }

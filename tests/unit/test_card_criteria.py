@@ -56,9 +56,11 @@ LIFECYCLE = GOVERNING.documents[GOVERNING.governs["lifecycle"]]
 CARD_SCHEMA = next(i["validates"] for i in GOVERNING.installs
                    if collection.kind_of(i) == "collection" and i.get("validates"))
 
-#: The one passage in the shipped lifecycle that a machine decides, found by the field that says
-#: so. Naming the states it runs between is exactly what this suite may not do.
-COMPUTED_EDGE = next(e for e in LIFECYCLE["transitions"] if lifecycle_module.COMPUTED in e)
+#: The passage decided by the card's own criteria -- found by what decides it, never by its position in
+#: the lifecycle: a declaration that gains a computed passage earlier in its list is not a different test.
+#: Naming the states it runs between is exactly what this suite may not do.
+COMPUTED_EDGE = next(e for e in LIFECYCLE["transitions"]
+                     if e.get(lifecycle_module.COMPUTED, {}).get("proof", {}).get("kind") == "criteria-all-hold")
 
 #: A rule of a kind this kit really answers, borrowed from a real declaration: it reads one file
 #: through one schema, which makes it a rule that can be made to hold or not to hold by what is

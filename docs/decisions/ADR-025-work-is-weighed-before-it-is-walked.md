@@ -39,13 +39,44 @@ The prior system (`gs-serialized`, read 2026-10-17) had excellent mechanisms and
 ## The principle
 
 **Rigour is proportional to consequence and uncertainty; safety comes from the floor, never from the
-number of approvals.** Every standard below converges on it: ITIL 4 change enablement (standard /
-normal / emergency changes), DORA's finding that heavyweight external approval slows delivery without
-improving stability (*Accelerate*, 2018), consequence-scaled assurance (IEC 61508 SIL, DO-178C DAL,
-NASA NPR 7150.2 software classes), ISO 31000 and ISO/IEC 23894 risk treatment proportional to risk,
-ISO 21502 and PMBOK 7 tailoring, the Cynefin domains, reversible and irreversible decisions (two-way
-and one-way doors), ISO/IEC 42001 and the NIST AI RMF (human oversight in proportion to risk), and
-ISO/IEC/IEEE 15026 (a claim is as strong as its evidence). Alignment, not certification.
+number of approvals.** Every standard in the tables below converges on it, in change management
+and in AI engineering alike: the path a piece of work walks is chosen by what a mistake would cost,
+and an agent is trusted exactly as far as an independent check reaches.
+
+## The standards it is aligned with
+
+Alignment, never a compliance claim: each row names the practice a mechanism follows, so a reader can
+check the mechanism against its source. Certification is an external auditor's act and nothing here
+asserts it.
+
+**Change, risk and delivery management**
+
+| Mechanism here | Practice | Source |
+|---|---|---|
+| `standard` / `normal` / `emergency`; a standard change pre-approved by its class | standard, normal and emergency changes; no change board for the pre-approved | ITIL 4, Change Enablement |
+| the floor of automated controls on every change; doors only where irreversible | heavyweight external approval slows delivery without improving stability | Forsgren, Humble, Kim, *Accelerate* (2018), DORA |
+| the undo-cost scale; doors on irreversible acts | reversible and irreversible decisions | two-way and one-way doors (Amazon) |
+| the class computed from consequence | rigour scaled to the consequence of failure | IEC 61508 (SIL), DO-178C (DAL), NASA NPR 7150.2 |
+| the uncertainty scale on a card | clear, complicated, complex, chaotic domains | Snowden, Cynefin |
+| areas tailor the path (`at_least`, `requires`) | the process is tailored to the work, and the tailoring is recorded | ISO 21502, PMBOK 7 |
+| signals weighed before and during the work | risk identified, assessed and treated in proportion, continuously | ISO 31000, ISO/IEC 23894 |
+| `after` and the computed entry gate | one entry gate per phase, lighter for smaller work | Cooper, Stage-Gate (and Lite / Xpress) |
+| appetite and the circuit breaker (ADR-020) | a fixed budget the owner bets, not an estimate | Basecamp, *Shape Up* |
+| `emergency` with its debt | an expedite class of service | Anderson, *Kanban* |
+| a lesson's guard; an emergency's card | learning becomes an automated guard, blamelessly | Google, *Site Reliability Engineering* |
+
+**AI engineering and agentic systems**
+
+| Mechanism here | Practice | Source |
+|---|---|---|
+| what is computable is a verb or a script; a model is spent only on judgement | start from the simplest deterministic workflow; add agentic complexity only when it earns its cost | Anthropic, *Building Effective Agents* (2024) |
+| a lesson or a rule reaches the agent when its area is touched, and nowhere else | context is a finite resource, retrieved just in time | Anthropic, *Effective Context Engineering for AI Agents* (2025) |
+| the owner decides only irreversible or accountable acts | human oversight in proportion to risk | NIST AI RMF 1.0 and its GenAI Profile (AI 600-1), ISO/IEC 42001, EU AI Act art. 14 |
+| an agent's autonomy is bounded by declared areas, gates and doors | no excessive agency; least privilege | OWASP Top 10 for LLM Applications (LLM06) |
+| an agent's result is accepted by a test, a gate or a review -- never by the agent | verification by an independent oracle; evaluations | agentic evaluation practice (ADR-024 `trial`) |
+| a review by the work's author proves nothing | separation of duties; a model does not grade its own output | ISO/IEC 27001 A.5.3 |
+| a claim never exceeds its evidence class | an assurance case: a claim is as strong as its evidence | ISO/IEC/IEEE 15026 |
+| the AI system's process is a declared lifecycle | AI system life-cycle processes | ISO/IEC 5338 |
 
 ## Decisions
 
@@ -102,8 +133,8 @@ ISO/IEC/IEEE 15026 (a claim is as strong as its evidence). Alignment, not certif
    Because a criterion's status is computed, a landed card whose proof stops holding is reported
    REGRESSED with every card after it named: invalidation needs no ledger.
 
-10. **A finding met on the way is captured in one act and never done on the side.** `intake` writes a
-    card in `intake` with its origin and returns. Doing it inside unrelated work is what decision 4
+10. **A finding met on the way is captured in one act and never done on the side.** `capture` writes a
+    card in the lifecycle's initial state with its origin and returns. Doing it inside unrelated work is what decision 4
     catches: the change touches an area its card does not, and its class rises.
 
 11. **The monster is prevented by construction.** A class requires the smallest record set that answers
@@ -200,7 +231,7 @@ has not made.
 | S1 | the work-class catalogue, the areas seed, signals, the computed class, and the `weigh` verb (staged or `--base/--head`) |
 | S2 | the class floor at commit (message hook): an under-declared change, or one owing a card it does not name, refused; tailoring by area (`at_least`, `requires`); the uncertainty scale on cards; `normal` cards pass without the owner's bet; FF-WORK-CLASSES |
 | S3 | evidence classes on proof kinds and the criterion's `needs` |
-| S4 | `due_when` on parked cards; the `intake` verb |
+| S4 | `due_when` on parked cards; the `capture` verb |
 | S5 | `after` edges, the computed entry gate, REGRESSED |
 | S6 | the emergency debt and the ceremony measure per class |
 | S7 | areas as the architecture map: `owner`, `feeds`, the downstream named on weighing, lessons by area |

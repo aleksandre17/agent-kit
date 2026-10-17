@@ -26,10 +26,10 @@ import criteria
 
 
 def _criteria_all_hold(request) -> criteria.Verdict:
-    readings = [
-        (item, request.about(item.get(criteria.PROOF)))
-        for item in (request.subject.get(request.ref) or [])
-    ]
+    items = request.subject.get(request.ref) or []
+    scale = criteria.scale_of(request.ctx) if any(criteria.NEEDS in item for item in items) else None
+    readings = [(item, criteria.needed(scale, item, request.about(item.get(criteria.PROOF))))
+                for item in items]
     if not readings:
         return criteria.Verdict(
             True, f"nothing is declared in {request.ref!r}, so nothing stated there is unmet"

@@ -22,7 +22,17 @@
           "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
           "title": { "type": "string", "minLength": 1 },
           "owner": { "type": "string", "minLength": 1 },
-          "intent": { "type": "string", "minLength": 1 }
+          "intent": { "type": "string", "minLength": 1 },
+          "defers": {
+            "description": "This state holds work deliberately NOT being done now (ADR-025 decision 8). A card in it may name `due_when`, the trigger that makes it due; one that does is reported the moment its trigger holds, and one that does not is counted -- a deferral with no trigger is an abandonment that has not said so yet.",
+            "type": "boolean",
+            "const": true
+          },
+          "closed": {
+            "description": "This state holds work that is FINISHED (ADR-025 decision 13). The board shows it as a count and its most recent few, by the host's number, and the archive passage starts here: a project's age never grows the surface anyone reads to work.",
+            "type": "boolean",
+            "const": true
+          }
         }
       }
     },

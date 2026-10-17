@@ -135,11 +135,66 @@ def resolve(ctx, proof: dict, subject, seen: frozenset = frozenset()) -> Verdict
     return answering[kind](Request(ctx, proof, subject, seen | {trail}))
 
 
+#: The field a criterion names the class of evidence it needs in (ADR-025 decision 7). Which kinds of
+#: proof are worth which class is the evidence scale's to say (`yielded_by`), never a module's.
+NEEDS = "needs"
+
+
+def evidence(scale: list) -> dict:
+    """kind of proof -> the evidence class its reading is worth, as the scale declares it."""
+    worth: dict = {}
+    for row in scale:
+        for kind in row.get("yielded_by", []):
+            if kind in worth:
+                raise CriterionError(f"the kind of proof {kind!r} is worth both {worth[kind]!r} and "
+                                     f"{row['id']!r}: one reading, one class")
+            worth[kind] = row["id"]
+    return worth
+
+
+def _enough(scale: list, yields, needs: str) -> bool:
+    rows = {row["id"]: (rank, row) for rank, row in enumerate(scale)}
+    if yields not in rows or needs not in rows:
+        return False
+    (got, got_row), (want, want_row) = rows[yields], rows[needs]
+    if got_row["ladder"] and want_row["ladder"]:
+        return got >= want
+    return yields == needs
+
+
+def scale_of(ctx):
+    """The evidence scale this host declares, or None -- read through the work classes' one door."""
+    import workclass  # here, not at the top: the work-class door reads the governed collection
+
+    found = workclass.declarations(ctx)
+    return None if found is None else found[0].get("evidence")
+
+
+def needed(scale, item: dict, verdict: Verdict) -> Verdict:
+    """A verdict held to the class of evidence its criterion needs: a reading that held on weaker
+    evidence is no reading of what was asked, so it becomes UNPROVEN -- never proved, never refuted."""
+    want = item.get(NEEDS)
+    if want is None or verdict.holds is not True:
+        return verdict
+    kind = (item.get(PROOF) or {}).get(KIND)
+    if scale is None:
+        return Verdict.unreadable(f"this criterion needs {want!r} evidence, and no evidence scale is "
+                                  f"declared here to weigh a reading against")
+    yields = evidence(scale).get(kind)
+    if not _enough(scale, yields, want):
+        return Verdict.unreadable(f"a proof of kind {kind!r} yields {yields or 'no evidence class of its own'}; "
+                                  f"this criterion needs {want}. What held was a weaker claim than the one made")
+    return verdict
+
+
 def read(ctx, record: dict, field: str) -> list:
     """Every criterion the record declares in `field`, each with the verdict its own proof
-    resolved to. A record that declares none reads as an empty list, which is a complete state:
-    nothing was stated, so nothing is unmet and nothing is proved."""
-    return [(item, resolve(ctx, item.get(PROOF), record)) for item in (record.get(field) or [])]
+    resolved to -- held to the evidence it needs, against `scale`. A record that declares none
+    reads as an empty list, which is a complete state: nothing was stated, so nothing is unmet and
+    nothing is proved."""
+    items = record.get(field) or []
+    scale = scale_of(ctx) if any(NEEDS in item for item in items) else None
+    return [(item, needed(scale, item, resolve(ctx, item.get(PROOF), record))) for item in items]
 
 
 #: What a surface may COUNT about the criteria a record declares, and the names it counts under.

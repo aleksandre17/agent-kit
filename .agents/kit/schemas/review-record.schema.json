@@ -1,0 +1,21 @@
+{
+  "$id": "review-record",
+  "title": "A review record -- a judgement of a card's work by someone who did not do it (ADR-025 decision 7)",
+  "description": "Kept as evidence beside the card it judges (`docs/work/evidence/<card>/`). The reviewer is named, the verdict is one of two words, and what was reviewed is a revision or a range, so the judgement points at bytes rather than at a memory. A reviewer who is the card's owner, or who ever moved it, is an author of the work reviewing it, and that reading proves nothing (separation of duties).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "card", "reviewer", "verdict", "reviewed", "at"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "card": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "reviewer": { "type": "string", "minLength": 1 },
+    "verdict": { "type": "string", "enum": ["approved", "changes-requested"] },
+    "reviewed": {
+      "description": "What was judged: a revision, or a range `base..head`.",
+      "type": "string",
+      "minLength": 1
+    },
+    "at": { "type": "string", "minLength": 1 },
+    "notes": { "type": "string" }
+  }
+}

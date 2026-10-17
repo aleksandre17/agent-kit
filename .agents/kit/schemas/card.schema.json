@@ -20,6 +20,22 @@
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9-]*$"
     },
+    "due_when": {
+      "description": "What makes a deferred card due (ADR-025 decision 8): a TYPED REFERENCE in the grammar a criterion's `proof` uses. While the card stands in a state that defers, the reference is resolved on every `check`; the moment it holds, the card is reported due -- a trigger that fired and is ignored is a defect, not a backlog. Absent on a deferred card is counted.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "ref"],
+      "properties": {
+        "kind": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "ref": { "type": "string", "minLength": 1 },
+        "params": { "type": "object" }
+      }
+    },
+    "after": {
+      "description": "The cards this one comes AFTER (ADR-025 decision 9): the order of a program's parts, drawn between cards and never as a ladder of phases. A card enters the work only once every card named here has finished -- the phase entry gate, computed by the lifecycle's passage. Who comes after a card is COMPUTED from this field; there is no back-pointer.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" }
+    },
     "owner": { "type": "string", "minLength": 1 },
     "created_at": { "type": "string", "minLength": 1 },
     "history": {
@@ -101,6 +117,11 @@
         "required": ["id", "statement", "proof"],
         "properties": {
           "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "needs": {
+            "description": "The class of evidence this criterion needs, from the work classes' evidence scale (ADR-025 decision 7). A proof whose kind yields weaker evidence leaves the criterion UNPROVEN, never proved: a static reading is not a test, and a test is not a review. Absent means any reading that holds will do.",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
           "statement": {
             "description": "The criterion as a human states it -- given, when, then. Prose, deliberately: what would convince a reader is not the same question as what a machine can read, and pretending otherwise produces criteria written for the resolver instead of for the work.",
             "type": "string",

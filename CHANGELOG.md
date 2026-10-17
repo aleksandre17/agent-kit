@@ -15,6 +15,20 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   `--base/--head` range, or `--path` -- and what that class requires; `--class` refuses a lighter
   declaration (KIT0086). An undo cost nobody declared is refused (KIT0085).
 - A standard change no longer needs a card: its commit is its record (delivery rule 4 revised).
+- S2: the message hook holds the floor (a lighter declaration, a missing or idle card, a card shaped
+  lighter than the change: refused); tailoring by area (`at_least`, `requires`); the Cynefin
+  uncertainty on cards; `normal` cards enter the work without the owner's bet; FF-WORK-CLASSES.
+
+**Added — the claim ladder, deferrals and a program's order (ADR-025 S3-S5)**
+- Evidence classes (`static` < `test` < `runtime` < `production`; `review`, `owner`), declared with the
+  kinds of proof worth each; a criterion's `needs` -- weaker evidence leaves it unproven.
+- Proof kinds `test-report-passed` (JUnit XML, TRX), `review-approved` (a review record by someone who
+  is not an author; schema `review-record`), `predecessors-closed`.
+- `due_when` on a deferred card and FF-WORK-DEFERRALS (due when its trigger holds; untriggered counted);
+  verb `capture` (a finding as a card in the initial state, with its origin; KIT0088).
+- `after` between cards: entering the work waits for what it comes after; FF-WORK-ORDER refuses a
+  cycle or a dangling name and reports finished work that stops holding as REGRESSED.
+- Lifecycle states may be marked `defers` and `closed`.
 
 ## 0.2.0 — 2026-10-17
 

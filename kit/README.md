@@ -41,6 +41,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `adopt` | read a host this kit has never touched and name every path that has no class | nothing |
 | `audit` | every edit gate in force over every tracked file: violations already in the tree, known ones by declaration | nothing |
 | `capsule` | show the continuity capsule, or replace one revision of it by compare-and-swap | yes -- `--plan` prints the writes first |
+| `capture` | write a finding met on the way as a card in the initial state, in one act | yes -- `--plan` prints the writes first |
 | `check` | run the declared fitness functions and report | nothing |
 | `claim` | take, list, release or break by name a claim on paths, which the judge holds other writers to | nothing |
 | `dispatch` | hand one act to the dispatch port: start a worker for a task, or carry an operator's answer back into one that asked | yes -- `--plan` prints the writes first |

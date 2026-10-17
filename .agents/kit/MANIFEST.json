@@ -140,6 +140,7 @@
     "delivery-policy": "schemas/delivery-policy.schema.json",
     "work-classes": "schemas/work-classes.schema.json",
     "delivery-areas": "schemas/delivery-areas.schema.json",
+    "review-record": "schemas/review-record.schema.json",
     "residence": "schemas/residence.schema.json",
     "boundary": "schemas/boundary.schema.json",
     "receipt": "schemas/receipt.schema.json",

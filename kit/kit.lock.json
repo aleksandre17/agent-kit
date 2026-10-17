@@ -1,17 +1,17 @@
 {
   "algorithm": "sha256",
-  "count": 349,
+  "count": 354,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "69e490b043d4cf9c69474f9c40e6e96293ab1bda6b76239470f89a6e9ea430d5",
+      "digest": "654746fbebbec247c32679792fbb459a946a1abb33ba5db312781ce57175fdf6",
       "path": "MANIFEST.json"
     },
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "ea359b8357837e88ddb54c2be44e2f3ed324f24531db8b150048162d3c52887c",
+      "digest": "a413077a977f1e60f1ab6afb2d523736d3f780a8157e401da40902267d51d5e1",
       "path": "README.md"
     },
     {
@@ -23,7 +23,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "026b9afe8c54912b8616c6d2c2c4a94b752c23310b6c0dbce31a58c2f078371a",
+      "digest": "fb3119531860100ae7740b91fe7b6eb51b5378fb5cf6bafbb880c11942845808",
       "path": "capabilities/delivery/capability.json"
     },
     {
@@ -35,7 +35,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "8f661d32e89a01a26ed87e04be3501df5dc7d55a58fbbfa18ad895bf80d1d18d",
+      "digest": "31f36ae33fd95fa7e08df9fc2ab38d5a3b374f79edca5f103cff8f43719246d2",
       "path": "capabilities/delivery/lifecycle.json"
     },
     {
@@ -65,7 +65,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "e9ffb3d20a7ebc194982e05c58f5001521f27d3da992695b063cfab9e73d4ef5",
+      "digest": "ab82b5a1af5029f0d63ed73278759ef74e739e92899edcfa0336660ccc915e17",
       "path": "capabilities/delivery/work-classes.json"
     },
     {
@@ -563,7 +563,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "e7433017941d7fefde380a51a7c0b237eb194b4847771b6f217fbf109ac525dc",
+      "digest": "cfa79d1be28a4344f2ef04882f7249e7a20ab1f7b96c5c2bb5eefc3c6d4278d6",
       "path": "diagnostics.json"
     },
     {
@@ -653,7 +653,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "18bed66a1f693f57f1094f93783b6a8ee13b5cb670132932dbf2b24450267304",
+      "digest": "11b6563cb44f2eb555723a01d171a6c025372a59fc05a7be95e374d2c6df94a5",
       "path": "interpreters/criteria.py"
     },
     {
@@ -941,7 +941,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "35bc153e43ff27a25f201ef4b88487a7b15b1a83be957f938b869316aaf99a2c",
+      "digest": "2d5360e238ab60e71b7c71948d98bd36acc486ffcac13904188463ab9ac80815",
       "path": "interpreters/gates/workcards.py"
     },
     {
@@ -1145,14 +1145,32 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d1844de67bf082c6e01521d0889091e8108cbbb71ce9a31317da70f303dc21d3",
+      "digest": "10d88a71a59252199296d0e620a3570389891702a366cb4ffcd496c3fd237bad",
       "path": "interpreters/proofs/card_criteria.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "e1ee0f7b762f5d01ebadf599bde31fe071bd75e07742d4209b6bafa50cb78d59",
+      "path": "interpreters/proofs/card_order.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "4501f9b76e4018de9418c3e88b43bc15ef175abfc57854cec9e3dc79da69fddc",
+      "path": "interpreters/proofs/review_record.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
       "digest": "b3175a01f7c9f9eb5a929181c1d330d11b481a8cebb73620ce25e605105a7d6e",
       "path": "interpreters/proofs/rule_verdict.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "b3a4957d835ca3d4de3ba87b4c7d504090e58f9be40fa175b287c31ef43d60a5",
+      "path": "interpreters/proofs/suite_report.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1363,6 +1381,12 @@
       "class": "interpreter",
       "digest": "5cdf8e773c2e684065e108abfff5b8cb738589a6fd4ae0e0ee286c20a4c4d789",
       "path": "interpreters/verbs/capsule.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "d5fb809a52d2221a16a2391f1e9e950795cbe7e8aca61bc0fbcb71aad89dd6b3",
+      "path": "interpreters/verbs/capture.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1625,7 +1649,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "77dd6bbd54f621c43af0d1b1fcdce125c418acf800fe39b45506490426e57652",
+      "digest": "87c9e00aff649539daf46f782c63d8e7703259005dff9d5541325b12653b4a1d",
       "path": "schemas/card.schema.json"
     },
     {
@@ -1835,7 +1859,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "aad9b07d171d20b37718925c42122b8db13de6b1789c55c86a56171de2689669",
+      "digest": "cb6ec08846808de92f7060edeafa3ea4b5eaeb8e3634843e9d1025c3006164bd",
       "path": "schemas/lifecycle.schema.json"
     },
     {
@@ -1967,6 +1991,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "ddacd02bde40a927897dbe6f75eafe02bcb0a83c96bb0b5bdeb159577b5fc774",
+      "path": "schemas/review-record.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "d95a152fc3f9dd04e3aca5edb8a3f11183a0bc6624f4d0b2ae8e2b9b1e198a69",
       "path": "schemas/route-table.schema.json"
     },
@@ -2057,7 +2087,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "554482bca3e1ef65a67c20c4cd869d920801a967bb27a5c93f6db1adcb10352c",
+      "digest": "86cbb165e8285fdef8474f9966200f23aa4ef1531f12a065321943421c3a7b3c",
       "path": "schemas/work-classes.schema.json"
     },
     {
@@ -2100,5 +2130,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T05:44:29+00:00"
+  "taken_at": "2026-10-17T06:02:32+00:00"
 }

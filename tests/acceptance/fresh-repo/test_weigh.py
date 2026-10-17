@@ -96,6 +96,104 @@ class Weigh(Fixtures, unittest.TestCase):
         self.assertIn("too-light: shaped normal, but complex work walks at least program", failed)
         self.assertNotIn("classless", failed)
 
+    def test_80_a_criterion_that_needs_a_test_is_not_proved_by_a_file_being_there(self):
+        host = self.installed()
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        report = "docs/work/evidence/orders/tests.xml"
+        (host / report).parent.mkdir(parents=True)
+        (host / report).write_text('<testsuite tests="4" failures="0" errors="0"/>\n', encoding="utf-8")
+
+        def card(kind):
+            body = {"schema_version": 1, "id": "orders", "title": "orders", "state": "in-flight",
+                    "created_at": "2026-10-17T00:00:00+00:00",
+                    "criteria": [{"id": "suite-green", "statement": "the suite passes", "needs": "test",
+                                  "proof": {"kind": kind, "ref": report}}]}
+            (cards / "orders.json").write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+        card("artifact-present")
+        refused = self.run_kit(KIT, host, "move", "--card", "orders", "--to", "verified", "--by", "dev")
+        self.assertNotEqual(0, refused.returncode)
+        self.assertIn("needs test", refused.stdout + refused.stderr)
+        card("test-report-passed")
+        moved = self.run_kit(KIT, host, "move", "--card", "orders", "--to", "verified", "--by", "dev")
+        self.assertEqual(0, moved.returncode, moved.stdout + moved.stderr)
+
+    def test_90_a_finding_is_one_card_in_the_initial_state_with_where_it_was_found(self):
+        host = self.installed()
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        (cards / "orders.json").write_text(json.dumps(
+            {"schema_version": 1, "id": "orders", "title": "orders", "state": "in-flight",
+             "created_at": "2026-10-17T00:00:00+00:00"}, indent=2) + "\n", encoding="utf-8", newline="\n")
+        planned = self.run_kit(KIT, host, "capture", "--card", "slow-query", "--title", "a slow query",
+                               "--by", "dev", "--from", "orders", "--plan")
+        self.assertEqual(0, planned.returncode, planned.stderr)
+        self.assertFalse((cards / "slow-query.json").exists(), "--plan wrote a byte")
+        made = self.run_kit(KIT, host, "capture", "--card", "slow-query", "--title", "a slow query",
+                            "--by", "dev", "--from", "orders")
+        self.assertEqual(0, made.returncode, made.stderr)
+        card = json.loads((cards / "slow-query.json").read_text(encoding="utf-8"))
+        self.assertEqual("intake", card["state"])
+        self.assertTrue(card["origin"]["ref"].endswith("orders.json"))
+        again = self.run_kit(KIT, host, "capture", "--card", "slow-query", "--title", "x", "--by", "dev")
+        self.assertNotEqual(0, again.returncode)
+        self.assertIn("KIT0088", again.stdout + again.stderr)
+
+    def test_95_a_deferral_is_due_when_its_trigger_holds_and_counted_when_it_has_none(self):
+        host = self.installed()
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+
+        def parked(identity, **fields):
+            body = {"schema_version": 1, "id": identity, "title": identity, "state": "parked",
+                    "created_at": "2026-10-17T00:00:00+00:00", **fields}
+            (cards / f"{identity}.json").write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+        parked("when-billing-exists", due_when={"kind": "artifact-present", "ref": "src/billing/README.md"})
+        parked("someday")
+        quiet = self._failed(host)
+        self.assertIn("PASS  FF-WORK-DEFERRALS", quiet)
+        self.assertIn("deferred with no trigger: 1 -- someday", quiet)
+        (host / "src" / "billing").mkdir(parents=True)
+        (host / "src" / "billing" / "README.md").write_text("billing\n", encoding="utf-8")
+        due = self._failed(host)
+        self.assertIn("when-billing-exists: DUE", due)
+
+    def test_96_a_phase_starts_only_after_the_phases_before_it_and_finished_work_that_stops_holding_regresses(self):
+        host = self.installed()
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+
+        def card(identity, state, **fields):
+            body = {"schema_version": 1, "id": identity, "title": identity, "state": state,
+                    "created_at": "2026-10-17T00:00:00+00:00", **fields}
+            (cards / f"{identity}.json").write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+        card("protect", "in-flight")
+        card("migrate", "bet", after=["protect"])
+        held = self.run_kit(KIT, host, "move", "--card", "migrate", "--to", "in-flight", "--by", "dev")
+        self.assertNotEqual(0, held.returncode)
+        self.assertIn("protect (in-flight)", held.stdout + held.stderr)
+
+        report = host / "docs" / "work" / "evidence" / "protect" / "suite.xml"
+        report.parent.mkdir(parents=True)
+        report.write_text('<testsuite tests="2" failures="0" errors="0"/>\n', encoding="utf-8")
+        card("protect", "landed", criteria=[{"id": "suite", "statement": "the suite passes",
+                                             "proof": {"kind": "test-report-passed",
+                                                       "ref": "docs/work/evidence/protect/suite.xml"}}])
+        moved = self.run_kit(KIT, host, "move", "--card", "migrate", "--to", "in-flight", "--by", "dev")
+        self.assertEqual(0, moved.returncode, moved.stdout + moved.stderr)
+        self.assertIn("PASS  FF-WORK-ORDER", self._failed(host))
+
+        report.write_text('<testsuite tests="2" failures="1" errors="0"/>\n', encoding="utf-8")
+        self.assertIn("protect: REGRESSED -- finished, and suite no longer holds; it came before migrate",
+                      self._failed(host))
+
+        card("a", "shaped", after=["b"])
+        card("b", "shaped", after=["a"])
+        self.assertIn("the order is a cycle", self._failed(host))
+
     def _failed(self, host) -> str:
         said = self.run_kit(KIT, host, "check")
         return said.stdout + said.stderr
