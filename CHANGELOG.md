@@ -63,6 +63,12 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   FF-WORK-ORDER (which re-reads finished cards) recursed without end in `check` and on the board.
 - The commit floor names a `Card:` line written outside the final trailer block.
 - kit-skills 1.3.1: a card's proof is independent of the card -- never a gate that reads cards or the board.
+- Independent audit, before release (ADR-025 amendment 1): one trailer parser and canonical spelling;
+  expedite only from a trailer; the bet for classes with doors; area `requires` held at commit;
+  `decision` held by a decision document; CI skips commits made before the areas; merges weighed by
+  `--cc`; the hook reads the index; demotions by path; loosening by an added cheap area; `chaotic` asks
+  `major`; skipped tests prove nothing; the archive keeps referenced cards and paid debts; an owner's
+  door is not authorship; Python 3.10 reads a trailing `Z`.
 
 ## 0.2.0 — 2026-10-17
 

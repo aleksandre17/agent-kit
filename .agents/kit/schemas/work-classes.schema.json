@@ -150,6 +150,11 @@
                 "description": "Held by a criterion that needs this evidence class: declared on the card, and proved when the criteria are.",
                 "type": "string",
                 "pattern": "^[a-z0-9][a-z0-9-]*$"
+              },
+              "kind_of_record": {
+                "description": "The kind of record the field must point at: a document whose front matter declares `kind: <this>` (a decision is an ADR, never the card a finding was captured from).",
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]*$"
               }
             }
           }

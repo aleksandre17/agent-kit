@@ -20,9 +20,12 @@ SCHEMA = "review-record"
 
 
 def _authors(card: dict) -> set:
-    """Who did the work: the card's owner and every principal who moved it. Separation of duties is
-    read from the record, never from a state name -- a reviewer judges, and does not move the card."""
-    authors = {card.get("owner")} | {p.get("by") for p in card.get(lifecycle_module.HISTORY, [])}
+    """Who did the work: the card's owner and every principal who moved it through an ordinary passage.
+    Separation of duties is read from the record, never from a state name."""
+    # A passage walked through a DOOR (signed) is the owner deciding, not working: on a host with one
+    # human and its agents, the owner who bet the work must still be able to review it.
+    authors = {card.get("owner")} | {p.get("by") for p in card.get(lifecycle_module.HISTORY, [])
+                                     if not p.get("signed_by")}
     return {a for a in authors if a}
 
 

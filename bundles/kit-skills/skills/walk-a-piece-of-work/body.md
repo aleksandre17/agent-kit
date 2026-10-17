@@ -11,9 +11,10 @@ through this skill's `scripts/kit.py <verb> ...` from the host root.
    - `normal` -- a card in `docs/work/cards/` with criteria, each with the proof that decides it
      (`needs: tested` or `review` where the claim must be one); move it to `in-flight`; every commit
      carries `Card: <id>`.
-   - `major` -- as `normal`, plus `origin` pointing at a decision (an ADR: the question, the
-     alternatives and why they lost), an `appetite`, and a criterion that `needs: review`. The bet and
-     the ruling are the owner's -- walk-a-door.
+   - `major` -- as `normal`, plus `origin` pointing at a decision (an ADR with `kind: decision`: the
+     question, the alternatives and why they lost), an `appetite`, and a criterion that `needs: review`.
+     The owner bets it (`move --to bet --approve`) before any commit; the ruling is theirs -- walk-a-door.
+   - An area may owe more than its class (a review where identity lives): `weigh` lists it; the card holds it.
    - `program` -- the parts as child cards (`parent`) in order (`after`); each part walks its own
      class.
 3. **Judge what is not computed, and say it honestly:** the card's `uncertainty` (clear, complicated,
@@ -27,5 +28,6 @@ through this skill's `scripts/kit.py <verb> ...` from the host root.
 6. **Done is computed:** `kit.py move --card <id> --to verified --by <you>` passes only when every
    criterion holds at the evidence it needs. A test not run is reported as not run.
 
-Never yours to do: lower a card's class, declare `Work-Class: emergency`, or approve a door. Report
-what you found and wait for the owner.
+Never yours to do: lower a card's class, declare `Work-Class: emergency` (a person declares it; a card
+is never shaped `emergency`), or approve a door. Write trailers exactly `Card: <id>` in the last
+paragraph, beside the other trailers. Report what you found and wait for the owner.

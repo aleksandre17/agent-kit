@@ -30,17 +30,20 @@ def _int(element, name: str) -> int:
 
 def _junit(root) -> tuple:
     suites = [root] if _local(root.tag) == "testsuite" else [e for e in root if _local(e.tag) == "testsuite"]
-    totals = [sum(_int(s, k) for s in suites) for k in ("tests", "failures", "errors")]
+    keys = ("tests", "failures", "errors", "skipped")
+    totals = [sum(_int(s, k) for s in suites) for k in keys]
     if _local(root.tag) == "testsuites" and root.get("tests") is not None:
-        totals = [_int(root, k) for k in ("tests", "failures", "errors")]
-    return tuple(totals)
+        totals = [_int(root, k) for k in keys]
+    tests, failures, errors, skipped = totals
+    return tests - skipped, failures, errors  # a skipped test was not run, and proves nothing
 
 
 def _trx(root) -> tuple:
     counters = next((e for e in root.iter() if _local(e.tag) == "Counters"), None)
     if counters is None:
         return 0, 0, 0
-    return _int(counters, "total"), _int(counters, "failed"), _int(counters, "error") + _int(counters, "aborted")
+    executed = _int(counters, "executed") if counters.get("executed") is not None else _int(counters, "total")
+    return executed, _int(counters, "failed"), _int(counters, "error") + _int(counters, "aborted")
 
 
 READERS = {"testsuites": _junit, "testsuite": _junit, "TestRun": _trx}
@@ -59,8 +62,8 @@ def _test_report_passed(request) -> criteria.Verdict:
         return criteria.Verdict.unreadable(f"{ref} is a <{_local(root.tag)}> document, which is neither a "
                                            f"JUnit nor a TRX report")
     total, failed, errored = reader(root)
-    if total == 0:
-        return criteria.Verdict.unreadable(f"{ref} counts no test: a run that ran nothing proves nothing")
+    if total <= 0:
+        return criteria.Verdict.unreadable(f"{ref} counts no test that ran: a run that ran nothing proves nothing")
     if failed or errored:
         return criteria.Verdict(False, f"{ref}: {failed} failed and {errored} errored of {total}")
     return criteria.Verdict(True, f"{ref}: {total} test(s), none failed")

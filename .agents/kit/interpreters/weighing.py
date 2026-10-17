@@ -51,6 +51,13 @@ def checked(classes_doc: dict, areas_doc: dict) -> None:
             words.append((f"class {row['id']!r}", row["admits"]["undo"], scale, "undo cost"))
         words += [(f"class {row['id']!r}", r, records, "record") for r in row["requires"]]
     words += [(f"uncertainty {u['id']!r}", u["at_least"], classes, "class") for u in classes_doc["uncertainty"]]
+    expedite = {row["id"] for row in classes_doc["classes"] if row.get("expedite")}
+    floors = [(f"uncertainty {u['id']!r}", u["at_least"]) for u in classes_doc["uncertainty"]]
+    floors += [(f"area {a['id']!r}", a["at_least"]) for a in areas_doc.get("areas", []) if "at_least" in a]
+    for where, floor in floors:
+        if floor in expedite:
+            raise WeighError(f"{where} asks at least {floor!r}, an expedite class: an expedite class lands now "
+                             f"and owes the rest, so it is no floor -- name the class the work must walk")
     words += [("max_areas", c, classes, "class") for c in areas_doc.get("max_areas", {})]
     for where, word, declared, what in words:
         if word not in declared:
@@ -170,6 +177,10 @@ def loosened(classes_doc: dict, before, after) -> list:
             said.append(f"max_areas of {cls} {limit} -> {now.get(cls, 'unlimited')}")
     old_areas = {a["id"]: a for a in before.get("areas", [])}
     new_areas = {a["id"]: a for a in after.get("areas", [])}
+    for identity, area in sorted(new_areas.items()):
+        if identity not in old_areas and lower(before["default_undo"], area["undo"], scale):
+            said.append(f"area {identity} added at {area['undo']}, cheaper than the {before['default_undo']} its "
+                        f"paths stood at")
     for identity, area in sorted(old_areas.items()):
         kept = new_areas.get(identity)
         if kept is None:
@@ -204,31 +215,52 @@ def weigh(paths, classes_doc: dict, areas_doc: dict, loosening=()) -> tuple:
     return sig, verdict
 
 
-def demotions(classes_doc: dict, before: dict, after: dict) -> list:
+def demotions(classes_doc: dict, before: dict, after: dict, closed=frozenset()) -> list:
     """Every card a change shapes LIGHTER than it stood, without the owner's door recorded on it.
 
-    `before` and `after` map card ids to the card as it stood and as the change leaves it. Raising a
-    class is anyone's act; lowering one is the owner's (ADR-025 decision 4), recorded by `reshape` as
-    the card's last `reshaped` entry -- from the old class, to the new, approved by a named owner."""
+    `before` and `after` map a card's PATH to the card as it stood and as the change leaves it (None:
+    removed). Raising a class is anyone's act; lowering one is the owner's (ADR-025 decision 4),
+    recorded by `reshape` as the card's last `reshaped` entry -- from the old class, to the new,
+    approved by a named owner. Moving a card to or from an expedite class is never a raise: an
+    expedite class owes nothing beyond its commit. Removing a classed card that has not finished is
+    the heaviest demotion of all. A card with no class reads as the lightest class that owes a card,
+    so dropping `class` from such a card lowers nothing."""
     rank, refused = _rank(classes_doc), []
-    for identity, card in sorted(after.items()):
-        was, now = (before.get(identity) or {}).get("class"), card.get("class")
-        if was not in rank or (now is not None and now not in rank):
+    expedite = {row["id"] for row in classes_doc["classes"] if row.get("expedite")}
+    plain = lightest_with(classes_doc, "card")
+    for rel, was_card in sorted(before.items()):
+        was = (was_card or {}).get("class")
+        if was not in rank:
             continue
-        lowered = now is None or rank[now] < rank[was]
+        card = after.get(rel)
+        identity = (was_card or {}).get("id", rel)
+        if card is None:
+            if (was_card or {}).get("state") not in closed:
+                refused.append(f"the card {identity} ({was}) is removed before it finished: removing a classed "
+                               f"card is lowering it to nothing -- the owner's door")
+            continue
+        now = card.get("class")
+        if now is not None and now not in rank:
+            continue
+        effective = now if now is not None else plain
+        if effective == was:
+            continue
+        crosses_expedite = was in expedite or effective in expedite
+        lowered = crosses_expedite or rank[effective] < rank[was]
         if not lowered:
             continue
         last = (card.get("reshaped") or [{}])[-1]
         if last.get("from") == was and last.get("to") == now and last.get("approved_by"):
             continue
-        refused.append(f"the card {identity} is shaped {now or 'with no class'} where it stood {was}: lowering a "
-                       f"class is the owner's door -- `reshape --card {identity} --class {now or '<class>'} "
-                       f"--approve <owner>` records it")
+        refused.append(f"the card {identity} is shaped {now or 'with no class'} where it stood {was}: "
+                       + ("an expedite class is declared in a commit's trailer, never as a card's" if crosses_expedite
+                          else "lowering a class is the owner's door")
+                       + f" -- `reshape --card {identity} --class {now or '<class>'} --approve <owner>` records it")
     return refused
 
 
 # -- a commit, and the card it names ----------------------------------------------------------
-_TRAILER = re.compile(r"^([A-Za-z][A-Za-z0-9-]*)\s*:\s*(\S.*?)\s*$")
+_TRAILER = re.compile(r"^([A-Za-z][A-Za-z0-9-]*)(\s*):\s*(\S.*?)\s*$")
 
 
 def trailers(message: str) -> dict:
@@ -242,8 +274,47 @@ def trailers(message: str) -> dict:
     for line in paragraphs[-1].splitlines():
         hit = _TRAILER.match(line)
         if hit:
-            found.setdefault(hit.group(1).lower(), hit.group(2))
+            found.setdefault(hit.group(1).lower(), hit.group(3))
     return found
+
+
+def miswritten(message: str, keys: dict) -> list:
+    """The trailer lines of the declared keys that are not written canonically (`Key: value`): a space
+    before the colon, or a key in another case. Every reader of trailers -- the hook, CI, the debt
+    search -- reads the canonical form, so a variant is refused rather than read by some and not by
+    others (the measured side door)."""
+    lines = [line for line in message.replace("\r\n", "\n").split("\n") if not line.startswith("#")]
+    paragraphs = [p for p in "\n".join(lines).strip().split("\n\n") if p.strip()]
+    if len(paragraphs) < 2:
+        return []
+    wanted = {key.lower(): key for key in keys.values()}
+    said = []
+    for line in paragraphs[-1].splitlines():
+        hit = _TRAILER.match(line)
+        if hit and hit.group(1).lower() in wanted and (hit.group(2) or hit.group(1) != wanted[hit.group(1).lower()]):
+            said.append(f"the trailer {line.strip()!r} is not written `{wanted[hit.group(1).lower()]}: <value>`: "
+                        f"every reader reads that form and no other")
+    return said
+
+
+def holds(card: dict, holder: dict, cards, decided=None) -> bool:
+    """Whether a card holds a record as its `held_by` row says: a field present and not empty, cards
+    hanging under it, or a criterion needing a class of evidence. `decided` -- handed in by a caller
+    that can read the tree -- says whether a field's reference resolves to what the record requires
+    (an `origin` that is a decision document)."""
+    if holder.get("children"):
+        return any(c.get("parent") == card.get("id") for c in cards)
+    if "criterion_needs" in holder:
+        return any(c.get("needs") == holder["criterion_needs"] for c in card.get("criteria") or [])
+    value = card.get(holder["field"])
+    if value in (None, "", [], {}):
+        return False
+    return decided(card, holder) if decided is not None and holder.get("kind_of_record") else True
+
+
+def bet(card: dict, door_states) -> bool:
+    """Whether the card passed through a door -- a passage into a state only a door opens, signed."""
+    return any(p.get("to") in door_states and p.get("signed_by") for p in card.get("history") or [])
 
 
 def card_floor(classes_doc: dict, card: dict, fallback: str) -> tuple:
@@ -260,31 +331,43 @@ def lightest_with(classes_doc: dict, record: str) -> str:
                 if not row.get("expedite") and record in row["requires"])
 
 
-def commit_refusals(classes_doc: dict, verdict: dict, message: str, cards: dict) -> list:
+def commit_refusals(classes_doc: dict, verdict: dict, message: str, cards: dict, door_states=frozenset(),
+                    decided=None) -> list:
     """Why a commit of this weight, with this message, may not be recorded -- empty when it may.
 
-    The declared class (a trailer) is a floor's claimant: lighter than computed is refused, an
-    expedite class is admitted with what it owes. A class that owes a card needs the card trailer,
-    a card that exists, stands in a working state and is not shaped lighter than the change."""
+    The declared class (a trailer) is a floor's claimant: lighter than computed is refused; an expedite
+    class -- only ever from the trailer, never from a card -- is admitted with what it owes; a heavier
+    one owes its own records. A class that owes a card needs the card trailer and a card that exists,
+    stands in a working state, is not shaped lighter than the change, holds every record the change
+    owes (its class's and every touched area's), and -- where its class has doors -- passed the bet."""
     keys = classes_doc["trailers"]
+    rank = _rank(classes_doc)
     said = trailers(message)
+    refusals = miswritten(message, keys)
     computed_id = verdict["class"]["id"]
+    owed = list(verdict["requires"])
     declared = said.get(keys["class"].lower())
-    refusals = []
     if declared is not None:
+        declared = declared.lower()
+        if declared not in rank:
+            return refusals + [f"the message declares {keys['class']}: {declared}, which is not a declared class "
+                               f"({', '.join(rank)})"]
+        row = classes_doc["classes"][rank[declared]]
+        if row.get("expedite"):
+            return refusals
         if not heavier_or_equal(classes_doc, declared, computed_id):
             refusals.append(f"the message declares {keys['class']}: {declared}, but the change computes "
                             f"{computed_id} ({verdict['why']}): a declared class may be heavier, never lighter")
-        row = classes_doc["classes"][_rank(classes_doc)[declared]]
-        if row.get("expedite"):
-            return refusals
-    if "card" not in verdict["requires"]:
+        else:
+            computed_id = declared  # a heavier declaration owes the heavier class's records
+            owed += [r for r in row["requires"] if r not in owed]
+    if "card" not in owed:
         return refusals
     named = said.get(keys["card"].lower())
     if named is None:
         stray = re.search(rf"^{re.escape(keys['card'])}\s*:", message, re.M | re.I)
         hint = (" -- a `" + keys["card"] + ":` line is in the message, but not in its LAST paragraph, the one "
-                "block git reads trailers from; put it beside the other trailers") if stray else ""
+                "block git reads trailers from; put it beside the other trailers") if stray and not refusals else ""
         return refusals + [f"the change computes {computed_id} ({verdict['why']}), which owes a card: "
                            f"name it with a trailer `{keys['card']}: <card id>`{hint}"]
     card = cards.get(named)
@@ -294,10 +377,27 @@ def commit_refusals(classes_doc: dict, verdict: dict, message: str, cards: dict)
         refusals.append(f"the card {named} is {card.get('state')!r}; work is committed to a card in "
                         f"{', '.join(classes_doc['working_states'])}")
     shaped, why = card_floor(classes_doc, card, lightest_with(classes_doc, "card"))
-    if shaped not in _rank(classes_doc):
-        refusals.append(f"the card {named} declares the class {shaped!r}, which is not declared")
-    elif not heavier_or_equal(classes_doc, shaped, computed_id):
+    if shaped not in rank:
+        return refusals + [f"the card {named} declares the class {shaped!r}, which is not declared"]
+    shaped_row = classes_doc["classes"][rank[shaped]]
+    if shaped_row.get("expedite"):
+        return refusals + [f"the card {named} is shaped {shaped}, an expedite class: an emergency is declared in "
+                           f"the commit's trailer and its card is shaped as the work it repays"]
+    if not heavier_or_equal(classes_doc, shaped, computed_id):
         refusals.append(f"the card {named} is shaped {shaped} ({why}), but this change computes "
                         f"{computed_id} ({verdict['why']}): re-shape the card -- a heavier class is the "
                         f"owner's bet -- or narrow the change")
+    if shaped_row.get("doors") and door_states and not bet(card, door_states):
+        refusals.append(f"the card {named} is shaped {shaped}, whose class has doors, and it never passed one: "
+                        f"the owner bets it (walk-a-door) before work is committed to it")
+    records = {row["id"]: row for row in classes_doc["records"]}
+    listed = list(cards.values())
+    for record in owed:
+        holder = records.get(record, {}).get("held_by")
+        if holder and not holds(card, holder, listed, decided):
+            where = ("a card hanging under it" if holder.get("children")
+                     else f"a criterion that needs {holder['criterion_needs']}" if "criterion_needs" in holder
+                     else f"`{holder['field']}`")
+            refusals.append(f"this change owes {record} (its class or a touched area asks it), held on the card "
+                            f"by {where}, and {named} has none")
     return refusals

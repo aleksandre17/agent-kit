@@ -133,7 +133,7 @@ class Workspace:
         `key: value`, newest first, each as `(sha, committed-at ISO date)` -- or `(None, why)`. Found by
         git's own search over messages, so the cost stays git's however long the history grows."""
         import vcs
-        pattern = f"^{key}:[[:space:]]*{value}[[:space:]]*$"
+        pattern = f"^{key}[[:space:]]*:[[:space:]]*{value}[[:space:]]*$"  # every spelling a hook could miss
         said, why = vcs.run(self._root, ["log", "-i", "--extended-regexp", f"--grep={pattern}",
                                          "--format=%H %cI"])
         if said is None:

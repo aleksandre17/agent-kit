@@ -277,3 +277,37 @@ areas before any gate binds.
 - `standard` no longer requires a card. Hosts that wrote cards for standard work keep them; nothing is
   back-filled or deleted.
 - The owner's door stays exactly where consequence is irreversible or accountable, and nowhere else.
+
+## Amendment 1 — an independent audit found decision 15 false, and what closed it (2026-10-17)
+
+Two independent auditors read this ADR against its code before it shipped. Decision 15 said the floor
+had no side door; it had several, and the auditors reproduced them. Each is closed below, with a test
+that fails without the fix.
+
+| Found | Closed by |
+|---|---|
+| `Work-Class : emergency` (a space before the colon) passed the hook and CI as expedite, and the debt search never found it | one trailer parser for every reader; a declared trailer written any other way than `Key: value` is refused; the debt search reads every spelling |
+| a card reshaped to `emergency` admitted any weight and owed nothing | an expedite class is admitted only from a commit's trailer, never as a card's class; `reshape` refuses it; moving to or from it is the owner's door |
+| a `major` card could skip the bet (shaped `normal`, moved into flight, then raised) | a class with doors needs a signed passage through a door, at commit and in FF-WORK-CLASSES |
+| an area's `requires` (identity's review) was shown and never held | the commit floor holds every record the change owes -- its class's and every touched area's -- on the named card |
+| any non-empty `origin` counted as the decision | `decision` is held by an `origin` pointing at a document whose front matter says `kind: decision` |
+| CI weighed every commit of a first push by today's areas | a commit made before the host declared areas is not weighed, and is counted as such |
+| a local merge of a heavy branch was refused; CI saw a merge as changing nothing | a merge is weighed by what differs from every parent (`--cc`, `MERGE_HEAD`) |
+| the hook read cards and areas from the working tree, not the index | the hook reads what the commit records (the index); demotions are matched by path, and removing an unfinished classed card is one |
+| a new area cheaper than the old default loosened the scale unseen | an added area cheaper than the default it claims from is loosening |
+| `chaotic` lowered work to `emergency` | `chaotic` asks at least `major`; an expedite class is refused as any floor |
+| a report whose every test was skipped proved `tested` | skipped is not executed; a run that executed nothing proves nothing (JUnit `skipped`, TRX `executed`) |
+| archiving broke paid debts and orders after 90 days | the archive keeps any card a staying card names, to a fixed point, and `repays` is read from the archive too |
+| a single-owner host could never review a major card | a passage through a door is the owner deciding, not authoring; the owner who bet the work may review it |
+
+**What this amendment does not claim.** Decision 6's count is reported and fails past the host's days;
+it is not yet a `budget-monotonic` ratchet. Decision 11's ceremony reading measures cards, criteria and
+lead time per class -- not records written, doors walked or tokens, and not standard changes. The
+`owner`, `runtime` and `production` evidence classes have no proof kind that yields them yet, so a
+criterion needing one stays unproven. A reviewer's name and an `--approve` name are recorded, not
+verified (the kit ledger's *approval is a moment, not an identity*). Decision 16 is enforced against a
+rule evaluating itself; a card proved by a gate that reads cards is otherwise refused only by the
+agents' skill. The FF-WORK-* gates enforce from the first day -- the "observe until areas are
+declared" sentence of the guard table is withdrawn: on a host with no areas they refuse nothing but a
+real defect.
+

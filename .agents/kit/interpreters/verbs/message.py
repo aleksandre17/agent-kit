@@ -65,10 +65,16 @@ def _floor(ctx, message: str) -> list:
     if found is None:
         return []
     classes_doc, areas_doc = found
-    staged = workclass.paths(vcs.staged_paths(ctx.workspace.root), "what the commit records")
+    root = ctx.workspace.root
+    staged = workclass.paths(vcs.staged_paths(root), "what the commit records")
+    index = lambda rel: vcs.staged_text(root, rel)  # noqa: E731 -- the commit records the index
     stood = workclass.accepted_areas(ctx, None)
-    _sig, verdict = weighing.weigh(staged, classes_doc, stood or areas_doc,
-                                   weighing.loosened(classes_doc, stood, areas_doc))
-    before, after = workclass.reshaped_cards(ctx, staged)
-    return (weighing.commit_refusals(classes_doc, verdict, message, workclass.cards(ctx))
-            + weighing.demotions(classes_doc, before, after))
+    target = workclass.areas_target(ctx)
+    left = workclass._parsed_any(index(target)[0]) if target else None
+    _sig, verdict = weighing.weigh(staged, classes_doc, stood or left or areas_doc,
+                                   weighing.loosened(classes_doc, stood, left))
+    doors, closed = workclass.lifecycle_flags(ctx)
+    before, after = workclass.reshaped_cards(ctx, staged, index)
+    return (weighing.commit_refusals(classes_doc, verdict, message, workclass.staged_cards(ctx, index),
+                                     doors, workclass.decided(ctx))
+            + weighing.demotions(classes_doc, before, after, closed))

@@ -65,7 +65,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "6fa1d8f408fa5aa230486863bde41270afd6c7a0f73d4fd624500ef3129647a2",
+      "digest": "401f3edf12539f90187ae3c6c49caaddb134540f711170891e8e8f28ee4496ed",
       "path": "capabilities/delivery/work-classes.json"
     },
     {
@@ -941,7 +941,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d258d6c3a3add52882e5a0d28a3cb49655043f0b9f50d54e071d70cd0b100cea",
+      "digest": "e968df96e5384f29001184953211df997dffb550d3d5d7864a3ac5e83f27d1c5",
       "path": "interpreters/gates/workcards.py"
     },
     {
@@ -995,7 +995,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "94fc8f7ed0bfb26d83688178c58fd5a17023942cad60d281e8fc30b124c658e6",
+      "digest": "1b95f6c829409a64f471f5513c88f921bb8d80565b646848b34e872d9944a69e",
       "path": "interpreters/lifecycle.py"
     },
     {
@@ -1103,13 +1103,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3a6248d5dc375fe8ef8d69b4272747ae8656cf345d6a121cb2668383308bd982",
+      "digest": "97854f531bcf32f6daa1af05806d312242282984a9f9409641841e20da3a903d",
       "path": "interpreters/ports/vcs.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "595067d68b9251d74908e331bf8c928d796037fcbc4f7f868610c4e490e3a811",
+      "digest": "fa4bfd18107f410a74269850dd6095d1ecc68f05f783dbb1e05bb3750220a484",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1157,7 +1157,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4501f9b76e4018de9418c3e88b43bc15ef175abfc57854cec9e3dc79da69fddc",
+      "digest": "4a86019332d61b31befc8ecf15a04dbac0e15d274bbfa0881bdcb81698069a44",
       "path": "interpreters/proofs/review_record.py"
     },
     {
@@ -1169,7 +1169,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b3a4957d835ca3d4de3ba87b4c7d504090e58f9be40fa175b287c31ef43d60a5",
+      "digest": "4fa8e3bd65c987983582ba63e7d5bbd2ce336c847e0d538ef1e4e8af829f0b74",
       "path": "interpreters/proofs/suite_report.py"
     },
     {
@@ -1373,7 +1373,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b270e552f1849af5a0f9ebbdd73c496b84b4ae1e9131b6769ee7196524e17db8",
+      "digest": "470b8f016d0a46f9e58af9c5a6e87c7770afbac02d2b0ea300124c6beab32901",
       "path": "interpreters/verbs/archive.py"
     },
     {
@@ -1481,7 +1481,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "c7262bfa70caea6500d1ebf11165b9045187d4cce06468f6eed95dc0a0f41e9d",
+      "digest": "43e2317e8e58702805bbf9d282d8ab7e69151dbe79311b893c04408f1a06c470",
       "path": "interpreters/verbs/message.py"
     },
     {
@@ -1511,7 +1511,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "eebb99b0b6da730f4129cc706df044d25f095c5b8ec756da386c7911a0c65157",
+      "digest": "79588c751ef2d9c5752c294785fbde463e53fe63bbfe5a1e8d56cedfbb759303",
       "path": "interpreters/verbs/reshape.py"
     },
     {
@@ -1577,7 +1577,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "74dfff1f39fe0e37d2ff8e479cb08bb75c1dbb309b822183bc56e9632cbc1eb0",
+      "digest": "4670bde6dc96468f29a5c4b6cebb993236bd6842a496beb2a83ad974091e1995",
       "path": "interpreters/verbs/weigh.py"
     },
     {
@@ -1589,13 +1589,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "dd48f522f30f201d9416f8ae5d71815c88e1049dc5e7333405ec95a5ce2a44f0",
+      "digest": "f06d3de67e5c64c6e0f1c98349be469fa07b157f93e80fb6ab649b6d6d33163c",
       "path": "interpreters/weighing.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "0f5e7833cc8a44a042854370bb2fed4ad9f5711dfe20007788a93874e80cb272",
+      "digest": "9eb2e14cafe51b897f5084f41836929a324a0f27ec67bee6c06d9034d34d0a34",
       "path": "interpreters/workclass.py"
     },
     {
@@ -2099,7 +2099,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "86cbb165e8285fdef8474f9966200f23aa4ef1531f12a065321943421c3a7b3c",
+      "digest": "23a32fc536aa9e4b25ae9bd3f7b7757c7e1079028a70916e659b77145ec9354c",
       "path": "schemas/work-classes.schema.json"
     },
     {
@@ -2142,5 +2142,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T07:24:14+00:00"
+  "taken_at": "2026-10-17T08:31:12+00:00"
 }

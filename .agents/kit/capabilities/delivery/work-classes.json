@@ -32,8 +32,8 @@
     },
     {
       "id": "chaotic",
-      "says": "act first to restore order, then make sense of it",
-      "at_least": "emergency"
+      "says": "act first to restore order -- the act is an emergency commit -- then make sense of it: the card that follows walks at least major",
+      "at_least": "major"
     }
   ],
   "evidence": [
@@ -106,6 +106,7 @@
       "says": "a decision record: the question, the alternatives and why they lost, the owner's ruling",
       "held_by": {
         "field": "origin",
+        "kind_of_record": "decision",
         "from": "in-flight"
       }
     },

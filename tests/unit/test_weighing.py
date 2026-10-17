@@ -116,11 +116,20 @@ def test_trailers_are_read_from_the_last_paragraph_only():
     assert weighing.trailers("feat: one line only\n") == {}
 
 
-def refusals(paths, message, cards=None, host=HOST):
-    return weighing.commit_refusals(CLASSES, weigh(paths, host)[2], message, cards or {})
+def refusals(paths, message, cards=None, host=HOST, doors=None):
+    return weighing.commit_refusals(CLASSES, weigh(paths, host)[2], message, cards or {},
+                                    DOORS if doors is None else doors)
 
 
-CARD = {"id": "orders", "state": "in-flight"}
+PROOF = {"id": "c", "statement": "it holds", "proof": {"kind": "artifact-present", "ref": "x"}}
+CARD = {"id": "orders", "state": "in-flight", "criteria": [PROOF]}
+#: A major card that holds everything its class owes and passed the owner's bet.
+MAJOR = {**CARD, "class": "major", "origin": {"kind": "artifact-present", "ref": "docs/decisions/ADR-9.md"},
+         "appetite": {"amount": 3, "unit": "days"},
+         "criteria": [PROOF, {"id": "r", "statement": "reviewed", "needs": "review",
+                             "proof": {"kind": "review-approved", "ref": "r.json"}}],
+         "history": [{"from": "shaped", "to": "bet", "at": "t", "by": "owner", "signed_by": "owner"}]}
+DOORS = {"bet"}
 
 
 def test_a_standard_commit_owes_nothing_beyond_itself():
@@ -138,8 +147,8 @@ def test_a_normal_commit_must_name_a_card_that_is_being_built():
 def test_a_card_shaped_lighter_than_the_change_is_refused():
     light = {**CARD, "class": "normal"}
     said = refusals(["db/migrations/1.sql"], "feat: m\n\nCard: orders\n", {"orders": light})
-    assert len(said) == 1 and "re-shape the card" in said[0]
-    assert refusals(["db/migrations/1.sql"], "feat: m\n\nCard: orders\n", {"orders": {**CARD, "class": "major"}}) == []
+    assert any("re-shape the card" in s for s in said)
+    assert refusals(["db/migrations/1.sql"], "feat: m\n\nCard: orders\n", {"orders": MAJOR}) == []
 
 
 def test_a_card_with_no_class_is_read_as_the_lightest_class_that_owes_a_card():
@@ -185,3 +194,61 @@ def test_a_card_line_outside_the_trailer_block_is_named_not_silently_missed():
     assert "not in its LAST paragraph" in said[0]
     assert refusals(["api/contracts/o.json"], "feat: o\n\nCard: orders\nCo-Authored-By: x <x@y>\n",
                     {"orders": CARD}) == []
+
+
+
+# -- the side doors an audit found, each closed ---------------------------------------------------
+def test_a_trailer_spelled_another_way_is_refused_never_read_by_some_readers_only():
+    said = refusals(["db/migrations/1.sql"], "fix: x\n\nWork-Class : emergency\n")
+    assert said and "is not written `Work-Class: <value>`" in said[0]
+    said = refusals(["db/migrations/1.sql"], "fix: x\n\nwork-class: emergency\n")
+    assert said and "is not written" in said[0]
+
+
+def test_an_undeclared_class_in_a_trailer_is_a_refusal_not_a_crash():
+    assert "not a declared class" in refusals(["docs/a.md"], "x\n\nWork-Class: Mega\n")[0]
+    assert refusals(["db/migrations/1.sql"], "x\n\nWork-Class: Emergency\n") == [], "a value is read in any case"
+
+
+def test_a_card_is_never_shaped_as_an_expedite_class():
+    said = refusals(["db/migrations/1.sql"], "feat: m\n\nCard: orders\n", {"orders": {**MAJOR, "class": "emergency"}})
+    assert any("an expedite class" in s for s in said)
+
+
+def test_reshaping_to_or_from_an_expedite_class_is_the_owners_door():
+    before = {"o.json": {"id": "o", "class": "major", "state": "in-flight"}}
+    after = {"o.json": {"id": "o", "class": "emergency", "state": "in-flight"}}
+    assert "expedite class is declared in a commit" in weighing.demotions(CLASSES, before, after)[0]
+
+
+def test_a_class_with_doors_needs_the_bet():
+    never_bet = {k: v for k, v in MAJOR.items() if k != "history"}
+    said = refusals(["db/migrations/1.sql"], "feat: m\n\nCard: orders\n", {"orders": never_bet})
+    assert any("never passed one" in s for s in said)
+
+
+def test_what_a_touched_area_requires_is_held_on_the_card():
+    host = areas(("auth", r"^src/auth/", "reversible", {"at_least": "normal", "requires": ["review"]}))
+    said = refusals(["src/auth/login.py"], "feat: a\n\nCard: orders\n", {"orders": CARD}, host)
+    assert any("owes review" in s for s in said)
+    reviewed = {**CARD, "criteria": [PROOF, {"id": "r", "statement": "reviewed", "needs": "review",
+                                              "proof": {"kind": "review-approved", "ref": "r.json"}}]}
+    assert refusals(["src/auth/login.py"], "feat: a\n\nCard: orders\n", {"orders": reviewed}, host) == []
+
+
+def test_a_heavier_declaration_owes_the_heavier_records():
+    said = refusals(["docs/a.md"], "x\n\nWork-Class: normal\n")
+    assert any("owes a card" in s for s in said)
+
+
+def test_removing_an_unfinished_classed_card_is_a_demotion_and_dropping_a_plain_class_is_not():
+    before = {"o.json": {"id": "o", "class": "major", "state": "in-flight"}}
+    assert "removed before it finished" in weighing.demotions(CLASSES, before, {})[0]
+    assert weighing.demotions(CLASSES, before, {}, closed={"in-flight"}) == []
+    plain = {"o.json": {"id": "o", "class": "normal", "state": "in-flight"}}
+    assert weighing.demotions(CLASSES, plain, {"o.json": {"id": "o", "state": "in-flight"}}) == []
+
+
+def test_a_new_area_cheaper_than_the_old_default_loosens():
+    said = weighing.loosened(CLASSES, areas(default="costly"), areas(("all", ".*", "reversible"), default="costly"))
+    assert said and "cheaper than the costly" in said[0]

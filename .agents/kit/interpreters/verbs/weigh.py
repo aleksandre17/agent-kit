@@ -72,29 +72,36 @@ def _each(ctx, args, classes_doc: dict, areas_doc: dict) -> int:
     shas = workclass.paths(vcs.commits_between(root, getattr(args, "base", None), head), "which commits the range holds")
     areas_rel, space = workclass.areas_target(ctx), workclass.card_space(ctx)
     keys = classes_doc["trailers"]
-    refused = 0
+    doors, closed = workclass.lifecycle_flags(ctx)
+    decided = workclass.decided(ctx)
+    refused = skipped = 0
     for sha in shas:
+        stood, left = _json_at(root, f"{sha}^", areas_rel), _json_at(root, sha, areas_rel)
+        if stood is None and left is None:
+            skipped += 1  # made before this host weighed its work: no scale stood to weigh it by
+            continue
         paths = workclass.paths(vcs.commit_paths(root, sha), f"what {sha[:12]} changed")
         message, _why = vcs.commit_message(root, sha)
-        stood, left = _json_at(root, f"{sha}^", areas_rel), _json_at(root, sha, areas_rel)
-        _sig, verdict = weighing.weigh(paths, classes_doc, stood or left or areas_doc,
-                                       weighing.loosened(classes_doc, stood, left))
-        named = weighing.trailers(message or "").get(keys["card"].lower())
+        _sig, verdict = weighing.weigh(paths, classes_doc, stood or left, weighing.loosened(classes_doc, stood, left))
         cards = {}
-        if named and space:
-            card = _json_at(root, sha, f"{space.rstrip('/')}/{named}.json")
-            if card:
-                cards[named] = card
-        before = {c["id"]: c for c in (_json_at(root, f"{sha}^", rel) for rel in paths
-                                       if space and rel.startswith(space) and rel.endswith(".json")) if c}
-        after = {c["id"]: c for c in (_json_at(root, sha, rel) for rel in paths
-                                      if space and rel.startswith(space) and rel.endswith(".json")) if c}
-        why = (weighing.commit_refusals(classes_doc, verdict, message or "", cards)
-               + weighing.demotions(classes_doc, before, after))
+        listing = (vcs.run(root, ["ls-tree", "-r", "--name-only", sha, "--", space.rstrip("/")])[0] or "") if space else ""
+        for rel in listing.splitlines():
+            card = _json_at(root, sha, rel) if rel.endswith(".json") else None
+            if isinstance(card, dict) and card.get("id"):
+                cards[card["id"]] = card
+        card_paths = [rel for rel in paths if space and rel.startswith(space) and rel.endswith(".json")]
+        before = {rel: c for rel in card_paths if isinstance(c := _json_at(root, f"{sha}^", rel), dict) and c.get("id")}
+        after = {rel: (c if isinstance(c := _json_at(root, sha, rel), dict) else None) for rel in before}
+        try:
+            why = (weighing.commit_refusals(classes_doc, verdict, message or "", cards, doors, decided)
+                   + weighing.demotions(classes_doc, before, after, closed))
+        except weighing.WeighError as error:
+            why = [str(error)]
         for line in why:
             print(f"weigh: REFUSED [{WeighRefused.code}] {sha[:12]} -- {line}")
         refused += bool(why)
-    print(f"weigh: {len(shas)} commit(s) held to the floor, {refused} refused")
+    print(f"weigh: {len(shas) - skipped} commit(s) held to the floor, {refused} refused"
+          + (f"; {skipped} made before this host weighed its work, not weighed" if skipped else ""))
     return 1 if refused else 0
 
 

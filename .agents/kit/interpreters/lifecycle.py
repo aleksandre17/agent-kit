@@ -113,7 +113,7 @@ def last_mover(card: dict) -> str:
 
 def _moment(text: str) -> datetime:
     try:
-        return datetime.fromisoformat(text)
+        return datetime.fromisoformat(str(text).replace("Z", "+00:00"))  # 3.10 reads no trailing Z
     except ValueError as exc:
         raise LifecycleError(f"{text!r} is not a moment this kit can read -- {exc}") from exc
 
@@ -160,7 +160,7 @@ def columns(governed: Governed, counted=None) -> list:
             # Finished work is COUNTED whole and LISTED by its newest few (ADR-025 decision 13): the
             # board a project reads to work stays one size however old the project grows, and the
             # count says out loud how many it does not list -- nothing is dropped in silence.
-            items = sorted(items, key=lambda c: c["entered_at"], reverse=True)[:recent]
+            items = sorted(items, key=lambda c: _moment(c["entered_at"]), reverse=True)[:recent]
         built.append(dict(state, items=items, count=count, hidden=count - len(items),
                           limit=limits.get(state["id"], "-")))
     return built

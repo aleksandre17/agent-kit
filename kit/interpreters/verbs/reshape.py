@@ -54,7 +54,12 @@ def run(ctx, args) -> int:
         raise ReshapeError(f"no card {identity!r}; this host holds {governed.members.identities()}")
     was = card.get("class")
     weighing.heavier_or_equal(classes_doc, target, target)  # refuses a class nobody declared (KIT0085)
-    lowering = was is not None and not weighing.heavier_or_equal(classes_doc, target, was)
+    rows = {row["id"]: row for row in classes_doc["classes"]}
+    if rows[target].get("expedite"):
+        raise ReshapeError(f"{target!r} is an expedite class: an emergency is declared in a commit's trailer, and "
+                           f"the card that repays it is shaped as the work it was")
+    lowering = was is not None and (rows.get(was, {}).get("expedite")
+                                    or not weighing.heavier_or_equal(classes_doc, target, was))
     if lowering and not approver:
         print(f"reshape: lowering {identity} from {was} to {target} is the owner's door -- run it with "
               f"--approve <owner>", flush=True)

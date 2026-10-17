@@ -61,10 +61,21 @@ def _born(root) -> bool:
 
 def staged_paths(root) -> tuple:
     """`(paths, None)` the next commit records -- the index against HEAD, or the whole index before
-    the first commit -- or `(None, why)`."""
+    the first commit -- or `(None, why)`. A merge being recorded is weighed by what differs from EVERY
+    parent: what the merged branch brought was weighed where it was made, and only what the merge
+    itself adds (a resolution, an evil merge) is new."""
     if not _born(root):
         return _paths(root, ["ls-files", "-z"])
-    return _paths(root, ["diff", "--cached", "--no-renames", "--name-only", "-z", "HEAD", "--"])
+    ours = _paths(root, ["diff", "--cached", "--no-renames", "--name-only", "-z", "HEAD", "--"])
+    if ours[0] is None or run(root, ["rev-parse", "--verify", "--quiet", "MERGE_HEAD"])[0] is None:
+        return ours
+    theirs = _paths(root, ["diff", "--cached", "--no-renames", "--name-only", "-z", "MERGE_HEAD", "--"])
+    return (None, theirs[1]) if theirs[0] is None else (sorted(set(ours[0]) & set(theirs[0])), None)
+
+
+def staged_text(root, rel: str) -> tuple:
+    """`(text, None)` of a file as the index holds it -- what the commit records -- or `(None, why)`."""
+    return run(root, ["show", f":{rel}"])
 
 
 def working_paths(root) -> tuple:
@@ -92,8 +103,9 @@ def commits_between(root, base, head: str) -> tuple:
 
 
 def commit_paths(root, sha: str) -> tuple:
-    """`(paths, None)` one commit changed against its first parent (or against nothing, a root)."""
-    return _paths(root, ["diff-tree", "--no-commit-id", "--name-only", "-r", "-z", "--no-renames", "--root", sha])
+    """`(paths, None)` one commit changed -- against its parent, against nothing for a root, and for a
+    merge only what differs from EVERY parent (`--cc`), which is what the merge itself introduced."""
+    return _paths(root, ["diff-tree", "--cc", "--no-commit-id", "--name-only", "-r", "-z", "--no-renames", "--root", sha])
 
 
 def commit_message(root, sha: str) -> tuple:

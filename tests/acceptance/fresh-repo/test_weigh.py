@@ -247,6 +247,8 @@ class Weigh(Fixtures, unittest.TestCase):
         card("old-needed", "landed", "2026-01-01T00:00:00+00:00")
         card("new-done", "landed", "2099-01-01T00:00:00+00:00")
         card("next", "shaped", "2026-10-17T00:00:00+00:00", after=["old-needed"])
+        card("old-chained", "landed", "2026-01-01T00:00:00+00:00")
+        card("recent-after", "landed", "2099-01-01T00:00:00+00:00", after=["old-chained"])
         nothing = self.run_kit(KIT, host, "archive", "--by", "dev")
         self.assertIn("declares no archive_after_days", nothing.stdout)
         policy = host / install_target("delivery", reads_as="policy")
@@ -260,6 +262,7 @@ class Weigh(Fixtures, unittest.TestCase):
         self.assertFalse((cards / "old-done.json").exists())
         self.assertTrue((host / "docs" / "work" / "archive" / "old-done.json").exists())
         self.assertTrue((cards / "old-needed.json").exists(), "a card a working card names was archived")
+        self.assertTrue((cards / "old-chained.json").exists(), "a card a staying finished card names was archived")
         self.assertTrue((cards / "new-done.json").exists())
         self.assertIn("PASS  FF-WORK-ORDER", self._failed(host))
 
@@ -374,13 +377,81 @@ class WorkClassFloor(commit_gate.CommitGate):
 
         cards = host / install_target("delivery", reads_as="cards")
         cards.mkdir(parents=True, exist_ok=True)
-        (cards / "first-table.json").write_text(json.dumps(
-            {"schema_version": 1, "id": "first-table", "title": "the first table", "state": "in-flight",
-             "class": "major", "created_at": "2026-10-17T00:00:00+00:00"}, indent=2) + "\n",
-            encoding="utf-8", newline="\n")
+        decision = host / "docs" / "decisions" / "ADR-001-the-first-table.md"
+        decision.parent.mkdir(parents=True, exist_ok=True)
+        decision.write_text("---\nkind: decision\n---\n\n# the first table\n", encoding="utf-8", newline="\n")
+        card = {"schema_version": 1, "id": "first-table", "title": "the first table", "state": "in-flight",
+                "class": "major", "created_at": "2026-10-17T00:00:00+00:00",
+                "criteria": [{"id": "reviewed", "statement": "a peer approved it", "needs": "review",
+                              "proof": {"kind": "review-approved", "ref": "docs/work/evidence/first-table/review.json"}}]}
+
+        def recorded(body):
+            (cards / "first-table.json").write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+            commit_gate._git(host, "add", "-A")
+            return commit_gate._git(host, "commit", "-m", "feat: the first table\n\nCard: first-table", check=False)
+
+        # A major card that holds none of what its class owes, and was never bet, is refused by name.
+        bare = recorded(card)
+        self.assertNotEqual(0, bare.returncode, bare.stdout + bare.stderr)
+        for owed in ("owes decision", "owes appetite", "never passed one"):
+            self.assertIn(owed, bare.stderr)
+        # The same card, shaped as its class asks and bet by the owner, records the change.
+        held = recorded({**card, "origin": {"kind": "artifact-present", "ref": decision.relative_to(host).as_posix()},
+                         "appetite": {"amount": 3, "unit": "days"},
+                         "history": [{"from": "shaped", "to": "bet", "at": "2026-10-17T00:00:00+00:00",
+                                      "by": "fixture-owner", "signed_by": "fixture-owner",
+                                      "signed_at": "2026-10-17T00:00:00+00:00"}]})
+        self.assertEqual(0, held.returncode, held.stdout + held.stderr)
+
+
+    def test_61_a_merge_is_weighed_by_what_it_adds(self):
+        """Found by an audit: a local merge of a heavy branch was refused for owing a card, and CI weighed
+        a merge as changing nothing. A merge owes only what it itself introduces."""
+        surface = self.activating[0]
+        host = self.repository()
+        self.assertEqual(0, self.activate(host, surface, "--approve", "fixture-owner").returncode)
+        git = lambda *a, **k: commit_gate._git(host, *a, **k)  # noqa: E731
+        before_areas = git("rev-parse", "HEAD").stdout.strip()
+        areas = {"schema_version": 1, "default_undo": "reversible", "max_areas": {},
+                 "areas": [{"id": "contracts", "paths": "^api/", "undo": "costly", "because": "a fixture"}]}
+        (host / AREAS).write_text(json.dumps(areas, indent=2) + "\n", encoding="utf-8", newline="\n")
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        (cards / "orders.json").write_text(json.dumps(
+            {"schema_version": 1, "id": "orders", "title": "orders", "state": "in-flight", "class": "normal",
+             "created_at": "2026-10-17T00:00:00+00:00",
+             "criteria": [{"id": "c", "statement": "it is there", "proof": {"kind": "artifact-present", "ref": "api/o.json"}}]},
+            indent=2) + "\n", encoding="utf-8", newline="\n")
+        git("add", "-A")
+        self.assertEqual(0, git("commit", "-m", "chore: weigh the work", check=False).returncode)
+        main = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
+        git("checkout", "-q", "-b", "side")
+        (host / "api").mkdir()
+        (host / "api" / "o.json").write_text("{}\n", encoding="utf-8", newline="\n")
+        git("add", "-A")
+        self.assertEqual(0, git("commit", "-m", "feat: orders\n\nCard: orders", check=False).returncode)
+        git("checkout", "-q", main)
+        merged = git("merge", "--no-ff", "-m", "merge: side", "side", check=False)
+        self.assertEqual(0, merged.returncode, merged.stdout + merged.stderr)
+        each = self.run_kit(self.kit, host, "weigh", "--head", "HEAD", "--each")
+        self.assertEqual(0, each.returncode, each.stdout + each.stderr)
+        ranged = self.run_kit(self.kit, host, "weigh", "--base", before_areas, "--head", "HEAD", "--each")
+        self.assertIn("3 commit(s) held to the floor, 0 refused", ranged.stdout)
+
+    def test_62_an_emergency_written_any_way_is_owed_and_a_space_before_its_colon_is_refused(self):
+        surface = self.activating[0]
+        host = self.repository()
+        self.assertEqual(0, self.activate(host, surface, "--approve", "fixture-owner").returncode)
+        (host / "notes.md").write_text("restore\n", encoding="utf-8", newline="\n")
         commit_gate._git(host, "add", "-A")
-        named = commit_gate._git(host, "commit", "-m", "feat: the first table\n\nCard: first-table", check=False)
-        self.assertEqual(0, named.returncode, named.stdout + named.stderr)
+        spaced = commit_gate._git(host, "commit", "-m", "fix: restore\n\nWork-Class : emergency", check=False)
+        self.assertNotEqual(0, spaced.returncode, "a trailer spelled another way passed the hook")
+        self.assertIn("is not written `Work-Class: <value>`", spaced.stderr)
+        quiet = commit_gate._git(host, "commit", "--no-verify", "-m", "fix: restore\n\nWork-Class : emergency", check=False)
+        self.assertEqual(0, quiet.returncode)
+        sha = commit_gate._git(host, "rev-parse", "HEAD").stdout.strip()
+        checked = self.run_kit(self.kit, host, "check")
+        self.assertIn(f"owed: {sha[:12]}", checked.stdout, "the debt search missed the spelling the hook refuses")
 
 
 if __name__ == "__main__":

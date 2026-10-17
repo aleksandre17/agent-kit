@@ -106,3 +106,19 @@ def test_a_review_by_an_author_or_of_another_card_proves_nothing():
     assert review_record._review_approved(request({"r.json": review("agent")}, "r.json", mover)).holds is None
     assert review_record._review_approved(request({"r.json": review("peer", card="other")}, "r.json")).holds is None
     assert review_record._review_approved(request({"r.json": review("peer")}, "r.json", schema_errors=["bad"])).holds is None
+
+
+def test_a_report_where_every_test_was_skipped_proves_nothing():
+    skipped = '<testsuite tests="4" failures="0" errors="0" skipped="4"/>'
+    assert suite_report._test_report_passed(request({"r.xml": skipped}, "r.xml")).holds is None
+    trx = ('<TestRun><ResultSummary><Counters total="4" executed="0" passed="0" failed="0" error="0"/>'
+           '</ResultSummary></TestRun>')
+    assert suite_report._test_report_passed(request({"r.trx": trx}, "r.trx")).holds is None
+
+
+def test_the_owner_who_walked_the_door_may_still_review():
+    bet = {"id": "orders", "owner": "dev",
+           "history": [{"from": "shaped", "to": "bet", "at": "t", "by": "owner", "signed_by": "owner"},
+                       {"from": "bet", "to": "in-flight", "at": "t", "by": "dev"}]}
+    assert review_record._review_approved(request({"r.json": review("owner")}, "r.json", bet)).holds is True
+    assert review_record._review_approved(request({"r.json": review("dev")}, "r.json", bet)).holds is None

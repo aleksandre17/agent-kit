@@ -33,15 +33,6 @@ def _reached(card: dict, state: str) -> bool:
                                              for p in card.get(lifecycle_module.HISTORY, []))
 
 
-def _held(card: dict, holder: dict, records) -> bool:
-    if holder.get("children"):
-        return bool(lineage.children_of(records, card["id"]))
-    if "criterion_needs" in holder:
-        return any(c.get(criteria.NEEDS) == holder["criterion_needs"] for c in card.get("criteria") or [])
-    value = card.get(holder["field"])
-    return value not in (None, "", [], {})
-
-
 def _work_classes_held(ctx, params):
     found = workclass.declarations(ctx)
     if found is None:
@@ -64,6 +55,8 @@ def _work_classes_held(ctx, params):
     uncertainty = {row["id"]: row for row in classes_doc["uncertainty"]}
     records = {row["id"]: row for row in classes_doc["records"]}
     members = lineage.among(ctx) or []
+    doors, _closed = workclass.lifecycle_flags(ctx)
+    decided = workclass.decided(ctx)
     for card in sorted(members, key=lambda c: c["id"]):
         for item in card.get("criteria") or []:
             if criteria.NEEDS in item and item[criteria.NEEDS] not in known:
@@ -76,6 +69,14 @@ def _work_classes_held(ctx, params):
             failures.append(f"{name}: declares the class {shaped!r}, which the catalogue does not "
                             f"({', '.join(classes)})")
             continue
+        if classes[shaped].get("expedite"):
+            failures.append(f"{name}: is shaped {shaped}, an expedite class -- an emergency is declared in a "
+                            f"commit's trailer, and the card that repays it is shaped as the work it was")
+            continue
+        if (classes[shaped].get("doors") and card.get("state") in classes_doc["working_states"]
+                and not weighing.bet(card, doors)):
+            failures.append(f"{name}: is {card.get('state')} as {shaped}, whose class has doors, and never "
+                            f"passed one -- the owner bets it before work is done under it")
         domain = card.get("uncertainty")
         if domain is not None:
             if domain not in uncertainty:
@@ -86,7 +87,7 @@ def _work_classes_held(ctx, params):
                                 f"{uncertainty[domain]['at_least']} -- re-shape it (a heavier class is the owner's bet)")
         for record in classes[shaped]["requires"]:
             holder = records[record].get("held_by")
-            if holder and _reached(card, holder["from"]) and not _held(card, holder, members):
+            if holder and _reached(card, holder["from"]) and not weighing.holds(card, holder, members, decided):
                 where = ("a card hanging under it" if holder.get("children")
                          else f"a criterion that needs {holder['criterion_needs']}" if "criterion_needs" in holder
                          else f"`{holder['field']}`")
@@ -177,8 +178,9 @@ def _order_held(ctx, params):
 
 
 def _days_between(earlier: str, later: str):
-    try:
-        return (datetime.fromisoformat(later) - datetime.fromisoformat(earlier)).total_seconds() / 86400
+    try:  # a trailing Z is UTC; Python 3.10's fromisoformat does not read it
+        return (datetime.fromisoformat(str(later).replace("Z", "+00:00"))
+                - datetime.fromisoformat(str(earlier).replace("Z", "+00:00"))).total_seconds() / 86400
     except (TypeError, ValueError):
         return None
 
@@ -196,7 +198,18 @@ def _emergencies_repaid(ctx, params):
         return []
     capabilities = ctx.enabled_capabilities()
     governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
-    repaid = {sha for card in governed.members.value for sha in card.get("repays") or []}
+    # A debt stays paid once its card is archived: the archive is read for `repays` too.
+    archived = []
+    for item in governed.capability.installs:
+        if item.get("mode") == "space" and not item.get("reads_as") and item.get("validates") == "card":
+            for rel in ctx.workspace.files_under(item["target"].rstrip("/")):
+                if rel.endswith(".json"):
+                    try:
+                        archived.append(ctx.workspace.read_json(rel))
+                    except ValueError:
+                        continue
+    repaid = {sha for card in [*governed.members.value, *archived] if isinstance(card, dict)
+              for sha in card.get("repays") or []}
     limit = (governed.policy or {}).get("emergency_debt_days")
     now = ctx.clock.now()
     failures = []

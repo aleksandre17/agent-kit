@@ -55,13 +55,26 @@ def run(ctx, args) -> int:
                            "contract that no reading is declared over")
     closed = {s["id"] for s in governed.states if s.get("closed")}
     now = ctx.clock.now()
-    named = {target for c in governed.members.value if c.get(governed.state_field) not in closed
-             for edge in EDGES for target in ([c[edge]] if isinstance(c.get(edge), str) else c.get(edge) or [])}
+    def names(card):
+        return {t for edge in EDGES for t in ([card[edge]] if isinstance(card.get(edge), str) else card.get(edge) or [])}
+
+    old = {c["id"] for c in governed.members.value if c.get(governed.state_field) in closed
+           and lifecycle_module.days_between(lifecycle_module.entered_at(c), now) > days}
+    # A card any STAYING card names stays too -- closed or not -- and so on, to a fixed point: an order
+    # or a parent that pointed into the archive would point at nothing.
+    while True:
+        named = {t for c in governed.members.value if c["id"] not in old for t in names(c)}
+        kept = old & named
+        if not kept:
+            break
+        old -= kept
     leaving = []
     for rel, card in sorted(governed.members.records):
-        if card.get(governed.state_field) not in closed or card["id"] in named:
-            continue
-        if lifecycle_module.days_between(lifecycle_module.entered_at(card), now) > days:
+        if card["id"] in old:
+            moved_to = archive_space.rstrip("/") + "/" + rel.split("/")[-1]
+            if ctx.workspace.exists(moved_to):
+                print(f"archive: {card['id']} stays -- {moved_to} already holds an archived card; one id, one home")
+                continue
             leaving.append((rel, card))
     writes = []
     for rel, card in leaving:

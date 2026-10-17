@@ -107,25 +107,89 @@ def card_space(ctx):
     return None
 
 
-def reshaped_cards(ctx, paths) -> tuple:
-    """(before, after): every card the change touches, as the last commit holds it and as the change
-    leaves it -- the two readings a demotion is judged between."""
+def _parsed_any(text):
+    try:
+        found = json.loads(text) if text else None
+    except ValueError:
+        return None
+    return found if isinstance(found, dict) else None
+
+
+def _parsed(text):
+    try:
+        found = json.loads(text) if text else None
+    except ValueError:
+        return None
+    return found if isinstance(found, dict) and found.get("id") else None
+
+
+def reshaped_cards(ctx, paths, staged_text=None) -> tuple:
+    """(before, after): every card the change touches, BY PATH -- as the last commit holds it and as the
+    change records it (`staged_text`: the index), None where the change removes it. Matched by path, so
+    a card cannot be lightened by changing its id or replaced by a lighter one."""
     space = card_space(ctx)
     before, after = {}, {}
     if space is None:
         return before, after
-    held = cards(ctx)
     for rel in paths:
         if not (rel.startswith(space) and rel.endswith(".json")):
             continue
-        text, _why = ctx.workspace.accepted_text(rel)
-        try:
-            was = json.loads(text) if text else None
-        except ValueError:
-            was = None
-        if isinstance(was, dict) and was.get("id"):
-            before[was["id"]] = was
-            if was["id"] in held:
-                after[was["id"]] = held[was["id"]]
+        was = _parsed(ctx.workspace.accepted_text(rel)[0])
+        if was is None:
+            continue
+        before[rel] = was
+        now = staged_text(rel) if staged_text else (ctx.workspace.read_text(rel) if ctx.workspace.exists(rel) else None)
+        after[rel] = _parsed(now[0] if isinstance(now, tuple) else now)
     return before, after
 
+
+def staged_cards(ctx, staged_text) -> dict:
+    """Every card as the index holds it, by id -- the cards a commit is judged against are the cards it
+    records, never the working tree's."""
+    space = card_space(ctx)
+    held = {}
+    for rel, _card in _records(ctx):
+        staged = _parsed(staged_text(rel)[0]) if space else None
+        if staged is not None:
+            held[staged["id"]] = staged
+    return held
+
+
+def _records(ctx):
+    capabilities = ctx.enabled_capabilities()
+    for capability in capabilities:
+        spec = getattr(capability, "governs", None)
+        if spec:
+            import collection
+            import lifecycle as lifecycle_module
+            governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
+            return governed.members.records
+    return []
+
+
+def lifecycle_flags(ctx) -> tuple:
+    """(door states, closed states): the states only a door opens, and the states marked closed."""
+    capabilities = ctx.enabled_capabilities()
+    if not any(getattr(c, "governs", None) for c in capabilities):
+        return frozenset(), frozenset()
+    import collection
+    import lifecycle as lifecycle_module
+    governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
+    doors = frozenset(t["to"] for t in governed.doc.get("transitions", []) if t.get("door"))
+    closed = frozenset(s["id"] for s in governed.states if s.get("closed"))
+    return doors, closed
+
+
+def decided(ctx):
+    """A reader of whether a card's reference is the KIND of record its row requires: a reference to a
+    document whose front matter declares that kind (`kind: decision`). Any non-empty pointer -- the card
+    a finding was captured from -- is not a decision."""
+    def read(card, holder):
+        reference = card.get(holder["field"]) or {}
+        ref = reference.get("ref") if isinstance(reference, dict) else None
+        if not ref or not ctx.workspace.exists(ref):
+            return False
+        head = ctx.workspace.read_text(ref)[:400].splitlines()
+        return bool(head) and head[0].strip() == "---" and any(
+            line.strip() == f"kind: {holder['kind_of_record']}" for line in head[1:12])
+    return read
