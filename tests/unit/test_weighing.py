@@ -382,7 +382,7 @@ def test_a_hosts_areas_are_drafted_from_the_modules_its_build_tool_declares():
     import areas as areas_verb
 
     mapdoc = {"id": "a-build-tool-modules", "path": "build.json", "pointer": "modules", "path_field": "path",
-              "proof": "tool:test-{id}", "declarations": ["^build\.json$", "^ops/"], "declarations_proof": "tool:validate"}
+              "proof": "tool:test-{id}", "declarations": [r"^build\.json$", "^ops/"], "declarations_proof": "tool:validate"}
     drafted = areas_verb.drafted([(mapdoc, {"web": {"path": "web"}, "api": {"path": "."}})],
                                  {"tool:test-web", "tool:validate"})
     by = {a["id"]: a for a in drafted}
