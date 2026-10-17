@@ -8,9 +8,11 @@ it: git verifies the signature against the host's allowed-signers file (OpenSSH'
 `gpg.ssh.allowedSignersFile`); this module holds no key, reads no passphrase and verifies nothing
 itself -- it says which marks a card holds and which door each one opens.
 
-A door is held when ONE of its marks is signed: an unsigned mark beside a signed one opens nothing the
-signed one did not, and a door whose only mark is unsigned is walked again in a commit the owner signs
--- history is never rewritten to repair it.
+A door is held when ONE of its marks was INTRODUCED by a commit its principal signed: an unsigned mark
+beside a signed one opens nothing the signed one did not, and a door whose only mark is unsigned is
+walked again in a commit the owner signs -- history is never rewritten to repair it. Every signature is
+read against the trust root as it was accepted at the commit's PARENT: a key a commit adds cannot vouch
+for that commit, and a change to who may sign holds only once a signer the parent allowed signed it.
 """
 
 from __future__ import annotations
@@ -31,36 +33,57 @@ def _walk(value, where: str):
 
 
 def marks(record) -> dict:
-    """{(who, moment): the door it opens} -- every acceptance a record carries, wherever it stands in it:
-    a door's passage or any acceptance (`signed_by`), a lowering (`approved_by`). A door walked twice
-    is one door: its passages share a description, so one signed mark holds it."""
+    """{(where, who, moment): the door it opens} -- every acceptance a record carries, wherever it stands
+    in it: a door's passage or any acceptance (`signed_by`), a lowering (`approved_by`). A mark is WHERE it
+    stands as much as who made it and when: the same name and moment copied to another place in the
+    record is another mark, which a signature over the first one never covered. A door walked twice is
+    one door: its passages share a description, so one signed mark holds it."""
     found = {}
     for where, item in _walk(record, ""):
         if item.get(doors.SIGNED_BY):
             moment = str(item.get(doors.SIGNED_AT) or item.get("at") or "")
             door = f"the passage to {item['to']}" if item.get("to") else f"the acceptance at {where or 'the top'}"
-            found[(str(item[doors.SIGNED_BY]), moment)] = door
+            found[(where, str(item[doors.SIGNED_BY]), moment)] = door
         elif item.get("approved_by"):
-            found[(str(item["approved_by"]), str(item.get("at") or ""))] = \
+            found[(where, str(item["approved_by"]), str(item.get("at") or ""))] = \
                 f"the lowering to {item.get('to')} (from {item.get('from')})"
     return found
 
 
 def reviews(record) -> dict:
-    """{(reviewer, moment): what was judged} -- a review record's verdict, a name like any other: it
+    """{(where, reviewer, moment): what was judged} -- a review record's verdict, a name like any other: it
     is held to a signature only when the name is one an allowed signer signs as."""
     if isinstance(record, dict) and record.get("reviewer") and record.get("verdict"):
-        return {(str(record["reviewer"]), str(record.get("at") or "")):
+        return {("", str(record["reviewer"]), str(record.get("at") or "")):
                 f"the review of {record.get('card')} ({record['verdict']})"}
     return {}
 
 
+def who(key) -> str:
+    """The principal a mark is in the name of."""
+    return key[1]
+
+
 def doors_of(card_marks: dict) -> dict:
-    """{door: [(who, moment)]} -- the marks grouped by the door each opens."""
+    """{door: [(where, who, moment)]} -- the marks grouped by the door each opens."""
     grouped: dict = {}
     for key, door in card_marks.items():
         grouped.setdefault(door, []).append(key)
     return grouped
+
+
+def introduced(after: dict, before: dict) -> dict:
+    """The marks `after` holds that `before` did not -- what ONE commit brought, read against its parent: a
+    signature covers what its commit introduced, never a mark that was already standing (forged or not).
+    A mark whose door changed under it is a new mark."""
+    return {key: door for key, door in after.items() if before.get(key) != door}
+
+
+def root_at(accepted: list, position: int) -> str:
+    """The trust root's text as it was ACCEPTED at `position` in the history -- the latest accepted
+    version `(position, sha, text)` at or before it, "" before any."""
+    held = [text for at, _sha, text in accepted if at <= position]
+    return held[-1] if held else ""
 
 
 def principals(text: str, namespace: str = "git") -> list:
