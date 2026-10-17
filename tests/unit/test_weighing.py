@@ -151,3 +151,29 @@ def test_a_lighter_declared_class_is_refused_and_an_expedite_one_admitted():
     assert "never lighter" in refusals(["api/contracts/o.json"], "x\n\nWork-Class: standard\nCard: orders\n",
                                        {"orders": CARD})[0]
     assert refusals(["db/migrations/1.sql"], "fix: restore\n\nWork-Class: emergency\n") == []
+
+
+# -- loosening the scale, lowering a card --------------------------------------------------------
+def test_tightening_the_areas_is_free_and_loosening_them_is_named():
+    strict = areas(("m", r"^m/", "irreversible", {"requires": ["review"]}), max_areas={"standard": 1})
+    assert weighing.loosened(CLASSES, None, strict) == []
+    assert weighing.loosened(CLASSES, areas(), strict) == []
+    said = weighing.loosened(CLASSES, strict, areas(("m", r"^m/", "costly"), max_areas={"standard": 3}))
+    assert any("undo irreversible -> costly" in s for s in said)
+    assert any("no longer requires review" in s for s in said)
+    assert any("max_areas of standard 1 -> 3" in s for s in said)
+    assert weighing.loosened(CLASSES, strict, areas()) and weighing.loosened(CLASSES, strict, None)
+
+
+def test_a_change_that_loosens_the_areas_owes_a_card():
+    _sig, verdict = weighing.weigh(["docs/a.md"], CLASSES, HOST, ["area m removed"])
+    assert verdict["class"]["id"] == "normal" and "loosens the areas" in verdict["why"]
+
+
+def test_lowering_a_card_needs_the_owners_door_on_record():
+    before = {"o": {"id": "o", "class": "major"}}
+    assert weighing.demotions(CLASSES, before, {"o": {"id": "o", "class": "program"}}) == []
+    assert "owner's door" in weighing.demotions(CLASSES, before, {"o": {"id": "o", "class": "normal"}})[0]
+    approved = {"id": "o", "class": "normal",
+                "reshaped": [{"from": "major", "to": "normal", "at": "t", "by": "dev", "approved_by": "owner"}]}
+    assert weighing.demotions(CLASSES, before, {"o": approved}) == []

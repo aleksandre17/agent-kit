@@ -8,6 +8,8 @@ question, which is refused.
 
 from __future__ import annotations
 
+import json
+
 import declared
 import lineage
 from errors import KitError
@@ -58,3 +60,72 @@ def paths(found: tuple, what: str) -> list:
     if listed is None:
         raise WorkClassError(f"git could not say {what} -- {why}")
     return listed
+
+
+def _install(ctx, contract: dict):
+    return next((item for capability in ctx.enabled_capabilities() for item in capability.installs
+                 if item.get(declared.CONTRACT) == contract[declared.CONTRACT] and item.get("mode") == "seed"), None)
+
+
+def areas_target(ctx):
+    """The host path the areas are declared at, or None -- the install that seeds them says where."""
+    item = _install(ctx, AREAS)
+    return None if item is None else item["target"]
+
+
+def accepted_areas(ctx, fallback: dict) -> dict:
+    """The areas as the last commit holds them: a change is weighed by the scale that stood before it,
+    never by the scale it rewrites. Before the first commit, or where it is new, the working one."""
+    target = areas_target(ctx)
+    if target is None:
+        return fallback
+    text, _why = ctx.workspace.accepted_text(target)
+    if text is None:
+        return fallback
+    try:
+        return json.loads(text)
+    except ValueError:
+        return fallback
+
+
+def governed_field(ctx, name: str):
+    """The card field the governing capability declares under `name` (`criteria`, `lesson`), or None --
+    so no interpreter has to know the word."""
+    for capability in ctx.enabled_capabilities():
+        spec = getattr(capability, "governs", None)
+        if spec:
+            return spec.get(name)
+    return None
+
+
+def card_space(ctx):
+    """Where the governed cards live -- the install that reads them, found by the collection's name."""
+    for capability in ctx.enabled_capabilities():
+        spec = getattr(capability, "governs", None)
+        if spec:
+            return next((i["target"] for i in capability.installs if i.get("reads_as") == spec["collection"]), None)
+    return None
+
+
+def reshaped_cards(ctx, paths) -> tuple:
+    """(before, after): every card the change touches, as the last commit holds it and as the change
+    leaves it -- the two readings a demotion is judged between."""
+    space = card_space(ctx)
+    before, after = {}, {}
+    if space is None:
+        return before, after
+    held = cards(ctx)
+    for rel in paths:
+        if not (rel.startswith(space) and rel.endswith(".json")):
+            continue
+        text, _why = ctx.workspace.accepted_text(rel)
+        try:
+            was = json.loads(text) if text else None
+        except ValueError:
+            was = None
+        if isinstance(was, dict) and was.get("id"):
+            before[was["id"]] = was
+            if was["id"] in held:
+                after[was["id"]] = held[was["id"]]
+    return before, after
+

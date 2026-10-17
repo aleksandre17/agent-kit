@@ -108,14 +108,14 @@ class Weigh(Fixtures, unittest.TestCase):
         def card(kind):
             body = {"schema_version": 1, "id": "orders", "title": "orders", "state": "in-flight",
                     "created_at": "2026-10-17T00:00:00+00:00",
-                    "criteria": [{"id": "suite-green", "statement": "the suite passes", "needs": "test",
+                    "criteria": [{"id": "suite-green", "statement": "the suite passes", "needs": "tested",
                                   "proof": {"kind": kind, "ref": report}}]}
             (cards / "orders.json").write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
 
         card("artifact-present")
         refused = self.run_kit(KIT, host, "move", "--card", "orders", "--to", "verified", "--by", "dev")
         self.assertNotEqual(0, refused.returncode)
-        self.assertIn("needs test", refused.stdout + refused.stderr)
+        self.assertIn("needs tested", refused.stdout + refused.stderr)
         card("test-report-passed")
         moved = self.run_kit(KIT, host, "move", "--card", "orders", "--to", "verified", "--by", "dev")
         self.assertEqual(0, moved.returncode, moved.stdout + moved.stderr)
@@ -262,6 +262,63 @@ class Weigh(Fixtures, unittest.TestCase):
         self.assertTrue((cards / "old-needed.json").exists(), "a card a working card names was archived")
         self.assertTrue((cards / "new-done.json").exists())
         self.assertIn("PASS  FF-WORK-ORDER", self._failed(host))
+
+    def test_a0_lowering_a_card_is_the_owners_door_and_raising_it_is_anyones(self):
+        host = self.installed()
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        (cards / "orders.json").write_text(json.dumps(
+            {"schema_version": 1, "id": "orders", "title": "orders", "state": "shaped", "class": "normal",
+             "created_at": "2026-10-17T00:00:00+00:00"}, indent=2) + "\n", encoding="utf-8", newline="\n")
+        raised = self.run_kit(KIT, host, "reshape", "--card", "orders", "--class", "major", "--by", "dev")
+        self.assertEqual(0, raised.returncode, raised.stdout + raised.stderr)
+        waiting = self.run_kit(KIT, host, "reshape", "--card", "orders", "--class", "normal", "--by", "dev")
+        self.assertEqual(3, waiting.returncode, waiting.stdout + waiting.stderr)
+        self.assertEqual("major", json.loads((cards / "orders.json").read_text(encoding="utf-8"))["class"])
+        lowered = self.run_kit(KIT, host, "reshape", "--card", "orders", "--class", "normal", "--approve", "owner")
+        self.assertEqual(0, lowered.returncode, lowered.stdout + lowered.stderr)
+        card = json.loads((cards / "orders.json").read_text(encoding="utf-8"))
+        self.assertEqual({"from": "major", "to": "normal", "approved_by": "owner"},
+                         {k: card["reshaped"][-1][k] for k in ("from", "to", "approved_by")})
+
+    def test_a1_ci_holds_every_pushed_commit_to_the_floor_a_skipped_hook_did_not(self):
+        host = self.installed()
+        self.declare(host, ("migrations", r"^db/migrations/", "irreversible"))
+        env = dict(os.environ, GIT_AUTHOR_NAME="f", GIT_AUTHOR_EMAIL="f@example.invalid",
+                   GIT_COMMITTER_NAME="f", GIT_COMMITTER_EMAIL="f@example.invalid")
+        git = lambda *a: subprocess.run(["git", "-C", str(host), *a], check=True, capture_output=True, text=True, env=env)
+        git("add", "-A"); git("commit", "-q", "--no-verify", "-m", "chore: the installed host")
+        base = git("rev-parse", "HEAD").stdout.strip()
+        (host / "db" / "migrations").mkdir(parents=True)
+        (host / "db" / "migrations" / "0001.sql").write_text("drop table t;\n", encoding="utf-8")
+        git("add", "-A"); git("commit", "-q", "--no-verify", "-m", "feat: quietly")
+        caught = self.run_kit(KIT, host, "weigh", "--base", base, "--head", "HEAD", "--each")
+        self.assertEqual(1, caught.returncode, caught.stdout + caught.stderr)
+        self.assertIn("owes a card", caught.stdout)
+        self.assertIn("1 commit(s) held to the floor, 1 refused", caught.stdout)
+
+    def test_a2_weighing_names_the_downstream_and_the_lessons_of_what_it_touches(self):
+        host = self.installed()
+        body = {"schema_version": 1, "default_undo": "reversible", "max_areas": {},
+                "areas": [{"id": "contracts", "paths": "^api/contracts/", "undo": "costly", "because": "a fixture",
+                           "owner": "api-team", "feeds": ["web"]},
+                          {"id": "web", "paths": "^web/", "undo": "reversible", "because": "a fixture",
+                           "owner": "web-team", "feeds": ["e2e"]},
+                          {"id": "e2e", "paths": "^e2e/", "undo": "reversible", "because": "a fixture"}]}
+        (host / AREAS).write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        (cards / "renamed-field.json").write_text(json.dumps(
+            {"schema_version": 1, "id": "renamed-field", "title": "a renamed field", "state": "landed",
+             "created_at": "2026-10-17T00:00:00+00:00",
+             "lesson": {"subject": "contracts", "extent": "local", "statement": "a renamed field breaks the web client"}},
+            indent=2) + "\n", encoding="utf-8", newline="\n")
+        said = self.run_kit(KIT, host, "weigh", "--path", "api/contracts/orders.json")
+        self.assertEqual(0, said.returncode, said.stdout + said.stderr)
+        self.assertIn("owner api-team", said.stdout)
+        self.assertIn("feeds web (owner web-team)", said.stdout)
+        self.assertIn("feeds e2e", said.stdout)
+        self.assertIn("lesson (renamed-field, contracts): a renamed field breaks the web client", said.stdout)
 
     def _failed(self, host) -> str:
         said = self.run_kit(KIT, host, "check")

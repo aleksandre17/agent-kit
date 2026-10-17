@@ -70,7 +70,14 @@ def _residence_declared(ctx, params):
     if uncalibrated:
         return uncalibrated
     failures = []
-    for rel in ctx.workspace.files_under(params["root"]):
+    # A RESIDENT is a file the repository carries -- tracked, or untracked and not ignored. What the
+    # repository ignores (the observed runtime plane, a dispatched worker's copy of the whole host) is
+    # not a resident of this tree and is not judged as one; with no repository, every file is read.
+    root = params["root"].rstrip("/") + "/"
+    carried = ctx.workspace.carried()
+    residents = (sorted(rel for rel in carried if rel.startswith(root)) if carried is not None
+                 else ctx.workspace.files_under(params["root"]))
+    for rel in residents:
         for rule in rules:
             if _compiled(rule).search(rel):
                 failures.append(

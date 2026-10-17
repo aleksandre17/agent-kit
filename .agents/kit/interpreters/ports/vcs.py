@@ -82,3 +82,25 @@ def working_paths(root) -> tuple:
 def range_paths(root, base: str, head: str) -> tuple:
     """`(paths, None)` changed between two revisions, or `(None, why)`."""
     return _paths(root, ["diff", "--no-renames", "--name-only", "-z", base, head, "--"])
+
+
+def commits_between(root, base, head: str) -> tuple:
+    """`(shas, None)` oldest first -- every commit reachable from `head` and not from `base` (every
+    commit reachable from `head` when there is no base) -- or `(None, why)`."""
+    said, why = run(root, ["rev-list", "--reverse", head] + ([f"^{base}"] if base else []))
+    return (None, why) if said is None else (said.split(), None)
+
+
+def commit_paths(root, sha: str) -> tuple:
+    """`(paths, None)` one commit changed against its first parent (or against nothing, a root)."""
+    return _paths(root, ["diff-tree", "--no-commit-id", "--name-only", "-r", "-z", "--no-renames", "--root", sha])
+
+
+def commit_message(root, sha: str) -> tuple:
+    return run(root, ["log", "-1", "--format=%B", sha])
+
+
+def file_at(root, sha: str, rel: str) -> tuple:
+    """`(text, None)` the file as the commit holds it, or `(None, why)` where it holds none."""
+    return run(root, ["show", f"{sha}:{rel}"])
+

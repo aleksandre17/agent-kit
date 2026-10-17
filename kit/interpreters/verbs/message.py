@@ -66,5 +66,9 @@ def _floor(ctx, message: str) -> list:
         return []
     classes_doc, areas_doc = found
     staged = workclass.paths(vcs.staged_paths(ctx.workspace.root), "what the commit records")
-    _sig, verdict = weighing.weigh(staged, classes_doc, areas_doc)
-    return weighing.commit_refusals(classes_doc, verdict, message, workclass.cards(ctx))
+    stood = workclass.accepted_areas(ctx, None)
+    _sig, verdict = weighing.weigh(staged, classes_doc, stood or areas_doc,
+                                   weighing.loosened(classes_doc, stood, areas_doc))
+    before, after = workclass.reshaped_cards(ctx, staged)
+    return (weighing.commit_refusals(classes_doc, verdict, message, workclass.cards(ctx))
+            + weighing.demotions(classes_doc, before, after))

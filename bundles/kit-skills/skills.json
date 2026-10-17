@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "summary": "Three procedures every host walks. Bodies are prose for judgement; the steps are verbs to RUN.",
+  "summary": "Four procedures every host walks. Bodies are prose for judgement; the steps are verbs to RUN.",
   "skills": [
     {
       "id": "walk-a-door",
@@ -18,6 +18,15 @@
       "body": "skills/propose-a-law/body.md",
       "files": [
         "skills/propose-a-law/scripts/gate.py"
+      ]
+    },
+    {
+      "id": "walk-a-piece-of-work",
+      "task_class": "judgement",
+      "description": "Use before changing anything in this repository, and while doing it: weighs the change (its work class, what it owes, who it affects, the lessons of where it touches), leaves exactly the records its class requires, and captures what is met on the way. Not for answering a question -- that changes nothing.",
+      "body": "skills/walk-a-piece-of-work/body.md",
+      "files": [
+        "skills/walk-a-piece-of-work/scripts/kit.py"
       ]
     },
     {

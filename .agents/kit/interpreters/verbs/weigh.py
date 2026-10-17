@@ -4,13 +4,19 @@
     python .agents/kit/interpreters/cli.py weigh --root . --path a,b            # a change not yet made
     python .agents/kit/interpreters/cli.py weigh --root . --base <rev> --head <rev>
     python .agents/kit/interpreters/cli.py weigh --root . --class standard      # refuse a lighter claim
+    python .agents/kit/interpreters/cli.py weigh --root . --base <rev> --head <rev> --each   # CI: every commit
 
 The class is the lightest one whose envelope admits the change, raised by every touched area that
 asks more; `--class` names the class the change is declared as, and a declaration lighter than the
-computed floor is refused, naming what raised it. Reading only: nothing is written.
+computed floor is refused, naming what raised it. `--each` holds every commit of a range to the floor
+the commit hook holds -- weighed by the areas its parent held, its card read as the commit holds it --
+so a hook skipped with --no-verify, or a commit made where no hook runs, is caught in CI. Reading
+only: nothing is written.
 """
 
 from __future__ import annotations
+
+import json
 
 import vcs
 import weighing
@@ -25,6 +31,8 @@ ARGUMENTS = [
     ("--head", {"default": None, "help": "the revision a weighed range ends at"}),
     ("--class", {"dest": "declared_class", "default": None,
                  "help": "the class the change is declared as: refused when lighter than the computed one"}),
+    ("--each", {"action": "store_true",
+                "help": "hold every commit of the range (or of --head's history) to the commit floor"}),
 ]
 
 
@@ -46,18 +54,77 @@ def _paths(ctx, args) -> list:
     return workclass.paths(vcs.working_paths(root), "what the working change touches")
 
 
+def _json_at(root, sha: str, rel):
+    if rel is None:
+        return None
+    text, _why = vcs.file_at(root, sha, rel)
+    try:
+        return json.loads(text) if text else None
+    except ValueError:
+        return None
+
+
+def _each(ctx, args, classes_doc: dict, areas_doc: dict) -> int:
+    """Every commit of the range against the floor its own hook would have held."""
+    root, head = ctx.workspace.root, getattr(args, "head", None)
+    if not head:
+        raise WeighRefused("--each needs --head <rev>, and --base <rev> unless every commit is meant")
+    shas = workclass.paths(vcs.commits_between(root, getattr(args, "base", None), head), "which commits the range holds")
+    areas_rel, space = workclass.areas_target(ctx), workclass.card_space(ctx)
+    keys = classes_doc["trailers"]
+    refused = 0
+    for sha in shas:
+        paths = workclass.paths(vcs.commit_paths(root, sha), f"what {sha[:12]} changed")
+        message, _why = vcs.commit_message(root, sha)
+        stood, left = _json_at(root, f"{sha}^", areas_rel), _json_at(root, sha, areas_rel)
+        _sig, verdict = weighing.weigh(paths, classes_doc, stood or left or areas_doc,
+                                       weighing.loosened(classes_doc, stood, left))
+        named = weighing.trailers(message or "").get(keys["card"].lower())
+        cards = {}
+        if named and space:
+            card = _json_at(root, sha, f"{space.rstrip('/')}/{named}.json")
+            if card:
+                cards[named] = card
+        before = {c["id"]: c for c in (_json_at(root, f"{sha}^", rel) for rel in paths
+                                       if space and rel.startswith(space) and rel.endswith(".json")) if c}
+        after = {c["id"]: c for c in (_json_at(root, sha, rel) for rel in paths
+                                      if space and rel.startswith(space) and rel.endswith(".json")) if c}
+        why = (weighing.commit_refusals(classes_doc, verdict, message or "", cards)
+               + weighing.demotions(classes_doc, before, after))
+        for line in why:
+            print(f"weigh: REFUSED [{WeighRefused.code}] {sha[:12]} -- {line}")
+        refused += bool(why)
+    print(f"weigh: {len(shas)} commit(s) held to the floor, {refused} refused")
+    return 1 if refused else 0
+
+
 def run(ctx, args) -> int:
     found = workclass.declarations(ctx)
     if found is None:
         print("weigh: no work-class catalogue is declared on this host -- nothing is weighed")
         return 0
     classes_doc, areas_doc = found
+    if getattr(args, "each", False):
+        return _each(ctx, args, classes_doc, areas_doc)
     sig, verdict = weighing.weigh(_paths(ctx, args), classes_doc, areas_doc)
     row = verdict["class"]
     print(f"weigh: {row['id']} -- {verdict['why']}")
     for identity, hit in sorted(sig["touched"].items()):
         area = hit["area"]
-        print(f"  area {identity} ({area['undo']}): {len(hit['paths'])} path(s) -- {area['because']}")
+        owner = f", owner {area['owner']}" if area.get("owner") else ""
+        print(f"  area {identity} ({area['undo']}{owner}): {len(hit['paths'])} path(s) -- {area['because']}")
+    declared_areas = {a["id"]: a for a in areas_doc.get("areas", [])}
+    for identity in sig["downstream"]:
+        owner = declared_areas[identity].get("owner")
+        print(f"  feeds {identity}" + (f" (owner {owner})" if owner else "") + " -- downstream of this change: "
+              f"it moves with it, or the change says why it need not")
+    # A lesson whose subject is a touched area reaches the work at the moment it applies, and costs no
+    # context anywhere else (ADR-025 decision 12).
+    field = workclass.governed_field(ctx, "lesson")
+    for card in sorted(workclass.cards(ctx).values(), key=lambda c: c["id"]) if field else []:
+        lesson = card.get(field) or {}
+        if lesson.get("subject") in sig["touched"]:
+            print(f"  lesson ({card['id']}, {lesson['subject']}): {lesson['statement']}")
     if sig["unclaimed"]:
         print(f"  unclaimed: {len(sig['unclaimed'])} path(s), undo cost {areas_doc['default_undo']} "
               f"(no area declares them)")

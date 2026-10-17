@@ -28,13 +28,13 @@ def needs(kind, want):
 
 def test_a_stronger_rung_satisfies_a_weaker_need_and_never_the_reverse():
     assert needs("test-report-passed", "static").holds is True
-    assert needs("artifact-present", "test").holds is None
+    assert needs("artifact-present", "tested").holds is None
 
 
 def test_a_judgement_satisfies_only_itself():
     assert needs("review-approved", "review").holds is True
     assert needs("test-report-passed", "review").holds is None
-    assert needs("review-approved", "test").holds is None
+    assert needs("review-approved", "tested").holds is None
 
 
 def test_a_composite_kind_yields_no_class_of_its_own():
@@ -44,7 +44,7 @@ def test_a_composite_kind_yields_no_class_of_its_own():
 def test_no_need_and_no_hold_pass_through_untouched():
     assert criteria.needed(SCALE, {"proof": {"kind": "artifact-present"}}, HELD) is HELD
     refuted = criteria.Verdict(False, "no")
-    assert criteria.needed(SCALE, {"needs": "test", "proof": {"kind": "x"}}, refuted) is refuted
+    assert criteria.needed(SCALE, {"needs": "tested", "proof": {"kind": "x"}}, refuted) is refuted
 
 
 def test_one_kind_worth_two_classes_is_refused():

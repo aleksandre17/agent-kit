@@ -62,6 +62,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `propose` | state what this host learned that it says is not its own, as text a person carries | nothing |
 | `release` | state what this kit is as a release, or refuse to call a working tree one | nothing |
 | `render` | recompute every projection from VENDOR + BINDING | yes -- `--plan` prints the writes first |
+| `reshape` | change the work class a card is shaped as -- raising is anyone's, lowering the owner's door | yes -- `--plan` prints the writes first |
 | `retake` | take this host's reading again, through a door, when its reality has legitimately moved | yes -- `--plan` prints the writes first |
 | `review` | check that a review range is covered by verified change records (tri-state JSON report) | nothing |
 | `session` | at a session's start: one context line -- the kit, how a change is proven, the capsule's handoff (advisory) | nothing |

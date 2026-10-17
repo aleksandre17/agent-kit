@@ -61,6 +61,10 @@ def checked(classes_doc: dict, areas_doc: dict) -> None:
         if area["id"] in seen:
             raise WeighError(f"the area {area['id']!r} is declared twice: one name, two sets of paths")
         seen.add(area["id"])
+    for area in areas_doc.get("areas", []):
+        unknown = sorted(set(area.get("feeds", [])) - seen)
+        if unknown:
+            raise WeighError(f"area {area['id']!r} feeds {unknown}, which no area declares")
 
 
 def signals(paths, classes_doc: dict, areas_doc: dict) -> dict:
@@ -80,7 +84,21 @@ def signals(paths, classes_doc: dict, areas_doc: dict) -> dict:
     if unclaimed:
         costs.append(areas_doc["default_undo"])
     undo = max(costs, key=scale.__getitem__) if costs else None
-    return {"touched": touched, "unclaimed": unclaimed, "undo": undo}
+    return {"touched": touched, "unclaimed": unclaimed, "undo": undo,
+            "downstream": downstream(areas_doc, set(touched))}
+
+
+def downstream(areas_doc: dict, touched: set) -> list:
+    """Every area the touched ones feed, transitively, that the change does not itself touch -- the
+    consumers that must move with it. A cycle in the map is walked once, never forever."""
+    feeds = {a["id"]: a.get("feeds", []) for a in areas_doc.get("areas", [])}
+    reached, frontier = set(), list(touched)
+    while frontier:
+        for nxt in feeds.get(frontier.pop(), []):
+            if nxt not in reached and nxt not in touched:
+                reached.add(nxt)
+                frontier.append(nxt)
+    return sorted(reached)
 
 
 def heavier_or_equal(classes_doc: dict, declared: str, floor: str) -> bool:
@@ -131,10 +149,82 @@ def computed(sig: dict, classes_doc: dict, areas_doc: dict) -> dict:
     return {"class": row, "why": why, "requires": owed}
 
 
-def weigh(paths, classes_doc: dict, areas_doc: dict) -> tuple:
-    """(signals, verdict) for a set of paths -- the one entry every caller weighs through."""
-    sig = signals(paths, classes_doc, areas_doc)
-    return sig, computed(sig, classes_doc, areas_doc)
+def loosened(classes_doc: dict, before, after) -> list:
+    """How the areas a change leaves are LOOSER than the areas that stood before it -- empty when they
+    are as strict or stricter. Tightening is anyone's act; loosening the scale a change is weighed by
+    is a change of its own that owes a named record. With nothing before, nothing is loosened: no
+    areas at all is the loosest a host can be."""
+    if not before or not after:
+        return [] if not before else ["the areas declaration is removed"]
+    scale, rank = _scale(classes_doc), _rank(classes_doc)
+    said = []
+
+    def lower(a, b, order):
+        return a in order and b in order and order[b] < order[a]
+
+    if lower(before["default_undo"], after["default_undo"], scale):
+        said.append(f"default_undo {before['default_undo']} -> {after['default_undo']}")
+    was, now = before.get("max_areas", {}), after.get("max_areas", {})
+    for cls, limit in sorted(was.items()):
+        if cls not in now or now[cls] > limit:
+            said.append(f"max_areas of {cls} {limit} -> {now.get(cls, 'unlimited')}")
+    old_areas = {a["id"]: a for a in before.get("areas", [])}
+    new_areas = {a["id"]: a for a in after.get("areas", [])}
+    for identity, area in sorted(old_areas.items()):
+        kept = new_areas.get(identity)
+        if kept is None:
+            said.append(f"area {identity} removed")
+            continue
+        if kept["paths"] != area["paths"]:
+            said.append(f"area {identity} paths {area['paths']!r} -> {kept['paths']!r}")
+        if lower(area["undo"], kept["undo"], scale):
+            said.append(f"area {identity} undo {area['undo']} -> {kept['undo']}")
+        if "at_least" in area and ("at_least" not in kept or lower(area["at_least"], kept["at_least"], rank)):
+            said.append(f"area {identity} at_least {area['at_least']} -> {kept.get('at_least', 'none')}")
+        dropped = sorted(set(area.get("requires", [])) - set(kept.get("requires", [])))
+        if dropped:
+            said.append(f"area {identity} no longer requires {', '.join(dropped)}")
+    return said
+
+
+def weigh(paths, classes_doc: dict, areas_doc: dict, loosening=()) -> tuple:
+    """(signals, verdict) for a set of paths -- the one entry every caller weighs through.
+
+    `loosening` names how the change loosens the areas it is weighed by (`loosened`). Such a change is
+    at least the lightest class that owes a card: whoever loosens the scale leaves a named,
+    criteria-bearing record of doing it -- and tightening it costs nothing."""
+    sig = signals(list(paths), classes_doc, areas_doc)
+    verdict = computed(sig, classes_doc, areas_doc)
+    floor = lightest_with(classes_doc, "card")
+    if loosening and _heavier(classes_doc, floor, verdict["class"]["id"]) != verdict["class"]["id"]:
+        row = classes_doc["classes"][_rank(classes_doc)[floor]]
+        owed = list(row["requires"]) + [r for r in verdict["requires"] if r not in row["requires"]]
+        verdict = {"class": row, "why": f"{verdict['why']}; it loosens the areas it is weighed by "
+                   f"({'; '.join(loosening)})", "requires": owed}
+    return sig, verdict
+
+
+def demotions(classes_doc: dict, before: dict, after: dict) -> list:
+    """Every card a change shapes LIGHTER than it stood, without the owner's door recorded on it.
+
+    `before` and `after` map card ids to the card as it stood and as the change leaves it. Raising a
+    class is anyone's act; lowering one is the owner's (ADR-025 decision 4), recorded by `reshape` as
+    the card's last `reshaped` entry -- from the old class, to the new, approved by a named owner."""
+    rank, refused = _rank(classes_doc), []
+    for identity, card in sorted(after.items()):
+        was, now = (before.get(identity) or {}).get("class"), card.get("class")
+        if was not in rank or (now is not None and now not in rank):
+            continue
+        lowered = now is None or rank[now] < rank[was]
+        if not lowered:
+            continue
+        last = (card.get("reshaped") or [{}])[-1]
+        if last.get("from") == was and last.get("to") == now and last.get("approved_by"):
+            continue
+        refused.append(f"the card {identity} is shaped {now or 'with no class'} where it stood {was}: lowering a "
+                       f"class is the owner's door -- `reshape --card {identity} --class {now or '<class>'} "
+                       f"--approve <owner>` records it")
+    return refused
 
 
 # -- a commit, and the card it names ----------------------------------------------------------

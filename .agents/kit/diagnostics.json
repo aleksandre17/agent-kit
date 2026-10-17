@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 89,
+  "issued": 90,
   "codes": [
     {
       "code": "KIT0001",
@@ -536,6 +536,12 @@
       "status": "active",
       "title": "an archive that cannot be taken honestly",
       "explanation": "Archiving moves finished cards out of the working set by a named mover, into the space delivery declares for them; with no mover, or no such space, nothing is moved (ADR-025)."
+    },
+    {
+      "code": "KIT0090",
+      "status": "active",
+      "title": "a reshape that cannot be taken honestly",
+      "explanation": "A reshape names a card, a declared class and its mover, on a host that weighs its work; raising a class is anyone's act, lowering one waits at the owner's door (--approve) (ADR-025)."
     }
   ]
 }

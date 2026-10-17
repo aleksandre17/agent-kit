@@ -121,7 +121,7 @@ asserts it.
    the bill attached.
 
 7. **A claim never exceeds its evidence.** Every proof kind declares the evidence class its reading
-   yields (`static` < `test` < `runtime` < `production`; and `owner`, `review` beside them). A criterion
+   yields (`static` < `tested` < `runtime` < `production`; and `owner`, `review` beside them). A criterion
    may name the class it needs; a weaker reading leaves it `unproven`, never `proved`.
 
 8. **A deferral carries its trigger.** A parked card may name `due_when`, a typed proof reference in the
@@ -165,6 +165,19 @@ asserts it.
     across the history or across all cards runs at push and in CI (`check`, 3.5 s on the kit's own
     host), and what it reads is bounded by the archive (decision 13). Fast path and slow path, as an
     SLO-minded system splits them: the hot path is cheap by construction, never by hoping.
+
+15. **The floor has no side door.** Four ways around it were found by a pre-mortem and closed:
+    - *a skipped hook* (`--no-verify`, a commit made where no hook runs): CI weighs every pushed commit
+      one at a time (`weigh --base --head --each`), by the areas its parent held and its card as the
+      commit holds it;
+    - *a card shaped lighter after the bet*: raising a class is anyone's act, lowering one is the
+      owner's door (`reshape --approve`), and a commit that lightens a card without that record on it
+      is refused;
+    - *loosening the scale in the same change it weighs*: a change is weighed by the areas that stood
+      before it, and a change that loosens them -- an area removed, a cost lowered, paths changed, a
+      requirement dropped, a limit raised -- owes a card; tightening them costs nothing;
+    - *an emergency declared to escape*: the debt is reported on every check and fails past the host's
+      days, and the agents' skill (S9) leaves the declaration of an emergency to a person.
 
 ## What the prior system's control plane becomes here
 
@@ -244,6 +257,8 @@ has not made.
 | S6 | the emergency debt and the ceremony measure per class |
 | S7 | areas as the architecture map: `owner`, `feeds`, the downstream named on weighing, lessons by area |
 | S8 | the bounded board: closed states as a count and the most recent few; the archive passage by declared age |
+| S8b | the side doors closed (decision 15): `weigh --each` in CI, `reshape`, loosening owes a card |
+| S9 | the agents' skill: how an agent walks a piece of work -- weigh first, judge only what is not computed, capture what it meets, leave doors and emergencies to people |
 
 Each slice is proven by a fixture the kit does not ship, and the first host to adopt it declares its
 areas before any gate binds.

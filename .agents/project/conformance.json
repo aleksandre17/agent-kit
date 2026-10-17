@@ -548,6 +548,171 @@
       "evidence": [],
       "status": "partial",
       "why": "the procedures a host walks today; audit/rotate/bootstrap are verbs already (check, start)"
+    },
+    {
+      "id": "itil-change-enablement",
+      "standard": "ITIL 4",
+      "clause": "Change enablement: standard, normal and emergency changes",
+      "mechanism": "work classes standard / normal / emergency; a standard change pre-approved by its computed class leaves only its commit (ADR-025)",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_10",
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_60",
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_97",
+        "gate:FF-WORK-EMERGENCY"
+      ],
+      "status": "conformant",
+      "why": "the class is computed, the floor is held at commit and in CI, the emergency owes its card"
+    },
+    {
+      "id": "dora-change-approval",
+      "standard": "DORA / Accelerate (Forsgren, Humble, Kim 2018)",
+      "clause": "lightweight change approval; lead time",
+      "mechanism": "an automated floor on every change, doors only where irreversible; FF-WORK-CEREMONY reads lead time per class",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_60",
+        "gate:FF-WORK-CEREMONY"
+      ],
+      "status": "conformant",
+      "why": "safety comes from the floor, not the number of approvals; lead time is read, never typed"
+    },
+    {
+      "id": "reversible-irreversible-decisions",
+      "standard": "two-way and one-way doors",
+      "clause": "decide reversible fast, irreversible deliberately",
+      "mechanism": "the undo-cost scale (reversible, costly, irreversible); lowering a card's class is the owner's door (reshape --approve)",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_20",
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_a0"
+      ],
+      "status": "conformant",
+      "why": "the weight of the path is the cost of undoing it"
+    },
+    {
+      "id": "consequence-scaled-rigour",
+      "standard": "IEC 61508 (SIL), DO-178C (DAL), NASA NPR 7150.2",
+      "clause": "rigour scaled to the consequence of failure",
+      "mechanism": "the lightest class whose envelope admits a change's undo cost and breadth; areas raise it (at_least) and owe records (requires)",
+      "evidence": [
+        "test:tests/unit/test_weighing.py::test_one_migration_file_makes_the_whole_change_major",
+        "test:tests/unit/test_weighing.py::test_an_area_raises_the_class_and_owes_its_own_records"
+      ],
+      "status": "partial",
+      "why": "the scaling is aligned; a safety-integrity certification is an external assessor's"
+    },
+    {
+      "id": "cynefin",
+      "standard": "Cynefin (Snowden)",
+      "clause": "clear, complicated, complex, chaotic",
+      "mechanism": "a card's uncertainty, each domain with the lightest class it may walk; it only raises the class",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_70"
+      ],
+      "status": "conformant",
+      "why": "declared at shaping, held by FF-WORK-CLASSES"
+    },
+    {
+      "id": "tailoring",
+      "standard": "ISO 21502 / PMBOK 7",
+      "clause": "tailoring the process to the work, recorded",
+      "mechanism": "the host tailors by areas (undo cost, at_least, requires, max_areas), never by editing the classes; loosening them owes a card",
+      "evidence": [
+        "test:tests/unit/test_weighing.py::test_an_area_raises_the_class_and_owes_its_own_records",
+        "test:tests/unit/test_weighing.py::test_tightening_the_areas_is_free_and_loosening_them_is_named"
+      ],
+      "status": "conformant",
+      "why": "the tailoring is a declaration, and loosening it leaves a record"
+    },
+    {
+      "id": "risk-treatment",
+      "standard": "ISO 31000 / ISO/IEC 23894",
+      "clause": "risk identified, assessed and treated in proportion, continuously",
+      "mechanism": "weigh before the work (--path), on the working change, at commit and on every pushed commit (--each)",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_20",
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_50",
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_a1"
+      ],
+      "status": "partial",
+      "why": "the change-level treatment is built; an organisation's risk register is its own"
+    },
+    {
+      "id": "stage-gate",
+      "standard": "Stage-Gate (Cooper)",
+      "clause": "one entry gate per phase",
+      "mechanism": "after between cards: entering the work waits for what it comes after; REGRESSED when finished work stops holding",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_96",
+        "gate:FF-WORK-ORDER"
+      ],
+      "status": "conformant",
+      "why": "the gate is computed from the cards"
+    },
+    {
+      "id": "kanban-expedite",
+      "standard": "Kanban (Anderson)",
+      "clause": "an expedite class of service; WIP limits",
+      "mechanism": "the emergency class with its debt and clock; wip_limit per state",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_97"
+      ],
+      "status": "conformant",
+      "why": "expedite is admitted and owed"
+    },
+    {
+      "id": "assurance-case",
+      "standard": "ISO/IEC/IEEE 15026",
+      "clause": "a claim is as strong as its evidence",
+      "mechanism": "evidence classes declared with the kinds of proof worth each; a criterion's needs; JUnit/TRX and review records as proofs",
+      "evidence": [
+        "test:tests/unit/test_claim_ladder.py::test_a_stronger_rung_satisfies_a_weaker_need_and_never_the_reverse",
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_80"
+      ],
+      "status": "conformant",
+      "why": "a weaker reading leaves a criterion unproven"
+    },
+    {
+      "id": "separation-of-duties",
+      "standard": "ISO/IEC 27001",
+      "clause": "A.5.3 Segregation of duties",
+      "mechanism": "a review record by the card's owner or anyone who moved it proves nothing",
+      "evidence": [
+        "test:tests/unit/test_claim_ladder.py::test_a_review_by_an_author_or_of_another_card_proves_nothing"
+      ],
+      "status": "conformant",
+      "why": "the author does not grade the work"
+    },
+    {
+      "id": "effective-agents",
+      "standard": "Anthropic, Building Effective Agents (2024)",
+      "clause": "the simplest workflow that works; agentic complexity only where it earns its cost",
+      "mechanism": "task classes; weighing is a verb, never a model; the skill walk-a-piece-of-work judges only what is not computed",
+      "evidence": [
+        "verb:weigh",
+        "path:bundles/kit-skills/skills/walk-a-piece-of-work/body.md"
+      ],
+      "status": "conformant",
+      "why": "zero tokens where a computation exists"
+    },
+    {
+      "id": "context-engineering",
+      "standard": "Anthropic, Effective Context Engineering for AI Agents (2025)",
+      "clause": "context is finite; retrieve just in time",
+      "mechanism": "a lesson reaches the agent when its area is touched; the board and hot surfaces are bounded (ADR-025 decisions 12, 13)",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_a2",
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_98"
+      ],
+      "status": "conformant",
+      "why": "the surface does not grow with the project"
+    },
+    {
+      "id": "ai-lifecycle",
+      "standard": "ISO/IEC 5338",
+      "clause": "AI system life-cycle processes",
+      "mechanism": "the delivery lifecycle as a declaration, with doors, computed passages and evidence",
+      "evidence": [],
+      "status": "mapping",
+      "why": "the life-cycle processes are an organisation's; the kit supplies their records"
     }
   ]
 }

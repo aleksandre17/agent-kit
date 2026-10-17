@@ -68,6 +68,19 @@
               "type": "string",
               "pattern": "^[a-z0-9][a-z0-9-]*$"
             }
+          },
+          "owner": {
+            "description": "Who answers for this area -- a role or a team, never a guess. Named on weighing, so a change reaches the people it affects.",
+            "type": "string",
+            "minLength": 1
+          },
+          "feeds": {
+            "description": "The areas downstream of this one: its consumers, that must move with a change to it. Weighing a change names every area it feeds, transitively -- impact read from the map, never written as an essay per change (ADR-025 decision 12).",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*$"
+            }
           }
         }
       }

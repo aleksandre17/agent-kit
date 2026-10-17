@@ -235,15 +235,15 @@ def _ceremony_reported(ctx, params):
         entered = next((p.get("at") for p in reversed(card.get(lifecycle_module.HISTORY, []))
                         if p.get("to") in closed), None)
         days = _days_between(card.get(lifecycle_module.CREATED_AT), entered) if entered else None
-        row = by_class.setdefault(card.get("class", "unclassed"), {"cards": 0, "criteria": 0, "days": []})
-        row["cards"] += 1
-        row["criteria"] += len(card.get(governed.spec["criteria"]) or [])
+        row = by_class.setdefault(card.get("class", "unclassed"), {"finished": 0, "declared": 0, "days": []})
+        row["finished"] += 1
+        row["declared"] += len(card.get(governed.spec["criteria"]) or [])
         if days is not None:
             row["days"].append(days)
     for identity, row in sorted(by_class.items()):
         lead = sorted(row["days"])
         median = f"{lead[len(lead) // 2]:.1f} day(s)" if lead else "unknown"
-        print(f"        ceremony: {identity}: {row['cards']} finished, {row['criteria']} criteria, "
+        print(f"        ceremony: {identity}: {row['finished']} finished, {row['declared']} criteria, "
               f"median lead time {median}")
     return []
 

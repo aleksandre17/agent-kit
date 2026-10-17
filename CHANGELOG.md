@@ -20,7 +20,7 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   uncertainty on cards; `normal` cards enter the work without the owner's bet; FF-WORK-CLASSES.
 
 **Added — the claim ladder, deferrals and a program's order (ADR-025 S3-S5)**
-- Evidence classes (`static` < `test` < `runtime` < `production`; `review`, `owner`), declared with the
+- Evidence classes (`static` < `tested` < `runtime` < `production`; `review`, `owner`), declared with the
   kinds of proof worth each; a criterion's `needs` -- weaker evidence leaves it unproven.
 - Proof kinds `test-report-passed` (JUnit XML, TRX), `review-approved` (a review record by someone who
   is not an author; schema `review-record`), `predecessors-closed`.
@@ -38,6 +38,25 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - The board lists closed states by their newest `board_recent` and counts the rest out loud; verb
   `archive` moves finished cards past `archive_after_days` into `docs/work/archive/` unless a
   working card still names them (KIT0089). A cost test holds weighing under a second.
+
+**Added — no side door, the architecture map, the agents' skill (ADR-025 S7, S8b, S9)**
+- `weigh --base --head --each` holds every commit of a range to the floor (CI step in the
+  github-actions adapter 1.5.0): a skipped hook is caught where it is pushed.
+- Verb `reshape`: raising a card's class is anyone's, lowering it the owner's door (KIT0090); a commit
+  that lightens a card without that record is refused.
+- A change is weighed by the areas that stood before it; loosening them owes a card, tightening is free.
+- Areas carry `owner` and `feeds`: weighing names the downstream, transitively, and the lessons whose
+  subject is a touched area.
+- kit-skills 1.3.0: `walk-a-piece-of-work` -- how an agent walks a change: weigh first, leave what the
+  class requires, judge only what is not computed, capture what it meets, leave doors to people.
+- The conformance map gains the standards ADR-025 is aligned with (ITIL 4, DORA, Cynefin, ISO 21502,
+  ISO 31000 / 23894, Stage-Gate, Kanban, ISO/IEC/IEEE 15026, ISO/IEC 27001 A.5.3, IEC 61508 / DO-178C,
+  ISO/IEC 5338, and Anthropic's agent and context-engineering guidance), each with its evidence.
+
+**Fixed**
+- FF-RESIDENCE judges the files the repository carries: what it ignores -- the runtime plane, a
+  dispatched worker's copy of the host -- is not a resident, so a host with an `archive/` directory
+  no longer fails once a worker has run.
 
 ## 0.2.0 — 2026-10-17
 

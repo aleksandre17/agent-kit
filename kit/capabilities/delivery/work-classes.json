@@ -50,7 +50,7 @@
       ]
     },
     {
-      "id": "test",
+      "id": "tested",
       "says": "a test suite ran and its report, kept as evidence, records no failure",
       "ladder": true,
       "yielded_by": [
