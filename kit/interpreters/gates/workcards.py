@@ -350,10 +350,10 @@ class _History:
         return (self.workspace.file_at(sha, rel)[0] or "") if sha and rel else ""
 
     def root(self, rel: str) -> dict:
-        """{accepted: [(position, sha, text)], bootstrap: sha, rejected: [sha], why}, oldest first."""
+        """{accepted: [(position, sha, text)], bootstrap: sha, refused: [sha], why}, oldest first."""
         if rel in self._roots:
             return self._roots[rel]
-        made = self._roots[rel] = {"accepted": [], "bootstrap": "", "rejected": [], "why": None}
+        made = self._roots[rel] = {"accepted": [], "bootstrap": "", "refused": [], "why": None}
         commits, made["why"] = self.workspace.history(rel)
         for sha, _path in commits or []:
             text = self.text(sha, rel)
@@ -365,7 +365,7 @@ class _History:
             if text == signing.root_at(made["accepted"], self.at(self.parent(sha))):
                 continue
             verdict, _principal = self.verdict(sha, rel)
-            (made["accepted"].append((self.at(sha), sha, text)) if verdict == "G" else made["rejected"].append(sha))
+            (made["accepted"].append((self.at(sha), sha, text)) if verdict == "G" else made["refused"].append(sha))
         return made
 
     def verdict(self, sha: str, root_rel: str) -> tuple:
@@ -460,7 +460,7 @@ def _marks_signed(ctx, params):
     accepted = chain["accepted"][-1]
     if seen.text("HEAD", signers) != accepted[2]:
         failures += [f"{signers}: commit {sha[:12]} changed who may sign, and no allowed signer signed it"
-                     for sha in chain["rejected"] if seen.at(sha) > accepted[0]]
+                     for sha in chain["refused"] if seen.at(sha) > accepted[0]]
     if not held["since"]:
         print(f"        {policy_rel}: owner_signing is declared and not committed -- marks are judged from the "
               f"commit that declares it")

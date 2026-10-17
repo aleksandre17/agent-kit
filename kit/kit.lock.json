@@ -71,7 +71,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "401f3edf12539f90187ae3c6c49caaddb134540f711170891e8e8f28ee4496ed",
+      "digest": "887a3cfa482eea7c2d67e977d93a65a9a781573a5f2555456b8a67c0c60aa046",
       "path": "capabilities/delivery/work-classes.json"
     },
     {
@@ -185,7 +185,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "18375aa9a389a0b8e863b406684c23c675c5047c7a1d71c3a08eea83ce872b6b",
+      "digest": "826ebbd8f164640193bc03e7296fb254ff5bcad2d9b8d02581fbd45b88d46bb5",
       "path": "capabilities/evaluation/verification.json"
     },
     {
@@ -947,7 +947,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4f1226a5e0d8cbc7ba04b995d295c26047fcc64c7c5f86fff57db4783a35361a",
+      "digest": "1bdaf0d1389a80186151a6c68ff3788ab79ba74397dd783e95b7d31aaaa2a50f",
       "path": "interpreters/gates/workcards.py"
     },
     {
@@ -1391,7 +1391,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "63f81679416b5324669e7f8975157d3694ec8a66e66fca297d066992c29df03d",
+      "digest": "69743952729c89c60fb814890d87244ec75e337c48820b092811accb5b074d5d",
       "path": "interpreters/verbs/areas.py"
     },
     {
@@ -1517,7 +1517,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ba26ccab0e25555c278ebe55e8c3098f81056c2ba13d6c214f0eb75de768213f",
+      "digest": "58b812ffc4af2bc2fe5c539a8ca3edb8682939962c6cbbfca5ceb4b87a20a5df",
       "path": "interpreters/verbs/prove.py"
     },
     {
@@ -1721,7 +1721,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "3ab0bcdea3f2d479d4b6e61814670be3316cd57326b92fb00905327a4ac85a6d",
+      "digest": "927c951d2111aadf0b21a03aa8838dc8ac379b54aa494c518a3fff96480b489f",
       "path": "schemas/consumption.schema.json"
     },
     {
@@ -2135,7 +2135,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "23a32fc536aa9e4b25ae9bd3f7b7757c7e1079028a70916e659b77145ec9354c",
+      "digest": "e9c70a221f850993b980da00c3a9e5afba5016e157b6c82365f94de1107fcd74",
       "path": "schemas/work-classes.schema.json"
     },
     {
@@ -2178,5 +2178,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T17:31:38+00:00"
+  "taken_at": "2026-10-17T18:00:49+00:00"
 }

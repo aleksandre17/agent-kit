@@ -4,7 +4,7 @@
   "max_areas": {},
   "areas": [
     {
-      "id": "prose",
+      "id": "plain-docs",
       "paths": "(^docs/|^(?!kit/).*\\.md$|^CHANGELOG)",
       "undo": "reversible",
       "because": "prose changes nothing that runs; check reads its structure -- the kit's own prose is served, and stands with the kit",

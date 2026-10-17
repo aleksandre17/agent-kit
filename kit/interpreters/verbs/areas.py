@@ -7,7 +7,7 @@ A host whose areas are empty weighs every change alike and proves it by everythi
 tool already knows the host's modules: its adapter publishes a MODULE MAP (where the modules are
 declared, the field that is a module's path, the vouched command that proves one). This verb reads
 every module map an enabled capability publishes and drafts one area per module -- its path, proved by
-its own tests where that command is vouched -- one for the tool's own declarations (costly: how the
+its own tests where that command is vouched -- one for the tool's own declarations (one rung dearer: how the
 host is built and delivered), and its prose (proved by `check` alone). A module at the repository root
 claims what no other area claims. An area the host wrote is never touched: the draft ADDS, and it
 recomputes only the `paths` of an area it drafted itself and nobody edited since -- one whose
@@ -21,7 +21,7 @@ at `marker_pointer` when one is named), and its proof is the map's `command` tem
 area also drafts the policy command it is proved by (`commands.test-<id>`), at the same door.
 
 The KIT PLANES -- every directory an enabled capability installs, projects or floors into, and the
-directory the kit itself is vendored in -- are drafted as one costly area proved by `check` alone: how the
+directory the kit itself is vendored in -- are drafted as one area a rung dearer, proved by `check` alone: how the
 host is governed is not the root module's reversible code. It is drafted only once the areas declaration
 is committed: the install commit right after `start` carries every plane, and a scale that made it owe a
 card would be the ceremony a fresh host cannot walk yet. A module at the repository root WAITS for them:
@@ -36,6 +36,7 @@ import collection
 import declared
 import hostlock
 import lifecycle as lifecycle_module
+import workclass
 from errors import KitError
 
 SUMMARY = "draft the host's areas and their proof from the modules its build tool declares, at a door"
@@ -54,7 +55,6 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", str(text).lower()).strip("-") or "root"
 
 
-PLANES_ID = "kit-planes"
 
 
 def _excluding(patterns) -> str:
@@ -82,22 +82,31 @@ def planes(capabilities, kit_dir=None) -> list:
     return sorted(found)
 
 
-def drafted(maps: list, vouched: set, plane_dirs=(), plane_files=(), roots=True) -> list:
+def drafted(maps: list, vouched: set, plane_dirs=(), plane_files=(), roots=True, scale=(), drafts=None) -> list:
     """The areas the module maps imply -- pure: `maps` is [(map document, {module id: module})]. The kit
     planes are `plane_dirs` and `plane_files`, the repository's own metadata files (the vcs port names them).
     `roots` False holds back a module at the repository root. Every drafted area carries `drafted_as`, the
-    paths it was drafted with: the mark that it is the draft's and not the host's."""
+    paths it was drafted with: the mark that it is the draft's and not the host's. `scale` is the host's
+    undo scale, cheapest first, as its work-class catalogue declares it: code is drafted at its cheapest rung,
+    the planes and a tool's declarations one rung above -- the words are the catalogue's, never spelled here."""
+    if not scale:
+        raise AreasError("no undo scale to draft against: the host's work-class catalogue declares none")
+    cheap, guarded = scale[0], scale[min(1, len(scale) - 1)]
+    drafts = drafts or {}
+
+    def rung(n) -> str:
+        return scale[min(int(n), len(scale) - 1)]
     out, want_roots, roots = [], roots, []
-    if plane_dirs:
+    planes = drafts.get("planes")
+    if plane_dirs and planes:
         held = [re.escape(d) for d in plane_dirs] + [re.escape(f) + "$" for f in plane_files]
-        out.append({"id": PLANES_ID, "paths": "^(" + "|".join(held) + ")",
-                    "undo": "costly", "because": "the kit's planes: how this host is governed and served",
-                    "proved_by": []})
+        out.append({"id": planes["id"], "paths": "^(" + "|".join(held) + ")", "undo": rung(planes["rung"]),
+                    "because": planes["because"], "proved_by": list(planes.get("proved_by", []))})
     for doc, modules in maps:
         for mid, module in sorted(modules.items()):
             path = str((module or {}).get(doc.get("path_field", "path")) or "").strip("/")
             proof = doc["proof"].replace("{id}", str(mid))
-            area = {"id": f"module-{_slug(mid)}", "undo": "reversible",
+            area = {"id": f"module-{_slug(mid)}", "undo": cheap,
                     "because": f"the {mid} module, as {doc.get('path') or 'its marker'} declares it"}
             if proof in vouched:
                 area["proved_by"] = [proof]
@@ -110,14 +119,13 @@ def drafted(maps: list, vouched: set, plane_dirs=(), plane_files=(), roots=True)
                 out.append(area)
         if doc.get("declarations"):
             area = {"id": f"{_slug(doc['id'])}-declarations", "paths": "(" + "|".join(doc["declarations"]) + ")",
-                    "undo": "costly", "because": f"how {doc['path']} builds and delivers this host"}
+                    "undo": guarded, "because": f"how {doc['path']} builds and delivers this host"}
             if doc.get("declarations_proof") in vouched:
                 area["proved_by"] = [doc["declarations_proof"]]
             out.append(area)
-    # Prose every host has. Its own declarations under `.agents/` are not drafted heavier: the first commit
-    # after `start` carries them all, and a draft that made it owe a card would be the ceremony it removes.
-    out.append({"id": "prose", "paths": r"(^docs/|\.md$)", "undo": "reversible",
-             "because": "prose changes nothing that runs; check reads its structure", "proved_by": []})
+    for shared in drafts.get("shared", []):  # the areas every host has, as the catalogue declares them
+        out.append({"id": shared["id"], "paths": shared["paths"], "undo": rung(shared["rung"]),
+                    "because": shared["because"], "proved_by": list(shared.get("proved_by", []))})
     claimed = [a["paths"] for a in out]
     for area in roots if want_roots else []:  # the repository root claims what no other area claims
         area["paths"] = _excluding(claimed)
@@ -197,9 +205,14 @@ def run(ctx, args) -> int:
     areas_doc = ctx.workspace.read_json(install["target"])
     have = {a["id"] for a in areas_doc.get("areas") or []}
     own = ctx.workspace.vcs_files() if plane_dirs else []
-    draft = drafted(maps, set(vouched), plane_dirs, own, roots=bool(plane_dirs))
+    found = workclass.declarations(ctx)
+    if found is None:
+        print("areas: this host declares no work classes, so no area would weigh anything -- nothing drafted")
+        return 0
+    scale = [row["id"] for row in found[0]["undo"]]
+    draft = drafted(maps, set(vouched), plane_dirs, own, roots=bool(plane_dirs), scale=scale, drafts=found[0].get("drafted_areas"))
     if not plane_dirs:
-        waiting = [a["id"] for a in drafted(maps, set(vouched)) if a["id"] not in {d["id"] for d in draft}]
+        waiting = [a["id"] for a in drafted(maps, set(vouched), scale=scale, drafts=found[0].get("drafted_areas")) if a["id"] not in {d["id"] for d in draft}]
         if waiting:
             print(f"areas: {', '.join(waiting)} (the repository root) waits for the kit planes -- drafted now, it "
                   f"would claim every plane as its own code")

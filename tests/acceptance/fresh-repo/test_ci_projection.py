@@ -196,17 +196,18 @@ class CiProjection(enforcement.Enforcement):
                 _git(host, "commit", "-q", "--no-verify", "-m", "a violation the local hook never saw")
                 for event in ({"pull_request": {"base": {"sha": base}}}, {"before": base}, {"before": ZERO}):
                     with self.subTest(event=event):
-                        check_step, judge_step = self.steps(host, surface, event)
+                        check_step, prove_step, judge_step = self.steps(host, surface, event)
                         self.assertEqual(0, check_step.returncode, check_step.stdout + check_step.stderr)
+                        self.assertEqual(0, prove_step.returncode, prove_step.stdout + prove_step.stderr)
                         self.assertEqual(surface["hands"]["refusal"]["exit"], judge_step.returncode, judge_step.stdout)
                         self.assertIn(HOST_GATE["id"], judge_step.stderr)
 
                 (host / "src" / "a.ts").write_text(f"let y = {HOST_GATE['admits']['text']};\n", encoding="utf-8", newline="\n")
                 _git(host, "commit", "-q", "--no-verify", "-am", "clean")
                 clean = _git(host, "rev-parse", "HEAD~1").stdout.strip()
-                _check, judged = self.steps(host, surface, {"before": clean})
+                _check, _prove, judged = self.steps(host, surface, {"before": clean})
                 self.assertEqual(0, judged.returncode, judged.stdout + judged.stderr)
-                _check, unreadable = self.steps(host, surface, {"before": "f" * 40})
+                _check, _prove, unreadable = self.steps(host, surface, {"before": "f" * 40})
                 self.assertEqual(surface["hands"]["refusal"]["exit"], unreadable.returncode, "an unreadable base was waved through")
 
 

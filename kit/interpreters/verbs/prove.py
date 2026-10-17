@@ -339,7 +339,11 @@ def run(ctx, args) -> int:
         if wanted:
             print(f"prove: {why}")
         else:
-            declared_test = (ctx.take_reading().get("facts") or {}).get("quality.tests.command")
+            facts = ctx.take_reading().get("facts") or {}
+            # Which fact is the host's proof command is a consuming capability's declaration, never a name here.
+            proving = [row["reads"] for doc in declared.sources(ctx, {declared.CONTRACT: "consumption"}).values()
+                       for row in doc.get("readings") or [] if row.get("proves_a_change")]
+            declared_test = next((facts.get(key) for key in proving if facts.get(key)), None)
             if declared_test:
                 # From the first day: what the host's briefing already says proves a change is what proves it
                 # here (`areas` refines it by module).

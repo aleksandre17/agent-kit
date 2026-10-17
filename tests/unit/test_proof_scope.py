@@ -85,9 +85,9 @@ def test_the_root_module_claims_only_what_no_other_area_claims_and_the_planes_st
     dirs = areas_verb.planes([_Cap([{"target": ".agents/project/x.json"}, {"target": "AGENTS.md"}]),
                               _Cap(floor=[{"path": ".github/workflows/"}, {"path": ".githooks/"}])], "kits/agent-kit")
     assert dirs == [".agents/", ".githooks/", ".github/", "kits/"]
-    drafted = areas_verb.drafted([(mapdoc, {"web": {"path": "web"}, "api": {"path": "."}})], {"tool:test-web"}, dirs)
+    drafted = areas_verb.drafted([(mapdoc, {"web": {"path": "web"}, "api": {"path": "."}})], {"tool:test-web"}, dirs, scale=[r["id"] for r in __import__("json").loads((Path(__file__).resolve().parents[2] / "kit" / "capabilities" / "delivery" / "work-classes.json").read_text(encoding="utf-8"))["undo"]], drafts=__import__("json").loads((Path(__file__).resolve().parents[2] / "kit" / "capabilities" / "delivery" / "work-classes.json").read_text(encoding="utf-8"))["drafted_areas"])
     by = {a["id"]: a for a in drafted}
-    assert drafted[0]["id"] == areas_verb.PLANES_ID and by[areas_verb.PLANES_ID]["undo"] == "costly"
+    assert drafted[0]["id"] == "kit-planes" and by["kit-planes"]["undo"] == "costly"
     root = re.compile(by["module-api"]["paths"])
     for path in ("README.md", "docs/x.md", "web/a.ts", ".agents/project/a.json", ".github/workflows/ci.yml",
                  "kits/agent-kit/x", "build.json", "ops/deploy.json", "sub/CLAUDE.md"):
@@ -96,7 +96,7 @@ def test_the_root_module_claims_only_what_no_other_area_claims_and_the_planes_st
     claimed = [a["id"] for a in drafted if re.search(a["paths"], "README.md")]
     assert claimed == ["prose"], "README.md is claimed once"
     assert all(a["drafted_as"] == a["paths"] for a in drafted), "every drafted area says it is the draft's"
-    waiting = areas_verb.drafted([(mapdoc, {"web": {"path": "web"}, "api": {"path": "."}})], set(), (), roots=False)
+    waiting = areas_verb.drafted([(mapdoc, {"web": {"path": "web"}, "api": {"path": "."}})], set(), (), roots=False, scale=[r["id"] for r in __import__("json").loads((Path(__file__).resolve().parents[2] / "kit" / "capabilities" / "delivery" / "work-classes.json").read_text(encoding="utf-8"))["undo"]], drafts=__import__("json").loads((Path(__file__).resolve().parents[2] / "kit" / "capabilities" / "delivery" / "work-classes.json").read_text(encoding="utf-8"))["drafted_areas"])
     assert "module-api" not in {a["id"] for a in waiting}, "a root module waits for the planes"
 
 
@@ -118,7 +118,7 @@ def test_the_kit_planes_hold_the_repositorys_own_files_the_vcs_port_names(tmp_pa
     (tmp_path / "sub" / ".gitattributes").write_text("", encoding="utf-8")
     own = vcs.own_files(tmp_path)
     assert own == [".gitignore", ".gitmodules"], "only the files the tree holds at its top"
-    drafted = areas_verb.drafted([], set(), [".agents/"], own)
+    drafted = areas_verb.drafted([], set(), [".agents/"], own, scale=[r["id"] for r in __import__("json").loads((Path(__file__).resolve().parents[2] / "kit" / "capabilities" / "delivery" / "work-classes.json").read_text(encoding="utf-8"))["undo"]], drafts=__import__("json").loads((Path(__file__).resolve().parents[2] / "kit" / "capabilities" / "delivery" / "work-classes.json").read_text(encoding="utf-8"))["drafted_areas"])
     planes = re.compile(drafted[0]["paths"])
     assert planes.search(".gitmodules") and planes.search(".gitignore") and planes.search(".agents/x.json")
     assert not planes.search("sub/.gitmodules.bak") and not planes.search(".gitmodules.d/x")

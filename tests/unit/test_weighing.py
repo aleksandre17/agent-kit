@@ -384,7 +384,7 @@ def test_a_hosts_areas_are_drafted_from_the_modules_its_build_tool_declares():
     mapdoc = {"id": "a-build-tool-modules", "path": "build.json", "pointer": "modules", "path_field": "path",
               "proof": "tool:test-{id}", "declarations": [r"^build\.json$", "^ops/"], "declarations_proof": "tool:validate"}
     drafted = areas_verb.drafted([(mapdoc, {"web": {"path": "web"}, "api": {"path": "."}})],
-                                 {"tool:test-web", "tool:validate"})
+                                 {"tool:test-web", "tool:validate"}, scale=[r["id"] for r in __import__("json").loads((Path(__file__).resolve().parents[2] / "kit" / "capabilities" / "delivery" / "work-classes.json").read_text(encoding="utf-8"))["undo"]], drafts=__import__("json").loads((Path(__file__).resolve().parents[2] / "kit" / "capabilities" / "delivery" / "work-classes.json").read_text(encoding="utf-8"))["drafted_areas"])
     by = {a["id"]: a for a in drafted}
     assert by["module-web"]["proved_by"] == ["tool:test-web"] and by["module-web"]["paths"] == "^web/"
     assert "proved_by" not in by["module-api"], "a module whose command nobody vouches is proved by everything"

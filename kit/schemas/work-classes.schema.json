@@ -254,6 +254,85 @@
           }
         }
       }
+    },
+    "drafted_areas": {
+      "description": "The areas `areas` drafts for every host beside a build tool's modules: the kit's planes (their paths are the planes the host's capabilities draw) and the shared ones (prose). Data, so the drafter holds no policy (ADR-025 amendment 4).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "planes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "rung",
+            "because"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*$"
+            },
+            "paths": {
+              "type": "string",
+              "minLength": 1
+            },
+            "rung": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "the area's undo cost, as a rung of `undo`, cheapest 0"
+            },
+            "proved_by": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "because": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "shared": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "paths",
+              "rung",
+              "because"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]*$"
+              },
+              "paths": {
+                "type": "string",
+                "minLength": 1
+              },
+              "rung": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "the area's undo cost, as a rung of `undo`, cheapest 0"
+              },
+              "proved_by": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "because": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

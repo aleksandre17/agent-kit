@@ -241,5 +241,22 @@
         "SRE: blameless postmortem"
       ]
     }
-  ]
+  ],
+  "drafted_areas": {
+    "planes": {
+      "id": "kit-planes",
+      "rung": 1,
+      "proved_by": [],
+      "because": "the kit's planes: how this host is governed and served"
+    },
+    "shared": [
+      {
+        "id": "prose",
+        "paths": "(^docs/|\\.md$)",
+        "rung": 0,
+        "proved_by": [],
+        "because": "prose changes nothing that runs; check reads its structure"
+      }
+    ]
+  }
 }
