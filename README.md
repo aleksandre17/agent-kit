@@ -46,6 +46,8 @@ python .agents/kit/interpreters/cli.py render --root .     # rebuild every gener
 python kits/agent-kit/kit/interpreters/cli.py upgrade --root . --plan   # take a newer kit
 ```
 
+The whole pipeline, act by act, and the blueprint of every place the kit draws: [docs/guide/setup.md](docs/guide/setup.md).
+
 ### The first day: weighed by place, proved by what proves it
 
 `start` drafts the host's **areas** -- where a change lands, what undoing it costs, and what proves it -- from

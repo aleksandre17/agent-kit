@@ -8,6 +8,7 @@ Read in this order:
 
 | Page | What it explains |
 |---|---|
+| [setup.md](setup.md) | the setup pipeline, act by act; the daily loop; alone and with stack-kit; the host blueprint |
 | [overview.md](overview.md) | capabilities, the take plane, vendored and referenced installs, the CLI |
 | [hooks.md](hooks.md) | what runs on every agent action: writes, shell commands, sub-agents, sessions, commits, pushes |
 | [norms-and-laws.md](norms-and-laws.md) | the normative tree, a host's laws, edit gates, the whole-tree audit |
