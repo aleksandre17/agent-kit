@@ -20,6 +20,10 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   `stack.java`; the standard starter takes it.
 - A host declares its own proof commands in its delivery policy (`commands`, vouched as `host:<key>`),
   and an area's `proved_by` runs whether or not a MUST names it; the kit proves itself with them.
+- `check --brief`: what fails and the summary only -- the listing an agent reads. The agents' skill
+  (kit-skills 1.3.4) opens a card with a verb and its shape, says what to report when no test
+  command is declared, never weighs a guessed path, and leaves an ADR `proposed` for the owner
+  (found by measuring an agent across five classes of task: all five walked right).
 - `check` says what judging cost, every run: how many gates, how long, and the three slowest.
 - Nothing is proved twice on the same bytes: a command green on a clean tree is remembered by that
   tree's id and not run again while the tree is the same; any change, a dirty tree or `--full` runs it.

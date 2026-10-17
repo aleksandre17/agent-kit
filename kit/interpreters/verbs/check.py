@@ -53,6 +53,9 @@ def _through(ctx, surface_id: "str | None") -> "dict | None":
     return surfaces[surface_id]
 
 
+ARGUMENTS = [("--brief", {"action": "store_true",
+                          "help": "print what fails and the summary only -- the listing an agent reads (Cardinal IX)"})]
+
 def run(ctx, args) -> int:
     """Every gate runs and every failure is printed, whatever its stance. The stance decides one
     thing only -- whether that failure fails this verb -- and it is printed beside the verdict with
@@ -89,11 +92,12 @@ def run(ctx, args) -> int:
                 crashed = True
                 failures = [f"the gate kind {kind!r} crashed ({type(exc).__name__}: {exc}) -- an "
                             f"unjudged gate is not a passed one"]
-            print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})  {held.label()}")
-            for failure in failures:
-                print(f"        {failure}")
-            if kind in reports and not crashed:
-                print(f"        {reports[kind](ctx, gate.get('params', {}))}")
+            if failures or not getattr(args, "brief", False):
+                print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})  {held.label()}")
+                for failure in failures:
+                    print(f"        {failure}")
+                if kind in reports and not crashed:
+                    print(f"        {reports[kind](ctx, gate.get('params', {}))}")
             if held.fails:
                 failed += 1 if failures else 0
             else:

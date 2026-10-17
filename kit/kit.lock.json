@@ -1415,7 +1415,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "98b10279d64946d97f1ffc9e127fd86a432263c2d30e17477967e75c7e928b86",
+      "digest": "fca192facd322d144c851b772c705585cb3b8e48075f5b90440c9fd6a617d7e2",
       "path": "interpreters/verbs/check.py"
     },
     {
@@ -2178,5 +2178,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T15:00:43+00:00"
+  "taken_at": "2026-10-17T15:04:42+00:00"
 }
