@@ -24,6 +24,11 @@
         }
       }
     },
+    "prune": {
+      "description": "Directory names a walk of the host's tree passes over where no repository answers what it carries (build outputs, installed dependencies).",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[^/]+$" }
+    },
     "emits": { "type": "object" }
   }
 }

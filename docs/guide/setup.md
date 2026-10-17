@@ -55,8 +55,25 @@ flowchart LR
   P --> V[move --to verified: computed]
 ```
 
-- `weigh --path <paths>` -- the class a change computes, what it owes, its doors, who it feeds.
-- `capture --card <id> --title "<what>" --by <you>` -- opens a card; `move`, `reshape` walk and shape it.
+- `weigh --path <a>,<b>` -- the class a change computes, what it owes, its doors, who it feeds; the paths
+  are comma-separated. `weigh --base <rev> --head <rev>` weighs a range; `--each` holds every commit of it
+  to the floor its own hook would have, and needs `--head`.
+- `capture --card <id> --title "<what>" --by <you>` -- opens a card in `intake`. Add to its JSON only what
+  the class requires -- for `normal` the first two fields, for `major` all four:
+
+  ```json
+  "class": "major",
+  "criteria": [{"id": "green", "statement": "the suite passes", "needs": "tested",
+                "proof": {"kind": "test-report-passed", "ref": "<the JUnit or TRX report>"}},
+               {"id": "reviewed", "statement": "a peer approved it", "needs": "review",
+                "proof": {"kind": "review-approved", "ref": "docs/work/evidence/<id>/review.json"}}],
+  "origin": {"kind": "artifact-present", "ref": "docs/decisions/ADR-<n>-<slug>.md"},
+  "appetite": {"amount": 2, "unit": "day"}
+  ```
+
+  Then walk it `intake -> shaped -> in-flight`, two `move` steps: `move --card <id> --to shaped --by <you>`,
+  then `move --card <id> --to in-flight --by <you>` (a `major` card is bet by the owner between them:
+  `move --to bet --approve`). `reshape` changes its shape later.
 - The commit hooks: `pre-commit` judges every edit against the host's edit gates; `commit-msg` holds the
   class floor (a lighter declaration, a missing card, a card shaped lighter than the change are refused).
 - The push hook runs `check`, then `prove`: the commands that prove the areas the push touches, never

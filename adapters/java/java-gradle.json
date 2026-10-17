@@ -1,6 +1,7 @@
 {
   "id": "java-gradle",
   "summary": "A Gradle project: a Groovy or Kotlin build script anywhere in the tree.",
+  "prune": ["node_modules", "target", "build"],
   "evidence": [
     {
       "kind": "glob_any",

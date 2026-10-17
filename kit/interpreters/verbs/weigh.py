@@ -97,7 +97,10 @@ def _each(ctx, args, classes_doc: dict, areas_doc: dict) -> int:
         try:
             if left is not None:
                 weighing.checked(classes_doc, left)
-            _sig, verdict = weighing.weigh(paths, classes_doc, stood or left, weighing.loosened(classes_doc, stood, left),
+            commands = (workclass.commands_at(ctx, lambda rel: vcs.file_at(root, f"{sha}^", rel)[0]),
+                        workclass.commands_at(ctx, lambda rel: vcs.file_at(root, sha, rel)[0]))
+            _sig, verdict = weighing.weigh(paths, classes_doc, stood or left,
+                                           weighing.loosened(classes_doc, stood, left, commands),
                                            weighing.loosened_areas(classes_doc, stood, left))
         except weighing.WeighError as error:
             print(f"weigh: REFUSED [{WeighRefused.code}] {sha[:12]} -- the areas it stood on or left: {error}")

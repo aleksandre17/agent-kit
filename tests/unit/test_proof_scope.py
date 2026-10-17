@@ -106,6 +106,53 @@ def test_a_marker_map_finds_its_modules_and_drafts_the_command_that_proves_each(
     assert modules == {"web": {"path": "web"}} and commands == {"test-web": "npm --prefix web test"}
 
 
+# -- the repository's own files ------------------------------------------------------------------
+def test_the_kit_planes_hold_the_repositorys_own_files_the_vcs_port_names(tmp_path):
+    import vcs
+    (tmp_path / ".gitmodules").write_text("", encoding="utf-8")
+    (tmp_path / ".gitignore").write_text("", encoding="utf-8")
+    (tmp_path / "sub").mkdir()
+    (tmp_path / "sub" / ".gitattributes").write_text("", encoding="utf-8")
+    own = vcs.own_files(tmp_path)
+    assert own == [".gitignore", ".gitmodules"], "only the files the tree holds at its top"
+    drafted = areas_verb.drafted([], set(), [".agents/"], own)
+    planes = re.compile(drafted[0]["paths"])
+    assert planes.search(".gitmodules") and planes.search(".gitignore") and planes.search(".agents/x.json")
+    assert not planes.search("sub/.gitmodules.bak") and not planes.search(".gitmodules.d/x")
+
+
+# -- L5 ------------------------------------------------------------------------------------------
+def test_with_no_repository_a_glob_passes_over_the_kit_planes_vendored_kits_and_what_an_adapter_prunes(tmp_path):
+    from probe import Probe
+    from workspace import Workspace
+
+    class Unversioned(Workspace):
+        def carried(self):
+            return None
+
+    for rel in ("package.json", "web/package.json", "web/node_modules/x/package.json", ".agents/kit/package.json",
+                "kits/other/package.json", "nested/package.json", "java/target/package.json"):
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / rel).write_text("{}", encoding="utf-8")
+    (tmp_path / "kits" / "other" / "MANIFEST.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "nested" / ".git").mkdir()
+    detector = json.loads((REPO / "adapters" / "node" / "node-workspace.json").read_text(encoding="utf-8"))
+    assert "node_modules" in detector["prune"], "the node adapter names what a walk passes over"
+    found = {}
+    real = Probe._evaluate
+
+    def caught(self, d):
+        matched, captures = real(self, d)
+        found[d["id"]] = captures
+        return matched, captures
+    Probe._evaluate = caught
+    try:
+        Probe(Unversioned(tmp_path), planes=lambda: ([".agents/kit"], ["MANIFEST.json"])).run([detector])
+    finally:
+        Probe._evaluate = real
+    assert found[detector["id"]][0] == ["package.json", "package.json"], found
+
+
 # -- M6 ------------------------------------------------------------------------------------------
 def test_a_stance_a_new_bundle_version_orphaned_is_reported_and_readdressed():
     cardinals = json.loads((REPO / "bundles" / "cardinals" / "payload" / "cardinals.json").read_text(encoding="utf-8"))

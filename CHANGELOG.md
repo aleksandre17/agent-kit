@@ -22,6 +22,17 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - FF-NORMS reports a stance a new bundle version orphaned (`NT-READDRESS`); `upgrade --mode addresses`
   re-addresses it at the owner's door.
 - The kit's own asserted prose (setup blueprint, upstream layout, verb table) is proved by `host:unit`.
+- The commit floor (`message`, `weigh --each`, an emergency's debt) weighs the proof commands too: a commit
+  that rewrites or removes a host's command is loosening, as at `prove` (`workclass.commands_at`).
+- `prove` reads the MUSTs, and the enforcers they name, as the published base held them: a push cannot drop
+  the enforcer that would prove it; a norms file absent there is read as pushed, and said so.
+- `areas`: the kit planes hold the repository's own metadata files the vcs port names (`.gitmodules`,
+  `.gitattributes`, `.gitignore`).
+- With no repository to ask, a `glob_any` walk passes over the kit's own planes, a vendored kit, a nested
+  repository and the directories a detector names in its new `prune` (java 1.1.1, node 1.1.1:
+  `node_modules`, `target`, `build`); a glob's `[...]` class is read as one character.
+- `docs/guide/setup.md` §2: a card's walk `intake -> shaped -> in-flight` with its JSON; `weigh --path` is
+  comma-separated; `--each` needs `--head`.
 
 **Added — proof is weighed as the work is (ADR-025 amendment 4)**
 - An area declares what proves it (`proved_by`, and `default_proved_by` for paths no area claims).

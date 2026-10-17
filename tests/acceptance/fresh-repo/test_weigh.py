@@ -582,6 +582,35 @@ class WorkClassFloor(commit_gate.CommitGate):
         self.assertNotEqual(0, loosened.returncode, loosened.stdout + loosened.stderr)
         self.assertIn("walks what migrations asked", loosened.stderr)
 
+    def test_64_rewriting_a_proof_command_is_loosening_at_commit_and_in_ci(self):
+        """Found by review: only `prove` read the host's commands, so a commit could rewrite one as standard."""
+        surface = self.activating[0]
+        host = self.repository()
+        self.assertEqual(0, self.activate(host, surface, "--approve", "fixture-owner").returncode)
+        policy = host / install_target("delivery", reads_as="policy")
+        body = json.loads(policy.read_text(encoding="utf-8"))
+        body["commands"] = {"lib": "python -c pass"}
+        policy.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+        areas = {"schema_version": 1, "default_undo": "reversible", "max_areas": {},
+                 "areas": [{"id": "lib", "paths": "^lib/", "undo": "reversible", "because": "a fixture",
+                            "proved_by": ["host:lib"]}]}
+        (host / AREAS).write_text(json.dumps(areas, indent=2) + "\n", encoding="utf-8", newline="\n")
+        commit_gate._git(host, "add", "-A")
+        self.assertEqual(0, commit_gate._git(host, "commit", "--no-verify", "-m", "chore: weigh the work",
+                                             check=False).returncode)  # an area narrower than the default: its own walk
+        base = commit_gate._git(host, "rev-parse", "HEAD").stdout.strip()
+        body["commands"]["lib"] = "exit 0"
+        policy.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+        commit_gate._git(host, "add", "-A")
+        refused = commit_gate._git(host, "commit", "-m", "chore: a quicker proof", check=False)
+        self.assertNotEqual(0, refused.returncode, refused.stdout + refused.stderr)
+        self.assertIn("command host:lib rewritten", refused.stderr)
+        quiet = commit_gate._git(host, "commit", "--no-verify", "-m", "chore: a quicker proof", check=False)
+        self.assertEqual(0, quiet.returncode, quiet.stdout + quiet.stderr)
+        caught = self.run_kit(self.kit, host, "weigh", "--base", base, "--head", "HEAD", "--each")
+        self.assertEqual(1, caught.returncode, caught.stdout + caught.stderr)
+        self.assertIn("command host:lib rewritten", caught.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

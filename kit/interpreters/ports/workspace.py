@@ -187,6 +187,16 @@ class Workspace:
         import vcs
         return vcs.shallow(self._root)
 
+    def vcs_files(self) -> list:
+        """The repository's own metadata files this tree holds -- see `vcs.own_files`."""
+        import vcs
+        return vcs.own_files(self._root)
+
+    def outside_tree(self, rel: str) -> bool:
+        """Whether a walk stops at directory `rel` -- see `vcs.outside_tree`."""
+        import vcs
+        return vcs.outside_tree(self._root / rel)
+
     def file_at(self, sha: str, rel: str) -> tuple:
         """(the text of `rel` as a commit holds it, None) or (None, why) where it holds none."""
         import vcs

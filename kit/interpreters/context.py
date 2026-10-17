@@ -27,7 +27,7 @@ class Context:
         self.manifest = manifest_port.composed(kit_root, host_root)
         self.workspace = Workspace(host_root)
         self.clock = clock or Clock()
-        self.probe = Probe(self.workspace, ours=self._served_paths)
+        self.probe = Probe(self.workspace, ours=self._served_paths, planes=self._kit_planes)
         #: The records THIS process opened and has not yet closed. A run cannot judge its own
         #: liveness: a record still open because the run holding it is the one asking is not a
         #: run that died, and a sensor unable to tell the two apart would report every healthy
@@ -49,6 +49,11 @@ class Context:
         """Compose the manifest again, after this run changed WHERE the host's takes are read (a
         referenced host's lock, ADR-024 decision 18): the run keeps its hold, its clock and its record."""
         self.manifest = manifest_port.composed(self.manifest.root, self.workspace.root)
+
+    def _kit_planes(self) -> tuple:
+        """(the kit's own plane roots, the file a vendored kit is known by) -- what a walk of the host's
+        own tree passes over."""
+        return [plane["root"] for plane in self.manifest.planes], [manifest_port.MANIFEST]
 
     def _served_paths(self) -> set:
         """Every path the kit's own record says it served -- the record, read from every

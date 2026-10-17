@@ -76,8 +76,10 @@ def _floor(ctx, message: str) -> list:
             weighing.checked(classes_doc, left)
         except weighing.WeighError as refused:
             return [f"the areas this commit records cannot be weighed by: {refused}"]
+    commands = (workclass.commands_at(ctx, lambda rel: ctx.workspace.accepted_text(rel)[0]),
+                workclass.commands_at(ctx, lambda rel: index(rel)[0]))
     _sig, verdict = weighing.weigh(staged, classes_doc, stood or left or areas_doc,
-                                   weighing.loosened(classes_doc, stood, left),
+                                   weighing.loosened(classes_doc, stood, left, commands),
                                    weighing.loosened_areas(classes_doc, stood, left))
     doors, closed = workclass.lifecycle_flags(ctx)
     before, after = workclass.reshaped_cards(ctx, staged, index)

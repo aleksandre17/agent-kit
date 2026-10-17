@@ -1,6 +1,7 @@
 {
   "id": "node-workspace",
   "summary": "A Node package: a package.json anywhere the repository carries, with the root's workspaces when it declares them.",
+  "prune": ["node_modules", "target", "build"],
   "evidence": [
     {
       "kind": "glob_any",

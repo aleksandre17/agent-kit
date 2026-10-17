@@ -641,7 +641,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d40f3368545652a6ea45291477db189f8e0ec7db0b04afaad1f785165c4d526e",
+      "digest": "513bdb9b83f0c2ee141c8411d3eff0de9f853888200f27561465ef56ee8d81b7",
       "path": "interpreters/context.py"
     },
     {
@@ -665,7 +665,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "514ec29e1dce1761171233fb90d98d84b31de988706777bc545042d3f9645915",
+      "digest": "be74cc308ebd9a655858694ce8188a29f2820517498cfe81d0dc24781670931d",
       "path": "interpreters/declared.py"
     },
     {
@@ -719,7 +719,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "804a07a233008b1374f2c32755255b50848ab632de13d351db050d7142db6365",
+      "digest": "0f1f82d6ceff1da661903043e9b6a3e0886eb58ea146ccd2b947b1bbb9d13a9e",
       "path": "interpreters/evidence/paths.py"
     },
     {
@@ -851,7 +851,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "95514676fc4b9a9aae86745808d9e0d14e3233d3a8286d98013b6ffa8dfc608c",
+      "digest": "d2ecbf2cb0c151681af67a125bd773b7e558eee7ab4161bb83027df699687a73",
       "path": "interpreters/gates/norms.py"
     },
     {
@@ -947,7 +947,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ace465fdde2e0757edd34df02313bdac2b5e69133f6f9686f5abaefb8df705b4",
+      "digest": "9272198b9c837de36454f17297dfdb5e1fc12bde758483e98094bfec4147a45f",
       "path": "interpreters/gates/workcards.py"
     },
     {
@@ -1091,13 +1091,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "746d36d9c8bbfbef6053b412a4d19cffcd47dd739910762bb8c47af61f576a4c",
+      "digest": "082551cc01ff15422ba0fcaf67841ec186f8fc8029ca490f232b08979d27d103",
       "path": "interpreters/ports/manifest.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "aa5a64229ba69de01f637af47fbdbd155796637ed0047f990b35e91f43db3cdb",
+      "digest": "99a0a16c76084c752a1dcd723edd29d742ff9b1a8be93fe9317b1f0e01b9023c",
       "path": "interpreters/ports/probe.py"
     },
     {
@@ -1109,13 +1109,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "47fb4770b53c5fc8cd053ec0a3d0d44b20087f75be12023a0047125dc77f113f",
+      "digest": "a8230789514abd23b93cfbe9de77f3f001ad541217b391452bcd475f4336d70e",
       "path": "interpreters/ports/vcs.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "78efff985c994da7b0c164a97f67dc5ecddb6e067a51311c73e215d22e5a5809",
+      "digest": "971a5ba3a9f5eca0eb19943f33cda47eff7ffabd7da47481225ee21b18bb5a7b",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1391,7 +1391,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ac12fd2e0d1507be31d0d5aaeec5d60c132a3a79cd7abba03809e0cf041fa30c",
+      "digest": "9b4143fe5368495857ecbe7cbef60d8b376aca40489c9db82e5c8b68d1c6ec6d",
       "path": "interpreters/verbs/areas.py"
     },
     {
@@ -1499,7 +1499,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "e51472b293d00f17707f33f00da5e576f108059ed6aa6eaa500baa4c86007607",
+      "digest": "b600775f03191151f5b43c3274a371782d9105c6d55f6632520db716b600ad39",
       "path": "interpreters/verbs/message.py"
     },
     {
@@ -1517,7 +1517,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "e157a47298957b9a3d269c93b39da68d47cee73a7de6353ff21ae74d2df27b80",
+      "digest": "6962364328833e5cbf06865c96c02a1bf53c1027419454708ccfb3c70a8f7bba",
       "path": "interpreters/verbs/prove.py"
     },
     {
@@ -1607,7 +1607,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d08efb43e7c4a23bd53e1d9b76c89af810f3a971a5b4e4dd9ac58bbaaa803f33",
+      "digest": "a825546c7eff3f1b2e5bf9e4992990f47ca564dc651b3c8aafd2f70ed875ed39",
       "path": "interpreters/verbs/weigh.py"
     },
     {
@@ -1625,7 +1625,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "6b8c8852aedf3432f1d2a2bbc55f04257d744971cb066b1bb847aaffb27e99f0",
+      "digest": "c8619128949facb488e05098d07ff451d5bf4500ad8215f1ee9caaa1decc2529",
       "path": "interpreters/workclass.py"
     },
     {
@@ -1763,7 +1763,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "e5c288cb7cfcb08c7145e0f5090ebca3c90d259759c0c1a63403dbc5bef23843",
+      "digest": "c89e788177712eb64f32544e5ce5c6accc1a6246b4e468268d0c72894bdaa4a6",
       "path": "schemas/detector.schema.json"
     },
     {
@@ -2178,5 +2178,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T16:21:22+00:00"
+  "taken_at": "2026-10-17T16:56:48+00:00"
 }

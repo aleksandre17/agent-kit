@@ -14,7 +14,7 @@ to the web app runs the web app's tests, not every suite the repository has. A c
 owe a decision, one touching an area that declares no proof, a host that weighs nothing, or `--full`, is
 proved by every command a MUST names. Which it was, and why, is printed.
 
-A push cannot rewrite its own proof: the areas and the commands that prove it are read as they stood
+A push cannot rewrite its own proof: its areas, commands and MUSTs are read as they stood
 on the PUBLISHED side -- the merge-base of what is pushed with what the remote holds -- and the pushed
 side only adds a command the published side did not have. A push that narrows a `proved_by`, the
 default's, or rewrites a command is told so, and is proved as the published side says. What is pushed
@@ -231,8 +231,13 @@ def run(ctx, args) -> int:
         if loosening:
             print(f"prove: this push loosens its own proof ({'; '.join(loosening)}) -- it is proved as the published "
                   f"side declares it; the loosening is a change of its own, weighed at commit")
+    musts = norms_gate.norms_of(ctx)
+    if base is not None:  # the MUSTs as published: a push does not drop the enforcer that proves it
+        musts, unheld = norms_gate.norms_held(ctx, lambda rel: vcs.file_at(ctx.workspace.root, base, rel)[0])
+        for rel in unheld:
+            print(f"prove: {rel} is not at the published base -- the norms it holds are read as pushed")
     wanted, missing = {}, {}
-    for norm in norms_gate.norms_of(ctx):
+    for norm in musts:
         if str(norm.get("modality", "")).upper() != "MUST":
             continue
         for enforcer in norm.get("enforced_by") or []:

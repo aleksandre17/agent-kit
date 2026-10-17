@@ -41,6 +41,9 @@ class DeclarationError(KitError):
 #: capability, that keeps that contract -- found by the contract, exactly as the stance vocabulary
 #: is found, never by a publisher's name.
 CONTRACT = "validates"
+#: The documents in which a taken adapter VOUCHES for the enforcers it finds in the host -- found by
+#: their contract, never by a product's name: read by the normative tree, by `prove` and by the floor.
+ENFORCERS = {CONTRACT: "enforcers"}
 
 
 def named(capabilities, spec) -> list:

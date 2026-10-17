@@ -73,6 +73,22 @@ def areas_target(ctx):
     return None if item is None else item["target"]
 
 
+def commands_at(ctx, text_of) -> dict:
+    """`<prefix>:<key>` -> the command, for every key a vouching document (the `enforcers` contract)
+    declares as `text_of(rel)` -- the text a path holds on one side of a change, or None -- reads it: the
+    proof commands a change is weighed by on that side (`weighing.loosened`). A side that holds no such
+    document declares no command."""
+    found = {}
+    for document in declared.sources(ctx, declared.ENFORCERS).values():
+        value = _parsed_any(text_of(document["path"]))
+        for step in document["pointer"].split("."):
+            value = value.get(step) if isinstance(value, dict) else None
+        if isinstance(value, dict):
+            found.update({f"{document['prefix']}:{key}": given for key, given in value.items()
+                          if isinstance(given, str) and given.strip()})
+    return found
+
+
 def accepted_areas(ctx, fallback: dict) -> dict:
     """The areas as the last commit holds them: a change is weighed by the scale that stood before it,
     never by the scale it rewrites. Before the first commit, or where it is new, the working one."""

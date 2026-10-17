@@ -79,11 +79,13 @@ def planes(capabilities, kit_dir=None) -> list:
     return sorted(found)
 
 
-def drafted(maps: list, vouched: set, plane_dirs=()) -> list:
-    """The areas the module maps imply -- pure: `maps` is [(map document, {module id: module})]."""
+def drafted(maps: list, vouched: set, plane_dirs=(), plane_files=()) -> list:
+    """The areas the module maps imply -- pure: `maps` is [(map document, {module id: module})]. The kit
+    planes are `plane_dirs` and `plane_files`, the repository's own metadata files (the vcs port names them)."""
     out, roots = [], []
     if plane_dirs:
-        out.append({"id": PLANES_ID, "paths": "^(" + "|".join(re.escape(d) for d in plane_dirs) + ")",
+        held = [re.escape(d) for d in plane_dirs] + [re.escape(f) + "$" for f in plane_files]
+        out.append({"id": PLANES_ID, "paths": "^(" + "|".join(held) + ")",
                     "undo": "costly", "because": "the kit's planes: how this host is governed and served",
                     "proved_by": []})
     for doc, modules in maps:
@@ -189,7 +191,8 @@ def run(ctx, args) -> int:
             maps.append((document, value))
     areas_doc = ctx.workspace.read_json(install["target"])
     have = {a["id"] for a in areas_doc.get("areas") or []}
-    adding = [a for a in drafted(maps, set(vouched), plane_dirs) if a["id"] not in have]
+    own = ctx.workspace.vcs_files() if plane_dirs else []
+    adding = [a for a in drafted(maps, set(vouched), plane_dirs, own) if a["id"] not in have]
     wanted = {p.split(":", 1)[1] for a in adding for p in a.get("proved_by", [])}
     new_commands = {k: v for k, v in new_commands.items() if k in wanted}
     if not maps:

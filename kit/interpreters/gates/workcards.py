@@ -202,7 +202,9 @@ def _owed_by(ctx, classes_doc: dict, sha: str) -> dict:
     areas = stood or left or {"default_undo": classes_doc["undo"][0]["id"], "max_areas": {}, "areas": []}
     paths = ctx.workspace.commit_paths(sha)[0] or []
     try:
-        return weighing.weigh(paths, classes_doc, areas, weighing.loosened(classes_doc, stood, left),
+        commands = (workclass.commands_at(ctx, lambda rel: ctx.workspace.file_at(f"{sha}^", rel)[0]),
+                    workclass.commands_at(ctx, lambda rel: ctx.workspace.file_at(sha, rel)[0]))
+        return weighing.weigh(paths, classes_doc, areas, weighing.loosened(classes_doc, stood, left, commands),
                               weighing.loosened_areas(classes_doc, stood, left))[1]
     except weighing.WeighError:  # a scale nobody can read weighs as the heaviest class, never the lightest
         row = [r for r in classes_doc["classes"] if not r.get("expedite")][-1]

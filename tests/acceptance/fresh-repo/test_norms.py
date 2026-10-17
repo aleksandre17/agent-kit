@@ -433,6 +433,42 @@ class Norms(Fixtures, unittest.TestCase):
         self.assertEqual(0, pushed.returncode, said(pushed))
         self.assertIn("is not HEAD", pushed.stdout)
         self.assertEqual(1, count("all"), "a pushed ref that is not HEAD is proved by everything")
+    def test_511_a_push_cannot_drop_the_enforcer_of_a_must_it_is_proved_by(self):
+        """Found by review: the MUSTs were read from the tree being pushed, so a push could unname the
+        command that proves it."""
+        import subprocess
+        from harness import install_target
+
+        ran = self._temp("ran-")
+        host = self.started()
+        policy = host / install_target("delivery", reads_as="policy")
+        body = json.loads(policy.read_text(encoding="utf-8"))
+        body["commands"] = {"all": self._counting(ran, "all")}
+        policy.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+        must = _norm("our-must", DERIVES[1], derives_from=RULE["derives_from"], modality="MUST",
+                     subject="held-by-the-whole-suite", enforced_by=["host:all"])
+        self.write_norms(host, [must])
+
+        def git(*argv):
+            done = subprocess.run(["git", "-C", str(host), "-c", "user.email=s@invalid", "-c", "user.name=suite",
+                                   "-c", "core.hooksPath=/dev/null", *argv], capture_output=True, text=True)
+            self.assertEqual(0, done.returncode, done.stdout + done.stderr)
+
+        remote = self._temp("remote-")
+        subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+        git("add", "-A")
+        git("commit", "-qm", "the host")
+        git("remote", "add", "origin", str(remote))
+        git("push", "-q", "-u", "origin", "HEAD")
+        self.write_norms(host, [{k: v for k, v in must.items() if k != "enforced_by"} | {"modality": "SHOULD"}])
+        (host / "lib").mkdir()
+        (host / "lib" / "a.py").write_text("A = 1\n", encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-qm", "a change that unnames its own enforcer")
+        proved = self.run_kit(KIT, host, "prove")
+        self.assertEqual(0, proved.returncode, said(proved))
+        self.assertTrue((ran / "all").exists(), "the MUST as published names host:all, and it ran: " + said(proved))
+
 
 if __name__ == "__main__":
     unittest.main()

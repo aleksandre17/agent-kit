@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "java",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "summary": "An ADAPTER for the JVM toolchains: the one published declaration that carries their names. It brings two detectors -- a Maven project by its pom.xml, a Gradle project by its build script -- so the reading names the toolchains a host actually builds with. The kit core ships no ecosystem's reading (ADR-023 amendment 5); a new toolchain is a new adapter, never a kit edit.",
   "requires": [],
   "provides": [],

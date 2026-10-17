@@ -232,6 +232,24 @@ def shallow(root) -> bool:
     return (said or "").strip() == "true"
 
 
+#: The files a repository keeps about itself in its own tree: how it is assembled, attributed and ignored.
+OWN_FILES = (".gitattributes", ".gitignore", ".gitmodules")
+#: Where a repository keeps its own store -- the marker of a repository of its own.
+MARKER = ".git"
+
+
+def own_files(root) -> list:
+    """The repository's own metadata files the tree at `root` holds at its top, sorted."""
+    return [name for name in OWN_FILES if (Path(root) / name).is_file()]
+
+
+def outside_tree(directory) -> bool:
+    """Whether a walk of a host's tree stops at `directory`: the repository's own store, or a repository
+    of its own nested within -- what the host's tree does not carry."""
+    directory = Path(directory)
+    return directory.name == MARKER or (directory / MARKER).exists()
+
+
 def file_at(root, sha: str, rel: str) -> tuple:
     """`(text, None)` the file as the commit holds it, or `(None, why)` where it holds none."""
     return run(root, ["show", f"{sha}:{rel}"])

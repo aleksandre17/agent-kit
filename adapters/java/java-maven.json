@@ -1,6 +1,7 @@
 {
   "id": "java-maven",
   "summary": "A Maven project: one or more pom.xml anywhere in the tree.",
+  "prune": ["node_modules", "target", "build"],
   "evidence": [
     {
       "kind": "glob_any",
