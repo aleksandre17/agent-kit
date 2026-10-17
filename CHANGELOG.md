@@ -76,6 +76,8 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - secrets 1.4.0: `no-committed-config-secret` -- a key, secret, password or token with a real value
   in a settings JSON file (found by an audit: a committed JWT key signed a live app's tokens while
   every gate was green). Calibrated to pass public keys, header names, empty values and placeholders.
+  1.4.1: narrowed after its first real host -- settings files only (a configuration CATALOGUE's
+  lowercase `key` field is metadata, never a key), the name matched case-sensitively.
 
 ## 0.2.0 — 2026-10-17
 
