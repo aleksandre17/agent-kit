@@ -12,6 +12,9 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   `prove` weighs what the push carries and runs only what the touched areas declare -- `check` alone for
   prose. A change owing a decision, an area that declares no proof, a host that weighs nothing, or
   `--full` runs every command a MUST names; it says which, and why.
+- A host declares its own proof commands in its delivery policy (`commands`, vouched as `host:<key>`),
+  and an area's `proved_by` runs whether or not a MUST names it; the kit proves itself with them.
+- `check` says what judging cost, every run: how many gates, how long, and the three slowest.
 - Nothing is proved twice on the same bytes: a command green on a clean tree is remembered by that
   tree's id and not run again while the tree is the same; any change, a dirty tree or `--full` runs it.
 - Cardinal IX (cardinals 1.1.0) -- every cost follows the change it serves: ceremony, proof, review,

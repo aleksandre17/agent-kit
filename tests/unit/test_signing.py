@@ -40,7 +40,7 @@ def test_the_setup_is_refused_without_a_person_at_a_terminal():
     pipe = SimpleNamespace(isatty=lambda: False)
     assert signer.interactive(tty, tty) and not signer.interactive(pipe, tty) and not signer.interactive(tty, pipe)
     with pytest.raises(signer.SignerError, match="owner's own act, in their own terminal"):
-        signer.run(None, SimpleNamespace(setup=True))  # an agent's shell: nothing is touched, not even the host
+        signer._setup(None, SimpleNamespace(setup=True))  # an agent's shell: nothing is touched, not even the host
 
 
 def test_a_key_that_opens_without_a_passphrase_is_refused_and_one_that_does_not_is_kept():

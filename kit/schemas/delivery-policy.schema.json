@@ -15,6 +15,11 @@
       "description": "state id -> how long a card may sit in it before the surface says so.",
       "type": "object"
     },
+    "commands": {
+      "description": "The host's own proof commands, by key: each is an enforcer `host:<key>` a MUST may name and an area may be proved by (`proved_by`). Run from the host root; red is a non-zero exit (ADR-025 amendment 4).",
+      "type": "object",
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
     "owner_signing": {
       "description": "An owner's mark (a door's passage, a lowering) counts only in a commit the owner signed, verified by git against this allowed-signers file (ADR-025 amendment 3). Written by `signer --setup`, the owner's own act; absent, a mark is a name.",
       "type": "object",

@@ -1,5 +1,12 @@
 {
   "schema_version": 1,
   "wip_limit": {},
-  "max_age_days": {}
+  "max_age_days": {},
+  "commands": {
+    "unit": "python -m pytest -q -p no:cacheprovider tests/unit",
+    "work": "python -m pytest -q -p no:cacheprovider tests/unit tests/acceptance/fresh-repo/test_weigh.py tests/acceptance/fresh-repo/test_signing.py tests/acceptance/fresh-repo/test_norms.py tests/acceptance/fresh-repo/test_commit_gate.py tests/acceptance/fresh-repo/test_boundary.py tests/acceptance/fresh-repo/test_gate_stance.py tests/acceptance/fresh-repo/test_one_writer.py",
+    "doctrine": "python -m pytest -q -p no:cacheprovider tests/unit tests/acceptance/fresh-repo/test_bundles.py tests/acceptance/fresh-repo/test_doctrine.py tests/acceptance/fresh-repo/test_boundary.py",
+    "adapters": "python -m pytest -q -p no:cacheprovider tests/unit tests/acceptance/fresh-repo/test_adapters.py tests/acceptance/fresh-repo/test_hooks.py tests/acceptance/fresh-repo/test_boundary.py",
+    "all": "python -m pytest -q -p no:cacheprovider tests"
+  }
 }

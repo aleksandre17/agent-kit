@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 359,
+  "count": 360,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -23,8 +23,14 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "c55d99c2c77e85e7fbeb6fa6164f0e3a6d49a1201ba935da5629bac5a7b4236f",
+      "digest": "520738bc0551092c488b009a87d5bf653892f821c18a8364e7d8a443400ccf6b",
       "path": "capabilities/delivery/capability.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "247de355cb30aa1969080c15d0250f07cd9442165ea9f994442d2297c2f3b404",
+      "path": "capabilities/delivery/commands-enforcers.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1403,7 +1409,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1611f4356dec30c93786e47b688e95be8f5ec1db9ebcb0a19adf4eefb23de0a3",
+      "digest": "98b10279d64946d97f1ffc9e127fd86a432263c2d30e17477967e75c7e928b86",
       "path": "interpreters/verbs/check.py"
     },
     {
@@ -1505,7 +1511,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "113b1791b9efcd87095d4afdd8bc4fa284abe72f01b1f89d58a75746db80ba0a",
+      "digest": "847ec5ab2de061bac4062f52a5b72aa258e994386457d762d6e5db0f38bb2161",
       "path": "interpreters/verbs/prove.py"
     },
     {
@@ -1547,7 +1553,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "7d127851d468c98ee5dbe57d258a040204c31d6cc599373b06c2e85ad9728753",
+      "digest": "65b0ed0e91b6db55e9513293c007d727afb5ed744124a7a47676680bab6b189f",
       "path": "interpreters/verbs/signer.py"
     },
     {
@@ -1739,7 +1745,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "55c5728912c0f789f84bb63de3400776fd6f16f85e12ced31b61dd0774bd5095",
+      "digest": "deb05136dc77186f6c284bfa45a363691769470eaf3909a86410b302927e8a0d",
       "path": "schemas/delivery-policy.schema.json"
     },
     {
@@ -2160,5 +2166,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T12:32:29+00:00"
+  "taken_at": "2026-10-17T13:42:10+00:00"
 }

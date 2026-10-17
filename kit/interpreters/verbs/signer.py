@@ -22,7 +22,7 @@ step skipped when it already holds:
 
 The first registration is trusted on first use, as an SSH host key is: the fingerprint is printed so
 the owner can see it is theirs. Every later change to the file holds only in a commit an allowed
-signer signed (FF-WORK-SIGNED).
+signer signed -- the delivery capability's gate over owner marks says so on every `check`.
 """
 
 from __future__ import annotations
@@ -35,6 +35,7 @@ import tempfile
 from pathlib import Path
 
 import collection
+import hostlock
 import lifecycle as lifecycle_module
 import provenance
 import signing
@@ -99,8 +100,13 @@ def _status(ctx) -> int:
 
 
 def run(ctx, args) -> int:
+    hostlock.arrive(ctx, args)  # one writer per host: a hold another run keeps refuses this one, by name
     if not getattr(args, "setup", False):
         return _status(ctx)
+    return hostlock.held(ctx, args, lambda: _setup(ctx, args))
+
+
+def _setup(ctx, args) -> int:
     if not interactive():
         raise SignerError("signer --setup is the owner's own act, in their own terminal: this run has no "
                           "interactive terminal, so nothing was done. A key made here would be known to "

@@ -443,6 +443,13 @@ map the host already keeps. *Skip a test whose declared inputs did not change* (
 a test is said to read): a declaration of dependencies is a guess that goes stale after a refactor, and
 a cache that lies is a red change pushed green.
 
+**Decision 3 -- any host declares its own proof** (the kit among them). A host's delivery policy
+declares `commands` (`host:<key>`), vouched by the delivery capability as stack-kit's adapter vouches for
+its manifest's: a host with no build kit proves its areas the same way, and an area's `proved_by` runs
+whether or not a MUST names it -- the area's declaration is the obligation; the MUSTs name what
+"everything" is. The kit proves itself so: its own areas map its interpreters, bundles and adapters to
+the suites that read them, and the rest of the kit is proved by everything.
+
 **Decision 2 -- nothing is proved twice on the same bytes** (Cardinal IX). A command that went green on
 a clean tree is remembered in the observed plane by that tree's id and its own command string, and is
 not run again while both are the same: a second push of what was proved, a retry after a refused push.

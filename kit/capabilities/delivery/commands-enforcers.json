@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "id": "delivery-commands",
+  "summary": "Every command a host declares in its delivery policy under `commands` is an enforcer a MUST may name and an area may be proved by (`host:<key>`) -- for a host with no build kit of its own to vouch for them, and for one that has. A command the policy does not declare is no enforcer (ADR-025 amendment 4).",
+  "prefix": "host",
+  "path": ".agents/project/delivery/policy.json",
+  "pointer": "commands"
+}

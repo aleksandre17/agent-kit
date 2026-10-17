@@ -2,5 +2,49 @@
   "schema_version": 1,
   "default_undo": "reversible",
   "max_areas": {},
-  "areas": []
+  "areas": [
+    {
+      "id": "prose",
+      "paths": "(^docs/|\\.md$|^CHANGELOG)",
+      "undo": "reversible",
+      "because": "prose changes nothing that runs; check reads its structure",
+      "proved_by": []
+    },
+    {
+      "id": "work",
+      "paths": "^kit/(interpreters/(weighing|workclass|signing|lifecycle|criteria|claims)\\.py|interpreters/gates/workcards\\.py|interpreters/proofs/|interpreters/verbs/(weigh|move|reshape|capture|archive|signer|message|prove)\\.py|capabilities/delivery/|schemas/(card|delivery-[a-z]+|work-classes|lifecycle|review-record)\\.schema\\.json)",
+      "undo": "reversible",
+      "because": "the work classes, their records and their proof",
+      "proved_by": [
+        "host:work"
+      ]
+    },
+    {
+      "id": "doctrine",
+      "paths": "^bundles/",
+      "undo": "reversible",
+      "because": "doctrine and skills published beside the kit",
+      "proved_by": [
+        "host:doctrine"
+      ]
+    },
+    {
+      "id": "adapters",
+      "paths": "^adapters/",
+      "undo": "reversible",
+      "because": "the runtime and tool adapters",
+      "proved_by": [
+        "host:adapters"
+      ]
+    },
+    {
+      "id": "tests",
+      "paths": "^tests/unit/",
+      "undo": "reversible",
+      "because": "the fast suite proves itself",
+      "proved_by": [
+        "host:unit"
+      ]
+    }
+  ]
 }

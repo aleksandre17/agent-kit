@@ -106,22 +106,26 @@ def run(ctx, args) -> int:
         print(f"prove: REFUSED -- {len(missing)} enforcer(s) a MUST names cannot be read; an enforcer nobody can "
               f"run does not hold")
         return 1
-    if not wanted:
-        print("prove: no MUST names a command as its enforcer -- nothing to run")
-        return 0
+    # An area's `proved_by` is the host's own declaration of what proves it, so a scoped proof runs with
+    # or without a MUST; everything -- the unscoped path -- is what the MUSTs name.
     scoped, why = _scope(ctx, args)
-    print(f"prove: {why}")
     if scoped is not None:
+        print(f"prove: {why}")
         unknown = [c for c in scoped if c not in commands]
         if unknown:
             print(f"prove: REFUSED -- an area names {', '.join(unknown)} as its proof, which no vouching declaration "
                   f"runs")
             return 1
-        held_by = {c: [h for held in wanted.values() for h in held] for c in scoped}
-        wanted = {c: held_by[c] or ["the change's areas"] for c in scoped}
+        musts = [h for held in wanted.values() for h in held]
+        wanted = {c: musts or ["the areas the change touches"] for c in scoped}
         if not wanted:
             print("prove: nothing beyond `check` proves this change")
             return 0
+    elif not wanted:
+        print("prove: no MUST names a command as its enforcer -- nothing to run")
+        return 0
+    else:
+        print(f"prove: {why}")
     if getattr(args, "plan", False):
         for enforcer, held in sorted(wanted.items()):
             print(f"  would run  {commands[enforcer]}  ({enforcer}, for {', '.join(map(str, held))})")

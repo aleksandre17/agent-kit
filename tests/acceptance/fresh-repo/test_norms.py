@@ -238,5 +238,43 @@ class Norms(Fixtures, unittest.TestCase):
         self.assertEqual(0, full.returncode, said(full))
         self.assertEqual(1, count("all"), "--full runs every command a MUST names")
 
+    def test_507_a_host_with_no_build_kit_proves_an_area_by_the_command_its_policy_declares(self):
+        """Any host -- the kit itself among them -- declares its own proof commands in its delivery
+        policy (`host:<key>`), and an area's `proved_by` runs with no MUST naming it."""
+        import subprocess
+        from harness import install_target
+
+        ran = self._temp("ran-")
+        host = self.started()
+        policy = host / install_target("delivery", reads_as="policy")
+        body = json.loads(policy.read_text(encoding="utf-8"))
+        body["commands"] = {"lib": f'python -c "open(r\'{(ran / "lib").as_posix()}\', \'a\').write(\'x\')"'}
+        policy.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+        areas = host / install_target("delivery", reads_as="areas")
+        shape = json.loads(areas.read_text(encoding="utf-8"))
+        shape["areas"] = [{"id": "lib", "paths": "^lib/", "undo": "reversible", "because": "a fixture",
+                           "proved_by": ["host:lib"]}]
+        areas.write_text(json.dumps(shape, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+        def git(*argv):
+            done = subprocess.run(["git", "-C", str(host), "-c", "user.email=s@invalid", "-c", "user.name=suite",
+                                   "-c", "core.hooksPath=/dev/null", *argv], capture_output=True, text=True)
+            self.assertEqual(0, done.returncode, done.stdout + done.stderr)
+
+        remote = self._temp("remote-")
+        subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+        git("add", "-A")
+        git("commit", "-qm", "the host")
+        git("remote", "add", "origin", str(remote))
+        git("push", "-q", "-u", "origin", "HEAD")
+        (host / "lib").mkdir()
+        (host / "lib" / "a.py").write_text("A = 1\n", encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-qm", "a library change")
+        proved = self.run_kit(KIT, host, "prove")
+        self.assertEqual(0, proved.returncode, said(proved))
+        self.assertIn("proved by host:lib", proved.stdout)
+        self.assertTrue((ran / "lib").exists(), "the host's own declared command ran")
+
 if __name__ == "__main__":
     unittest.main()

@@ -12,6 +12,8 @@ must be modified to admit a new capability is not open, however generic its eval
 
 from __future__ import annotations
 
+import time
+
 import declared
 import gatekinds
 import maturation
@@ -64,8 +66,10 @@ def run(ctx, args) -> int:
     stances, unbound = stance_of.resolve(ctx.manifest, ctx.host_answers(), enabled, matured)
     failed = 0
     observed, clean = [], []
+    timed, began = [], time.perf_counter()
     for capability in enabled:
         for gate in capability.gates:
+            started = time.perf_counter()
             kind = gate["kind"]
             if kind not in kinds:
                 raise GateError(
@@ -94,6 +98,7 @@ def run(ctx, args) -> int:
                 failed += 1 if failures else 0
             else:
                 (observed if failures else clean).append(f"{gate['id']} [{held.stance}]")
+            timed.append((time.perf_counter() - started, gate["id"]))
     for sentence in idle:
         print(f"  MATURED {sentence}")
     for entry in unbound:
@@ -106,5 +111,8 @@ def run(ctx, args) -> int:
         print(f"check: {len(clean)} gate(s) held under a stance that does not fail check are "
               f"clean: {', '.join(clean)} -- no failure stands between them and a stance that "
               f"fails; raising one is a declaration only the host makes")
+    # What judging cost, every time (Cardinal IX): a check that grows slow says which gates made it so.
+    slowest = ", ".join(f"{gid} {spent:.1f} s" for spent, gid in sorted(timed, reverse=True)[:3])
+    print(f"check: {len(timed)} gate(s) judged in {time.perf_counter() - began:.1f} s -- the slowest: {slowest}")
     print(f"check: {failed} gate(s) failed")
     return 1 if failed else 0
