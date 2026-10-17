@@ -5,7 +5,7 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade --plan`, which names every path that changes between the two.
 
-## 0.2.0 — unreleased
+## 0.2.0 — 2026-10-17
 
 **Added — the agentic layer: every token serves the result (ADR-024)**
 - Skills (`skills`, served per product, extended by hosts with chapters); bundles `kit-skills`,
