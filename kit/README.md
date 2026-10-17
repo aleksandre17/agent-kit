@@ -67,6 +67,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `retake` | take this host's reading again, through a door, when its reality has legitimately moved | yes -- `--plan` prints the writes first |
 | `review` | check that a review range is covered by verified change records (tri-state JSON report) | nothing |
 | `session` | at a session's start: one context line -- the kit, how a change is proven, the capsule's handoff (advisory) | nothing |
+| `signer` | set up the owner's signing key, so an owner's mark is a signature -- the owner's own act | yes -- `--plan` prints the writes first |
 | `spawn` | before a runtime starts a sub-agent: the brief must be a packet under its ceiling (blocking) | nothing |
 | `start` | carry a host from nothing to a served, checked install in one door, by a published starter | yes -- `--plan` prints the writes first |
 | `stop` | before a session ends: the continuity capsule it leaves must keep its contract (blocking) | nothing |

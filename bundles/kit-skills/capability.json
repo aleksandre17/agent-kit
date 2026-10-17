@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "kit-skills",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "summary": "The kit's own SKILLS, published beside it: how to walk a piece of work, walk a door, propose a law and take a capability. Each skill's deterministic steps are the kit's verbs and a small script; its prose is only what needs judgement. A host serves them by taking this bundle -- the issued kit ships none (ADR-024).",
   "requires": [
     {

@@ -7,6 +7,30 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 
 ## 0.3.0 — unreleased
 
+**Added — proof is weighed as the work is (ADR-025 amendment 4)**
+- An area declares what proves it (`proved_by`, and `default_proved_by` for paths no area claims).
+  `prove` weighs what the push carries and runs only what the touched areas declare -- `check` alone for
+  prose. A change owing a decision, an area that declares no proof, a host that weighs nothing, or
+  `--full` runs every command a MUST names; it says which, and why.
+- Nothing is proved twice on the same bytes: a command green on a clean tree is remembered by that
+  tree's id and not run again while the tree is the same; any change, a dirty tree or `--full` runs it.
+- Cardinal IX (cardinals 1.1.0) -- every cost follows the change it serves: ceremony, proof, review,
+  context and waiting are computed from the change and grow only with its risk; both directions, too
+  heavy and too light, are defects. Every cardinal's address moves to `cardinals@1.1.0#…`.
+
+**Added — an owner's mark is a signature, not a name (ADR-025 amendment 3)**
+- Verb `signer`: where owner signing stands; `--setup`, the owner's own act in their own terminal --
+  git and ssh-keygen checked, the key made by `ssh-keygen` (which alone asks for the passphrase),
+  refused if it opens without one, registered in the host's allowed-signers file (seeded by
+  `delivery`), git told how to sign, a sign-and-verify round trip, the fingerprint to compare.
+- FF-WORK-SIGNED: where the host declares `owner_signing`, a door's mark holds only in a commit the
+  principal it names signed, verified by git; a change to who may sign holds only when an allowed
+  signer signed it. Marks from before the setup hold; marks not yet committed are reported. It reads
+  every record in the binding places -- an install's or upgrade's acceptance, and a review in the
+  name of someone who signs, as well as a card's doors -- and a shallow clone is not measured.
+- A card's `origin` holds `decision` only in a place the host's layout declares holds decisions: a
+  vendored kit's own ADR no longer counts as the host's ruling.
+
 **Added — work is weighed before it is walked (ADR-025), slice S1**
 - `delivery` 0.2.0: the work-class catalogue (`standard`, `normal`, `major`, `program`, `emergency`;
   each with the records it requires, its doors and the practice it is aligned with), the undo-cost

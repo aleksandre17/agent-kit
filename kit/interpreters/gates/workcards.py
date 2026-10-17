@@ -18,12 +18,14 @@ the card declares one that needs its class -- the verified passage then proves i
 
 from __future__ import annotations
 
+import json
 from datetime import datetime
 
 import collection
 import criteria
 import lifecycle as lifecycle_module
 import lineage
+import signing
 import weighing
 import workclass
 
@@ -315,7 +317,90 @@ def _ceremony_reported(ctx, params):
     return []
 
 
-KINDS = {"work-classes-held": _work_classes_held, "deferrals-held": _deferrals_held, "order-held": _order_held,
+def _marks_signed(ctx, params):
+    """Where the host declares `owner_signing`, every acceptance a record in the binding places carries
+    -- a door's passage, a lowering, a host's install or upgrade, and a review in the name of someone
+    who signs -- holds only in a commit that principal SIGNED (ADR-025 amendment 3): a name in a record
+    is text anything can write. Marks that stood when signing was set up hold as they were; a mark not
+    yet committed is reported, never failed -- it is judged when it is committed."""
+    capabilities = ctx.enabled_capabilities()
+    if not any(getattr(c, "governs", None) for c in capabilities):
+        return []
+    governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
+    declared = (governed.policy or {}).get("owner_signing")
+    if declared is None:  # `{}` is a declaration: signing, against the host's one trust root
+        return []
+    rooted = signing.trust_root(capabilities)
+    signers = declared.get("signers") or (rooted[0] if rooted else "")
+    setup = "run, in your own terminal: python <kit>/interpreters/cli.py signer --setup --root ."
+    if not signers:
+        return ["owner signing is declared and no trust root is: no capability declares a verifier"]
+    who_signs = signing.principals(ctx.workspace.read_text(signers)) if ctx.workspace.exists(signers) else []
+    if not who_signs:
+        return [f"owner signing is declared and nobody may sign yet ({signers} names no key) -- {setup}"]
+    if ctx.workspace.shallow():
+        return ["owner signing: NOT MEASURED -- this clone is shallow, so the commits that carry the marks are "
+                "not here to be read; fetch the whole history (fetch-depth: 0)"]
+    first, why = ctx.workspace.introduced(signers)
+    if first is None:
+        return [f"owner signing: NOT MEASURED -- git could not say when {signers} came in: {why}"]
+    if not first:
+        return [f"{signers} is written and not committed -- commit it signed: git add {signers} && git commit -S"]
+    changes, why = ctx.workspace.signed_commits(signers, signers)
+    if changes is None:
+        return [f"owner signing: NOT MEASURED -- {why}"]
+    failures = [f"{signers}: commit {sha[:12]} changed who may sign, and no allowed signer signed it"
+                for sha, verdict, _ in changes if sha != first and verdict != "G"]
+
+    def held_in(value) -> dict:
+        found = signing.marks(value)
+        found.update({key: door for key, door in signing.reviews(value).items() if key[0] in who_signs})
+        return found
+
+    def parsed(text):
+        try:
+            return json.loads(text) if text else None
+        except ValueError:
+            return None
+
+    places = [p["root"].rstrip("/") for p in ctx.manifest.planes if p["class"] == "binding"]
+    places += [i["target"].rstrip("/") for c in capabilities for i in c.installs
+               if i.get("class") == "binding" and i.get("mode") == "space"]
+    records = sorted({rel for place in places for rel in ctx.workspace.files_under(place) if rel.endswith(".json")})
+    for rel in records:
+        value = parsed(ctx.workspace.read_text(rel))
+        if value is None:
+            continue
+        before, _ = ctx.workspace.file_at(first, rel)
+        held_then = held_in(parsed(before)) if before else {}
+        judged = {door: keys for door, keys in signing.doors_of(held_in(value)).items()
+                  if not any(key in held_then for key in keys)}
+        if not judged:
+            continue
+        commits, why = ctx.workspace.signed_commits(rel, signers)
+        if commits is None:
+            failures.append(f"{rel}: NOT MEASURED -- {why}")
+            continue
+        signed, committed = set(), set()
+        for sha, verdict, principal in commits:
+            there = held_in(parsed(ctx.workspace.file_at(sha, rel)[0]) or {})
+            committed |= set(there)
+            if verdict == "G":
+                signed |= {key for key in there if key[0] == principal}
+        for door, keys in sorted(judged.items()):
+            if any(key in signed for key in keys):
+                continue
+            if not any(key in committed for key in keys):
+                print(f"        {rel}: {door} is marked by {keys[0][0]} and not committed yet -- it holds once a "
+                      f"commit {keys[0][0]} signs carries it (git commit -S)")
+                continue
+            failures.append(f"{rel}: {door} is marked by {', '.join(sorted({k[0] for k in keys}))}, and no commit "
+                            f"that principal signed carries the mark -- a name is not a signature; it is walked "
+                            f"again in a commit they sign (git commit -S)")
+    return failures
+
+
+KINDS = {"marks-signed": _marks_signed, "work-classes-held": _work_classes_held, "deferrals-held": _deferrals_held, "order-held": _order_held,
          "emergencies-repaid": _emergencies_repaid, "ceremony-reported": _ceremony_reported}
 #: Every kind here judges by reading the governed records: none of them may prove one (decision 16).
 READS_THE_RECORDS = {kind: True for kind in KINDS}

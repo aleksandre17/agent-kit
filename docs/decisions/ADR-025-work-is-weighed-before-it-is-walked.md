@@ -365,3 +365,87 @@ as a limit this release does not close.
   local path. It stays: the boundary's decisive test traces a host's own path to that measured fact, and
   a reading without it would leave that difference with no ancestor. A host that minds re-takes its
   reading where it lives.
+
+## Amendment 3 — an owner's mark is a signature, not a name (2026-10-17, owner-decided)
+
+**Context.** Amendment 2 left one limit standing that an outside reading ranks first: an owner's
+mark -- a door's passage (`signed_by`), a lowering (`approved_by`) -- is text in a card, and whatever
+can write the card can write it, an agent included. Human oversight that an overseen agent can forge
+is oversight in name only: the EU AI Act (art. 14) asks that oversight be effective, OWASP's LLM06
+(excessive agency) names an agent that can grant itself what a person must grant, and NIST AI RMF and
+ISO/IEC 42001 ask that accountability be attributable. The owner decided it is closed now.
+
+**Decision.**
+1. *Where a host declares `owner_signing`, a mark holds only in a commit the owner signed* (FF-WORK-
+   SIGNED). git verifies the signature -- SSH signing, against the host's allowed-signers file in
+   OpenSSH's format (`gpg.ssh.allowedSignersFile`); the kit holds no key and verifies nothing itself.
+   The principal a signature names is the name the mark carries. A door is held when one of its marks
+   is signed: an agent may PREPARE a mark, and it opens nothing until the owner signs a commit that
+   carries it; a door whose only mark is unsigned is walked again in a signed commit -- history is
+   never rewritten. A mark not yet committed is reported, never failed; marks that stood before
+   signing was set up hold as they were.
+2. *Who may sign changes only by a signature.* Every commit after the first that changes the
+   allowed-signers file holds only if an allowed signer signed it. A key is retired, keeping what it
+   signed, with OpenSSH's own `valid-before`.
+3. *The setup is the owner's own act* (`signer --setup`, the delivery capability seeding the file):
+   refused without an interactive terminal; the passphrase asked by `ssh-keygen` itself, never seen,
+   stored or passed by the kit; a key that opens with an empty passphrase refused; git's config told
+   the format, the file and the key, and never `commit.gpgsign` -- an agent's commits go on unsigned,
+   and only the owner's carry marks; a round trip (sign, then verify against the file) before anything
+   leans on it; the fingerprint printed to compare once. It declares `owner_signing` in the host's
+   policy itself: the opt-in is the owner's act, and from then on the gate is the setup rule -- a host
+   that declares it and names no key is told the exact command.
+4. *The commit floor does not judge signatures*: git signs a commit after its message hook runs, so
+   the mark is judged where it can be -- `check`, which the pre-push hook and CI run.
+5. *Every acceptance a record carries, not only a card's.* The gate reads every JSON record in the
+   binding places (the binding plane and the binding spaces): a door's passage, a lowering, a host's
+   install, upgrade or takeover (`signed_by`), and a review whose reviewer is a name an allowed signer
+   signs as -- so no record speaks in the owner's name unsigned. A reviewer who signs nothing (an
+   auditor agent) stays a name, judged as before by separation of duties.
+6. *A shallow clone is not measured*: the commits that carry the marks are not in it, and a reading
+   that found no history would hold every mark as one that stood before the setup. It fails, saying
+   so (`fetch-depth: 0`; the kit's CI template already fetches the whole history).
+7. *A decision is the host's own* (closes NEW-8 of Amendment 2): a card's `origin` holds `decision`
+   only when the document stands in a place the host's layout declares holds decisions (`holds:
+   decision`) -- a vendored kit's ADR is the kit's, and a card that bet on it bet on nobody's ruling
+   here -- and only its front matter, between the two fences, says what it is.
+
+**Limits, said.** The first registration is trusted on first use, as an SSH host key is: the printed
+fingerprint is the owner's one check. The terminal test guards against accident, not against an agent
+that fakes a terminal -- what an agent cannot fake is the passphrase only the owner knows (a hardware
+key that asks for a touch is stronger still, and works the same way). A machine where the agent runs
+as the owner's user can read the key file: it cannot open it.
+
+**Rejected.** *Sign every commit* (`commit.gpgsign`): every agent commit would stop at a passphrase,
+or the key would be left open for it. *A token or a password the kit checks*: a second credential
+store, held where the agent runs. *GPG*: a second toolchain where SSH keys already are. *Verify in the
+commit-msg hook*: the signature does not exist yet. *A kit-made key*: whatever made it knows it.
+
+## Amendment 4 — proof is weighed as the work is (2026-10-17, owner-decided)
+
+**Context.** The owner: a one-line change must not run every suite the repository has; the system must
+not hold its users hostage to their own process. The work was weighed (a standard change is one
+commit), and its proof was not: `prove`, on every push, ran every command a MUST names.
+
+**Decision.** An area declares what proves it (`proved_by`: commands a vouching declaration runs;
+`default_proved_by` for paths no area claims). `prove` weighs what the push carries -- through `weigh`,
+the one weigher -- and runs what the touched areas declare: the web app's tests for the web app, `check`
+alone for prose. Everything runs when the change owes a decision (major and heavier), when an area it
+touches declares no proof (the safe default, said by name), when the host weighs nothing, or on `--full`;
+CI and a release run everything as they did. It aligns with change-based test selection (test impact
+analysis, as Google's TAP and the affected-target builds of Bazel and Nx run it), risk-based testing
+(ISO/IEC/IEEE 29119) and DORA's fast feedback.
+
+**Rejected.** *The agent picks the tests*: a judgement where a computation exists, and an agent wrong
+once is a push unproved. *Coverage-derived impact maps* (a test is selected by the lines it ran): a
+second tool, a cache to keep honest, and a map that is wrong after every refactor; the areas are the
+map the host already keeps. *Skip a test whose declared inputs did not change* (a digest over the files
+a test is said to read): a declaration of dependencies is a guess that goes stale after a refactor, and
+a cache that lies is a red change pushed green.
+
+**Decision 2 -- nothing is proved twice on the same bytes** (Cardinal IX). A command that went green on
+a clean tree is remembered in the observed plane by that tree's id and its own command string, and is
+not run again while both are the same: a second push of what was proved, a retry after a refused push.
+The key is the exact bytes -- any change at all, a dirty tree, a command that wrote into the tree, or
+`--full` runs it again -- so the cache cannot be wrong where the command is deterministic, and a red run
+is never remembered.

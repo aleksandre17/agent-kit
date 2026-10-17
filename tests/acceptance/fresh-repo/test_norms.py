@@ -164,5 +164,79 @@ class Norms(Fixtures, unittest.TestCase):
         self.assertEqual(1, refused.returncode, said(refused))
         self.assertIn("cannot be run", refused.stdout)
 
+    def test_506_a_push_is_proved_by_what_it_touches_and_never_twice_on_the_same_bytes(self):
+        """The owner: a one-line change must not run every suite (ADR-025 amendment 4, Cardinal IX)."""
+        import subprocess
+        from harness import install_target
+
+        vouching = next(doc for d in TAKEN for doc in documents_of(d, norms.VOUCHED["validates"]))
+        prefix = vouching["prefix"]
+        ran = self._temp("ran-")
+
+        def counting(name):
+            return f'python -c "open(r\'{(ran / name).as_posix()}\', \'a\').write(\'x\')"'
+
+        host = self.host()
+        value = into = {}
+        *steps, last = vouching["pointer"].split(".")
+        for step in steps:
+            into = into.setdefault(step, {})
+        into[last] = {"test": counting("all"), "test-web": counting("web")}
+        (host / vouching["path"]).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
+        started = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
+        self.assertEqual(0, started.returncode, said(started))
+        self.write_norms(host, [_norm("our-must", DERIVES[1], derives_from=RULE["derives_from"], modality="MUST",
+                                      subject="held-by-the-build-tool", enforced_by=[f"{prefix}:test"])])
+        areas = host / install_target("delivery", reads_as="areas")
+        body = json.loads(areas.read_text(encoding="utf-8"))
+        body["areas"] = [{"id": "web", "paths": "^web/", "undo": "reversible", "because": "a fixture",
+                          "proved_by": [f"{prefix}:test-web"]},
+                         {"id": "docs", "paths": "^docs/", "undo": "reversible", "because": "a fixture", "proved_by": []}]
+        body["default_proved_by"] = []
+        areas.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+        def git(*argv):
+            done = subprocess.run(["git", "-C", str(host), "-c", "user.email=s@invalid", "-c", "user.name=suite",
+                                   "-c", "core.hooksPath=/dev/null", *argv], capture_output=True, text=True)
+            self.assertEqual(0, done.returncode, done.stdout + done.stderr)
+
+        remote = self._temp("remote-")
+        subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+        git("add", "-A")
+        git("commit", "-qm", "the host")
+        git("remote", "add", "origin", str(remote))
+        git("push", "-q", "-u", "origin", "HEAD")
+
+        def count(name):
+            return len((ran / name).read_text()) if (ran / name).exists() else 0
+
+        (host / "web").mkdir()
+        (host / "web" / "app.ts").write_text("export const a = 1;\n", encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-qm", "one line in the web app")
+        proved = self.run_kit(KIT, host, "prove")
+        self.assertEqual(0, proved.returncode, said(proved))
+        self.assertEqual((1, 0), (count("web"), count("all")), "a web change runs the web tests, not every suite")
+        self.assertIn(f"proved by {prefix}:test-web", proved.stdout)
+
+        again = self.run_kit(KIT, host, "prove")
+        self.assertEqual(0, again.returncode, said(again))
+        self.assertEqual(1, count("web"), "a green proof is not run twice on the same bytes")
+        self.assertIn("already went green on these exact bytes", again.stdout)
+
+        git("push", "-q")
+        (host / "docs").mkdir(exist_ok=True)
+        (host / "docs" / "guide.md").write_text("# a guide\n", encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-qm", "prose")
+        prose = self.run_kit(KIT, host, "prove")
+        self.assertEqual(0, prose.returncode, said(prose))
+        self.assertIn("nothing beyond `check` proves this change", prose.stdout)
+        self.assertEqual((1, 0), (count("web"), count("all")))
+
+        full = self.run_kit(KIT, host, "prove", "--full")
+        self.assertEqual(0, full.returncode, said(full))
+        self.assertEqual(1, count("all"), "--full runs every command a MUST names")
+
 if __name__ == "__main__":
     unittest.main()

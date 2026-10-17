@@ -6,7 +6,19 @@ A norm that says MUST and names a COMMAND as its enforcer (`stack-kit:test`, vou
 that reads the host's own declaration) is enforced only where something runs that command. `check`
 reads; it does not run a test suite. This verb is what runs them: the git adapter's pre-push hook calls
 it after `check`, so a MUST whose command is red does not leave the machine. Each command runs once,
-from the host root, however many norms name it; `--plan` names them and runs nothing. A MUST whose
+from the host root, however many norms name it; `--plan` names them and runs nothing.
+
+Proof is weighed as the work is (ADR-025 amendment 4): what a push carries is weighed by the host's
+areas, and it is proved by the commands the areas it touches declare (`proved_by`) -- a one-line change
+to the web app runs the web app's tests, not every suite the repository has. A change heavy enough to
+owe a decision, one touching an area that declares no proof, a host that weighs nothing, or `--full`, is
+proved by every command a MUST names. Which it was, and why, is printed.
+
+Nothing is proved twice on the same bytes (Cardinal IX): a command that went green on a clean tree is
+recorded in the observed plane with that tree's id, and is not run again while the tree is the same --
+a second push of what was proved, a retry after a refused push. The key is the exact bytes, never a
+guess at what a command depends on: any change at all, a dirty tree, `--full`, or another command
+string runs it again. A red run is never recorded. A MUST whose
 enforcer an adapter vouches for, but whose command cannot be read -- the host's declaration missing,
 unreadable, or silent on that key -- is refused, never read as nothing to run: an enforcer nobody can
 run does not hold.
@@ -16,12 +28,18 @@ from __future__ import annotations
 
 import subprocess
 
+import hashlib
+
 import declared
+import ephemeral
 import norms as norms_gate
+import weighing
+import workclass
 
 SUMMARY = "run every command a MUST norm names as its enforcer -- the pre-push proof (blocking on red)"
 MUTATES = False
 REQUIRES_APPROVED_HOST = True
+ARGUMENTS = [("--full", {"action": "store_true", "help": "prove with every command a MUST names, whatever the change"})]
 
 
 def _commands(ctx) -> tuple:
@@ -46,6 +64,29 @@ def _commands(ctx) -> tuple:
     return found, unread
 
 
+#: Where a green proof is remembered, in the observed plane: by command and by the exact tree it read.
+SUBJECT = "proofs"
+
+
+def _record(ctx, command: str, tree: str) -> str:
+    key = hashlib.sha256(f"{command}\n{tree}".encode("utf-8")).hexdigest()[:32]
+    return ephemeral.place(ctx, f"{SUBJECT}/{key}.json")
+
+
+def _scope(ctx, args) -> tuple:
+    """(the commands that prove what this push carries, why) -- or (None, why): every command."""
+    if getattr(args, "full", False):
+        return None, "--full: every command a MUST names"
+    found = workclass.declarations(ctx)
+    if found is None:
+        return None, "this host weighs nothing (no work classes): every command a MUST names"
+    paths, why = ctx.workspace.unpushed_paths()
+    if paths is None:
+        return None, f"what this push carries could not be read ({why}): every command a MUST names"
+    commands, why = weighing.proof_for(paths, *found)
+    return commands, (why if commands is None else f"{why}: proved by {', '.join(commands) or 'check alone'}")
+
+
 def run(ctx, args) -> int:
     commands, unread = _commands(ctx)
     wanted, missing = {}, {}
@@ -68,19 +109,41 @@ def run(ctx, args) -> int:
     if not wanted:
         print("prove: no MUST names a command as its enforcer -- nothing to run")
         return 0
+    scoped, why = _scope(ctx, args)
+    print(f"prove: {why}")
+    if scoped is not None:
+        unknown = [c for c in scoped if c not in commands]
+        if unknown:
+            print(f"prove: REFUSED -- an area names {', '.join(unknown)} as its proof, which no vouching declaration "
+                  f"runs")
+            return 1
+        held_by = {c: [h for held in wanted.values() for h in held] for c in scoped}
+        wanted = {c: held_by[c] or ["the change's areas"] for c in scoped}
+        if not wanted:
+            print("prove: nothing beyond `check` proves this change")
+            return 0
     if getattr(args, "plan", False):
         for enforcer, held in sorted(wanted.items()):
             print(f"  would run  {commands[enforcer]}  ({enforcer}, for {', '.join(map(str, held))})")
         return 0
     red = []
+    tree = None if getattr(args, "full", False) else ctx.workspace.clean_tree()
     for enforcer, held in sorted(wanted.items()):
         command = commands[enforcer]
+        record = _record(ctx, command, tree) if tree else None
+        if record and ctx.workspace.exists(record):
+            print(f"prove: {enforcer} already went green on these exact bytes (tree {tree[:12]}) -- not run again; "
+                  f"it holds {', '.join(map(str, held))}", flush=True)
+            continue
         print(f"prove: {enforcer}: {command}", flush=True)
         done = subprocess.run(command, shell=True, cwd=str(ctx.workspace.root))
         verdict = "green" if done.returncode == 0 else f"RED (exit {done.returncode})"
         print(f"prove: {enforcer} is {verdict} -- it holds {', '.join(map(str, held))}", flush=True)
         if done.returncode != 0:
             red.append(enforcer)
+        elif record and ctx.workspace.clean_tree() == tree:  # a command that wrote into the tree proved other bytes
+            ctx.workspace.scoped((ephemeral.place(ctx, SUBJECT) + "/",)).write_json(
+                record, {"command": command, "tree": tree, "green": True})
     if red:
         print(f"prove: REFUSED -- {', '.join(red)} red; a MUST whose enforcer is red does not hold")
         return 1

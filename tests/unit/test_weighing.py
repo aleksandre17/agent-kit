@@ -324,9 +324,50 @@ def test_a_decision_is_what_its_front_matter_says_never_a_line_of_its_body():
     import workclass
     files = {"d.md": "---\nkind: decision\n---\n# d\n", "n.md": "---\ntitle: notes\n---\nkind: decision\n",
              "open.md": "---\nkind: decision\n"}
-    ctx = SimpleNamespace(workspace=SimpleNamespace(exists=files.__contains__, read_text=files.__getitem__))
+    ctx = SimpleNamespace(workspace=SimpleNamespace(exists=files.__contains__, read_text=files.__getitem__),
+                          enabled_capabilities=lambda: [])
     decided = workclass.decided(ctx)
     holder = {"field": "origin", "kind_of_record": "decision"}
     assert decided({"origin": {"ref": "d.md"}}, holder)
     assert not decided({"origin": {"ref": "n.md"}}, holder), "a body line was read as front matter"
     assert not decided({"origin": {"ref": "open.md"}}, holder), "front matter that never closes is none"
+
+
+def test_a_decision_is_the_hosts_own_never_a_vendored_kits():
+    # Found by an audit: a card bet on the vendored kit's own ADR read as the host's ruling.
+    from types import SimpleNamespace
+    import workclass
+    body = "---\nkind: decision\n---\n# d\n"
+    files = {"docs/decisions/ADR-001.md": body, "platform/kits/agent-kit/docs/decisions/ADR-025.md": body}
+    layout = SimpleNamespace(documents={"host_layout": {"entries": [
+        {"path": "docs/decisions/", "kind": "dir", "holds": "decision"}, {"path": "docs/work/", "holds": "work-card"}]}})
+    ctx = SimpleNamespace(workspace=SimpleNamespace(exists=files.__contains__, read_text=files.__getitem__),
+                          enabled_capabilities=lambda: [layout])
+    decided = workclass.decided(ctx)
+    holder = {"field": "origin", "kind_of_record": "decision"}
+    assert decided({"origin": {"ref": "docs/decisions/ADR-001.md"}}, holder)
+    assert not decided({"origin": {"ref": "platform/kits/agent-kit/docs/decisions/ADR-025.md"}}, holder), \
+        "another repository's decision is not this host's"
+
+
+def test_proof_is_weighed_as_the_work_is():
+    # The owner: a one-line change must not run every suite the repository has.
+    host = areas(("migrations", r"^db/migrations/", "irreversible", {"proved_by": ["kit:test-db"]}),
+                 ("web", r"^web/", "reversible", {"proved_by": ["kit:test-web"]}),
+                 ("docs", r"^docs/", "reversible", {"proved_by": []}))
+    assert weighing.proof_for(["web/app.ts"], CLASSES, host)[0] == ["kit:test-web"], "the web app's tests, no other"
+    assert weighing.proof_for(["docs/guide.md"], CLASSES, host)[0] == [], "prose is proved by check alone"
+    assert weighing.proof_for([], CLASSES, host) == ([], "nothing new to prove")
+    heavy, why = weighing.proof_for(["db/migrations/1.sql"], CLASSES, host)
+    assert heavy is None and "owes a decision is proved by everything" in why
+
+
+def test_an_area_that_declares_no_proof_is_proved_by_everything_and_says_so():
+    host = areas(("web", r"^web/", "reversible", {"proved_by": ["kit:test-web"]}), ("loose", r"^loose/", "reversible"))
+    commands, why = weighing.proof_for(["loose/x.txt"], CLASSES, host)
+    assert commands is None and "loose declare(s) no proof" in why
+    commands, why = weighing.proof_for(["nowhere/x.txt"], CLASSES, host)
+    assert commands is None and "(no area)" in why
+    host["default_proved_by"] = []
+    assert weighing.proof_for(["nowhere/x.txt", "web/a.ts"], CLASSES, host)[0] == ["kit:test-web"], \
+        "a path no area claims is proved by the default"

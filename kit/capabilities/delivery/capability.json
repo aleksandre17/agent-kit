@@ -122,6 +122,11 @@
       "params": {}
     },
     {
+      "id": "FF-WORK-SIGNED",
+      "kind": "marks-signed",
+      "params": {}
+    },
+    {
       "id": "FF-WORK-EMERGENCY",
       "kind": "emergencies-repaid",
       "params": {}

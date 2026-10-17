@@ -25,9 +25,14 @@ through this skill's `scripts/kit.py <verb> ...` from the host root.
    card is `kit.py capture --card <id> --title "<what>" --from <card> --by <you>` -- then return to the
    work. Never do it on the side.
 5. **A lesson `weigh` shows applies now.** Follow it, or say in the card why it does not.
-6. **Done is computed:** `kit.py move --card <id> --to verified --by <you>` passes only when every
+6. **Proof follows the change** (Cardinal IX): run the tests of what you touched; `prove` (the
+   pre-push) selects them from the areas and runs everything only where the change's weight asks.
+   Never run a whole suite by hand for a standard change, and never re-run a green proof on the same
+   bytes.
+7. **Done is computed:** `kit.py move --card <id> --to verified --by <you>` passes only when every
    criterion holds at the evidence it needs. A test not run is reported as not run.
 
 Never yours to do: lower a card's class, declare `Work-Class: emergency` (a person declares it; a card
-is never shaped `emergency`), or approve a door. Write trailers exactly `Card: <id>` in the last
+is never shaped `emergency`), or approve a door -- where the host declares `owner_signing`, a door
+holds only in a commit the owner signs, so a mark you write opens nothing; never run `signer --setup`. Write trailers exactly `Card: <id>` in the last
 paragraph, beside the other trailers. Report what you found and wait for the owner.

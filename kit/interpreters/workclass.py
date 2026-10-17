@@ -180,14 +180,38 @@ def lifecycle_flags(ctx) -> tuple:
     return doors, closed
 
 
+def places_holding(capabilities, kind: str) -> list:
+    """The places a capability's layout declares hold records of `kind` (`holds`), as path prefixes --
+    found by what a place holds, never by its name."""
+    out = []
+    for capability in capabilities:
+        for doc in capability.documents.values():
+            for row in (doc.get("entries") if isinstance(doc, dict) else None) or []:
+                if isinstance(row, dict) and row.get("holds") == kind and row.get("path"):
+                    out.append(str(row["path"]))
+    return out
+
+
 def decided(ctx):
-    """A reader of whether a card's reference is the KIND of record its row requires: a reference to a
-    document whose front matter declares that kind (`kind: decision`). Any non-empty pointer -- the card
-    a finding was captured from -- is not a decision."""
+    """A reader of whether a card's reference is the KIND of record its row requires: a document IN A
+    PLACE THE HOST'S LAYOUT SAYS HOLDS THAT KIND, whose front matter declares it (`kind: decision`). A
+    decision some other repository made -- a vendored kit's own ADR -- is that repository's, not this
+    host's (ADR-025 amendment 3). Any non-empty pointer -- the card a finding was captured from -- is not
+    a decision. Where no place declares the kind, the front matter alone is read, and that is said."""
+    places = {}
+
+    def held_in(kind: str) -> list:
+        if kind not in places:
+            places[kind] = places_holding(ctx.enabled_capabilities(), kind)
+        return places[kind]
+
     def read(card, holder):
         reference = card.get(holder["field"]) or {}
         ref = reference.get("ref") if isinstance(reference, dict) else None
         if not ref or not ctx.workspace.exists(ref):
+            return False
+        where = held_in(holder["kind_of_record"])
+        if where and not any(ref == p.rstrip("/") or ref.startswith(p if p.endswith("/") else p + "/") for p in where):
             return False
         lines = ctx.workspace.read_text(ref).splitlines()
         if not lines or lines[0].strip() != "---":
