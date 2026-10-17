@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 90,
+  "issued": 91,
   "codes": [
     {
       "code": "KIT0001",
@@ -542,6 +542,12 @@
       "status": "active",
       "title": "a reshape that cannot be taken honestly",
       "explanation": "A reshape names a card, a declared class and its mover, on a host that weighs its work; raising a class is anyone's act, lowering one waits at the owner's door (--approve) (ADR-025)."
+    },
+    {
+      "code": "KIT0091",
+      "status": "active",
+      "title": "a signing setup that cannot be taken honestly",
+      "explanation": "Setting up the owner's signing key is the owner's own act, in their own terminal: the kit refuses it without an interactive terminal, refuses a key without a passphrase (anything that can read it could sign as the owner), and refuses a git that cannot verify SSH signatures (ADR-025 amendment 3)."
     }
   ]
 }

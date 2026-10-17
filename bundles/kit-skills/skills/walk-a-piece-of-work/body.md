@@ -29,5 +29,6 @@ through this skill's `scripts/kit.py <verb> ...` from the host root.
    criterion holds at the evidence it needs. A test not run is reported as not run.
 
 Never yours to do: lower a card's class, declare `Work-Class: emergency` (a person declares it; a card
-is never shaped `emergency`), or approve a door. Write trailers exactly `Card: <id>` in the last
+is never shaped `emergency`), or approve a door -- where the host declares `owner_signing`, a door
+holds only in a commit the owner signs, so a mark you write opens nothing; never run `signer --setup`. Write trailers exactly `Card: <id>` in the last
 paragraph, beside the other trailers. Report what you found and wait for the owner.

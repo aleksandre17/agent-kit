@@ -145,6 +145,17 @@ class Workspace:
         import vcs
         return vcs.commit_paths(self._root, sha)
 
+    def signed_commits(self, rel: str, signers_rel: str) -> tuple:
+        """Every commit that touched `rel`, with its signature's verdict against the host's
+        allowed-signers file -- see `vcs.signed_commits`."""
+        import vcs
+        return vcs.signed_commits(self._root, rel, self.path(signers_rel).as_posix())
+
+    def introduced(self, rel: str) -> tuple:
+        """The commit that first added `rel` -- see `vcs.introduced`."""
+        import vcs
+        return vcs.introduced(self._root, rel)
+
     def file_at(self, sha: str, rel: str) -> tuple:
         """(the text of `rel` as a commit holds it, None) or (None, why) where it holds none."""
         import vcs

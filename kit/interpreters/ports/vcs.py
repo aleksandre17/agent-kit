@@ -123,6 +123,27 @@ def commit_message(root, sha: str) -> tuple:
     return run(root, ["log", "-1", "--format=%B", sha])
 
 
+def signed_commits(root, rel: str, signers) -> tuple:
+    """`([(sha, verdict, principal)], None)` -- every commit that touched `rel`, newest first, with git's
+    verdict on its signature read against the allowed-signers file `signers` (`G` good; anything else
+    is not one) and the principal it names -- or `(None, why)`. git verifies; nothing here does."""
+    said, why = run(root, ["-c", "gpg.format=ssh", "-c", f"gpg.ssh.allowedSignersFile={signers}",
+                           "log", "--format=%H%x09%G?%x09%GS", "--", rel])
+    if said is None:
+        return None, why
+    return [tuple((line.split("\t") + ["", ""])[:3]) for line in said.splitlines() if line.strip()], None
+
+
+def introduced(root, rel: str) -> tuple:
+    """`(the sha of the commit that first added rel, None)`, `("", None)` when no commit has, or
+    `(None, why)`."""
+    said, why = run(root, ["log", "--diff-filter=A", "--format=%H", "--", rel])
+    if said is None:
+        return None, why
+    lines = [line for line in said.splitlines() if line.strip()]
+    return (lines[-1] if lines else ""), None
+
+
 def file_at(root, sha: str, rel: str) -> tuple:
     """`(text, None)` the file as the commit holds it, or `(None, why)` where it holds none."""
     return run(root, ["show", f"{sha}:{rel}"])

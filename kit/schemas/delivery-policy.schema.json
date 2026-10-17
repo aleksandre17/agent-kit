@@ -15,6 +15,15 @@
       "description": "state id -> how long a card may sit in it before the surface says so.",
       "type": "object"
     },
+    "owner_signing": {
+      "description": "An owner's mark (a door's passage, a lowering) counts only in a commit the owner signed, verified by git against this allowed-signers file (ADR-025 amendment 3). Written by `signer --setup`, the owner's own act; absent, a mark is a name.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signers"],
+      "properties": {
+        "signers": {"type": "string", "minLength": 1}
+      }
+    },
     "emergency_debt_days": {
       "description": "How many days an emergency change may stand before a card repays it (ADR-025 decision 6). The host's number; absent means the debt is reported and never comes due.",
       "type": "integer",

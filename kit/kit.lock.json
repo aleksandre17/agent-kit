@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 357,
+  "count": 360,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -11,7 +11,7 @@
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "075a11f3d3b4e9f429be5564cb2f53d712028fb0787fa2a396764c4cf0fabead",
+      "digest": "b0521cb620aaf053bea847efa008b1ca61295d0c587bdbeb35b31c3631ebe54e",
       "path": "README.md"
     },
     {
@@ -23,7 +23,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "85332ac1b69f7fecc7db5e5e35d34fa6d9b0950b7595b6680ccde2ae085407e6",
+      "digest": "a1b4e3179924ae76f8d72ed2df268562e80387dd4e470389d2c949d0d86ba342",
       "path": "capabilities/delivery/capability.json"
     },
     {
@@ -43,6 +43,12 @@
       "class": "payload",
       "digest": "2db6e41caf487b2f0c07bc9330121f04e055e9866eb34f8f096b60147657532d",
       "path": "capabilities/delivery/payload/BOARD.md.mustache"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "payload",
+      "digest": "7776368a418e8097668e0eecc4a90b52252ecacad96e8341d64ae83206dc6ac4",
+      "path": "capabilities/delivery/payload/allowed_signers"
     },
     {
       "accounted_by": "declaration-closure",
@@ -563,7 +569,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "f0577e6e2712eac93960cbcf908012f37fcd3fc9bb3dd8221257648c832780d3",
+      "digest": "127316c91168c9bef8ac5b27fa556452eed3456bf7d6ad4e357d93f13122b8ff",
       "path": "diagnostics.json"
     },
     {
@@ -941,7 +947,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "9c76ca9f63f6588bde8f9434934566adca9e92a74c12fb19bcb5300cf8d024d1",
+      "digest": "1066fcb529f2ae9eeed6b911ce9253cb8aa75e8d431bdcca580874b28b8f5304",
       "path": "interpreters/gates/workcards.py"
     },
     {
@@ -1103,13 +1109,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "e10586c46bf7ef1878a27dd09a20b1ddd8d38159f01f30d84951f001f240c437",
+      "digest": "bd0cd052b4a1c163cad4a7acd81efea0d4d1e0f2bfa3dfb1b92548cafff2495c",
       "path": "interpreters/ports/vcs.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "6d39f435160d42360c657a5a77ccf4b1a1e33edaf692b32dcf697b33eb4b80ef",
+      "digest": "e7eb9201b1b5742312382172c6c23e2067fbd3340afd2e5c3236900d1d106571",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1303,6 +1309,12 @@
       "class": "interpreter",
       "digest": "11ff05400114538745c4825f9ff57854e7142060fd9fa10a937bddfe89739de2",
       "path": "interpreters/shaping.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "bb4ba1f59a582a4646154a43af1daeec30992ca804199c4b1003222031810e00",
+      "path": "interpreters/signing.py"
     },
     {
       "accounted_by": "interpreter",
@@ -1541,6 +1553,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "a41d0f3fa44c7f7d1abbea2298f57ac4f84e17081c42a77841d04f93e954032d",
+      "path": "interpreters/verbs/signer.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "8f745a2ac6dd65015c097a59a723049aa7dd3bd68667d88ac8c3ed81afb6747f",
       "path": "interpreters/verbs/spawn.py"
     },
@@ -1727,7 +1745,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "245ced744e0352dc963fa732490b677face32c332031191469365d00ee787c33",
+      "digest": "ca699001755250488464bffdab662be0dbb1f44669030f3183aacde1b87f9f87",
       "path": "schemas/delivery-policy.schema.json"
     },
     {
@@ -2148,5 +2166,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T10:30:20+00:00"
+  "taken_at": "2026-10-17T11:46:54+00:00"
 }
