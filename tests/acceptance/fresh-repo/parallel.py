@@ -25,6 +25,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 RAN = re.compile(r"^Ran (\d+) tests? in", re.M)
+#: The most of one failed module's report printed, in characters: enough for a traceback, never a flood.
+REPORT = 6000
 
 
 def _one(module: Path, logs: Path) -> tuple:
@@ -62,6 +64,12 @@ def main(argv=None) -> int:
     print(f"acceptance: {total} test(s) in {len(modules)} module(s), {time.monotonic() - started:.0f}s, "
           f"{args.workers} worker(s); logs at {logs}")
     if failed:
+        # A log kept on a machine nobody can open (a CI runner) is not read where the failure happened:
+        # each failed module's own report -- unittest's from its first failure banner -- is printed too.
+        for name in failed:
+            said = (logs / f"{name}.log").read_text(encoding="utf-8")
+            start = said.find("=" * 70)
+            print(f"\n----- {name} -----\n{(said[start:] if start >= 0 else said)[:REPORT]}")
         print(f"acceptance: FAILED in {len(failed)} module(s): {', '.join(failed)}")
         return 1
     print("acceptance: OK")
