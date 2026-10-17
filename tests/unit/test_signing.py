@@ -27,7 +27,19 @@ def test_a_cards_marks_are_its_door_passages_and_its_lowerings():
                      ("reshaped[1]", "owner", "t4"): "the lowering to normal (from major)"}
     assert signing.doors_of(marks)["the passage to bet"] == [("history[1]", "owner", "t1"),
                                                              ("history[2]", "owner", "t3")], \
-        "a door walked twice is one door: one signed mark holds it"
+        "a door walked twice keeps both marks, in the record's order"
+
+
+def test_a_door_walked_twice_is_held_by_its_latest_mark_never_by_its_first_signed_one_N1():
+    first, second = ("history[0]", "owner", "t1"), ("history[4]", "owner", "t5")
+    door = "the passage to bet"
+    assert not signing.holds([first, second], door, {(first, door)}), "a later unsigned passage is not covered"
+    assert signing.holds([first, second], door, {(second, door)}), "a door walked again, signed, holds"
+    assert signing.holds([first, second], door, {(first, door), (second, door)})
+    slipped = ("history[0]", "owner", "t9")
+    assert not signing.holds([slipped, second], door, {(second, door)}), \
+        "a forged mark slipped in before a signed one, with a later moment, is not covered"
+    assert not signing.holds([first], door, set())
 
 
 def test_an_allowed_signers_line_names_its_principal_and_only_git():

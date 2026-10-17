@@ -8,9 +8,10 @@ it: git verifies the signature against the host's allowed-signers file (OpenSSH'
 `gpg.ssh.allowedSignersFile`); this module holds no key, reads no passphrase and verifies nothing
 itself -- it says which marks a card holds and which door each one opens.
 
-A door is held when ONE of its marks was INTRODUCED by a commit its principal signed: an unsigned mark
-beside a signed one opens nothing the signed one did not, and a door whose only mark is unsigned is
-walked again in a commit the owner signs -- history is never rewritten to repair it. Every signature is
+A door is held when its LATEST mark was INTRODUCED by a commit its principal signed, or a signed mark
+stands after it: a door walked twice is walked twice, and the first signed walk never covers a later
+passage (`holds`). A door whose only mark is unsigned is walked again in a commit the owner signs --
+history is never rewritten to repair it. Every signature is
 read against the trust root as it was accepted at the commit's PARENT: a key a commit adds cannot vouch
 for that commit, and a change to who may sign holds only once a signer the parent allowed signed it.
 """
@@ -36,8 +37,8 @@ def marks(record) -> dict:
     """{(where, who, moment): the door it opens} -- every acceptance a record carries, wherever it stands
     in it: a door's passage or any acceptance (`signed_by`), a lowering (`approved_by`). A mark is WHERE it
     stands as much as who made it and when: the same name and moment copied to another place in the
-    record is another mark, which a signature over the first one never covered. A door walked twice is
-    one door: its passages share a description, so one signed mark holds it."""
+    record is another mark, which a signature over the first one never covered. A door walked twice
+    has two marks under one description, in the record's order (`holds` reads the latest)."""
     found = {}
     for where, item in _walk(record, ""):
         if item.get(doors.SIGNED_BY):
@@ -70,6 +71,19 @@ def doors_of(card_marks: dict) -> dict:
     for key, door in card_marks.items():
         grouped.setdefault(door, []).append(key)
     return grouped
+
+
+def holds(keys, door: str, held) -> bool:
+    """Whether `door` holds, given its marks `keys` in the record's order and the (mark, door) pairs that
+    are `held` (signed, or standing where signing began). Every mark of the door must be covered: held
+    itself, or followed in the record by a held mark at a moment no earlier. So the LATEST passage decides
+    -- a door walked again unsigned is not held by its first signed walk -- and a forged mark slipped in
+    before a signed one, with a later moment, is not covered either."""
+    keys = list(keys)
+    at = [i for i, key in enumerate(keys) if (key, door) in held]
+    if not at:
+        return False
+    return all(i in at or any(j > i and keys[j][2] >= key[2] for j in at) for i, key in enumerate(keys))
 
 
 def introduced(after: dict, before: dict) -> dict:

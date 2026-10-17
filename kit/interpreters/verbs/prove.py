@@ -12,15 +12,18 @@ Proof is weighed as the work is (ADR-025 amendment 4): what a push carries is we
 areas, and it is proved by the commands the areas it touches declare (`proved_by`) -- a one-line change
 to the web app runs the web app's tests, not every suite the repository has. A change heavy enough to
 owe a decision, one touching an area that declares no proof, a host that weighs nothing, or `--full`, is
-proved by every command a MUST names. Which it was, and why, is printed.
+proved by EVERYTHING: every command a MUST names AND every command an area declares as its proof
+(`proved_by`, `default_proved_by`), each once -- everything is never weaker than a scoped proof. Which it
+was, and why, is printed.
 
-A push cannot rewrite its own proof: its areas, commands and MUSTs are read as they stood
-on the PUBLISHED side -- the merge-base of what is pushed with what the remote holds -- and the pushed
+A push cannot rewrite its own proof: its areas, work-class catalogue, commands and MUSTs are read as
+they stood on the PUBLISHED side -- the merge-base of what is pushed with what the remote holds -- and the pushed
 side only adds a command the published side did not have. A push that narrows a `proved_by`, the
 default's, or rewrites a command is told so, and is proved as the published side says. What is pushed
 is what git hands the hook (`--pushed "<local sha>:<remote sha> ..."`): exactly those ranges are
-weighed -- `remote..local`, or what no remote holds for a new ref. A pushed sha that is not HEAD (the
-tree the commands run over), or a range that cannot be read, is proved by everything. An area
+weighed -- `remote..local`, or what no remote holds for a new ref. A range that cannot be read is proved
+by everything. prove judges the WORKING TREE, so a push whose sha is not HEAD, or made from a tree that is
+not clean, is refused outright -- `--full` included: it would prove other bytes than those pushed. An area
 downstream of a touched one is proved with it; a MUST is said to hold only when its own enforcer ran.
 
 Nothing is proved twice on the same bytes (Cardinal IX): a command that went green on a clean tree is
@@ -30,7 +33,9 @@ guess at what a command depends on: any change at all, a dirty tree, `--full`, o
 string runs it again. A record is honoured only when its content names the same command, tree, kit
 version and proof declarations (the areas and commands it was proved under). A red run is never
 recorded. The record is a SPEED-UP, not a security boundary: whoever can write the observed plane can
-forge one, as they could edit the hook; what holds the line is the remote's own checks. A MUST whose
+forge one, as they could edit the hook or push with `--no-verify`. The hook is FEEDBACK; the authority is
+CI, which runs `check` and `prove --full` on the exact pushed commit, on a clean runner that never reads
+this record (ADR-025 amendment 5). A MUST whose
 enforcer an adapter vouches for, but whose command cannot be read -- the host's declaration missing,
 unreadable, or silent on that key -- is refused, never read as nothing to run: an enforcer nobody can
 run does not hold.
@@ -202,6 +207,21 @@ def _published_areas(ctx, base, catalogue, working):
                                                   "areas": []}
 
 
+def _published_catalogue(ctx, base, pushed):
+    """The work-class catalogue as the published side holds it: a push that edits class rows cannot make
+    itself weigh lighter. Absent there -- nothing published, or a catalogue this repository does not
+    carry -- the pushed one, said so."""
+    if base is None:
+        return pushed
+    home = workclass.catalogue_home(ctx)
+    stood = _at(ctx, base, home) if home else None
+    if isinstance(stood, dict) and isinstance(stood.get("classes"), list) and isinstance(stood.get("undo"), list):
+        return stood
+    where = f"{home} is not at the published base" if home else "this repository does not carry it"
+    print(f"prove: the work-class catalogue is weighed as pushed -- {where}")
+    return pushed
+
+
 def _scope(ctx, args) -> tuple:
     """(the commands that prove what this push carries or None for every command, why, the published base,
     the areas it was weighed by, whether the tree the commands read is the tree pushed)."""
@@ -214,13 +234,49 @@ def _scope(ctx, args) -> tuple:
     if found is None:
         return None, "this host weighs nothing (no work classes): every command a MUST names", base, None, True
     catalogue, working = found
+    catalogue = _published_catalogue(ctx, base, catalogue)
     areas = _published_areas(ctx, base, catalogue, working)
     commands, why = weighing.proof_for(paths, catalogue, areas)
     return (commands, (why if commands is None else f"{why}: proved by {', '.join(commands) or 'check alone'}"),
             base, areas, True)
 
 
+def _other_bytes(ctx, args):
+    """Why the tree prove would run its commands over is not what a push carries, or None: a pushed sha
+    that is not HEAD, or a working tree that is not clean. Only a push names its shas (`--pushed`)."""
+    pushed = [pair.partition(":")[0] for pair in str(getattr(args, "pushed", None) or "").split() if pair.strip()]
+    if not pushed:
+        return None
+    root = ctx.workspace.root
+    head, why = vcs.run(root, ["rev-parse", "HEAD"])
+    if head is None:
+        return f"HEAD cannot be read ({why})"
+    for local in pushed:
+        if _zero(local):
+            continue
+        said, why = vcs.run(root, ["rev-parse", local])
+        if said is None or said.strip() != head.strip():
+            return f"the pushed {local[:12]} is not HEAD ({head.strip()[:12]})"
+    if ctx.workspace.clean_tree() is None:
+        return "the working tree is not clean"
+    return None
+
+
+def _area_proof(areas) -> list:
+    """Every command an area declares as its proof, and the default's, once each, in their order."""
+    found = []
+    for area in (areas or {}).get("areas") or []:
+        found += [c for c in area.get("proved_by") or [] if c not in found]
+    found += [c for c in (areas or {}).get("default_proved_by") or [] if c not in found]
+    return found
+
+
 def run(ctx, args) -> int:
+    other = _other_bytes(ctx, args)
+    if other:
+        print(f"prove: REFUSED -- {other}: prove judges the working tree: push from a clean checkout of what you "
+              f"push, or let CI prove it")
+        return 1
     scoped, why, base, areas, same_tree = _scope(ctx, args)
     commands, unread = _commands(ctx, base)
     if base is not None:
@@ -254,7 +310,8 @@ def run(ctx, args) -> int:
               f"run does not hold")
         return 1
     # An area's `proved_by` is the host's own declaration of what proves it, so a scoped proof runs with
-    # or without a MUST; everything -- the unscoped path -- is what the MUSTs name.
+    # or without a MUST; everything -- the unscoped path -- is what the MUSTs name AND what every area
+    # declares, so it is never weaker than a scoped proof.
     if scoped is not None:
         print(f"prove: {why}")
         unknown = [c for c in scoped if c not in commands]
@@ -270,20 +327,36 @@ def run(ctx, args) -> int:
         if not wanted:
             print("prove: nothing beyond `check` proves this change")
             return 0
-    elif not wanted:
-        declared_test = (ctx.take_reading().get("facts") or {}).get("quality.tests.command")
-        if not declared_test:
-            print(f"prove: {why}; no MUST names a command, and this host's reading declares no test command -- "
-                  f"nothing to run")
-            return 0
-        # From the first day: what the host's briefing already says proves a change is what proves it here
-        # (`areas` refines it by module).
-        print(f"prove: {why}; no MUST names a command -- proved by the test command this host declares: "
-              f"{declared_test}")
-        commands = {**commands, "declared:test": declared_test}
-        wanted = {"declared:test": ["the host's declared test command"]}
     else:
-        print(f"prove: {why}")
+        if areas is None:  # --full, an unreadable range, a host that weighs nothing: the areas as they stand
+            areas = (workclass.declarations(ctx) or (None, None))[1]
+        everything = _area_proof(areas)
+        unknown = [c for c in everything if c not in commands]
+        if unknown:
+            print(f"prove: REFUSED -- an area names {', '.join(unknown)} as its proof, which no vouching declaration "
+                  f"runs")
+            return 1
+        if wanted:
+            print(f"prove: {why}")
+        else:
+            declared_test = (ctx.take_reading().get("facts") or {}).get("quality.tests.command")
+            if declared_test:
+                # From the first day: what the host's briefing already says proves a change is what proves it
+                # here (`areas` refines it by module).
+                print(f"prove: {why}; no MUST names a command -- proved by the test command this host declares: "
+                      f"{declared_test}")
+                commands = {**commands, "declared:test": declared_test}
+                wanted = {"declared:test": ["the host's declared test command"]}
+            elif not everything:
+                print(f"prove: {why}; no MUST names a command, no area declares one, and this host's reading "
+                      f"declares no test command -- nothing to run")
+                return 0
+            else:
+                print(f"prove: {why}; no MUST names a command")
+        for command in everything:
+            wanted.setdefault(command, ["an area's own proof"])
+        if everything:
+            print(f"prove: everything includes every area's own proof: {', '.join(everything)}")
     if getattr(args, "plan", False):
         for enforcer, held in sorted(wanted.items()):
             print(f"  would run  {commands[enforcer]}  ({enforcer}, for {', '.join(map(str, held))})")

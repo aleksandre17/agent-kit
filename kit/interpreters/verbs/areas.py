@@ -9,8 +9,10 @@ declared, the field that is a module's path, the vouched command that proves one
 every module map an enabled capability publishes and drafts one area per module -- its path, proved by
 its own tests where that command is vouched -- one for the tool's own declarations (costly: how the
 host is built and delivered), and its prose (proved by `check` alone). A module at the repository root
-claims what no other area claims. An area the host already declares is
-never touched: the draft only ADDS. Writing it is a door (`--approve`).
+claims what no other area claims. An area the host wrote is never touched: the draft ADDS, and it
+recomputes only the `paths` of an area it drafted itself and nobody edited since -- one whose
+`drafted_as` still equals its `paths` (a root module's, once the kit planes are known). Writing it is a
+door (`--approve`).
 
 A module map takes one of two forms. The MANIFEST form names the file and the pointer where a build tool
 declares its modules. The MARKER form is for a host with no such manifest: a module is every directory
@@ -22,7 +24,8 @@ The KIT PLANES -- every directory an enabled capability installs, projects or fl
 directory the kit itself is vendored in -- are drafted as one costly area proved by `check` alone: how the
 host is governed is not the root module's reversible code. It is drafted only once the areas declaration
 is committed: the install commit right after `start` carries every plane, and a scale that made it owe a
-card would be the ceremony a fresh host cannot walk yet.
+card would be the ceremony a fresh host cannot walk yet. A module at the repository root WAITS for them:
+drafted before the planes, it would claim every plane as the root module's code.
 """
 
 from __future__ import annotations
@@ -79,10 +82,12 @@ def planes(capabilities, kit_dir=None) -> list:
     return sorted(found)
 
 
-def drafted(maps: list, vouched: set, plane_dirs=(), plane_files=()) -> list:
+def drafted(maps: list, vouched: set, plane_dirs=(), plane_files=(), roots=True) -> list:
     """The areas the module maps imply -- pure: `maps` is [(map document, {module id: module})]. The kit
-    planes are `plane_dirs` and `plane_files`, the repository's own metadata files (the vcs port names them)."""
-    out, roots = [], []
+    planes are `plane_dirs` and `plane_files`, the repository's own metadata files (the vcs port names them).
+    `roots` False holds back a module at the repository root. Every drafted area carries `drafted_as`, the
+    paths it was drafted with: the mark that it is the draft's and not the host's."""
+    out, want_roots, roots = [], roots, []
     if plane_dirs:
         held = [re.escape(d) for d in plane_dirs] + [re.escape(f) + "$" for f in plane_files]
         out.append({"id": PLANES_ID, "paths": "^(" + "|".join(held) + ")",
@@ -114,10 +119,10 @@ def drafted(maps: list, vouched: set, plane_dirs=(), plane_files=()) -> list:
     out.append({"id": "prose", "paths": r"(^docs/|\.md$)", "undo": "reversible",
              "because": "prose changes nothing that runs; check reads its structure", "proved_by": []})
     claimed = [a["paths"] for a in out]
-    for area in roots:  # the repository root claims what no other area claims
+    for area in roots if want_roots else []:  # the repository root claims what no other area claims
         area["paths"] = _excluding(claimed)
         out.append(area)
-    return out
+    return [dict(area, drafted_as=area["paths"]) for area in out]
 
 
 def marked(doc: dict, carried: list, read_json, excluded=()) -> tuple:
@@ -192,7 +197,22 @@ def run(ctx, args) -> int:
     areas_doc = ctx.workspace.read_json(install["target"])
     have = {a["id"] for a in areas_doc.get("areas") or []}
     own = ctx.workspace.vcs_files() if plane_dirs else []
-    adding = [a for a in drafted(maps, set(vouched), plane_dirs, own) if a["id"] not in have]
+    draft = drafted(maps, set(vouched), plane_dirs, own, roots=bool(plane_dirs))
+    if not plane_dirs:
+        waiting = [a["id"] for a in drafted(maps, set(vouched)) if a["id"] not in {d["id"] for d in draft}]
+        if waiting:
+            print(f"areas: {', '.join(waiting)} (the repository root) waits for the kit planes -- drafted now, it "
+                  f"would claim every plane as its own code")
+    adding = [a for a in draft if a["id"] not in have]
+    # An area the draft wrote and nobody edited since (`drafted_as` still its `paths`) follows the draft;
+    # an area the host wrote, or edited, is never touched.
+    fresh = {a["id"]: a["paths"] for a in draft}
+    kept, moved = [], []
+    for area in areas_doc.get("areas") or []:
+        if area.get("drafted_as") and area["drafted_as"] == area.get("paths") and fresh.get(area["id"], area["paths"]) != area["paths"]:
+            area = dict(area, paths=fresh[area["id"]], drafted_as=fresh[area["id"]])
+            moved.append(area)
+        kept.append(area)
     wanted = {p.split(":", 1)[1] for a in adding for p in a.get("proved_by", [])}
     new_commands = {k: v for k, v in new_commands.items() if k in wanted}
     if not maps:
@@ -201,20 +221,22 @@ def run(ctx, args) -> int:
     for area in adding:
         proof = ", ".join(area["proved_by"]) if "proved_by" in area else "everything (no vouched command proves it)"
         print(f"  + {area['id']}  {area['paths']}  [{area['undo']}]  proved by {proof or 'check alone'}")
+    for area in moved:
+        print(f"  ~ {area['id']}  {area['paths']}  (drafted by this verb and not edited since: redrafted)")
     for key, command in sorted(new_commands.items()):
         print(f"  + command {key}: {command}  (the delivery policy's `commands`)")
-    if not adding:
+    if not adding and not moved:
         print("areas: nothing to add -- every drafted area is declared")
         return 0
     who = getattr(args, "approve", None)
     if not who:
-        print(f"areas: {len(adding)} area(s) drafted and not written -- writing them is the owner's door: "
-              f"areas --approve <who>")
+        print(f"areas: {len(adding) + len(moved)} area(s) drafted and not written -- writing them is the owner's "
+              f"door: areas --approve <who>")
         return 0
 
     def write() -> int:
         scoped = ctx.workspace.scoped(governed.capability.targets())
-        scoped.write_json(install["target"], dict(areas_doc, areas=list(areas_doc.get("areas") or []) + adding))
+        scoped.write_json(install["target"], dict(areas_doc, areas=kept + adding))
         if new_commands:
             policy = next((i for i in governed.capability.installs if i.get("reads_as") == "policy"), None)
             if policy is None:
@@ -222,7 +244,7 @@ def run(ctx, args) -> int:
             body = ctx.workspace.read_json(policy["target"]) if ctx.workspace.exists(policy["target"]) else {}
             scoped.write_json(policy["target"], dict(body, commands={**new_commands, **(body.get("commands") or {})}))
             print(f"areas: {len(new_commands)} command(s) written into {policy['target']}")
-        print(f"areas: {len(adding)} area(s) written by {who}")
+        print(f"areas: {len(adding)} area(s) written{f', {len(moved)} redrafted' if moved else ''} by {who}")
         return 0
 
     return hostlock.held(ctx, args, write)

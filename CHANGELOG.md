@@ -7,6 +7,19 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 
 ## 0.3.0 — unreleased
 
+**Fixed — a re-audit's four logic defects; the trust model said as it is (ADR-025 amendment 5)**
+- FF-WORK-SIGNED: a door walked twice is held by its LATEST mark (`signing.holds`), never by an earlier
+  signed walk -- a later unsigned passage in the owner's name fails (N1).
+- `prove`: everything runs every area's `proved_by` and `default_proved_by` as published, with the MUSTs'
+  commands, each once -- never weaker than a scoped proof (N2); the work-class catalogue is read at the
+  published base, as pushed only where it is absent there, said so (N5).
+- `prove --pushed` refuses a pushed sha that is not HEAD or a working tree that is not clean, `--full`
+  included: it judges the working tree.
+- `areas`: a root module waits for the kit planes; a drafted area carries `drafted_as` (delivery-areas
+  schema) and is redrafted while unedited; an area the host wrote is never touched (M3/N4).
+- github-actions 1.6.1: the workflow runs `prove --full` on the checked-out commit. Hooks are feedback; CI,
+  required by branch protection, is the authority; the proof cache is a local speed-up CI never reads.
+
 **Fixed — a push can no longer go out green with a red or unproved change (ADR-025 amendment 4, review)**
 - `prove` reads areas and commands as the published side holds them; a narrowed `proved_by` /
   `default_proved_by` or a removed or rewritten command is loosening (`weighing.loosened`).

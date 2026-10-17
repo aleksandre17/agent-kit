@@ -204,6 +204,30 @@ class OwnerMarksSigned(Fixtures, unittest.TestCase):
         self.assertIn("card.json: the passage to bet is marked by owner, and no commit", said)
         self.assertNotIn("card.json: the passage to doing", said)
 
+    def test_a_door_walked_twice_is_held_by_its_latest_passage_not_its_first_signed_one_N1(self):
+        host, owner = self.signed_host()
+        bet = self.entry("bet", "2026-10-17T01:00:00+00:00")
+        self.write_card(host, "card", [bet])
+        self.commit(host, "the owner bets, signed", signed_with=owner)
+        flight = {"from": "bet", "to": "in-flight", "at": "2026-10-17T02:00:00+00:00", "by": "dev"}
+        self.write_card(host, "card", [bet, flight], state="in-flight")
+        self.commit(host, "the agent starts the work")
+        parked = dict(self.entry("parked", "2026-10-17T03:00:00+00:00"), **{"from": "in-flight"})
+        self.write_card(host, "card", [bet, flight, parked], state="parked")
+        self.commit(host, "the owner parks it, signed", signed_with=owner)
+        self.assertIn(f"PASS  {GATE}", self.checked(host))
+        reshaped = {"from": "parked", "to": "shaped", "at": "2026-10-17T04:00:00+00:00", "by": "dev"}
+        again = self.entry("bet", "2026-10-17T05:00:00+00:00")
+        self.write_card(host, "card", [bet, flight, parked, reshaped, again], state="bet")
+        self.commit(host, "the agent walks the bet again, in the owner's name, unsigned")
+        said = self.checked(host)
+        self.assertIn(f"FAIL  {GATE}", said, "the first signed bet never covers a later passage")
+        self.assertIn("card.json: the passage to bet is marked by owner, and no commit that principal signed", said)
+        self.write_card(host, "card", [bet, flight, parked, reshaped, again,
+                                       self.entry("bet", "2026-10-17T06:00:00+00:00")], state="bet")
+        self.commit(host, "the owner walks the bet again, signed", signed_with=owner)
+        self.assertIn(f"PASS  {GATE}", self.checked(host), "a later signed passage covers the unsigned one")
+
     def test_turning_signing_on_keeps_an_existing_host_green_H5(self):
         def history(host):
             self.commit(host, "the install, with the empty trust root it seeds")

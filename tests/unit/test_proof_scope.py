@@ -95,6 +95,9 @@ def test_the_root_module_claims_only_what_no_other_area_claims_and_the_planes_st
     assert root.search("src/App.java") and root.search(".gitignore")
     claimed = [a["id"] for a in drafted if re.search(a["paths"], "README.md")]
     assert claimed == ["prose"], "README.md is claimed once"
+    assert all(a["drafted_as"] == a["paths"] for a in drafted), "every drafted area says it is the draft's"
+    waiting = areas_verb.drafted([(mapdoc, {"web": {"path": "web"}, "api": {"path": "."}})], set(), (), roots=False)
+    assert "module-api" not in {a["id"] for a in waiting}, "a root module waits for the planes"
 
 
 def test_a_marker_map_finds_its_modules_and_drafts_the_command_that_proves_each():

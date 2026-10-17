@@ -67,6 +67,25 @@ def _install(ctx, contract: dict):
                  if item.get(declared.CONTRACT) == contract[declared.CONTRACT] and item.get("mode") == "seed"), None)
 
 
+def catalogue_home(ctx):
+    """The repository-relative path the work-class catalogue is read from, or None where this repository
+    does not carry it (a kit run from outside the host): an install that reads it back, else the shipped
+    document under the kit or a take this host vendors."""
+    names = declared.named(ctx.enabled_capabilities(), CATALOGUE)
+    for capability in ctx.enabled_capabilities():
+        for item in capability.installs:
+            if item.get("reads_as") in names:
+                return item["target"]
+        for document in capability.raw.get("documents", []):
+            if document["id"] in names:
+                try:
+                    return ctx.manifest.path(document["source"]).resolve().relative_to(
+                        ctx.workspace.root.resolve()).as_posix()
+                except ValueError:
+                    return None
+    return None
+
+
 def areas_target(ctx):
     """The host path the areas are declared at, or None -- the install that seeds them says where."""
     item = _install(ctx, AREAS)

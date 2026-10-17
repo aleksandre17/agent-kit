@@ -947,7 +947,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "9272198b9c837de36454f17297dfdb5e1fc12bde758483e98094bfec4147a45f",
+      "digest": "4f1226a5e0d8cbc7ba04b995d295c26047fcc64c7c5f86fff57db4783a35361a",
       "path": "interpreters/gates/workcards.py"
     },
     {
@@ -1313,7 +1313,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "41f517c29cb08317aa2702777367e533de41d3cf453941e44ff3fb2977b699f0",
+      "digest": "0718e69a967c3ea432659962a04a33591aca3a5b28d6e18d2f99db9a8a2fd34f",
       "path": "interpreters/signing.py"
     },
     {
@@ -1391,7 +1391,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "9b4143fe5368495857ecbe7cbef60d8b376aca40489c9db82e5c8b68d1c6ec6d",
+      "digest": "63f81679416b5324669e7f8975157d3694ec8a66e66fca297d066992c29df03d",
       "path": "interpreters/verbs/areas.py"
     },
     {
@@ -1517,7 +1517,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "6962364328833e5cbf06865c96c02a1bf53c1027419454708ccfb3c70a8f7bba",
+      "digest": "ba26ccab0e25555c278ebe55e8c3098f81056c2ba13d6c214f0eb75de768213f",
       "path": "interpreters/verbs/prove.py"
     },
     {
@@ -1625,7 +1625,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "c8619128949facb488e05098d07ff451d5bf4500ad8215f1ee9caaa1decc2529",
+      "digest": "5611837dded91205a1f8fadb40604d47104e0c34b884ed6099ae4a25aad94b67",
       "path": "interpreters/workclass.py"
     },
     {
@@ -1745,7 +1745,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "3788ba364dac0043578d9a7bc26192e8740347ffd60f716945fc681dfbc85b76",
+      "digest": "582950d3407bc6dfef6900d8b1107284855fe4d7e6c7776de012b659f0c7bb30",
       "path": "schemas/delivery-areas.schema.json"
     },
     {
@@ -2178,5 +2178,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T17:12:35+00:00"
+  "taken_at": "2026-10-17T17:31:38+00:00"
 }

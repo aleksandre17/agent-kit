@@ -411,7 +411,8 @@ def _marks_signed(ctx, params):
     """Where the host declares `owner_signing`, every acceptance a record in the binding places carries
     -- a door's passage, a lowering, a host's install or upgrade, and a review in the name of someone
     who signs -- holds only when a commit that principal SIGNED introduced it (ADR-025 amendment 3): a
-    name in a record is text anything can write. Each signature is read against the trust root as it was
+    name in a record is text anything can write. A door walked twice is held by its LATEST mark, never
+    by an earlier signed walk (`signing.holds`). Each signature is read against the trust root as it was
     accepted at the commit's parent; a mark is where it stands, who made it and when, and a commit is
     credited only with the marks it brought; a card the archive moved keeps its history. Marks that stood
     when signing was set up -- the later of the first trust root that names a principal and the first
@@ -472,9 +473,6 @@ def _marks_signed(ctx, params):
         found.update({key: door for key, door in signing.reviews(value).items() if signing.who(key) in who_signs})
         return found
 
-    def holds(keys, door, items) -> bool:
-        return any((key, door) in items for key in keys)
-
     places = [p["root"].rstrip("/") for p in ctx.manifest.planes if p["class"] == "binding"]
     places += [i["target"].rstrip("/") for c in capabilities for i in c.installs
                if i.get("class") == "binding" and i.get("mode") == "space"]
@@ -494,7 +492,7 @@ def _marks_signed(ctx, params):
             then_path = next((path for sha, path in reversed(commits) if seen.at(sha) <= seen.at(baseline)), "")
             then_text = seen.text(baseline, then_path)
         then = set(held_in(_parsed(then_text) or {}).items())
-        judged = {door: keys for door, keys in signing.doors_of(now).items() if not holds(keys, door, then)}
+        judged = {door: keys for door, keys in signing.doors_of(now).items() if not signing.holds(keys, door, then)}
         if not judged:
             continue
         if commits is None:
@@ -518,10 +516,10 @@ def _marks_signed(ctx, params):
                 signed |= {(key, door) for key, door in brought.items() if signing.who(key) == principal}
         committed = set(held_in(_parsed(seen.text("HEAD", commits[-1][1])) or {}).items()) if commits else set()
         for door, keys in sorted(judged.items()):
-            if holds(keys, door, signed):
+            if signing.holds(keys, door, signed | then):  # the LATEST passage decides, never the first
                 continue
             names = ", ".join(sorted({signing.who(k) for k in keys}))
-            if not holds(keys, door, committed):
+            if (keys[-1], door) not in committed:
                 print(f"        {rel}: {door} is marked by {names} and not committed yet -- it holds once a "
                       f"commit {names} signs carries it (git commit -S)")
                 continue

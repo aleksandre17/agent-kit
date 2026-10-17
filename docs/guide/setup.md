@@ -77,7 +77,14 @@ flowchart LR
 - The commit hooks: `pre-commit` judges every edit against the host's edit gates; `commit-msg` holds the
   class floor (a lighter declaration, a missing card, a card shaped lighter than the change are refused).
 - The push hook runs `check`, then `prove`: the commands that prove the areas the push touches, never
-  twice on the same bytes; everything only where the change owes a decision.
+  twice on the same bytes; everything (every MUST's command and every area's own proof) only where the
+  change owes a decision. It refuses a pushed sha that is not HEAD, or a tree that is not clean: prove
+  judges the working tree, so push from a clean checkout of what you push, or let CI prove it.
+- **Who holds the line.** The hooks are FEEDBACK: `--no-verify` skips them, as git documents. The
+  AUTHORITY is CI -- the github-actions workflow runs `check` and `prove --full` on the exact pushed
+  commit, on a clean runner with no proof cache; require it in branch protection, or the hooks are all
+  there is (OWASP CI/CD security: enforce controls server-side). The proof cache is a local speed-up only:
+  CI never reads it (ADR-025 amendment 5).
 - `check --brief` -- what fails, and the summary: what an agent reads. `check` -- the full listing.
 - The agents' own walk of all this is the skill `walk-a-piece-of-work`, served by `render`.
 

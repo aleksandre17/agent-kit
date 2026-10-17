@@ -237,6 +237,7 @@ class Norms(Fixtures, unittest.TestCase):
         full = self.run_kit(KIT, host, "prove", "--full")
         self.assertEqual(0, full.returncode, said(full))
         self.assertEqual(1, count("all"), "--full runs every command a MUST names")
+        self.assertEqual(2, count("web"), "everything runs every area's own proof too, which no MUST names (N2)")
 
     def test_507_a_host_with_no_build_kit_proves_an_area_by_the_command_its_policy_declares(self):
         """Any host -- the kit itself among them -- declares its own proof commands in its delivery
@@ -429,10 +430,113 @@ class Norms(Fixtures, unittest.TestCase):
         git("commit", "-qm", "on another branch")
         other = git("rev-parse", "HEAD")
         git("checkout", "-q", "-")
-        pushed = self.run_kit(KIT, host, "prove", "--pushed", f"{other}:{published}")
-        self.assertEqual(0, pushed.returncode, said(pushed))
+        pushed = self.run_kit(KIT, host, "prove", "--pushed", f"{other}:{published}", "--full")
+        self.assertEqual(1, pushed.returncode, said(pushed))
         self.assertIn("is not HEAD", pushed.stdout)
-        self.assertEqual(1, count("all"), "a pushed ref that is not HEAD is proved by everything")
+        self.assertIn("prove judges the working tree: push from a clean checkout of what you push", pushed.stdout)
+        self.assertEqual(0, count("all"), "a pushed ref that is not HEAD is refused, never proved on other bytes")
+        (host / "lib" / "stray.py").write_text("S = 1\n", encoding="utf-8")
+        dirty = self.run_kit(KIT, host, "prove", "--pushed", f"{published}:{published}", "--full")
+        self.assertEqual(1, dirty.returncode, said(dirty))
+        self.assertIn("the working tree is not clean", dirty.stdout)
+        self.assertEqual(0, count("all"), "--full does not bypass the guard")
+
+    def test_512_a_push_cannot_weigh_itself_lighter_by_editing_the_class_rows_N5(self):
+        import subprocess
+        from harness import install_target
+        from test_pinned_kit import PINNED
+
+        ran = self._temp("ran-")
+        host = self.started()
+        policy = host / install_target("delivery", reads_as="policy")
+        body = json.loads(policy.read_text(encoding="utf-8"))
+        body["commands"] = {"lib": self._counting(ran, "lib"), "all": self._counting(ran, "all")}
+        policy.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+        areas = host / install_target("delivery", reads_as="areas")
+        shape = json.loads(areas.read_text(encoding="utf-8"))
+        shape["areas"] = [{"id": "lib", "paths": "^lib/", "undo": "irreversible", "because": "a fixture",
+                           "proved_by": ["host:lib"]}]
+        shape["default_proved_by"] = []
+        areas.write_text(json.dumps(shape, indent=2) + "\n", encoding="utf-8", newline="\n")
+        self.write_norms(host, [_norm("our-must", DERIVES[1], derives_from=RULE["derives_from"], modality="MUST",
+                                      subject="held-by-the-whole-suite", enforced_by=["host:all"])])
+
+        def git(*argv):
+            done = subprocess.run(["git", "-C", str(host), "-c", "user.email=s@invalid", "-c", "user.name=suite",
+                                   "-c", "core.hooksPath=/dev/null", *argv], capture_output=True, text=True)
+            self.assertEqual(0, done.returncode, done.stdout + done.stderr)
+
+        remote = self._temp("remote-")
+        subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+        git("add", "-A")
+        git("commit", "-qm", "the host")
+        git("remote", "add", "origin", str(remote))
+        git("push", "-q", "-u", "origin", "HEAD")
+        kit = host / PINNED
+        catalogue = kit / "capabilities" / "delivery" / "work-classes.json"
+        rows = json.loads(catalogue.read_text(encoding="utf-8"))
+        heavy = next(r for r in rows["classes"] if r.get("admits", {}).get("undo") == "irreversible")
+        heavy["requires"] = [r for r in heavy["requires"] if r != "decision"]
+        catalogue.write_text(json.dumps(rows, indent=2) + "\n", encoding="utf-8", newline="\n")
+        (host / "lib").mkdir()
+        (host / "lib" / "a.py").write_text("A = 1\n", encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-qm", "an irreversible change that rewrites the class it weighs")
+        proved = self.run_kit(kit, host, "prove")
+        self.assertEqual(0, proved.returncode, said(proved))
+        self.assertTrue((ran / "all").exists(), "weighed by the catalogue as published, it owes a decision: "
+                                                "proved by everything -- " + said(proved))
+
+    def test_513_a_root_module_waits_for_the_kit_planes_and_a_drafted_area_follows_its_draft_M3(self):
+        import re
+        import subprocess
+        from harness import install_target
+
+        host = self.host()
+        (host / "stack-kit.json").write_text(json.dumps({"modules": {"api": {"type": "java-boot", "path": "."}},
+                                                         "commands": {"test": "exit 0"}}, indent=2) + "\n",
+                                             encoding="utf-8", newline="\n")
+        started = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
+        self.assertEqual(0, started.returncode, said(started))
+        areas = host / install_target("delivery", reads_as="areas")
+        ids = [a["id"] for a in json.loads(areas.read_text(encoding="utf-8"))["areas"]]
+        self.assertNotIn("module-api", ids, "a root module drafted before the planes would claim them")
+        waits = self.run_kit(KIT, host, "areas")
+        self.assertIn("waits for the kit planes", waits.stdout)
+
+        def git(*argv):
+            done = subprocess.run(["git", "-C", str(host), "-c", "user.email=s@invalid", "-c", "user.name=suite",
+                                   "-c", "core.hooksPath=/dev/null", *argv], capture_output=True, text=True)
+            self.assertEqual(0, done.returncode, done.stdout + done.stderr)
+
+        git("add", "-A")
+        git("commit", "-qm", "the install")
+        approved = self.run_kit(KIT, host, "areas", "--approve", "acceptance-suite")
+        self.assertEqual(0, approved.returncode, said(approved))
+        doc = json.loads(areas.read_text(encoding="utf-8"))
+        root = next(a for a in doc["areas"] if a["id"] == "module-api")
+        claims = re.compile(root["paths"])
+        self.assertTrue(claims.search("src/App.java"))
+        for plane in (".agents/project/x.json", ".githooks/pre-push"):
+            self.assertFalse(claims.search(plane), f"the root module claims {plane}")
+
+        stale = "^(?!(?:.*?(?:^docs/))).+"
+        doc["areas"] = [dict(a, paths=stale, drafted_as=stale) if a["id"] == "module-api" else a for a in doc["areas"]]
+        areas.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8", newline="\n")
+        git("add", "-A")
+        git("commit", "-qm", "a root area the verb drafted before the planes")
+        redrafted = self.run_kit(KIT, host, "areas", "--approve", "acceptance-suite")
+        self.assertEqual(0, redrafted.returncode, said(redrafted))
+        doc = json.loads(areas.read_text(encoding="utf-8"))
+        self.assertEqual(root["paths"], next(a for a in doc["areas"] if a["id"] == "module-api")["paths"],
+                         "an area the verb drafted, unedited, follows the draft")
+
+        doc["areas"] = [dict(a, paths="^src/") if a["id"] == "module-api" else a for a in doc["areas"]]
+        areas.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8", newline="\n")
+        kept = self.run_kit(KIT, host, "areas", "--approve", "acceptance-suite")
+        self.assertEqual(0, kept.returncode, said(kept))
+        self.assertEqual("^src/", next(a for a in json.loads(areas.read_text(encoding="utf-8"))["areas"]
+                                       if a["id"] == "module-api")["paths"], "an area the host edited is never touched")
     def test_511_a_push_cannot_drop_the_enforcer_of_a_must_it_is_proved_by(self):
         """Found by review: the MUSTs were read from the tree being pushed, so a push could unname the
         command that proves it."""

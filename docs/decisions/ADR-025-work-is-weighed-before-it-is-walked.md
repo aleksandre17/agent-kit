@@ -523,6 +523,39 @@ at the same door. Rejected: one area per plane -- the install commit would cross
 yet closed: the commit floor's own `loosened` call does not yet pass the command maps (only `prove` reads
 them), and a MUST's `enforced_by` rewritten in the pushed tree is read from the pushed tree.
 
+## Amendment 5 — the hooks are feedback; the authority is CI (2026-10-17)
+
+**Context.** A re-audit reproduced four logic defects behind green gates, and read the trust model as
+claiming more than it holds. Closed: (N1) a door walked twice was held by its FIRST signed walk -- a later
+unsigned passage in the owner's name passed FF-WORK-SIGNED; a door now holds only when every mark of it is
+covered by a signed mark at or after it in the record, at a moment no earlier (`signing.holds`). (N2)
+"everything" ran only what a MUST names, so a heavy or unclaimed change dropped every area's own proof --
+everything was weaker than a scoped proof; it now runs every `proved_by` and `default_proved_by` of the
+published areas too, each once. (N5) the work-class catalogue was read from the pushed tree, so a push
+could edit class rows to weigh lighter; it is read at the published base, as the areas are, and only where
+it is absent there, as pushed -- said so. (M3/N4) `start` drafted the root module before the kit planes,
+so it claimed `.agents/`, `.github/`, `.gitignore`; a root module now waits for the planes, and an area the
+verb drafted carries `drafted_as` (its drafted paths), so `areas` redrafts it while nobody edited it -- an
+area the host wrote or edited is never touched. And `prove --pushed` refuses a pushed sha that is not HEAD,
+or a working tree that is not clean, `--full` included: it judges the working tree, so it would prove other
+bytes.
+
+**Decision -- the trust model, said as it is.**
+1. Client-side hooks (`pre-commit`, `commit-msg`, `pre-push`) are FEEDBACK: early, cheap, and skipped by
+   anyone who runs `git commit --no-verify` or `git push --no-verify`, as git documents. They are never
+   the boundary.
+2. The AUTHORITATIVE gate is CI: the github-actions workflow (1.6.1) runs `check`, `prove --full` and
+   `judge` on the exact commit the runner checked out -- the pushed commit, or a pull request's merge
+   commit -- on a clean runner with no proof cache, and a host makes it binding by requiring it in branch
+   protection. This is the OWASP CI/CD security guidance's position: a control is enforced server-side,
+   where the person it constrains cannot switch it off.
+3. The proof record (`proofs/` in the observed plane) is a local speed-up only. CI never reads it, and
+   `--full` never honours one.
+
+Rejected: making the hook "unbypassable" -- no client-side mechanism is; claiming it would be the false
+assurance this amendment removes. Not closed: a host that does not require the workflow in branch
+protection has feedback only, and `check` cannot see a remote's settings to say so.
+
 **Closed after Amendment 2's limits were re-read** (2026-10-17): a dropped `feeds` is loosening -- a consumer no
 longer named is one a change no longer reaches -- and is weighed as one. An `appetite` held by any declared
 value is BY DESIGN, not a limit: the bet records the budget the owner declared, in the owner's unit, and

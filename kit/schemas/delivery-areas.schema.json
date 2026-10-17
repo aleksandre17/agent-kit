@@ -84,6 +84,11 @@
             "type": "array",
             "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*:[A-Za-z0-9._-]+$"}
           },
+          "drafted_as": {
+            "description": "Written by the areas verb on an area it drafted: the paths it drafted. While it still equals `paths`, the verb may redraft them (a root module's, once the kit planes are known); an area without it, or whose `paths` differ, is the host's and is never touched. Delete it to own the area.",
+            "type": "string",
+            "minLength": 1
+          },
           "feeds": {
             "description": "The areas downstream of this one: its consumers, that must move with a change to it. Weighing a change names every area it feeds, transitively -- impact read from the map, never written as an essay per change (ADR-025 decision 12).",
             "type": "array",
