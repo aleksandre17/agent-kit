@@ -72,6 +72,28 @@ def opens_without_passphrase(tool: str, key: Path, run=subprocess.run) -> bool:
     return done.returncode == 0
 
 
+def global_warnings(setting, key: Path) -> list:
+    """What the owner's GLOBAL version-control settings would undo (`setting(name)` -> its value, "" when
+    unset): signing every commit, or this key as every repository's signing key, signs an agent's commits
+    on this machine as the owner -- the very thing the setup keeps apart."""
+    warnings = []
+    if setting("commit.gpgsign").strip().lower() == "true":
+        warnings.append("your global configuration signs EVERY commit (commit.gpgsign=true): a commit an agent "
+                        "makes on this machine is then signed as you -- unset it globally and sign your own "
+                        "commits by hand (commit -S)")
+    configured = setting("user.signingkey").strip()
+    if configured:
+        def same(a: Path, b: Path) -> bool:
+            try:
+                return a.expanduser().resolve() == b.expanduser().resolve()
+            except OSError:
+                return False
+        if any(same(Path(configured), held) for held in (key, key.with_name(key.name + ".pub"))):
+            warnings.append(f"your global user.signingkey is this key ({configured}): every repository on this "
+                            f"machine signs with it -- keep it in this host's own configuration only")
+    return warnings
+
+
 def _places(ctx):
     """(governed, the trust root, the key tool, the capability that seeds the root, the policy's path)."""
     capabilities = ctx.enabled_capabilities()
@@ -161,6 +183,8 @@ def _setup(ctx, args) -> int:
                                              "user.signingkey": key.as_posix()})
     if done is None:
         raise SignerError(f"version control here could not be told how to sign: {why}")
+    for warning in global_warnings(ctx.workspace.global_vcs_setting, key):
+        print(f"        WARNING: {warning}")
 
     print(f"signer: 5/6  a round trip -- {tool} asks for the passphrase once more")
     with tempfile.TemporaryDirectory() as scratch:

@@ -145,12 +145,6 @@ class Workspace:
         import vcs
         return vcs.commit_paths(self._root, sha)
 
-    def signed_commits(self, rel: str, signers_rel: str) -> tuple:
-        """Every commit that touched `rel`, with its signature's verdict against the host's
-        allowed-signers file -- see `vcs.signed_commits`."""
-        import vcs
-        return vcs.signed_commits(self._root, rel, self.path(signers_rel).as_posix())
-
     def vcs_version(self) -> tuple:
         import vcs
         return vcs.version(self._root)
@@ -167,14 +161,31 @@ class Workspace:
         import vcs
         return vcs.clean_tree(self._root)
 
+    def history(self, rel: str, follow: bool = False) -> tuple:
+        """Every commit that touched `rel`, oldest first, with the path it had there -- see `vcs.history`."""
+        import vcs
+        return vcs.history(self._root, rel, follow)
+
+    def parent(self, sha: str) -> str:
+        import vcs
+        return vcs.parent(self._root, sha)
+
+    def commit_order(self) -> dict:
+        import vcs
+        return vcs.order(self._root)
+
+    def signature(self, sha: str, signers_text: str) -> tuple:
+        """(verdict, principal) of one commit, against an allowed-signers TEXT -- see `vcs.verdict`."""
+        import vcs
+        return vcs.verdict(self._root, sha, signers_text)
+
+    def global_vcs_setting(self, name: str) -> str:
+        import vcs
+        return vcs.global_setting(self._root, name)
+
     def shallow(self) -> bool:
         import vcs
         return vcs.shallow(self._root)
-
-    def introduced(self, rel: str) -> tuple:
-        """The commit that first added `rel` -- see `vcs.introduced`."""
-        import vcs
-        return vcs.introduced(self._root, rel)
 
     def file_at(self, sha: str, rel: str) -> tuple:
         """(the text of `rel` as a commit holds it, None) or (None, why) where it holds none."""

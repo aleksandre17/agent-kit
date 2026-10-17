@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import re
 import subprocess
+from pathlib import Path
 
 
 def run(root, argv: list) -> tuple:
@@ -124,15 +125,57 @@ def commit_message(root, sha: str) -> tuple:
     return run(root, ["log", "-1", "--format=%B", sha])
 
 
-def signed_commits(root, rel: str, signers) -> tuple:
-    """`([(sha, verdict, principal)], None)` -- every commit that touched `rel`, newest first, with git's
-    verdict on its signature read against the allowed-signers file `signers` (`G` good; anything else
-    is not one) and the principal it names -- or `(None, why)`. git verifies; nothing here does."""
-    said, why = run(root, ["-c", "gpg.format=ssh", "-c", f"gpg.ssh.allowedSignersFile={signers}",
-                           "log", "--format=%H%x09%G?%x09%GS", "--", rel])
+def history(root, rel: str, follow: bool = False) -> tuple:
+    """`([(sha, path)], None)` -- every commit on HEAD's history that touched `rel`, OLDEST first, with the
+    path the file had in that commit (renames followed when `follow`) -- or `(None, why)`."""
+    said, why = run(root, ["log", *(["--follow"] if follow else []), "--format=%x01%H", "--name-only", "--", rel])
     if said is None:
         return None, why
-    return [tuple((line.split("\t") + ["", ""])[:3]) for line in said.splitlines() if line.strip()], None
+    out, sha = [], None
+    for line in said.splitlines():
+        if line.startswith("\x01"):
+            sha = line[1:].strip()
+        elif line.strip() and sha:
+            out.append((sha, line.strip()))
+            sha = None
+    return list(reversed(out)), None
+
+
+def parent(root, sha: str) -> str:
+    """The first parent of a commit, or "" for a root commit."""
+    said, _why = run(root, ["rev-parse", "--verify", "-q", f"{sha}^"])
+    return (said or "").strip()
+
+
+def order(root) -> dict:
+    """{sha: position} of every commit on HEAD's history, oldest first and every parent before its
+    children -- what came before what."""
+    said, _why = run(root, ["rev-list", "--topo-order", "--reverse", "HEAD"])
+    return {sha: index for index, sha in enumerate((said or "").split())}
+
+
+def verdict(root, sha: str, signers_text: str) -> tuple:
+    """(git's verdict on one commit's signature, the principal it names), read against an allowed-signers
+    TEXT -- the trust root as it stood where the caller says, never the one the tree holds now. `G` is
+    good; anything else is not one. git verifies; nothing here does."""
+    import os
+    import tempfile
+    handle, held = tempfile.mkstemp(prefix="kit-signers-")
+    try:
+        with os.fdopen(handle, "w", encoding="utf-8", newline="\n") as out:
+            out.write(signers_text or "")
+        said, _why = run(root, ["-c", "gpg.format=ssh", "-c", f"gpg.ssh.allowedSignersFile={Path(held).as_posix()}",
+                                "log", "-1", "--format=%G?%x09%GS", sha])
+    finally:
+        os.unlink(held)
+    verdict_, _, principal = (said or "").strip().partition("\t")
+    return verdict_, principal
+
+
+def global_setting(root, name: str) -> str:
+    """A setting of the user's own git configuration, "" where it is unset."""
+    said, _why = run(root, ["config", "--global", "--get", name])
+    return (said or "").strip()
 
 
 def version(root) -> tuple:
@@ -187,16 +230,6 @@ def shallow(root) -> bool:
     """Whether this clone holds only part of its history -- where a commit a reading needs may be absent."""
     said, _why = run(root, ["rev-parse", "--is-shallow-repository"])
     return (said or "").strip() == "true"
-
-
-def introduced(root, rel: str) -> tuple:
-    """`(the sha of the commit that first added rel, None)`, `("", None)` when no commit has, or
-    `(None, why)`."""
-    said, why = run(root, ["log", "--diff-filter=A", "--format=%H", "--", rel])
-    if said is None:
-        return None, why
-    lines = [line for line in said.splitlines() if line.strip()]
-    return (lines[-1] if lines else ""), None
 
 
 def file_at(root, sha: str, rel: str) -> tuple:

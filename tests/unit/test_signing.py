@@ -22,9 +22,11 @@ def test_a_cards_marks_are_its_door_passages_and_its_lowerings():
             "reshaped": [{"to": "major", "at": "t2", "by": "dev"},
                          {"from": "major", "to": "normal", "at": "t4", "by": "dev", "approved_by": "owner"}]}
     marks = signing.marks(card)
-    assert marks == {("owner", "t1"): "the passage to bet", ("owner", "t3"): "the passage to bet",
-                     ("owner", "t4"): "the lowering to normal (from major)"}
-    assert signing.doors_of(marks)["the passage to bet"] == [("owner", "t1"), ("owner", "t3")], \
+    assert marks == {("history[1]", "owner", "t1"): "the passage to bet",
+                     ("history[2]", "owner", "t3"): "the passage to bet",
+                     ("reshaped[1]", "owner", "t4"): "the lowering to normal (from major)"}
+    assert signing.doors_of(marks)["the passage to bet"] == [("history[1]", "owner", "t1"),
+                                                             ("history[2]", "owner", "t3")], \
         "a door walked twice is one door: one signed mark holds it"
 
 
@@ -65,8 +67,40 @@ def test_a_publishers_line_is_never_a_signer_of_commits():
 
 def test_any_acceptance_a_record_carries_is_a_mark_and_a_review_is_one_in_its_reviewers_name():
     estate = {"signed_by": "owner", "signed_at": "t9", "entries": [{"id": "x"}]}
-    assert signing.marks(estate) == {("owner", "t9"): "the acceptance at the top"}
+    assert signing.marks(estate) == {("", "owner", "t9"): "the acceptance at the top"}
     nested = {"answers": {"approval": {"signed_by": "owner", "signed_at": "t8"}}}
-    assert signing.marks(nested) == {("owner", "t8"): "the acceptance at answers.approval"}
+    assert signing.marks(nested) == {("answers.approval", "owner", "t8"): "the acceptance at answers.approval"}
     review = {"card": "c", "reviewer": "owner", "verdict": "approved", "at": "t7"}
-    assert signing.reviews(review) == {("owner", "t7"): "the review of c (approved)"} and signing.marks(review) == {}
+    assert signing.reviews(review) == {("", "owner", "t7"): "the review of c (approved)"} and signing.marks(review) == {}
+
+
+def test_a_mark_replayed_elsewhere_is_a_new_mark_and_a_commit_brings_only_what_its_parent_lacked():
+    signed = {"history": [{"to": "bet", "signed_by": "owner", "signed_at": "t1"}]}
+    replayed = {"history": [{"to": "bet", "signed_by": "owner", "signed_at": "t1"},
+                            {"to": "done", "signed_by": "owner", "signed_at": "t1"}]}
+    before, after = signing.marks(signed), signing.marks(replayed)
+    assert signing.introduced(after, before) == {("history[1]", "owner", "t1"): "the passage to done"}, \
+        "the same name and moment at another door is another mark (C2)"
+    assert signing.introduced(after, after) == {}, "a commit that brings no mark is credited with none (M1)"
+    moved = {"history": [{"to": "done", "signed_by": "owner", "signed_at": "t1"}]}
+    assert signing.introduced(signing.marks(moved), before) == {("history[0]", "owner", "t1"): "the passage to done"}, \
+        "a door changed under a signed mark is a new mark"
+
+
+def test_the_trust_root_is_the_one_accepted_at_a_position_never_a_later_one():
+    accepted = [(3, "a", "owner-key"), (7, "b", "owner-and-second")]
+    assert signing.root_at(accepted, 2) == "" and signing.root_at(accepted, 3) == "owner-key"
+    assert signing.root_at(accepted, 6) == "owner-key" and signing.root_at(accepted, 9) == "owner-and-second"
+
+
+def test_the_setup_warns_when_the_owners_global_settings_sign_as_them_everywhere(tmp_path):
+    key = tmp_path / "kit_owner_signing"
+    key.write_text("k", encoding="utf-8")
+    key.with_name(key.name + ".pub").write_text("p", encoding="utf-8")
+    assert signer.global_warnings({"commit.gpgsign": "", "user.signingkey": ""}.get, key) == []
+    every = signer.global_warnings({"commit.gpgsign": "true", "user.signingkey": ""}.get, key)
+    assert len(every) == 1 and "commit.gpgsign=true" in every[0]
+    for held in (key, key.with_name(key.name + ".pub")):
+        same = signer.global_warnings({"commit.gpgsign": "false", "user.signingkey": str(held)}.get, key)
+        assert len(same) == 1 and "global user.signingkey is this key" in same[0]
+    assert signer.global_warnings({"commit.gpgsign": "", "user.signingkey": str(tmp_path / "other")}.get, key) == []

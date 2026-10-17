@@ -947,7 +947,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "d44bd71ff2c48252fc97aad7938929bb53291ebca8ca990c51fedb38f2b500f4",
+      "digest": "ace465fdde2e0757edd34df02313bdac2b5e69133f6f9686f5abaefb8df705b4",
       "path": "interpreters/gates/workcards.py"
     },
     {
@@ -1109,13 +1109,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "3cfab16c51ec74f6eff833db0adbdbf9f4fcd392ce72885a556ddae04d84d926",
+      "digest": "47fb4770b53c5fc8cd053ec0a3d0d44b20087f75be12023a0047125dc77f113f",
       "path": "interpreters/ports/vcs.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "8445779e98cbd7e4efa9d9f7c46f4185a9c7e1376c78ac1b4492bfdddfa1315b",
+      "digest": "78efff985c994da7b0c164a97f67dc5ecddb6e067a51311c73e215d22e5a5809",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1313,7 +1313,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "46ac50d1a2d0719e7c43ba4927451aa34aa84f0b802209e009ee1da9e1b78568",
+      "digest": "41f517c29cb08317aa2702777367e533de41d3cf453941e44ff3fb2977b699f0",
       "path": "interpreters/signing.py"
     },
     {
@@ -1559,7 +1559,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "65b0ed0e91b6db55e9513293c007d727afb5ed744124a7a47676680bab6b189f",
+      "digest": "c0896e6f072c979c720304e62df32b8103cba0654a011cc7f014ca1db846b84c",
       "path": "interpreters/verbs/signer.py"
     },
     {
@@ -2178,5 +2178,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T16:09:04+00:00"
+  "taken_at": "2026-10-17T16:21:22+00:00"
 }

@@ -317,86 +317,215 @@ def _ceremony_reported(ctx, params):
     return []
 
 
+def _parsed(text):
+    try:
+        return json.loads(text) if text else None
+    except ValueError:
+        return None
+
+
+class _History:
+    """What the gate over owner marks reads of the history, read once: the order of commits, each
+    commit's parent, and every trust root's ACCEPTED versions -- a change to who may sign is accepted
+    only when a signer the root allowed at the commit's parent signed it; the first version that names a
+    principal is the bootstrap, trusted on first use (ADR-025 amendment 3)."""
+
+    def __init__(self, workspace):
+        self.workspace = workspace
+        self.order = workspace.commit_order()
+        self._parents: dict = {}
+        self._roots: dict = {}
+
+    def at(self, sha: str) -> int:
+        return self.order.get(sha, -1)
+
+    def parent(self, sha: str) -> str:
+        if sha not in self._parents:
+            self._parents[sha] = self.workspace.parent(sha)
+        return self._parents[sha]
+
+    def text(self, sha: str, rel: str) -> str:
+        return (self.workspace.file_at(sha, rel)[0] or "") if sha and rel else ""
+
+    def root(self, rel: str) -> dict:
+        """{accepted: [(position, sha, text)], bootstrap: sha, rejected: [sha], why}, oldest first."""
+        if rel in self._roots:
+            return self._roots[rel]
+        made = self._roots[rel] = {"accepted": [], "bootstrap": "", "rejected": [], "why": None}
+        commits, made["why"] = self.workspace.history(rel)
+        for sha, _path in commits or []:
+            text = self.text(sha, rel)
+            if not made["accepted"]:
+                if signing.principals(text):
+                    made["accepted"].append((self.at(sha), sha, text))
+                    made["bootstrap"] = sha
+                continue
+            if text == signing.root_at(made["accepted"], self.at(self.parent(sha))):
+                continue
+            verdict, _principal = self.verdict(sha, rel)
+            (made["accepted"].append((self.at(sha), sha, text)) if verdict == "G" else made["rejected"].append(sha))
+        return made
+
+    def verdict(self, sha: str, root_rel: str) -> tuple:
+        """(git's verdict, the principal) on one commit, against `root_rel` as ACCEPTED at its parent --
+        never the root the tree holds now, never one the commit itself wrote (but the bootstrap's own)."""
+        chain = self.root(root_rel)
+        if sha == chain["bootstrap"]:
+            held = chain["accepted"][0][2]
+        else:
+            held = signing.root_at(chain["accepted"], self.at(self.parent(sha))) if self.parent(sha) else ""
+        return self.workspace.signature(sha, held) if held else ("", "")
+
+
+def _declaration_held(seen: _History, policy_rel: str, default_root: str) -> dict:
+    """The policy's `owner_signing` as its history holds it: {accepted, protected, since, refused}. Once a
+    declaration stands in a signed commit it is PROTECTED -- removing it or repointing its signers holds
+    only in a commit a signer the declared root allowed at the parent signed; a change nobody allowed
+    signed is refused, and the declaration it tried to undo goes on binding. `since` is the first commit
+    that declared it."""
+    held = {"accepted": None, "protected": False, "since": "", "refused": []}
+    commits, _why = seen.workspace.history(policy_rel)
+    for sha, path in commits or []:
+        value = _parsed(seen.text(sha, path))
+        value = value.get("owner_signing") if isinstance(value, dict) else None
+        if value == held["accepted"] and (held["protected"] or value is None):
+            continue
+        judged_by = (held["accepted"] if held["protected"] else value) or {}
+        root_rel = judged_by.get("signers") or default_root
+        signed = bool(root_rel) and seen.verdict(sha, root_rel)[0] == "G"
+        if held["protected"]:
+            if not signed:
+                held["refused"].append((sha, value))
+                continue
+            held["accepted"], held["protected"] = value, value is not None
+            continue
+        held["accepted"], held["protected"] = value, value is not None and signed
+        if value is not None and not held["since"]:
+            held["since"] = sha
+    return held
+
+
 def _marks_signed(ctx, params):
     """Where the host declares `owner_signing`, every acceptance a record in the binding places carries
     -- a door's passage, a lowering, a host's install or upgrade, and a review in the name of someone
-    who signs -- holds only in a commit that principal SIGNED (ADR-025 amendment 3): a name in a record
-    is text anything can write. Marks that stood when signing was set up hold as they were; a mark not
-    yet committed is reported, never failed -- it is judged when it is committed."""
+    who signs -- holds only when a commit that principal SIGNED introduced it (ADR-025 amendment 3): a
+    name in a record is text anything can write. Each signature is read against the trust root as it was
+    accepted at the commit's parent; a mark is where it stands, who made it and when, and a commit is
+    credited only with the marks it brought; a card the archive moved keeps its history. Marks that stood
+    when signing was set up -- the later of the first trust root that names a principal and the first
+    policy that declares it -- hold as they were; a mark not yet committed is reported, never failed."""
     capabilities = ctx.enabled_capabilities()
     if not any(getattr(c, "governs", None) for c in capabilities):
         return []
     governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
-    declared = (governed.policy or {}).get("owner_signing")
-    if declared is None:  # `{}` is a declaration: signing, against the host's one trust root
-        return []
+    in_tree = (governed.policy or {}).get("owner_signing")
+    policy_rel = next((i["target"] for i in governed.capability.installs if i.get("reads_as") == "policy"), "")
     rooted = signing.trust_root(capabilities)
-    signers = declared.get("signers") or (rooted[0] if rooted else "")
+    default_root = rooted[0] if rooted else ""
     setup = "run, in your own terminal: python <kit>/interpreters/cli.py signer --setup --root ."
-    if not signers:
-        return ["owner signing is declared and no trust root is: no capability declares a verifier"]
-    who_signs = signing.principals(ctx.workspace.read_text(signers)) if ctx.workspace.exists(signers) else []
-    if not who_signs:
-        return [f"owner signing is declared and nobody may sign yet ({signers} names no key) -- {setup}"]
     if ctx.workspace.shallow():
-        return ["owner signing: NOT MEASURED -- this clone is shallow, so the commits that carry the marks are "
-                "not here to be read; fetch the whole history (fetch-depth: 0)"]
-    first, why = ctx.workspace.introduced(signers)
-    if first is None:
-        return [f"owner signing: NOT MEASURED -- git could not say when {signers} came in: {why}"]
-    if not first:
-        return [f"{signers} is written and not committed -- commit it signed: git add {signers} && git commit -S"]
-    changes, why = ctx.workspace.signed_commits(signers, signers)
-    if changes is None:
-        return [f"owner signing: NOT MEASURED -- {why}"]
-    failures = [f"{signers}: commit {sha[:12]} changed who may sign, and no allowed signer signed it"
-                for sha, verdict, _ in changes if sha != first and verdict != "G"]
+        return [] if in_tree is None else [
+            "owner signing: NOT MEASURED -- this clone is shallow, so the commits that carry the marks are "
+            "not here to be read; fetch the whole history (fetch-depth: 0)"]
+    seen = _History(ctx.workspace)
+    held = _declaration_held(seen, policy_rel, default_root)
+    failures = []
+    committed_value = _parsed(seen.text("HEAD", policy_rel))
+    committed_value = committed_value.get("owner_signing") if isinstance(committed_value, dict) else None
+    if held["protected"] and committed_value != held["accepted"]:
+        failures += [f"{policy_rel}: commit {sha[:12]} {'removed owner_signing' if value is None else 'changed owner_signing'}"
+                     f", and no allowed signer signed it -- the declaration it tried to undo still binds"
+                     for sha, value in held["refused"]]
+    if held["protected"] and in_tree != held["accepted"]:
+        print(f"        {policy_rel}: owner_signing is changed and not committed -- it holds once an allowed "
+              f"signer signs the commit (git commit -S); until then the signed declaration binds")
+    declared = held["accepted"] if held["protected"] else in_tree
+    if declared is None:  # `{}` is a declaration: signing, against the host's one trust root
+        return failures
+    signers = declared.get("signers") or default_root
+    if not signers:
+        return failures + ["owner signing is declared and no trust root is: no capability declares a verifier"]
+    chain = seen.root(signers)
+    if chain["why"]:
+        return failures + [f"owner signing: NOT MEASURED -- git could not read the history of {signers}: {chain['why']}"]
+    if not chain["accepted"]:
+        if signing.principals(ctx.workspace.read_text(signers) if ctx.workspace.exists(signers) else ""):
+            print(f"        {signers} names a signer and is not committed -- commit it signed: "
+                  f"git add {signers} {policy_rel} && git commit -S")
+            return failures
+        return failures + [f"owner signing is declared and nobody may sign yet ({signers} names no key) -- {setup}"]
+    accepted = chain["accepted"][-1]
+    if seen.text("HEAD", signers) != accepted[2]:
+        failures += [f"{signers}: commit {sha[:12]} changed who may sign, and no allowed signer signed it"
+                     for sha in chain["rejected"] if seen.at(sha) > accepted[0]]
+    if not held["since"]:
+        print(f"        {policy_rel}: owner_signing is declared and not committed -- marks are judged from the "
+              f"commit that declares it")
+        return failures
+    baseline = max((chain["bootstrap"], held["since"]), key=seen.at)
+    who_signs = signing.principals(accepted[2])
 
     def held_in(value) -> dict:
         found = signing.marks(value)
-        found.update({key: door for key, door in signing.reviews(value).items() if key[0] in who_signs})
+        found.update({key: door for key, door in signing.reviews(value).items() if signing.who(key) in who_signs})
         return found
 
-    def parsed(text):
-        try:
-            return json.loads(text) if text else None
-        except ValueError:
-            return None
+    def holds(keys, door, items) -> bool:
+        return any((key, door) in items for key in keys)
 
     places = [p["root"].rstrip("/") for p in ctx.manifest.planes if p["class"] == "binding"]
     places += [i["target"].rstrip("/") for c in capabilities for i in c.installs
                if i.get("class") == "binding" and i.get("mode") == "space"]
     records = sorted({rel for place in places for rel in ctx.workspace.files_under(place) if rel.endswith(".json")})
     for rel in records:
-        value = parsed(ctx.workspace.read_text(rel))
-        if value is None:
+        value = _parsed(ctx.workspace.read_text(rel))
+        now = held_in(value) if value is not None else {}
+        if not now:
             continue
-        before, _ = ctx.workspace.file_at(first, rel)
-        held_then = held_in(parsed(before)) if before else {}
-        judged = {door: keys for door, keys in signing.doors_of(held_in(value)).items()
-                  if not any(key in held_then for key in keys)}
+        commits, then_path = None, rel
+        then_text, _ = ctx.workspace.file_at(baseline, rel)
+        if then_text is None:  # moved since (the archive): the path it had where signing began
+            commits, why = ctx.workspace.history(rel, follow=True)
+            if commits is None:
+                failures.append(f"{rel}: NOT MEASURED -- {why}")
+                continue
+            then_path = next((path for sha, path in reversed(commits) if seen.at(sha) <= seen.at(baseline)), "")
+            then_text = seen.text(baseline, then_path)
+        then = set(held_in(_parsed(then_text) or {}).items())
+        judged = {door: keys for door, keys in signing.doors_of(now).items() if not holds(keys, door, then)}
         if not judged:
             continue
-        commits, why = ctx.workspace.signed_commits(rel, signers)
         if commits is None:
-            failures.append(f"{rel}: NOT MEASURED -- {why}")
-            continue
-        signed, committed = set(), set()
-        for sha, verdict, principal in commits:
-            there = held_in(parsed(ctx.workspace.file_at(sha, rel)[0]) or {})
-            committed |= set(there)
+            commits, why = ctx.workspace.history(rel, follow=True)
+            if commits is None:
+                failures.append(f"{rel}: NOT MEASURED -- {why}")
+                continue
+        signed, before_path = set(), then_path
+        for sha, path in commits:
+            if seen.at(sha) <= seen.at(baseline):
+                before_path = path
+                continue
+            after = held_in(_parsed(seen.text(sha, path)) or {})
+            before = held_in(_parsed(seen.text(seen.parent(sha), before_path or path)) or {})
+            before_path = path
+            brought = signing.introduced(after, before)
+            if not brought:
+                continue
+            verdict, principal = seen.verdict(sha, signers)
             if verdict == "G":
-                signed |= {key for key in there if key[0] == principal}
+                signed |= {(key, door) for key, door in brought.items() if signing.who(key) == principal}
+        committed = set(held_in(_parsed(seen.text("HEAD", commits[-1][1])) or {}).items()) if commits else set()
         for door, keys in sorted(judged.items()):
-            if any(key in signed for key in keys):
+            if holds(keys, door, signed):
                 continue
-            if not any(key in committed for key in keys):
-                print(f"        {rel}: {door} is marked by {keys[0][0]} and not committed yet -- it holds once a "
-                      f"commit {keys[0][0]} signs carries it (git commit -S)")
+            names = ", ".join(sorted({signing.who(k) for k in keys}))
+            if not holds(keys, door, committed):
+                print(f"        {rel}: {door} is marked by {names} and not committed yet -- it holds once a "
+                      f"commit {names} signs carries it (git commit -S)")
                 continue
-            failures.append(f"{rel}: {door} is marked by {', '.join(sorted({k[0] for k in keys}))}, and no commit "
-                            f"that principal signed carries the mark -- a name is not a signature; it is walked "
-                            f"again in a commit they sign (git commit -S)")
+            failures.append(f"{rel}: {door} is marked by {names}, and no commit that principal signed "
+                            f"introduced the mark -- a name is not a signature; it is walked again in a commit "
+                            f"they sign (git commit -S)")
     return failures
 
 
