@@ -17,6 +17,8 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   signer signed it. Marks from before the setup hold; marks not yet committed are reported. It reads
   every record in the binding places -- an install's or upgrade's acceptance, and a review in the
   name of someone who signs, as well as a card's doors -- and a shallow clone is not measured.
+- A card's `origin` holds `decision` only in a place the host's layout declares holds decisions: a
+  vendored kit's own ADR no longer counts as the host's ruling.
 
 **Added — work is weighed before it is walked (ADR-025), slice S1**
 - `delivery` 0.2.0: the work-class catalogue (`standard`, `normal`, `major`, `program`, `emergency`;

@@ -392,6 +392,10 @@ ISO/IEC 42001 ask that accountability be attributable. The owner decided it is c
 6. *A shallow clone is not measured*: the commits that carry the marks are not in it, and a reading
    that found no history would hold every mark as one that stood before the setup. It fails, saying
    so (`fetch-depth: 0`; the kit's CI template already fetches the whole history).
+7. *A decision is the host's own* (closes NEW-8 of Amendment 2): a card's `origin` holds `decision`
+   only when the document stands in a place the host's layout declares holds decisions (`holds:
+   decision`) -- a vendored kit's ADR is the kit's, and a card that bet on it bet on nobody's ruling
+   here -- and only its front matter, between the two fences, says what it is.
 
 **Limits, said.** The first registration is trusted on first use, as an SSH host key is: the printed
 fingerprint is the owner's one check. The terminal test guards against accident, not against an agent

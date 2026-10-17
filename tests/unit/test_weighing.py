@@ -324,9 +324,27 @@ def test_a_decision_is_what_its_front_matter_says_never_a_line_of_its_body():
     import workclass
     files = {"d.md": "---\nkind: decision\n---\n# d\n", "n.md": "---\ntitle: notes\n---\nkind: decision\n",
              "open.md": "---\nkind: decision\n"}
-    ctx = SimpleNamespace(workspace=SimpleNamespace(exists=files.__contains__, read_text=files.__getitem__))
+    ctx = SimpleNamespace(workspace=SimpleNamespace(exists=files.__contains__, read_text=files.__getitem__),
+                          enabled_capabilities=lambda: [])
     decided = workclass.decided(ctx)
     holder = {"field": "origin", "kind_of_record": "decision"}
     assert decided({"origin": {"ref": "d.md"}}, holder)
     assert not decided({"origin": {"ref": "n.md"}}, holder), "a body line was read as front matter"
     assert not decided({"origin": {"ref": "open.md"}}, holder), "front matter that never closes is none"
+
+
+def test_a_decision_is_the_hosts_own_never_a_vendored_kits():
+    # Found by an audit: a card bet on the vendored kit's own ADR read as the host's ruling.
+    from types import SimpleNamespace
+    import workclass
+    body = "---\nkind: decision\n---\n# d\n"
+    files = {"docs/decisions/ADR-001.md": body, "platform/kits/agent-kit/docs/decisions/ADR-025.md": body}
+    layout = SimpleNamespace(documents={"host_layout": {"entries": [
+        {"path": "docs/decisions/", "kind": "dir", "holds": "decision"}, {"path": "docs/work/", "holds": "work-card"}]}})
+    ctx = SimpleNamespace(workspace=SimpleNamespace(exists=files.__contains__, read_text=files.__getitem__),
+                          enabled_capabilities=lambda: [layout])
+    decided = workclass.decided(ctx)
+    holder = {"field": "origin", "kind_of_record": "decision"}
+    assert decided({"origin": {"ref": "docs/decisions/ADR-001.md"}}, holder)
+    assert not decided({"origin": {"ref": "platform/kits/agent-kit/docs/decisions/ADR-025.md"}}, holder), \
+        "another repository's decision is not this host's"
