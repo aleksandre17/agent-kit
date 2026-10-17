@@ -179,6 +179,13 @@ asserts it.
     - *an emergency declared to escape*: the debt is reported on every check and fails past the host's
       days, and the agents' skill (S9) leaves the declaration of an emergency to a person.
 
+16. **A card's proof is independent of the card.** Met on the first real host: a finished card proved by
+    FF-KIT-PROJECTION -- the gate that renders the board showing that very proof's status -- read
+    differently at each depth and reported itself REGRESSED. ISO/IEC/IEEE 15026's rule applies as
+    written: evidence for a claim may not be the claim. `declared-rule-holds` never follows a rule
+    into its own evaluation, and the agents' skill names the gates that read cards or the board as
+    unfit to prove one.
+
 ## What the prior system's control plane becomes here
 
 Its `docs/project/` was the best part of it: one entry point, a small current-state file, a

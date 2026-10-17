@@ -18,6 +18,8 @@ through this skill's `scripts/kit.py <verb> ...` from the host root.
      class.
 3. **Judge what is not computed, and say it honestly:** the card's `uncertainty` (clear, complicated,
    complex, chaotic) -- it can only raise the class; the criteria and their proofs; the alternatives.
+   A proof is independent of the card: never a gate that reads cards or the board (`FF-WORK-*`,
+   `FF-DELIVERY-*`, `FF-KIT-PROJECTION`) -- that is the card vouching for itself.
 4. **While working, keep weighing:** run `kit.py weigh` when the change grows. A finding outside the
    card is `kit.py capture --card <id> --title "<what>" --from <card> --by <you>` -- then return to the
    work. Never do it on the side.

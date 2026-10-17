@@ -62,6 +62,7 @@ moment of need by `upgrade --plan`, which names every path that changes between 
 - `declared-rule-holds` refuses to follow a rule into its own evaluation: a finished card proved by
   FF-WORK-ORDER (which re-reads finished cards) recursed without end in `check` and on the board.
 - The commit floor names a `Card:` line written outside the final trailer block.
+- kit-skills 1.3.1: a card's proof is independent of the card -- never a gate that reads cards or the board.
 
 ## 0.2.0 — 2026-10-17
 
