@@ -120,6 +120,7 @@
   ],
   "schemas": {
     "manifest": "schemas/manifest.schema.json",
+    "module-map": "schemas/module-map.schema.json",
     "lock": "schemas/lock.schema.json",
     "stewardship": "schemas/stewardship.schema.json",
     "estate": "schemas/estate.schema.json",
