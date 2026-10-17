@@ -14,7 +14,9 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   `delivery`), git told how to sign, a sign-and-verify round trip, the fingerprint to compare.
 - FF-WORK-SIGNED: where the host declares `owner_signing`, a door's mark holds only in a commit the
   principal it names signed, verified by git; a change to who may sign holds only when an allowed
-  signer signed it. Marks from before the setup hold; marks not yet committed are reported.
+  signer signed it. Marks from before the setup hold; marks not yet committed are reported. It reads
+  every record in the binding places -- an install's or upgrade's acceptance, and a review in the
+  name of someone who signs, as well as a card's doors -- and a shallow clone is not measured.
 
 **Added — work is weighed before it is walked (ADR-025), slice S1**
 - `delivery` 0.2.0: the work-class catalogue (`standard`, `normal`, `major`, `program`, `emergency`;

@@ -53,3 +53,12 @@ def test_a_git_older_than_ssh_signing_is_named():
     assert signer.git_version("git version 2.45.1.windows.1") == (2, 45)
     assert signer.git_version("git version 2.33.0") < signer.MINIMUM_GIT
     assert signer.git_version("") == (0, 0)
+
+
+def test_any_acceptance_a_record_carries_is_a_mark_and_a_review_is_one_in_its_reviewers_name():
+    estate = {"signed_by": "owner", "signed_at": "t9", "entries": [{"id": "x"}]}
+    assert signing.marks(estate) == {("owner", "t9"): "the acceptance at the top"}
+    nested = {"answers": {"approval": {"signed_by": "owner", "signed_at": "t8"}}}
+    assert signing.marks(nested) == {("owner", "t8"): "the acceptance at answers.approval"}
+    review = {"card": "c", "reviewer": "owner", "verdict": "approved", "at": "t7"}
+    assert signing.reviews(review) == {("owner", "t7"): "the review of c (approved)"} and signing.marks(review) == {}

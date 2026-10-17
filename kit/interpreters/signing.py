@@ -18,18 +18,39 @@ from __future__ import annotations
 import doors
 
 
-def marks(card: dict) -> dict:
-    """{(who, moment): the door it opens} -- every owner's mark the card records."""
+def _walk(value, where: str):
+    if isinstance(value, dict):
+        yield where, value
+        for key, inner in value.items():
+            yield from _walk(inner, f"{where}.{key}" if where else key)
+    elif isinstance(value, list):
+        for index, inner in enumerate(value):
+            yield from _walk(inner, f"{where}[{index}]")
+
+
+def marks(record) -> dict:
+    """{(who, moment): the door it opens} -- every acceptance a record carries, wherever it stands in it:
+    a door's passage or any acceptance (`signed_by`), a lowering (`approved_by`). A door walked twice
+    is one door: its passages share a description, so one signed mark holds it."""
     found = {}
-    for passage in card.get("history") or []:
-        if isinstance(passage, dict) and passage.get(doors.SIGNED_BY):
-            found[(str(passage[doors.SIGNED_BY]), str(passage.get(doors.SIGNED_AT) or passage.get("at") or ""))] = \
-                f"the passage to {passage.get('to')}"
-    for entry in card.get("reshaped") or []:
-        if isinstance(entry, dict) and entry.get("approved_by"):
-            found[(str(entry["approved_by"]), str(entry.get("at") or ""))] = \
-                f"the lowering to {entry.get('to')} (from {entry.get('from')})"
+    for where, item in _walk(record, ""):
+        if item.get(doors.SIGNED_BY):
+            moment = str(item.get(doors.SIGNED_AT) or item.get("at") or "")
+            door = f"the passage to {item['to']}" if item.get("to") else f"the acceptance at {where or 'the top'}"
+            found[(str(item[doors.SIGNED_BY]), moment)] = door
+        elif item.get("approved_by"):
+            found[(str(item["approved_by"]), str(item.get("at") or ""))] = \
+                f"the lowering to {item.get('to')} (from {item.get('from')})"
     return found
+
+
+def reviews(record) -> dict:
+    """{(reviewer, moment): what was judged} -- a review record's verdict, a name like any other: it
+    is held to a signature only when the name is one an allowed signer signs as."""
+    if isinstance(record, dict) and record.get("reviewer") and record.get("verdict"):
+        return {(str(record["reviewer"]), str(record.get("at") or "")):
+                f"the review of {record.get('card')} ({record['verdict']})"}
+    return {}
 
 
 def doors_of(card_marks: dict) -> dict:

@@ -318,10 +318,11 @@ def _ceremony_reported(ctx, params):
 
 
 def _marks_signed(ctx, params):
-    """Where the host declares `owner_signing`, every door an owner's mark opens is opened by a commit
-    the owner SIGNED (ADR-025 amendment 3): a name in a card is text anything can write. Marks a card
-    already held when signing was set up are held as they were; a mark not yet committed is reported,
-    never failed -- it is judged when it is committed."""
+    """Where the host declares `owner_signing`, every acceptance a record in the binding places carries
+    -- a door's passage, a lowering, a host's install or upgrade, and a review in the name of someone
+    who signs -- holds only in a commit that principal SIGNED (ADR-025 amendment 3): a name in a record
+    is text anything can write. Marks that stood when signing was set up hold as they were; a mark not
+    yet committed is reported, never failed -- it is judged when it is committed."""
     capabilities = ctx.enabled_capabilities()
     if not any(getattr(c, "governs", None) for c in capabilities):
         return []
@@ -331,8 +332,12 @@ def _marks_signed(ctx, params):
         return []
     signers = declared["signers"]
     setup = "run, in your own terminal: python <kit>/interpreters/cli.py signer --setup --root ."
-    if not ctx.workspace.exists(signers) or not signing.principals(ctx.workspace.read_text(signers)):
+    who_signs = signing.principals(ctx.workspace.read_text(signers)) if ctx.workspace.exists(signers) else []
+    if not who_signs:
         return [f"owner signing is declared and nobody may sign yet ({signers} names no key) -- {setup}"]
+    if ctx.workspace.shallow():
+        return ["owner signing: NOT MEASURED -- this clone is shallow, so the commits that carry the marks are "
+                "not here to be read; fetch the whole history (fetch-depth: 0)"]
     first, why = ctx.workspace.introduced(signers)
     if first is None:
         return [f"owner signing: NOT MEASURED -- git could not say when {signers} came in: {why}"]
@@ -343,15 +348,29 @@ def _marks_signed(ctx, params):
         return [f"owner signing: NOT MEASURED -- {why}"]
     failures = [f"{signers}: commit {sha[:12]} changed who may sign, and no allowed signer signed it"
                 for sha, verdict, _ in changes if sha != first and verdict != "G"]
-    for rel, card in sorted(governed.members.records):
-        held_then = {}
+
+    def held_in(value) -> dict:
+        found = signing.marks(value)
+        found.update({key: door for key, door in signing.reviews(value).items() if key[0] in who_signs})
+        return found
+
+    def parsed(text):
+        try:
+            return json.loads(text) if text else None
+        except ValueError:
+            return None
+
+    places = [p["root"].rstrip("/") for p in ctx.manifest.planes if p["class"] == "binding"]
+    places += [i["target"].rstrip("/") for c in capabilities for i in c.installs
+               if i.get("class") == "binding" and i.get("mode") == "space"]
+    records = sorted({rel for place in places for rel in ctx.workspace.files_under(place) if rel.endswith(".json")})
+    for rel in records:
+        value = parsed(ctx.workspace.read_text(rel))
+        if value is None:
+            continue
         before, _ = ctx.workspace.file_at(first, rel)
-        if before:
-            try:
-                held_then = signing.marks(json.loads(before))
-            except ValueError:
-                held_then = {}
-        judged = {door: keys for door, keys in signing.doors_of(signing.marks(card)).items()
+        held_then = held_in(parsed(before)) if before else {}
+        judged = {door: keys for door, keys in signing.doors_of(held_in(value)).items()
                   if not any(key in held_then for key in keys)}
         if not judged:
             continue
@@ -361,11 +380,7 @@ def _marks_signed(ctx, params):
             continue
         signed, committed = set(), set()
         for sha, verdict, principal in commits:
-            text, _ = ctx.workspace.file_at(sha, rel)
-            try:
-                there = signing.marks(json.loads(text)) if text else {}
-            except ValueError:
-                continue
+            there = held_in(parsed(ctx.workspace.file_at(sha, rel)[0]) or {})
             committed |= set(there)
             if verdict == "G":
                 signed |= {key for key in there if key[0] == principal}
@@ -373,12 +388,12 @@ def _marks_signed(ctx, params):
             if any(key in signed for key in keys):
                 continue
             if not any(key in committed for key in keys):
-                print(f"        {card.get('id')}: {door} is marked by {keys[0][0]} and not committed yet -- "
-                      f"it holds once a commit {keys[0][0]} signs carries it (git commit -S)")
+                print(f"        {rel}: {door} is marked by {keys[0][0]} and not committed yet -- it holds once a "
+                      f"commit {keys[0][0]} signs carries it (git commit -S)")
                 continue
-            failures.append(f"{card.get('id')}: {door} is marked by {', '.join(sorted({k[0] for k in keys}))}, and "
-                            f"no commit that principal signed carries the mark -- a name is not a signature; the "
-                            f"owner walks the door again in a commit they sign (git commit -S)")
+            failures.append(f"{rel}: {door} is marked by {', '.join(sorted({k[0] for k in keys}))}, and no commit "
+                            f"that principal signed carries the mark -- a name is not a signature; it is walked "
+                            f"again in a commit they sign (git commit -S)")
     return failures
 
 

@@ -947,7 +947,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "1066fcb529f2ae9eeed6b911ce9253cb8aa75e8d431bdcca580874b28b8f5304",
+      "digest": "12ac9768e2b43219cbd3e3f464a457a4563b6ab13bfb504be21770977e6d4cc6",
       "path": "interpreters/gates/workcards.py"
     },
     {
@@ -1109,13 +1109,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "bd0cd052b4a1c163cad4a7acd81efea0d4d1e0f2bfa3dfb1b92548cafff2495c",
+      "digest": "0f72127f7fb89012283cc25bb2fa76d48cca7dd4d00e62eaad8e9646805c121f",
       "path": "interpreters/ports/vcs.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "e7eb9201b1b5742312382172c6c23e2067fbd3340afd2e5c3236900d1d106571",
+      "digest": "b342e16a20773d6ffd64c74a3fd5dba411601c7ba65255cc712419492064714b",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1313,7 +1313,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "bb4ba1f59a582a4646154a43af1daeec30992ca804199c4b1003222031810e00",
+      "digest": "bdb44daefc2d0b7cbb71c4e8fb1d69b30c2605353f1e3c279e4ace2f4233dd58",
       "path": "interpreters/signing.py"
     },
     {
@@ -2166,5 +2166,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T11:46:54+00:00"
+  "taken_at": "2026-10-17T11:55:48+00:00"
 }

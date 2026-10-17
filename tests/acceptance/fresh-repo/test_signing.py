@@ -76,7 +76,7 @@ class OwnerMarksSigned(Fixtures, unittest.TestCase):
         self.commit(host, "a mark an agent wrote")
         failed = self.checked(host)
         self.assertIn(f"FAIL  {GATE}", failed)
-        self.assertIn("forged: the passage to bet is marked by owner, and no commit that principal signed", failed)
+        self.assertIn("forged.json: the passage to bet is marked by owner, and no commit that principal signed", failed)
 
         self.card(host, "forged", "2026-10-17T01:00:00+00:00", "2026-10-17T02:00:00+00:00")
         self.commit(host, "signed by a key the host does not allow", signed_with=stranger)
@@ -89,8 +89,23 @@ class OwnerMarksSigned(Fixtures, unittest.TestCase):
         self.card(host, "waiting", "2026-10-17T04:00:00+00:00")
         waiting = self.checked(host)
         self.assertIn(f"PASS  {GATE}", waiting)
-        self.assertIn("waiting: the passage to bet is marked by owner and not committed yet", waiting)
+        self.assertIn("waiting.json: the passage to bet is marked by owner and not committed yet", waiting)
         (host / install_target("delivery", reads_as="cards") / "waiting.json").unlink()
+
+        evidence = host / "docs" / "work" / "evidence" / "forged"
+        evidence.mkdir(parents=True, exist_ok=True)
+        (evidence / "review.json").write_text(json.dumps(
+            {"schema_version": 1, "card": "forged", "reviewer": "owner", "verdict": "approved",
+             "reviewed": "HEAD", "at": "2026-10-17T05:00:00+00:00"}) + "\n", encoding="utf-8", newline="\n")
+        (evidence / "agent-review.json").write_text(json.dumps(
+            {"schema_version": 1, "card": "forged", "reviewer": "an-auditor-agent", "verdict": "approved",
+             "reviewed": "HEAD", "at": "2026-10-17T05:00:00+00:00"}) + "\n", encoding="utf-8", newline="\n")
+        self.commit(host, "a review in the owner's name, and one in an auditor's")
+        reviewed = self.checked(host)
+        self.assertIn("review.json: the review of forged (approved) is marked by owner, and no commit", reviewed)
+        self.assertNotIn("agent-review.json", reviewed, "a reviewer who signs nothing is a name, as before")
+        (evidence / "review.json").unlink()
+        self.commit(host, "the forged review withdrawn", signed_with=owner)
 
         line = stranger.with_name("stranger.pub").read_text(encoding="utf-8").split()
         with open(host / signers, "a", encoding="utf-8", newline="\n") as more:

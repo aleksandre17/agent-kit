@@ -134,6 +134,12 @@ def signed_commits(root, rel: str, signers) -> tuple:
     return [tuple((line.split("\t") + ["", ""])[:3]) for line in said.splitlines() if line.strip()], None
 
 
+def shallow(root) -> bool:
+    """Whether this clone holds only part of its history -- where a commit a reading needs may be absent."""
+    said, _why = run(root, ["rev-parse", "--is-shallow-repository"])
+    return (said or "").strip() == "true"
+
+
 def introduced(root, rel: str) -> tuple:
     """`(the sha of the commit that first added rel, None)`, `("", None)` when no commit has, or
     `(None, why)`."""

@@ -151,6 +151,10 @@ class Workspace:
         import vcs
         return vcs.signed_commits(self._root, rel, self.path(signers_rel).as_posix())
 
+    def shallow(self) -> bool:
+        import vcs
+        return vcs.shallow(self._root)
+
     def introduced(self, rel: str) -> tuple:
         """The commit that first added `rel` -- see `vcs.introduced`."""
         import vcs

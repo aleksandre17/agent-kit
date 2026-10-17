@@ -384,6 +384,14 @@ ISO/IEC 42001 ask that accountability be attributable. The owner decided it is c
    that declares it and names no key is told the exact command.
 4. *The commit floor does not judge signatures*: git signs a commit after its message hook runs, so
    the mark is judged where it can be -- `check`, which the pre-push hook and CI run.
+5. *Every acceptance a record carries, not only a card's.* The gate reads every JSON record in the
+   binding places (the binding plane and the binding spaces): a door's passage, a lowering, a host's
+   install, upgrade or takeover (`signed_by`), and a review whose reviewer is a name an allowed signer
+   signs as -- so no record speaks in the owner's name unsigned. A reviewer who signs nothing (an
+   auditor agent) stays a name, judged as before by separation of duties.
+6. *A shallow clone is not measured*: the commits that carry the marks are not in it, and a reading
+   that found no history would hold every mark as one that stood before the setup. It fails, saying
+   so (`fetch-depth: 0`; the kit's CI template already fetches the whole history).
 
 **Limits, said.** The first registration is trusted on first use, as an SSH host key is: the printed
 fingerprint is the owner's one check. The terminal test guards against accident, not against an agent
