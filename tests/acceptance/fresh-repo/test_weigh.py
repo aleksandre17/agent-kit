@@ -251,6 +251,8 @@ class Weigh(Fixtures, unittest.TestCase):
         card("recent-after", "landed", "2099-01-01T00:00:00+00:00", after=["old-chained"])
         card("program", "in-flight", "2026-10-17T00:00:00+00:00")
         card("old-part", "landed", "2026-01-01T00:00:00+00:00", parent="program")
+        card("aaa-other", "in-flight", "2026-10-17T00:00:00+00:00")
+        card("part-two", "in-flight", "2026-10-17T00:00:00+00:00", parent="program")
         nothing = self.run_kit(KIT, host, "archive", "--by", "dev")
         self.assertIn("declares no archive_after_days", nothing.stdout)
         policy = host / install_target("delivery", reads_as="policy")
@@ -262,12 +264,20 @@ class Weigh(Fixtures, unittest.TestCase):
         moved = self.run_kit(KIT, host, "archive", "--by", "dev")
         self.assertEqual(0, moved.returncode, moved.stdout + moved.stderr)
         self.assertFalse((cards / "old-done.json").exists())
-        self.assertTrue((host / "docs" / "work" / "archive" / "old-done.json").exists())
+        self.assertTrue((host / "docs" / "work" / "archive" / "2026" / "old-done.json").exists(),
+                        "a card is archived in the folder of the year it closed in")
         self.assertTrue((cards / "old-needed.json").exists(), "a card a working card names was archived")
         self.assertTrue((cards / "old-chained.json").exists(), "a card a staying finished card names was archived")
         self.assertTrue((cards / "new-done.json").exists())
         self.assertTrue((cards / "old-part.json").exists(), "a finished part of a working program was archived")
         self.assertIn("PASS  FF-WORK-ORDER", self._failed(host))
+        board = (host / "docs" / "work" / "BOARD.md").read_text(encoding="utf-8")
+        listed = [line.split("**")[1] for line in board.splitlines() if line.startswith("- **")]
+        self.assertIn("**old-part** — old-part · part of **program**", board, "a part says whose part it is")
+        self.assertEqual(["aaa-other", "program", "part-two"], [c for c in listed if c in ("aaa-other", "program", "part-two")],
+                         "in a column, a program's parts follow it -- by name, part-two would come first")
+        again = self.run_kit(KIT, host, "archive", "--by", "dev")
+        self.assertEqual(0, again.returncode, again.stdout + again.stderr)
 
     def test_a0_lowering_a_card_is_the_owners_door_and_raising_it_is_anyones(self):
         host = self.installed()

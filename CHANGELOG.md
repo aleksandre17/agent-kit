@@ -39,6 +39,12 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   `archive` moves finished cards past `archive_after_days` into `docs/work/archive/` unless a
   working card still names them (KIT0089). A cost test holds weighing under a second.
 
+**Added — grouping is a view; the archive is foldered by the year a card closed (ADR-025)**
+- The board lists a program's parts right after their program in each column, each line saying
+  `part of <program>`; the working set stays one flat folder.
+- `archive` moves a card into `docs/work/archive/<year it closed>/`; one id still has one home across
+  every year's folder.
+
 **Added — no side door, the architecture map, the agents' skill (ADR-025 S7, S8b, S9)**
 - `weigh --base --head --each` holds every commit of a range to the floor (CI step in the
   github-actions adapter 1.5.0): a skipped hook is caught where it is pushed.

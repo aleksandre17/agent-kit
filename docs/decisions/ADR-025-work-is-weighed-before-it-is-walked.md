@@ -217,6 +217,19 @@ the collection per application (`docs/work/<app>/`) was rejected: work that cros
 applications -- the work that most needs one view -- would belong to neither, and two boards are two
 answers to *what are we doing*.
 
+**Folders follow only what never changes** (the owner asked whether cards should be grouped into
+folders). A working card's area, application, state and even parent change while it is worked; a
+folder by any of them would move the file each time -- its links, its history and every `after` that
+names it would move with it. So the working set is one flat folder, as every issue tracker keeps one
+store (Jira, GitHub Issues, Linear: a project, a label, an epic are views over it), and grouping is
+the board's: in each column a program's parts follow their program, each line saying whose part it
+is. The one axis that never changes is when a card closed, and the archive is foldered by it
+(`docs/work/archive/<year>/`): bounded folders however many years the project runs, as logs rotate.
+*Rejected:* folders by area or application (a card crossing two belongs to neither), by state (every
+move a rename), a program's parts inside its folder (a part can be re-parented; an epic links its
+stories, it does not contain them); areas on the board's lines (a card holds no paths -- its areas
+are its commits', and a board that read git on every render would be a reading, not a projection).
+
 ## The prior system's failures, and the guard each has here
 
 Balance has two failure directions, and each guard below is aimed at one of them.
