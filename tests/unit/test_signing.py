@@ -44,15 +44,23 @@ def test_the_setup_is_refused_without_a_person_at_a_terminal():
 
 
 def test_a_key_that_opens_without_a_passphrase_is_refused_and_one_that_does_not_is_kept():
-    opens = signer.opens_without_passphrase(Path("k"), run=lambda argv, **kw: SimpleNamespace(returncode=0))
-    shut = signer.opens_without_passphrase(Path("k"), run=lambda argv, **kw: SimpleNamespace(returncode=255))
-    assert opens and not shut
+    asked = []
+
+    def run(argv, **kw):
+        asked.append(argv)
+        return SimpleNamespace(returncode=0 if len(asked) == 1 else 255)
+
+    assert signer.opens_without_passphrase("the-declared-tool", Path("k"), run=run)
+    assert not signer.opens_without_passphrase("the-declared-tool", Path("k"), run=run)
+    assert asked[0][:4] == ["the-declared-tool", "-y", "-P", ""], "the program is the declared verifier's"
 
 
-def test_a_git_older_than_ssh_signing_is_named():
-    assert signer.git_version("git version 2.45.1.windows.1") == (2, 45)
-    assert signer.git_version("git version 2.33.0") < signer.MINIMUM_GIT
-    assert signer.git_version("") == (0, 0)
+def test_a_publishers_line_is_never_a_signer_of_commits():
+    text = ('owner namespaces="git" ssh-ed25519 AAAA\n'
+            'publisher namespaces="agent-kit-capability" ssh-ed25519 BBBB\n'
+            'anyone ssh-ed25519 CCCC\n')
+    assert signing.principals(text) == ["owner", "anyone"], "an unrestricted line signs in every namespace"
+    assert signing.principals(text, "agent-kit-capability") == ["publisher", "anyone"]
 
 
 def test_any_acceptance_a_record_carries_is_a_mark_and_a_review_is_one_in_its_reviewers_name():

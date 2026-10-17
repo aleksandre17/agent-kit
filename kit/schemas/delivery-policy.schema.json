@@ -19,9 +19,8 @@
       "description": "An owner's mark (a door's passage, a lowering) counts only in a commit the owner signed, verified by git against this allowed-signers file (ADR-025 amendment 3). Written by `signer --setup`, the owner's own act; absent, a mark is a name.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["signers"],
       "properties": {
-        "signers": {"type": "string", "minLength": 1}
+        "signers": {"description": "Absent: the host's one trust root, as the declared verifier names it (ADR-008).", "type": "string", "minLength": 1}
       }
     },
     "emergency_debt_days": {

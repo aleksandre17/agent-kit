@@ -15,6 +15,7 @@ guessing past it.
 
 from __future__ import annotations
 
+import re
 import subprocess
 
 
@@ -132,6 +133,23 @@ def signed_commits(root, rel: str, signers) -> tuple:
     if said is None:
         return None, why
     return [tuple((line.split("\t") + ["", ""])[:3]) for line in said.splitlines() if line.strip()], None
+
+
+def version(root) -> tuple:
+    """(major, minor) of the version control on this machine, (0, 0) where none answers."""
+    said, _why = run(root, ["version"])
+    found = re.search(r"(\d+)\.(\d+)", said or "")
+    return (int(found.group(1)), int(found.group(2))) if found else (0, 0)
+
+
+def configure(root, settings: dict) -> tuple:
+    """Write each setting into this repository's own configuration (never the user's); `(True, None)`
+    or `(None, why)`."""
+    for name, value in settings.items():
+        said, why = run(root, ["config", "--local", name, value])
+        if said is None:
+            return None, why
+    return True, None
 
 
 def shallow(root) -> bool:

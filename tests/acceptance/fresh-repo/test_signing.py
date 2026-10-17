@@ -60,12 +60,12 @@ class OwnerMarksSigned(Fixtures, unittest.TestCase):
     def test_a_name_is_not_a_signature_and_a_signature_is(self):
         host = self.installed()
         owner, stranger = self.key("owner"), self.key("stranger")
-        signers = ".agents/project/delivery/allowed_signers"
+        signers = ".agents/project/allowed_signers"  # the host's one trust root (ADR-008)
         public = owner.with_name("owner.pub").read_text(encoding="utf-8").split()
         (host / signers).write_text(f'owner namespaces="git" {public[0]} {public[1]}\n', encoding="utf-8", newline="\n")
         policy = host / install_target("delivery", reads_as="policy")
         body = json.loads(policy.read_text(encoding="utf-8"))
-        policy.write_text(json.dumps({**body, "owner_signing": {"signers": signers}}, indent=2) + "\n",
+        policy.write_text(json.dumps({**body, "owner_signing": {}}, indent=2) + "\n",
                           encoding="utf-8", newline="\n")
         self.git(host, "config", "gpg.ssh.allowedSignersFile", (host / signers).as_posix())
         self.card(host, "before", "2026-10-01T00:00:00+00:00")

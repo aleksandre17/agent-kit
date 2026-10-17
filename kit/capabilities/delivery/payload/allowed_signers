@@ -1,5 +1,0 @@
-# Who may sign an owner's mark in this host (ADR-025 amendment 3) -- OpenSSH's allowed-signers format,
-# which git verifies against. Public keys only: this file is committed. It is written by
-#   python <kit>/interpreters/cli.py signer --setup --root .
-# run by the owner in their own terminal, never by an agent. A change to it holds only in a commit an
-# allowed signer signed. To retire a key and keep what it signed, give its line valid-before="YYYYMMDD".

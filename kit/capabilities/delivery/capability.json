@@ -54,12 +54,6 @@
       "reads_as": "areas"
     },
     {
-      "mode": "seed",
-      "class": "binding",
-      "target": ".agents/project/delivery/allowed_signers",
-      "source": "capabilities/delivery/payload/allowed_signers"
-    },
-    {
       "mode": "space",
       "class": "binding",
       "target": "docs/work/cards/",

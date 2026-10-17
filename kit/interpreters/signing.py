@@ -15,6 +15,8 @@ signed one did not, and a door whose only mark is unsigned is walked again in a 
 
 from __future__ import annotations
 
+import re
+
 import doors
 
 
@@ -61,14 +63,32 @@ def doors_of(card_marks: dict) -> dict:
     return grouped
 
 
-def principals(text: str) -> list:
-    """The principals an allowed-signers file names (its first field, comma-separated), in order."""
+def principals(text: str, namespace: str = "git") -> list:
+    """The principals an allowed-signers file lets sign in `namespace` (its first field, comma-separated),
+    in order: a line restricted by `namespaces="..."` to others -- a capability publisher's -- is not one."""
     out = []
     for line in text.splitlines():
         line = line.strip()
-        if line and not line.startswith("#"):
-            out += [p for p in line.split()[0].split(",") if p and p not in out]
+        if not line or line.startswith("#"):
+            continue
+        restricted = re.search(r'namespaces="([^"]*)"', line)
+        if restricted and namespace not in [n.strip() for n in restricted.group(1).split(",")]:
+            continue
+        out += [p for p in line.split()[0].split(",") if p and p not in out]
     return out
+
+
+def trust_root(capabilities) -> "tuple | None":
+    """(the host's trust root, the declared verifier's argv, the capability that seeds the root) -- read
+    from the declared verifier (ADR-008), so a signature has one root and one program, named once."""
+    for capability in capabilities:
+        for doc in capability.documents.values():
+            for verifier in (doc.get("verifiers") if isinstance(doc, dict) else None) or []:
+                root = verifier.get("trust_root")
+                owner = next((c for c in capabilities for i in c.installs if i.get("target") == root), None)
+                if root and verifier.get("argv"):
+                    return root, list(verifier["argv"]), owner
+    return None
 
 
 def signers_line(principal: str, public_key: str) -> str:

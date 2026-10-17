@@ -328,10 +328,13 @@ def _marks_signed(ctx, params):
         return []
     governed = lifecycle_module.the_governed(capabilities, collection.read_all(ctx, capabilities))
     declared = (governed.policy or {}).get("owner_signing")
-    if not declared:
+    if declared is None:  # `{}` is a declaration: signing, against the host's one trust root
         return []
-    signers = declared["signers"]
+    rooted = signing.trust_root(capabilities)
+    signers = declared.get("signers") or (rooted[0] if rooted else "")
     setup = "run, in your own terminal: python <kit>/interpreters/cli.py signer --setup --root ."
+    if not signers:
+        return ["owner signing is declared and no trust root is: no capability declares a verifier"]
     who_signs = signing.principals(ctx.workspace.read_text(signers)) if ctx.workspace.exists(signers) else []
     if not who_signs:
         return [f"owner signing is declared and nobody may sign yet ({signers} names no key) -- {setup}"]

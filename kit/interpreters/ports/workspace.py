@@ -151,6 +151,14 @@ class Workspace:
         import vcs
         return vcs.signed_commits(self._root, rel, self.path(signers_rel).as_posix())
 
+    def vcs_version(self) -> tuple:
+        import vcs
+        return vcs.version(self._root)
+
+    def configure_vcs(self, settings: dict) -> tuple:
+        import vcs
+        return vcs.configure(self._root, settings)
+
     def shallow(self) -> bool:
         import vcs
         return vcs.shallow(self._root)
