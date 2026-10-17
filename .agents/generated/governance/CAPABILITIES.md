@@ -26,6 +26,7 @@ Gates declared by this capability:
 - **FF-WORK-CLASSES** — `work-classes-held`
 - **FF-WORK-DEFERRALS** — `deferrals-held`
 - **FF-WORK-ORDER** — `order-held`
+- **FF-WORK-SIGNED** — `marks-signed`
 - **FF-WORK-EMERGENCY** — `emergencies-repaid`
 - **FF-WORK-CEREMONY** — `ceremony-reported`
 - **FF-DELIVERY-APPETITE** — `appetite-within-limit`
@@ -256,9 +257,9 @@ A runtime ADAPTER for git's commit hooks: the one published declaration that car
 Gates declared by this capability:
 
 
-### github-actions 1.1.0
+### github-actions 1.6.1
 
-A runtime ADAPTER for GitHub Actions: the one published declaration that carries this product's name. A CI runner is not an agent runtime, and that is the point -- it is the one RETURN POINT nobody at the keyboard can skip: `git commit --no-verify` bypasses every local hook by git's design, but a push or pull request is checked out and judged where no local flag reaches. Served, it projects one workflow file that runs the kit this host CARRIES -- never a fetched one -- as `check` over the tree and as the same one judge, over the pushed or proposed diff, that a runtime's write hook and the commit hook use. An ordinary capability, taken through the provenance door like any adapter; no interpreter in the kit knows that it exists.
+A runtime ADAPTER for GitHub Actions: the one published declaration that carries this product's name. A CI runner is not an agent runtime, and that is the point -- it is the one RETURN POINT nobody at the keyboard can skip: `git commit --no-verify` bypasses every local hook by git's design, but a push or pull request is checked out and judged where no local flag reaches. Served, it projects one workflow file that runs the kit this host CARRIES -- never a fetched one -- as `check` over the tree and as the same one judge, over the pushed or proposed diff, that a runtime's write hook and the commit hook use. An ordinary capability, taken through the provenance door like any adapter; no interpreter in the kit knows that it exists. It also serves the host's declared review owners (.agents/project/owners.json, the core's) into a span of .github/CODEOWNERS, and names the branch protection only a person can switch on -- with the exact command (`doctor`).
 
 | path | class | mode |
 | --- | --- | --- |

@@ -20,9 +20,21 @@
       "surface": "git-commit"
     },
     {
+      "comment": [
+        "#",
+        ""
+      ],
+      "path": ".github/CODEOWNERS",
+      "runtime": "github-actions",
+      "seed_sha256": "08bfe61a6770bd6c698c4fa3fa42471f1af9ed94adde7aa9f5dc924df5f16cc4",
+      "span": "owners",
+      "span_sha256": "a0761e906f8713738b4fe571ee3ebdfc3a11344953773d6b6e93722b39cf7ca5",
+      "surface": "github-actions"
+    },
+    {
       "path": ".github/workflows/kit-gates.yml",
       "runtime": "github-actions",
-      "sha256": "4531fc1a464f99692a464dd670627df5de449b4c73a9d93b8d41974e71b0c15d",
+      "sha256": "95d6ddcf99b3819a8f17e54621a28107d2b9f9890af1ebf2e29e67d614199aaf",
       "surface": "github-actions"
     },
     {

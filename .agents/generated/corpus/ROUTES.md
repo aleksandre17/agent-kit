@@ -11,7 +11,7 @@
 
 ## The walk
 
-37 node(s) joined by 1 edge(s) -- 1 written as a link one document resolves to another, the rest conferred by an index on the place it answers for -- walked from 3 document(s) resident in 3 declared entry place(s); 2 link(s) named nothing this reading reaches.
+37 node(s) joined by 1 edge(s) -- 1 written as a link one document resolves to another, the rest conferred by an index on the place it answers for -- walked from 3 document(s) resident in 3 declared entry place(s); 3 link(s) named nothing this reading reaches.
 
 An entry is a place a row of the map MARKS as one. A graph whose roots are everything has no
 unreachable node and measures nothing, so the roots are the host's declaration and never this
@@ -76,7 +76,7 @@ No index answers for this place.
 - **0 hop(s) from an entry** — 3 document(s)
 
 3 of 37 document(s) are reachable from a declared entry;
-34 are reached by nothing. 2 link(s) named nothing this
+34 are reached by nothing. 3 link(s) named nothing this
 reading reaches.
 
 A depth is a distance and never a verdict. The number that would turn a distance into a verdict

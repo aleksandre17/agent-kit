@@ -1,9 +1,11 @@
 # Generated. Do not edit. Served to the runtime github-actions through the surface github-actions - kit 0.2.0.
 # The one projection of this host's gates nobody skips with `--no-verify`: on every push and pull
 # request the runner checks out the change and runs the kit THIS HOST CARRIES at .agents/kit -- it
-# never fetches one -- twice: `check` over the whole tree, and the one `judge` over the pushed or
-# proposed diff against the edit gates this host declares. Neither step holds policy of its own, and
-# both fail CLOSED: a base that cannot be read, a diff that cannot be made or a Python that cannot be
+# never fetches one -- three times: `check` over the whole tree, `prove --full` (every command a MUST or
+# an area names, on a clean runner that holds no proof record), and the one `judge` over the pushed or
+# proposed diff against the edit gates this host declares. This is the AUTHORITATIVE gate -- the hooks are
+# feedback a person may skip -- once branch protection requires it (ADR-025 amendment 5). No step holds
+# policy of its own, and each fails CLOSED: a base that cannot be read, a diff that cannot be made or a Python that cannot be
 # run refuses the run. Every other file in this directory is the owner's, and the kit never writes it.
 name: kit gates
 on:
@@ -27,6 +29,16 @@ jobs:
             fi
           done
           echo "kit gates: REFUSED -- no Python interpreter could be run, so nothing was checked" >&2
+          exit 1
+      - name: prove -- every command a MUST or an area names, on the commit checked out
+        shell: sh
+        run: |
+          for candidate in python3 python py; do
+            if "$candidate" -c "import sys" >/dev/null 2>&1; then
+              exec "$candidate" ".agents/kit/interpreters/cli.py" prove --root . --full --surface github-actions
+            fi
+          done
+          echo "kit gates: REFUSED -- no Python interpreter could be run, so nothing was proved" >&2
           exit 1
       - name: judge -- the pushed or proposed change, against this host's edit gates
         shell: sh
@@ -56,4 +68,19 @@ jobs:
             echo "kit gates: REFUSED -- the change from $base could not be read, so it was not judged" >&2
             exit 1
           }
-          printf '%s\n' "$change" | "$python" ".agents/kit/interpreters/cli.py" judge --root . --surface github-actions
+          printf '%s\n' "$change" | "$python" ".agents/kit/interpreters/cli.py" judge --root . --surface github-actions || exit 1
+          # Whitespace errors the change introduces (trailing blanks, a conflict marker left behind):
+          # git's own check over the same range (a first push has no range to check).
+          [ "$base" = "$(git hash-object -t tree /dev/null)" ] || git diff --check "$base" HEAD || {
+            echo "kit gates: REFUSED -- the change introduces whitespace errors or a conflict marker (git diff --check)" >&2
+            exit 1
+          }
+          # Every pushed commit against its work-class floor (ADR-025): a commit hook skipped with
+          # --no-verify, or a commit made where no hook runs, is weighed here, one commit at a time.
+          # A new branch's first push weighs only what no other branch on the remote already carries:
+          # those commits were weighed where they were made, and today's rules are not theirs.
+          if [ "$base" = "$(git hash-object -t tree /dev/null)" ]; then
+            "$python" ".agents/kit/interpreters/cli.py" weigh --root . --head HEAD --each --published-as "origin/${GITHUB_REF_NAME}" || exit 1
+          else
+            "$python" ".agents/kit/interpreters/cli.py" weigh --root . --base "$base" --head HEAD --each || exit 1
+          fi

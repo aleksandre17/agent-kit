@@ -713,6 +713,148 @@
       "evidence": [],
       "status": "mapping",
       "why": "the life-cycle processes are an organisation's; the kit supplies their records"
+    },
+    {
+      "id": "risk-based-testing",
+      "standard": "ISO/IEC/IEEE 29119-1/-2",
+      "clause": "Risk-based testing: test effort proportional to the risk of what changed",
+      "mechanism": "an area declares what proves it (proved_by); prove weighs what a push carries and runs that, and everything only where the change owes a decision (ADR-025 amendment 4, Cardinal IX)",
+      "evidence": [
+        "test:tests/unit/test_weighing.py::test_proof_is_weighed_as_the_work_is",
+        "test:tests/acceptance/fresh-repo/test_norms.py::test_506_a_push_is_proved_by_what_it_touches_and_never_twice_on_the_same_bytes"
+      ],
+      "status": "conformant",
+      "why": "the selection is computed from declared areas, never chosen by an agent"
+    },
+    {
+      "id": "test-impact-analysis",
+      "standard": "Change-based test selection (Google TAP; Bazel and Nx affected targets)",
+      "clause": "Run the tests a change can affect; fall back to all of them where the impact cannot be computed",
+      "mechanism": "proof_for over the published areas, their downstream (feeds) and the pushed refs; an unmapped place, a heavy change or an unreadable range runs everything and says why",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_norms.py::test_508_a_new_host_drafts_its_areas_from_its_modules_and_a_change_is_proved_by_its_own",
+        "test:tests/acceptance/fresh-repo/test_norms.py::test_510_a_push_is_proved_as_published_by_the_refs_it_carries_and_a_record_must_match"
+      ],
+      "status": "conformant",
+      "why": "the impact map is the host's areas, which it already keeps -- no second map to go stale"
+    },
+    {
+      "id": "lean-waste",
+      "standard": "Lean software development (Poppendieck 2003; Womack and Jones)",
+      "clause": "Over-processing and waiting are waste",
+      "mechanism": "Cardinal IX: every cost follows the change it serves; a green proof is never repeated on the same bytes; check --brief for agents",
+      "evidence": [
+        "path:bundles/cardinals/payload/cardinals.json",
+        "test:tests/acceptance/fresh-repo/test_norms.py::test_506_a_push_is_proved_by_what_it_touches_and_never_twice_on_the_same_bytes"
+      ],
+      "status": "conformant",
+      "why": "both directions are defects: heavier than the failure prevented, or lighter than the risk"
+    },
+    {
+      "id": "shape-up-appetite",
+      "standard": "Shape Up (Singer, Basecamp 2019)",
+      "clause": "An appetite set before the work, and a bet a person places",
+      "mechanism": "a major card owes an appetite and the owner's bet, a door no machine opens",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_60",
+        "gate:FF-DELIVERY-APPETITE"
+      ],
+      "status": "conformant",
+      "why": "the bet is a door; the appetite is measured where its unit can be read and said where it cannot"
+    },
+    {
+      "id": "sre-emergency-change",
+      "standard": "Site Reliability Engineering (Beyer et al., Google 2016)",
+      "clause": "An emergency change ships first and owes its postmortem",
+      "mechanism": "a Work-Class: emergency trailer a person declares; its debt is repaid by a card holding what its computed class owes, within the host's days",
+      "evidence": [
+        "gate:FF-WORK-EMERGENCY",
+        "test:tests/acceptance/fresh-repo/test_weigh.py::test_97"
+      ],
+      "status": "conformant",
+      "why": "a stub card no longer repays it (second audit)"
+    },
+    {
+      "id": "eu-ai-act-human-oversight",
+      "standard": "EU AI Act (Regulation (EU) 2024/1689)",
+      "clause": "Art. 14: effective human oversight -- a person can decide, override and stop",
+      "mechanism": "doors only a person opens; where the host declares owner_signing, an owner's mark holds only in a commit the owner signed, verified against the trust root as it stood at the parent",
+      "evidence": [
+        "gate:FF-WORK-SIGNED",
+        "test:tests/acceptance/fresh-repo/test_signing.py::test_a_key_a_commit_adds_never_vouches_for_that_commit_or_what_it_signs_C1"
+      ],
+      "status": "mapping",
+      "why": "an obligation of a provider or deployer; the repository supplies the verifiable oversight it can"
+    },
+    {
+      "id": "owasp-llm06-unforgeable-approval",
+      "standard": "OWASP Top 10 for LLM Applications (2025)",
+      "clause": "LLM06 Excessive Agency: high-impact actions need a human approval the agent cannot grant itself",
+      "mechanism": "owner signing: a mark is introduced by a commit its principal signed; replayed, re-walked and self-vouched marks fail",
+      "evidence": [
+        "test:tests/acceptance/fresh-repo/test_signing.py::test_a_mark_replayed_onto_another_door_is_a_new_mark_C2",
+        "test:tests/acceptance/fresh-repo/test_signing.py::test_a_door_walked_twice_is_held_by_its_latest_passage_not_its_first_signed_one_N1"
+      ],
+      "status": "conformant",
+      "why": "found forgeable twice by independent review, and closed with a test for each way"
+    },
+    {
+      "id": "git-ssh-signing",
+      "standard": "git SSH signing (gpg.format=ssh) and OpenSSH allowed_signers",
+      "clause": "A signature verified against a trust root, the bootstrap trusted on first use",
+      "mechanism": "verb signer (the owner's own act, passphrase asked by the key tool); one trust root shared with capability provenance (ADR-008)",
+      "evidence": [
+        "verb:signer",
+        "test:tests/acceptance/fresh-repo/test_signing.py::test_a_name_is_not_a_signature_and_a_signature_is"
+      ],
+      "status": "conformant",
+      "why": "the first registration is trusted on first use, as an SSH host key is -- said, not hidden"
+    },
+    {
+      "id": "independent-verification",
+      "standard": "IEEE 1012 (independent verification and validation)",
+      "clause": "Verification independent of the author",
+      "mechanism": "a review by the work's author, or by whoever carried it through a door, proves nothing",
+      "evidence": [
+        "test:tests/unit/test_claim_ladder.py::test_a_review_by_an_author_or_of_another_card_proves_nothing",
+        "test:tests/unit/test_claim_ladder.py::test_whoever_carried_a_card_through_a_door_is_still_its_author"
+      ],
+      "status": "partial",
+      "why": "authorship is separated; the reviewer's own independence (organisational, financial) is not the repository's to prove"
+    },
+    {
+      "id": "owasp-cicd-flow-control",
+      "standard": "OWASP Top 10 CI/CD Security Risks (2022)",
+      "clause": "CICD-SEC-1 Insufficient flow control: controls enforced on the server, not only on the client",
+      "mechanism": "client hooks are feedback a person can bypass; CI runs check on the exact pushed commit on a clean runner with no cache (ADR-025 amendment 5)",
+      "evidence": [
+        "path:adapters/github-actions/payload/workflow.mustache"
+      ],
+      "status": "partial",
+      "why": "branch protection that requires the CI check is the forge's, set by the owner"
+    },
+    {
+      "id": "nist-ai-rmf-measure",
+      "standard": "NIST AI RMF 1.0",
+      "clause": "MEASURE 2: the AI system's behaviour is evaluated, not assumed",
+      "mechanism": "verb trial runs agent evals judged by deterministic oracles; the work skill was measured across five task classes (2026-10-17: five of five walked right)",
+      "evidence": [
+        "verb:trial"
+      ],
+      "status": "partial",
+      "why": "one study and the shipped evals; no recurring behavioural suite yet"
+    },
+    {
+      "id": "docs-as-code",
+      "standard": "Docs as Code (Write the Docs)",
+      "clause": "Documentation built from its sources and tested",
+      "mechanism": "the verb table and the host blueprint are derived from the verbs and the host layout, and fail a test the moment they differ",
+      "evidence": [
+        "test:tests/unit/test_setup_reference.py::test_the_host_blueprint_is_the_layouts_own_declaration",
+        "test:tests/unit/test_verb_reference.py::test_the_verb_table_is_the_verbs_own_declaration"
+      ],
+      "status": "conformant",
+      "why": "a hand-kept table drifted once; these cannot"
     }
   ]
 }
