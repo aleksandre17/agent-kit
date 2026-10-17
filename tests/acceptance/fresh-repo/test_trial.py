@@ -32,7 +32,7 @@ POLICY = next(p for p in sorted((REPO / "policies").glob("*")) if p.is_dir()
               and any(g["id"] for d in documents_of(p, "edit-gate") for g in d["gates"] if g["paths"] == ".*"))
 GATE = next(g for d in documents_of(POLICY, "edit-gate") for g in d["gates"] if g["paths"] == ".*")
 POLICY_ID = json.loads((POLICY / "capability.json").read_text(encoding="utf-8"))["id"]
-WORKSPACES = next(p for p in sorted((REPO / "adapters").glob("*")) if documents_of(p, "workspace-provider"))
+WORKSPACES = next(p for p in sorted((REPO / "adapters").glob("*")) if p.is_dir() and documents_of(p, "workspace-provider"))
 WORKSPACES_ID = json.loads((WORKSPACES / "capability.json").read_text(encoding="utf-8"))["id"]
 
 WORKER = (

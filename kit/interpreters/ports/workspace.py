@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import stat
 import shutil
 import time
 from pathlib import Path, PurePosixPath
@@ -27,6 +28,14 @@ _REPLACE_PAUSE = 0.02
 
 
 def _replace(source: Path, target: Path) -> None:
+    # A replacement keeps the mode of what it replaces: a served hook made executable by its
+    # activation stays executable when it is rendered again (a fresh temporary file is 0644, and a
+    # hook without its execute bit is one the product silently skips).
+    if target.exists():
+        try:
+            os.chmod(source, stat.S_IMODE(target.stat().st_mode))
+        except OSError:
+            pass
     for attempt in range(_REPLACE_ATTEMPTS):
         try:
             os.replace(source, target)
