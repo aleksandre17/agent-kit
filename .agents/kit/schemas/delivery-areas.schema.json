@@ -1,0 +1,76 @@
+{
+  "$id": "delivery-areas",
+  "title": "The host's areas -- where a change is costly to undo, and how far each class may spread (ADR-025)",
+  "description": "Seeded once and owned by the host thereafter. An area is a set of paths and the cost of undoing a change to them, with the reason; a change's class is computed from the areas it touches. A path no area claims carries `default_undo`. The breadth numbers are the host's: a class absent from `max_areas` may span any number of areas.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "default_undo",
+    "areas"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "default_undo": {
+      "description": "The undo cost of a path no area claims, by its id on the work classes' scale.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "max_areas": {
+      "description": "class id -> the most areas a change of that class may touch.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1
+      }
+    },
+    "areas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "paths",
+          "undo",
+          "because"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "paths": {
+            "description": "A regular expression searched in a repository-relative POSIX path -- read exactly as an edit gate reads its `paths` (anchor it with ^ to mean a prefix).",
+            "type": "string",
+            "minLength": 1
+          },
+          "undo": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "because": {
+            "type": "string",
+            "minLength": 1
+          },
+          "at_least": {
+            "description": "The lightest class a change touching this area may be, by its id: tailoring a class upward where the undo cost alone does not say enough.",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "requires": {
+            "description": "Record ids a change touching this area owes beyond its class's -- a review where security lives, a decision where a public contract does.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

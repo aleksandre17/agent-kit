@@ -79,7 +79,14 @@
       "to": "in-flight",
       "owner": "doer",
       "when": { "field": "class", "equals": "standard" },
-      "exit": "a pre-approved standard change: low risk, its class declared in advance, and still written as a card"
+      "exit": "a pre-approved standard change that was written as a card anyway: its class computed, not claimed (ADR-025) -- a standard change needs no card at all, its commit is its record"
+    },
+    {
+      "from": "shaped",
+      "to": "in-flight",
+      "owner": "doer",
+      "when": { "field": "class", "equals": "normal" },
+      "exit": "a normal change (ADR-025): costly to undo but not irreversible, so it is assessed by its criteria and its owner's peers rather than bet by the owner -- the owner's door stands where consequence is irreversible"
     },
     {
       "from": "bet",

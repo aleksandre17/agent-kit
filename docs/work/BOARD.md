@@ -74,7 +74,9 @@ _empty_
 - `shaped` → `bet` · owner **owner** · DOOR: only the owner may open it
   - exit: the owner has accepted this work into the cycle -- no machine may make this move
 - `shaped` → `in-flight` · owner **doer** · only when `class` = `standard`
-  - exit: a pre-approved standard change: low risk, its class declared in advance, and still written as a card
+  - exit: a pre-approved standard change that was written as a card anyway: its class computed, not claimed (ADR-025) -- a standard change needs no card at all, its commit is its record
+- `shaped` → `in-flight` · owner **doer** · only when `class` = `normal`
+  - exit: a normal change (ADR-025): costly to undo but not irreversible, so it is assessed by its criteria and its owner's peers rather than bet by the owner -- the owner's door stands where consequence is irreversible
 - `bet` → `in-flight` · owner **doer**
   - exit: the work has started and the host had a free slot for it
 - `in-flight` → `verified` · owner **verifier**

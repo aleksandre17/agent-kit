@@ -5,13 +5,14 @@
 
 ## Capabilities installed here
 
-### delivery 0.1.0
+### delivery 0.2.0
 
 Declares the task lifecycle as data: cards are BINDING and carry exactly one state, the board is a PROJECTION of them, the owner's acceptance is a declared door no machine may open, and capacity and staleness are limits the host declares. It requires no provision, and the emptiness is deliberate: everything it reads -- its lifecycle, its policy, its cards -- it declares itself, and a capability that listed a dependency it never consumes would be promising a coupling nobody keeps. That the kit cannot stand without governance is the KIT's statement, made once on the manifest entry as never_disabled; restating it here would be a second home for it.
 
 | path | class | mode |
 | --- | --- | --- |
 | `.agents/project/delivery/policy.json` | binding | seed |
+| `.agents/project/delivery/areas.json` | binding | seed |
 | `docs/work/cards/` | binding | space |
 | `docs/work/evidence/` | binding | space |
 | `docs/work/BOARD.md` | projection | projection |
@@ -21,6 +22,7 @@ Gates declared by this capability:
 - **FF-DELIVERY-WIP** — `capacity-within-limit`
 - **FF-DELIVERY-AGE** — `state-age-within-limit`
 - **FF-DELIVERY-LINEAGE** — `lineage-resolves`
+- **FF-WORK-CLASSES** — `work-classes-held`
 - **FF-DELIVERY-APPETITE** — `appetite-within-limit`
 - **FF-DELIVERY-RESTATED** — `section-restating-a-record`
 

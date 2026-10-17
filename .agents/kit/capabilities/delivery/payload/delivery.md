@@ -31,9 +31,13 @@ declared, in `lifecycle.json`, as data.
 3. **Capacity and staleness are the host's declarations**, in `.agents/project/delivery/policy.json`.
    The interpreter holds no number. A second card entering a full state is refused; a card that
    has sat too long in one fails a gate rather than being moved by a machine that no one named.
-4. **Low-risk work may skip the door by DECLARATION, never by omission** — ITIL's pre-approved
-   standard change. The lifecycle declares which edge is open to which class of card, and a card
-   is still written. A bypass nobody declared is not a bypass; it is a state that was skipped.
+4. **Work is weighed before it is walked** (ADR-025). The host declares its areas -- paths and the
+   cost of undoing a change to them -- in `.agents/project/delivery/areas.json`; `weigh` computes a
+   change's class from the areas it touches. A `standard` change (reversible, inside the host's
+   breadth) leaves only its commit; a `normal` one a card and its criteria; a `major` one a decision,
+   an appetite and a review as well; a `program` a plan of cards. The computed class is a floor: a
+   change may be declared heavier, never lighter, so low-risk work is light by computation and heavy
+   work cannot pass as light. The floor of edit gates, tests and `check` holds for every class.
 
 ## Working with it
 
@@ -46,6 +50,9 @@ kit move --root . --card <id> --to shaped --by <who>
 
 # the owner's door
 kit move --root . --card <id> --to bet --approve <who>
+
+# how heavy is this change? (staged and untracked, a range, or paths not yet touched)
+kit weigh --root . [--base <rev> --head <rev> | --path a,b] [--class <declared>]
 
 # the board is never edited; it is rendered
 kit render --root .

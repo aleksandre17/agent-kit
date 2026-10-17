@@ -165,6 +165,13 @@
     {
       "capability": "delivery",
       "class": "binding",
+      "digest": "2b96cca8fae3a4213d4a01ab5034bed0cd581588b775039e362d71971ab2f200",
+      "mode": "seed",
+      "path": ".agents/project/delivery/areas.json"
+    },
+    {
+      "capability": "delivery",
+      "class": "binding",
       "digest": "56cc6c4dd6fa60e51045c7c8bb0f81fe0498722b3251a143bc23967bdd22b0fa",
       "mode": "seed",
       "path": ".agents/project/delivery/policy.json"
@@ -559,5 +566,5 @@
       "version": "1.1.0"
     }
   ],
-  "taken_at": "2026-10-16T17:43:34+00:00"
+  "taken_at": "2026-10-17T05:05:49+00:00"
 }

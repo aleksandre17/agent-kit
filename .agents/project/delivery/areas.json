@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "default_undo": "reversible",
+  "max_areas": {},
+  "areas": []
+}

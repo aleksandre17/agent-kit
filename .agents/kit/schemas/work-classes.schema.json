@@ -1,0 +1,212 @@
+{
+  "$id": "work-classes",
+  "title": "The work classes -- how heavy a change's path is, decided by its consequence (ADR-025)",
+  "description": "SHIPPED by the delivery capability. The undo-cost scale and the record vocabulary are ORDERED words; each class names the most consequential change it admits, the records it requires and the acts that need the owner's door. No number lives here: how many areas a class may span is the host's, in its areas declaration.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "undo",
+    "uncertainty",
+    "records",
+    "trailers",
+    "working_states",
+    "classes"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "undo": {
+      "description": "The undo-cost scale, cheapest first. An area declares one of these; a change carries the highest among the areas it touches.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "uncertainty": {
+      "description": "How much of the answer is unknown when the work is shaped (the Cynefin domains), each with the lightest class work of that kind may walk. Declared on a card at shaping; it can only raise the card's class.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says",
+          "at_least"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          },
+          "at_least": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          }
+        }
+      }
+    },
+    "records": {
+      "description": "The closed vocabulary of what a class may require a change to leave behind.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          },
+          "held_by": {
+            "description": "Where a card holds this record, and from which state on it must: a card FIELD that is present and not empty, or CHILDREN hanging under it. A record with no `held_by` is held outside the card (the commit) or by a proof (S3).",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "from"
+            ],
+            "properties": {
+              "field": {
+                "type": "string",
+                "minLength": 1
+              },
+              "children": {
+                "type": "boolean",
+                "const": true
+              },
+              "from": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]*$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "trailers": {
+      "description": "The git trailer keys a commit message names its card and its declared class with (git interpret-trailers form: `Key: value` in the last paragraph).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "card",
+        "class"
+      ],
+      "properties": {
+        "card": {
+          "type": "string",
+          "minLength": 1
+        },
+        "class": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "working_states": {
+      "description": "The card states a commit may name its card in: work is committed to a card that is being built, never to one that is still being shaped or has already landed.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]*$"
+      }
+    },
+    "classes": {
+      "description": "Lightest first. The computed class of a change is the first row whose `admits` holds it; a row with no `admits` is never computed, only declared.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "says",
+          "requires"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "says": {
+            "type": "string",
+            "minLength": 1
+          },
+          "admits": {
+            "description": "The most consequential change this class holds: the highest undo cost, by its id on the scale.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "undo"
+            ],
+            "properties": {
+              "undo": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]*$"
+              }
+            }
+          },
+          "expedite": {
+            "description": "Declared only, never computed: the change may land at any weight now and owes the records of its computed class afterwards (ADR-025 decision 6).",
+            "type": "boolean"
+          },
+          "requires": {
+            "description": "Record ids from `records`, every one owed by a change of this class.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*$"
+            }
+          },
+          "doors": {
+            "description": "What only the owner may decide for a change of this class, in words.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "aligned_with": {
+            "description": "The external practice this row follows -- alignment, never a compliance claim.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

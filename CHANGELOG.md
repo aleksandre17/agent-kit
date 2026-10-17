@@ -5,6 +5,17 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade --plan`, which names every path that changes between the two.
 
+## 0.3.0 — unreleased
+
+**Added — work is weighed before it is walked (ADR-025), slice S1**
+- `delivery` 0.2.0: the work-class catalogue (`standard`, `normal`, `major`, `program`, `emergency`;
+  each with the records it requires, its doors and the practice it is aligned with), the undo-cost
+  scale and the record vocabulary; the host's areas seed `.agents/project/delivery/areas.json`.
+- Verb `weigh`: a change's class computed from the areas it touches -- the working change, a
+  `--base/--head` range, or `--path` -- and what that class requires; `--class` refuses a lighter
+  declaration (KIT0086). An undo cost nobody declared is refused (KIT0085).
+- A standard change no longer needs a card: its commit is its record (delivery rule 4 revised).
+
 ## 0.2.0 — 2026-10-17
 
 **Added — the agentic layer: every token serves the result (ADR-024)**

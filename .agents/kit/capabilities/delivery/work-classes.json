@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "undo": [
+    {
+      "id": "reversible",
+      "says": "undone by reverting the commit: nothing outside the repository remembers it"
+    },
+    {
+      "id": "costly",
+      "says": "undone with work beyond a revert: a public contract, a dependency, a shared configuration, consumers that must move with it"
+    },
+    {
+      "id": "irreversible",
+      "says": "not undone by any commit: data changed, a schema migrated, a secret exposed, a release published, a permission granted"
+    }
+  ],
+  "uncertainty": [
+    {
+      "id": "clear",
+      "says": "the answer is known and repeatable: apply it",
+      "at_least": "standard"
+    },
+    {
+      "id": "complicated",
+      "says": "the answer exists and takes analysis or expertise to find",
+      "at_least": "normal"
+    },
+    {
+      "id": "complex",
+      "says": "the answer emerges only from trying: small probes, each one a part of a plan",
+      "at_least": "program"
+    },
+    {
+      "id": "chaotic",
+      "says": "act first to restore order, then make sense of it",
+      "at_least": "emergency"
+    }
+  ],
+  "records": [
+    {
+      "id": "commit",
+      "says": "the commit and its message -- the record every change leaves"
+    },
+    {
+      "id": "card",
+      "says": "a card naming the work, its owner and its state (docs/work/cards/)"
+    },
+    {
+      "id": "criteria",
+      "says": "the card's criteria, each with the proof that decides it",
+      "held_by": {
+        "field": "criteria",
+        "from": "in-flight"
+      }
+    },
+    {
+      "id": "decision",
+      "says": "a decision record: the question, the alternatives and why they lost, the owner's ruling",
+      "held_by": {
+        "field": "origin",
+        "from": "in-flight"
+      }
+    },
+    {
+      "id": "appetite",
+      "says": "the budget the owner bet on the work, read passively from receipts",
+      "held_by": {
+        "field": "appetite",
+        "from": "in-flight"
+      }
+    },
+    {
+      "id": "review",
+      "says": "a review by a principal who is not the work's author"
+    },
+    {
+      "id": "card-tree",
+      "says": "a card tree with an order: the parts and what each comes after",
+      "held_by": {
+        "children": true,
+        "from": "in-flight"
+      }
+    }
+  ],
+  "trailers": {
+    "card": "Card",
+    "class": "Work-Class"
+  },
+  "working_states": [
+    "in-flight",
+    "verified"
+  ],
+  "classes": [
+    {
+      "id": "standard",
+      "says": "Reversible and inside the host's breadth: the floor proves it, and its commit is its whole record.",
+      "admits": {
+        "undo": "reversible"
+      },
+      "requires": [
+        "commit"
+      ],
+      "doors": [],
+      "aligned_with": [
+        "ITIL 4 change enablement: standard change",
+        "Amazon: two-way door",
+        "Cynefin: clear"
+      ]
+    },
+    {
+      "id": "normal",
+      "says": "Costly to undo, or wider than a standard change may spread: the work is named and done by its criteria.",
+      "admits": {
+        "undo": "costly"
+      },
+      "requires": [
+        "commit",
+        "card",
+        "criteria"
+      ],
+      "doors": [],
+      "aligned_with": [
+        "ITIL 4 change enablement: normal change",
+        "ISO 31000: treatment proportional to risk",
+        "Cynefin: complicated"
+      ]
+    },
+    {
+      "id": "major",
+      "says": "Irreversible somewhere: decided before it is built, bet by the owner, and reviewed by someone who did not write it.",
+      "admits": {
+        "undo": "irreversible"
+      },
+      "requires": [
+        "commit",
+        "card",
+        "criteria",
+        "decision",
+        "appetite",
+        "review"
+      ],
+      "doors": [
+        "the bet: the owner accepts the work and its appetite",
+        "the decision: the owner rules among the recorded alternatives"
+      ],
+      "aligned_with": [
+        "Amazon: one-way door",
+        "IEC 61508 / DO-178C: rigour scaled to consequence",
+        "ISO/IEC 42001, NIST AI RMF: human oversight in proportion to risk"
+      ]
+    },
+    {
+      "id": "program",
+      "says": "Beyond every envelope, or declared complex: a plan of cards with an order, each part walking its own class.",
+      "requires": [
+        "commit",
+        "card",
+        "criteria",
+        "decision",
+        "appetite",
+        "review",
+        "card-tree"
+      ],
+      "doors": [
+        "the bet on the program and on each phase",
+        "every decision the plan raises"
+      ],
+      "aligned_with": [
+        "ISO 21502 / PMBOK 7: tailoring",
+        "Stage-Gate: one entry gate per phase",
+        "Cynefin: complex",
+        "NASA NPR 7150.2: classification"
+      ]
+    },
+    {
+      "id": "emergency",
+      "says": "Restore service now: lands at any weight with its reason, and owes the records of its computed class afterwards.",
+      "expedite": true,
+      "requires": [
+        "commit"
+      ],
+      "doors": [
+        "afterwards: the owner accepts the card that pays the debt"
+      ],
+      "aligned_with": [
+        "ITIL 4 change enablement: emergency change",
+        "Kanban: expedite class of service",
+        "SRE: blameless postmortem"
+      ]
+    }
+  ]
+}

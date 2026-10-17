@@ -138,6 +138,8 @@
     "obligation-markers": "schemas/obligation-markers.schema.json",
     "card": "schemas/card.schema.json",
     "delivery-policy": "schemas/delivery-policy.schema.json",
+    "work-classes": "schemas/work-classes.schema.json",
+    "delivery-areas": "schemas/delivery-areas.schema.json",
     "residence": "schemas/residence.schema.json",
     "boundary": "schemas/boundary.schema.json",
     "receipt": "schemas/receipt.schema.json",

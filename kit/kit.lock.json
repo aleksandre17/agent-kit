@@ -1,17 +1,17 @@
 {
   "algorithm": "sha256",
-  "count": 341,
+  "count": 349,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "f9c45c5be8e3e39f1b276ab67d2b112a77d30a134d124a177fced8bd417b9d46",
+      "digest": "69e490b043d4cf9c69474f9c40e6e96293ab1bda6b76239470f89a6e9ea430d5",
       "path": "MANIFEST.json"
     },
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "0b625668dbd7b84690073dd363b1b51b2ee76c087f43f66e3b4457ff822e3580",
+      "digest": "ea359b8357837e88ddb54c2be44e2f3ed324f24531db8b150048162d3c52887c",
       "path": "README.md"
     },
     {
@@ -23,7 +23,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "f1e85f968030077960337f04e888ba5b1a6dcacc5010feaea75a28a65dc7ef19",
+      "digest": "026b9afe8c54912b8616c6d2c2c4a94b752c23310b6c0dbce31a58c2f078371a",
       "path": "capabilities/delivery/capability.json"
     },
     {
@@ -35,7 +35,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "2f820f2fe7173c74627aafbedbdec41b9e2a66ada2ca47a5d7c2e52a68b300c6",
+      "digest": "8f661d32e89a01a26ed87e04be3501df5dc7d55a58fbbfa18ad895bf80d1d18d",
       "path": "capabilities/delivery/lifecycle.json"
     },
     {
@@ -46,8 +46,14 @@
     },
     {
       "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "2b96cca8fae3a4213d4a01ab5034bed0cd581588b775039e362d71971ab2f200",
+      "path": "capabilities/delivery/payload/areas.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
       "class": "payload",
-      "digest": "fb4b69620443b3e76a5b7759c4270066fbb954e8ecd40a26d7da150936360345",
+      "digest": "6f32487da3b881a3b2dabbc3be86eb8e6386e7a0b8e3bff4a4442ba1f8469460",
       "path": "capabilities/delivery/payload/delivery.md"
     },
     {
@@ -55,6 +61,12 @@
       "class": "declaration",
       "digest": "56cc6c4dd6fa60e51045c7c8bb0f81fe0498722b3251a143bc23967bdd22b0fa",
       "path": "capabilities/delivery/payload/policy.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "e9ffb3d20a7ebc194982e05c58f5001521f27d3da992695b063cfab9e73d4ef5",
+      "path": "capabilities/delivery/work-classes.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -551,7 +563,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "2fe62243d2159ca2fa0ee6e645ecdfa158ec221f7e10dd5579e84f6374c42c4b",
+      "digest": "e7433017941d7fefde380a51a7c0b237eb194b4847771b6f217fbf109ac525dc",
       "path": "diagnostics.json"
     },
     {
@@ -929,6 +941,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "35bc153e43ff27a25f201ef4b88487a7b15b1a83be957f938b869316aaf99a2c",
+      "path": "interpreters/gates/workcards.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "2d683ac189dc62b732cdae079c8c36032fb2babb98ca55fad57535d4a1b7db6a",
       "path": "interpreters/hooks.py"
     },
@@ -1085,7 +1103,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "416a8de6d785855b9efff52535bf129b4aab2674c3c650cb6b7ce848493cd4b4",
+      "digest": "18fa353049e7894787da4bc84b506b52252d69df608d8fb3c69a5179e54b1b5e",
       "path": "interpreters/ports/vcs.py"
     },
     {
@@ -1433,7 +1451,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "94848ac9d03a3ab5ac102ffb86759960a7218016238d36630315a632ef2985e7",
+      "digest": "b11cfc9e625727f17b4230cc90e74e11099aa905c04a7beda495d910df17c550",
       "path": "interpreters/verbs/message.py"
     },
     {
@@ -1523,8 +1541,26 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "2a904528258bb6ca9bf58893fd8865f26584faa50e370ea9b7c906d863f1ca7d",
+      "path": "interpreters/verbs/weigh.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "9fa015d96ff9898bd0baf731f88d7d0303dbf966e4a3daf60942cc4a6712b892",
       "path": "interpreters/version_range.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "b7993584f2f08774b3268959f5c0768078449e8ee55ced188d8998c50653c0a9",
+      "path": "interpreters/weighing.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
+      "digest": "3bdd21c9bce396a1cbea8c49a59b488bfdbc6174198635adf5576d4846924a8c",
+      "path": "interpreters/workclass.py"
     },
     {
       "accounted_by": "declaration-closure",
@@ -1589,7 +1625,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "c1acc91b87ba44e6bf382be278c1443c4bbdc51c092f754d7a302b6fe388da29",
+      "digest": "77dd6bbd54f621c43af0d1b1fcdce125c418acf800fe39b45506490426e57652",
       "path": "schemas/card.schema.json"
     },
     {
@@ -1639,6 +1675,12 @@
       "class": "declaration",
       "digest": "62ddc8febc0a64ccc54d139740b31e18b3878d57f7bc02f590f83b425fc7ca09",
       "path": "schemas/corpus-map.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
+      "digest": "db6ba64c71be8bfaee922073320f477aff62af97be654811365ba659b7dfb6ff",
+      "path": "schemas/delivery-areas.schema.json"
     },
     {
       "accounted_by": "declaration-closure",
@@ -2015,6 +2057,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "554482bca3e1ef65a67c20c4cd869d920801a967bb27a5c93f6db1adcb10352c",
+      "path": "schemas/work-classes.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "90b915105e41ec3a6ecdec3e7d3b402a9331592ba7837c797764dcd3eae5aa62",
       "path": "schemas/workspace-provider.schema.json"
     },
@@ -2052,5 +2100,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-16T19:27:04+00:00"
+  "taken_at": "2026-10-17T05:44:29+00:00"
 }

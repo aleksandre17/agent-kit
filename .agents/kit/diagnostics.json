@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 84,
+  "issued": 87,
   "codes": [
     {
       "code": "KIT0001",
@@ -506,6 +506,24 @@
       "status": "active",
       "title": "a whole-tree audit that cannot be taken honestly",
       "explanation": "The audit reads what the repository tracks; with no repository it would pass on a guessed file list. One violation (gate, path) acknowledged twice has two tracking answers. Run it in the repository, or keep one acknowledgement (ADR-024)."
+    },
+    {
+      "code": "KIT0085",
+      "status": "active",
+      "title": "a work-class catalogue or an areas declaration that names a word nobody declared",
+      "explanation": "An area, a default or a class names an undo cost the scale does not declare, a breadth limit names a class nobody declares, or one area id is declared twice. A cost nobody declared cannot be compared; declare the word or use one that is (ADR-025)."
+    },
+    {
+      "code": "KIT0086",
+      "status": "active",
+      "title": "a change declared lighter than the class its areas compute",
+      "explanation": "The class of a change is computed from the areas it touches and is a floor: a declared class may be heavier, never lighter. Leave the records the computed class requires, or narrow the change (ADR-025)."
+    },
+    {
+      "code": "KIT0087",
+      "status": "active",
+      "title": "work classes that cannot be read honestly",
+      "explanation": "Two sources keep the work-class or the areas contract -- one question, two answers -- or git could not say what a change touches. Keep one source of each, and weigh inside the repository (ADR-025)."
     }
   ]
 }

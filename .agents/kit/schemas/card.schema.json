@@ -11,9 +11,14 @@
     "title": { "type": "string", "minLength": 1 },
     "state": { "type": "string", "minLength": 1 },
     "class": {
-      "description": "The change class a declared bypass may name. Absent means the ordinary way.",
+      "description": "The work class this card is shaped as (ADR-025): a word of the work-class catalogue. A commit naming the card is refused when it computes heavier than this; a card lighter than its uncertainty is reported. Absent means the ordinary way: the owner's door on `bet`, and the class `normal` for a commit that names it.",
       "type": "string",
       "minLength": 1
+    },
+    "uncertainty": {
+      "description": "How much of the answer was unknown when this work was shaped, as a word of the work classes' uncertainty scale (the Cynefin domains, ADR-025 decision 3). It can only RAISE the class: a card declared lighter than its uncertainty allows is reported. Absent says nothing was declared, and the class stands on its areas alone.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
     },
     "owner": { "type": "string", "minLength": 1 },
     "created_at": { "type": "string", "minLength": 1 },

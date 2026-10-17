@@ -12,9 +12,9 @@
 
 ## The reading
 
-READ 36 document(s) ending '.md', under 8 declared place(s), from 1 corpus-map file(s).
+READ 37 document(s) ending '.md', under 8 declared place(s), from 1 corpus-map file(s).
 
-Of those documents, **5** declared their own class or authority and
+Of those documents, **6** declared their own class or authority and
 **31** declared nothing and are UNCLASSIFIED — of the unclassified,
 31 are classed by the place they reside in and the rest by nothing at all.
 0 carry a declaration that cannot be read. UNCLASSIFIED is a state and not a
@@ -40,7 +40,7 @@ Why the work exists at all: the outcome it serves and the standing requirements 
 - **index** — none declared, and none is expected of it
 - **found here** — 4 document(s): 0 declared their own class or authority, 4 declared nothing, 0 could not be read
 
-### rule — 1 declared place(s), 25 document(s)
+### rule — 1 declared place(s), 26 document(s)
 
 What BINDS. Read a document of this plane and you are obliged by it: a decision that was accepted, a contract between parts, a law of the host. The only plane whose residents may claim the top authority.
 
@@ -51,7 +51,7 @@ What BINDS. Read a document of this plane and you are obliged by it: a decision 
 - **writer** — `decision-authority`
 - **lifecycle** — `permanent`
 - **index** — none declared, and none is expected of it
-- **found here** — 25 document(s): 5 declared their own class or authority, 20 declared nothing, 0 could not be read
+- **found here** — 26 document(s): 6 declared their own class or authority, 20 declared nothing, 0 could not be read
 
 ### knowledge — 4 declared place(s), 5 document(s)
 
@@ -163,6 +163,7 @@ document is a listing nobody reads, and it would hide the handful of rows that m
 - `docs/decisions/ADR-022-the-operating-plane.md` — claims `canonical`, owning `operating-plane`
 - `docs/decisions/ADR-023-a-new-host-starts-in-one-door.md` — claims `canonical`, owning `starting-a-host`
 - `docs/decisions/ADR-024-the-agentic-layer.md` — claims `canonical`, owning `the-agentic-layer`
+- `docs/decisions/ADR-025-work-is-weighed-before-it-is-walked.md` — claims `canonical`, owning `work-classes`
 
 ### Indexes — a place, and the document answerable for it
 

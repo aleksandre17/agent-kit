@@ -70,6 +70,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `takeover` | carry out the host's signed migration map, through a door that accepts its roster digest | yes -- `--plan` prints the writes first |
 | `trial` | run an agent eval on a fixture host, judged by the host's gates and check, recorded with its cost | yes -- `--plan` prints the writes first |
 | `upgrade` | reconcile what was shipped, what the host has, and what this kit ships -- then install | yes -- `--plan` prints the writes first |
+| `weigh` | compute a change's work class from the areas it touches, and what that class requires | nothing |
 <!-- verbs:end -->
 
 `eject` is granular, one path at a time (ADR-010 rejected the all-or-nothing CRA/`ng eject` shape
