@@ -1,6 +1,6 @@
 #!/bin/sh
 # Generated. Do not edit. Served to the runtime {{runtime}} through the surface {{surface}} - kit {{kit_version}}.
-# git runs this before a push, once core.hooksPath names this directory. It runs this host's `check`:
+# git runs this before a push, once core.hooksPath names this directory. It runs this host's `check`, then `prove`:
 # a red check blocks the push, so what leaves the machine is what the host's gates hold. It fails
 # CLOSED: a check it cannot run blocks the push too.
 [ -f "{{vendor}}/interpreters/cli.py" ] || {
@@ -11,6 +11,12 @@ for candidate in python3 python py; do
   if "$candidate" -c "import sys" >/dev/null 2>&1; then
     "$candidate" "{{vendor}}/interpreters/cli.py" check --root . >/dev/null || {
       echo "push gate: REFUSED -- check is red; run it to see which gate, fix it, push again" >&2
+      exit 1
+    }
+    # The commands this host's MUST norms name as their enforcers (its test suite, its validate) run
+    # here: a MUST is enforced only where something runs its enforcer.
+    "$candidate" "{{vendor}}/interpreters/cli.py" prove --root . || {
+      echo "push gate: REFUSED -- a command a MUST names as its enforcer is red; fix it, push again" >&2
       exit 1
     }
     exit 0

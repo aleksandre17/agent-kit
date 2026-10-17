@@ -60,6 +60,7 @@ python kit/interpreters/cli.py <verb> --root <host-repo> [--kit <kit-dir>]
 | `message` | before a change is recorded: its message must take the form the host's message rules declare (blocking) | nothing |
 | `move` | move one card across one declared transition | yes -- `--plan` prints the writes first |
 | `propose` | state what this host learned that it says is not its own, as text a person carries | nothing |
+| `prove` | run every command a MUST norm names as its enforcer -- the pre-push proof (blocking on red) | nothing |
 | `release` | state what this kit is as a release, or refuse to call a working tree one | nothing |
 | `render` | recompute every projection from VENDOR + BINDING | yes -- `--plan` prints the writes first |
 | `reshape` | change the work class a card is shaped as -- raising is anyone's, lowering the owner's door | yes -- `--plan` prints the writes first |

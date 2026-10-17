@@ -32,6 +32,11 @@ VOCABULARY = ({declared.CONTRACT: "doctrine"}, "stance_vocabulary")
 VOUCHED = {declared.CONTRACT: "enforcers"}
 
 
+def norms_of(ctx) -> list:
+    """Every norm the host's declared sources carry -- read by `check` and by `prove`."""
+    return _norms(ctx)
+
+
 def _norms(ctx) -> list:
     found = []
     for name in declared.named(ctx.enabled_capabilities(), NORMS[0]):

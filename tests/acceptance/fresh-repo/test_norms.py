@@ -16,6 +16,7 @@ Every address, genre and code is read from the declarations and the module that 
 from __future__ import annotations
 
 import json
+import sys
 import unittest
 
 from harness import KIT, REPO, Fixtures
@@ -115,6 +116,33 @@ class Norms(Fixtures, unittest.TestCase):
         unheld = checked({"build": "build it"})
         self.assertNotEqual(0, unheld.returncode)
         self.assertIn(f"NT-UNENFORCED {must['id']}", unheld.stdout)
+
+    def test_504_prove_runs_the_command_a_must_names_and_fails_on_red(self):
+        """Found by an audit: a MUST vouched for by a command nothing ran was enforced on paper only.
+        `prove` runs every command a MUST names; the git pre-push hook runs it after `check`."""
+        vouching = next(doc for d in TAKEN for doc in documents_of(d, norms.VOUCHED["validates"]))
+        must = _norm("our-must", DERIVES[1], derives_from=RULE["derives_from"], modality="MUST",
+                     subject="held-by-the-build-tool", enforced_by=[f"{vouching['prefix']}:test"])
+
+        def proved(command):
+            host = self.host()
+            value = into = {}
+            *steps, last = vouching["pointer"].split(".")
+            for step in steps:
+                into = into.setdefault(step, {})
+            into[last] = {"test": command}
+            (host / vouching["path"]).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
+            ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
+            self.assertEqual(0, ran.returncode, said(ran))
+            self.write_norms(host, [must])
+            return self.run_kit(KIT, host, "prove")
+
+        green = proved(f"\"{sys.executable}\" -c \"raise SystemExit(0)\"")
+        self.assertEqual(0, green.returncode, said(green))
+        self.assertIn("1 enforcer command(s) green", green.stdout)
+        red = proved(f"\"{sys.executable}\" -c \"raise SystemExit(3)\"")
+        self.assertEqual(1, red.returncode, said(red))
+        self.assertIn("RED (exit 3)", red.stdout)
 
 if __name__ == "__main__":
     unittest.main()

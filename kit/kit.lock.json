@@ -1,6 +1,6 @@
 {
   "algorithm": "sha256",
-  "count": 356,
+  "count": 357,
   "files": [
     {
       "accounted_by": "declaration-closure",
@@ -11,7 +11,7 @@
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "6da0b72fc504c0452a67dfd4c26b40b5222f3a82f2f26187718fcadb98d3be4b",
+      "digest": "075a11f3d3b4e9f429be5564cb2f53d712028fb0787fa2a396764c4cf0fabead",
       "path": "README.md"
     },
     {
@@ -845,7 +845,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "9b864e647b1714e8b176375ee6c27b84feecd26161f273f88ea81e30e96a5871",
+      "digest": "60577edfaa66ba93ee6d05870b0f9781ed6abc4006120e9a4cf50f953a8098bd",
       "path": "interpreters/gates/norms.py"
     },
     {
@@ -1499,6 +1499,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "baefa0f871fc7501014e186936dc2665ab198e4a6be33991e0018c6972a3ec08",
+      "path": "interpreters/verbs/prove.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "1dd198c9c7f7c962f9df68194cf22f8ae89223f42ce7382b985662e30ff4e036",
       "path": "interpreters/verbs/release.py"
     },
@@ -2142,5 +2148,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T08:31:12+00:00"
+  "taken_at": "2026-10-17T08:55:20+00:00"
 }

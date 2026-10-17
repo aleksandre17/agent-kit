@@ -69,6 +69,13 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   `--cc`; the hook reads the index; demotions by path; loosening by an added cheap area; `chaotic` asks
   `major`; skipped tests prove nothing; the archive keeps referenced cards and paid debts; an owner's
   door is not authorship; Python 3.10 reads a trailing `Z`.
+- Verb `prove`: runs every command a MUST norm names as its enforcer (`stack-kit:test`), once each,
+  and fails on red; the git adapter 1.5.0 pre-push hook runs it after `check` -- a MUST is enforced
+  only where something runs its enforcer (found by an audit: two MUSTs were vouched for by commands
+  nothing ran).
+- secrets 1.4.0: `no-committed-config-secret` -- a key, secret, password or token with a real value
+  in a settings JSON file (found by an audit: a committed JWT key signed a live app's tokens while
+  every gate was green). Calibrated to pass public keys, header names, empty values and placeholders.
 
 ## 0.2.0 — 2026-10-17
 
