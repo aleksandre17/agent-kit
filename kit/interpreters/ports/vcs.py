@@ -102,6 +102,17 @@ def commits_between(root, base, head: str) -> tuple:
     return (None, why) if said is None else (said.split(), None)
 
 
+def commits_unpublished(root, head: str, published_as: str) -> tuple:
+    """`(shas, None)` oldest first -- every commit reachable from `head` that no remote-tracking ref
+    carries other than `published_as` (the ref `head` is being pushed as) and the remotes' HEAD -- or
+    `(None, why)`. What a first push of a branch brings that the remote did not already hold."""
+    name = published_as[len("refs/remotes/"):] if published_as.startswith("refs/remotes/") else published_as
+    remote = name.split("/", 1)[0]
+    said, why = run(root, ["rev-list", "--reverse", head, f"--exclude={name}", f"--exclude={remote}/HEAD",
+                           "--not", "--remotes"])
+    return (None, why) if said is None else (said.split(), None)
+
+
 def commit_paths(root, sha: str) -> tuple:
     """`(paths, None)` one commit changed -- against its parent, against nothing for a root, and for a
     merge only what differs from EVERY parent (`--cc`), which is what the merge itself introduced."""

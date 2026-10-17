@@ -311,3 +311,44 @@ agents' skill. The FF-WORK-* gates enforce from the first day -- the "observe un
 declared" sentence of the guard table is withdrawn: on a host with no areas they refuse nothing but a
 real defect.
 
+## Amendment 2 — a second independent audit, and what it closed (2026-10-17)
+
+A second auditor read the code after Amendment 1 and reproduced two more side doors on live hooks and
+in CI: loosening the scale cheaply, then committing irreversible work as `standard`; and an emergency
+"repaid" by a stub card. Each row below is closed by a test that fails without its fix, or is named
+as a limit this release does not close.
+
+| Found | Closed by, or the limit |
+|---|---|
+| removing or cheapening an irreversible area cost one `normal` card; the next migration landed `standard` | a loosening is weighed as each area it loosens, AS IT STOOD: removing the migrations area is itself `major` (decision, bet, review), and so is cheapening it; a lowered default and a loosened breadth limit stand as areas of their own (`loosened_areas`) |
+| an emergency debt was paid by any card naming its sha, in any state, holding nothing | the debt is the class the emergency commit weighs by its parent's areas; a card pays it only when it is shaped at least that class, holds every record that weight owes and passed the owner's door where the class has one |
+| a new branch's first push weighed the whole history by today's rules | `weigh --each --published-as <remote ref>` weighs only the commits no other remote-tracking ref carries (github-actions 1.6.0) |
+| an area's `requires` (review, decision) was owed by a `standard` change and refused nothing | a record held on a card raises the change to the lightest class that keeps a card |
+| a classless `chaotic` card was read as `normal` | a card stands at the heavier of its class and what its uncertainty asks, at commit and in FF-WORK-CLASSES |
+| a JUnit root without `skipped` outvoted children that skipped everything; per-case `<skipped/>` and TRX timeouts passed | the report is read the way that proves the least: cases counted, a root only lowers what ran; TRX holds only when every executed test passed |
+| archiving a program's finished parts left it with no card tree | a part of a staying card stays with it |
+| an old lowering approval could be replayed | the approving `reshaped` entry must be new in the change |
+| whoever carried a card through a door stopped being its author | only the signer is spared; the carrier stays an author |
+| decision 16's guard made a card-reading gate's inner reading unreadable and the outer one HELD | a gate kind that reads the governed records says so (`READS_THE_RECORDS`), and `declared-rule-holds` refuses it as the proof of a record |
+| hook and CI split paragraphs differently; a declared trailer written twice was read once | one paragraph split for every reader (a line of blanks is blank, as git's cleanup reads it); a declared trailer written twice is refused |
+| an undo cost changed to an undeclared word was not loosening, and locked every later commit out | an undeclared word reads as the cheapest; the hook checks the areas a commit records before it records them |
+| `decision` was held by a `kind: decision` line anywhere in a document's head | only the front matter, between its fences, says what a document is |
+| `prove` printed "nothing to run" and passed when a MUST's command could not be read | a MUST whose vouched command cannot be read is refused |
+| `no-committed-config-secret` missed `API_KEY`, `api_key`, `apikey`, `JWT_SECRET`, `Pwd`, `launchSettings.json` and YAML / properties files | secrets 1.4.2: snake and short names, launch settings, and `no-committed-config-secret-in-properties` |
+
+**The limits this amendment names and does not close.**
+- `decision` is held by a decision document anywhere in the tree -- a vendored kit's ADRs count -- and
+  the hook reads it from the working tree, CI from today's checkout.
+- `git commit --amend` is weighed by its new delta only; CI's `--each` weighs the whole commit.
+- A dropped `feeds` is not read as loosening.
+- `appetite` is held by any non-empty value; FF-DELIVERY-APPETITE reports a unit nothing reads.
+- `weigh --base --head` without `--each` weighs by today's areas.
+- A bet passage and a reshape approval are plain JSON: their names are recorded, not verified, and
+  nothing checks that the history at HEAD is a prefix of the staged one.
+- A card with neither class nor uncertainty is still passed over by FF-WORK-CLASSES (ADR-020
+  decision 11); its commits are held by the floor.
+- `PublicKeyToken` is admitted on purpose: it is public by definition.
+- A reading records the absolute root it was taken at (`boundary.root`), so a tracked reading carries a
+  local path. It stays: the boundary's decisive test traces a host's own path to that measured fact, and
+  a reading without it would leave that difference with no ancestor. A host that minds re-takes its
+  reading where it lives.

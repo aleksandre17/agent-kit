@@ -189,7 +189,11 @@ def decided(ctx):
         ref = reference.get("ref") if isinstance(reference, dict) else None
         if not ref or not ctx.workspace.exists(ref):
             return False
-        head = ctx.workspace.read_text(ref)[:400].splitlines()
-        return bool(head) and head[0].strip() == "---" and any(
-            line.strip() == f"kind: {holder['kind_of_record']}" for line in head[1:12])
+        lines = ctx.workspace.read_text(ref).splitlines()
+        if not lines or lines[0].strip() != "---":
+            return False
+        end = next((i for i, line in enumerate(lines[1:], 1) if line.strip() == "---"), None)
+        # Only the front matter -- between its two fences -- says what a document is: a body line that
+        # reads `kind: decision` is prose about one.
+        return end is not None and any(line.strip() == f"kind: {holder['kind_of_record']}" for line in lines[1:end])
     return read

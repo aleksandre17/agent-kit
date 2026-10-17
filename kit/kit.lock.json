@@ -653,7 +653,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "11b6563cb44f2eb555723a01d171a6c025372a59fc05a7be95e374d2c6df94a5",
+      "digest": "7d544fe0504bad05f9f7b0b68294fbf76394d43f1411db82c5629070220f5b96",
       "path": "interpreters/criteria.py"
     },
     {
@@ -737,7 +737,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "202dd3a30ad62f5f93f4ba1d6901ed2b55cf0d689a4f5f16ccd090ae93f51418",
+      "digest": "3c757936cae5a6465b2e95d6f769845ceb228d0dae666ae01d4b5458d73ff76f",
       "path": "interpreters/gates/ancestry.py"
     },
     {
@@ -785,13 +785,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "8ddb2e6e095ae8923e3646b1ec1a519051b54bc95b25bbe6c5f9e070b51d0116",
+      "digest": "57a5f365442e5579273f02c32fd33e6164e5b3603d39de807e7ccfc11c218e83",
       "path": "interpreters/gates/core.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a24f3d7b910758e2addf5a472abe35264efa7e699f7a27b24c4e6f8795014994",
+      "digest": "54d8d3ee294e55e3def5cca3181177ddbe0654ad83a22b5afac0b88a43459bc4",
       "path": "interpreters/gates/delivery.py"
     },
     {
@@ -911,7 +911,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "ebd92bc86fe492c49be19fca0c3a8bb57d717d794ef91b44c166fc534b6eb11b",
+      "digest": "d78635553bf2a015932390b5fdef9fd773c5aa00192686c849602e7304f0363f",
       "path": "interpreters/gates/restatement.py"
     },
     {
@@ -941,7 +941,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "e968df96e5384f29001184953211df997dffb550d3d5d7864a3ac5e83f27d1c5",
+      "digest": "9c76ca9f63f6588bde8f9434934566adca9e92a74c12fb19bcb5300cf8d024d1",
       "path": "interpreters/gates/workcards.py"
     },
     {
@@ -1103,13 +1103,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "97854f531bcf32f6daa1af05806d312242282984a9f9409641841e20da3a903d",
+      "digest": "e10586c46bf7ef1878a27dd09a20b1ddd8d38159f01f30d84951f001f240c437",
       "path": "interpreters/ports/vcs.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "fa4bfd18107f410a74269850dd6095d1ecc68f05f783dbb1e05bb3750220a484",
+      "digest": "6d39f435160d42360c657a5a77ccf4b1a1e33edaf692b32dcf697b33eb4b80ef",
       "path": "interpreters/ports/workspace.py"
     },
     {
@@ -1145,7 +1145,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "10d88a71a59252199296d0e620a3570389891702a366cb4ffcd496c3fd237bad",
+      "digest": "427307be5d7e0f3c33c1a71410c61fba16625e42119235fde080c1a1159ce857",
       "path": "interpreters/proofs/card_criteria.py"
     },
     {
@@ -1157,19 +1157,19 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4a86019332d61b31befc8ecf15a04dbac0e15d274bbfa0881bdcb81698069a44",
+      "digest": "9cc5e633af42730099c49b95a3f4d0941d460570631e72a938c3a791e8552be4",
       "path": "interpreters/proofs/review_record.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "c95cc8f48bb3576d6df33f85361c06d3eeb53febcc021093d8de58e32b685db3",
+      "digest": "c0cbdfb6b9d122529a1106140b28de322683d5647fe8606b534872f0af68ebce",
       "path": "interpreters/proofs/rule_verdict.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4fa8e3bd65c987983582ba63e7d5bbd2ce336c847e0d538ef1e4e8af829f0b74",
+      "digest": "d6ee8f34a62be3c20473488e83e0a598c9d96ba6ebe3d98430de822a0e70ad9c",
       "path": "interpreters/proofs/suite_report.py"
     },
     {
@@ -1373,7 +1373,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "470b8f016d0a46f9e58af9c5a6e87c7770afbac02d2b0ea300124c6beab32901",
+      "digest": "07e45c949cadee346d1104caeb223f36fa2b215e17dfd39819651def2ab3dabd",
       "path": "interpreters/verbs/archive.py"
     },
     {
@@ -1481,7 +1481,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "43e2317e8e58702805bbf9d282d8ab7e69151dbe79311b893c04408f1a06c470",
+      "digest": "e51472b293d00f17707f33f00da5e576f108059ed6aa6eaa500baa4c86007607",
       "path": "interpreters/verbs/message.py"
     },
     {
@@ -1499,7 +1499,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "baefa0f871fc7501014e186936dc2665ab198e4a6be33991e0018c6972a3ec08",
+      "digest": "7f50e5857ad9ece8735d1259697a12022cf4275adcc796f727a686e5799f008e",
       "path": "interpreters/verbs/prove.py"
     },
     {
@@ -1583,7 +1583,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "4670bde6dc96468f29a5c4b6cebb993236bd6842a496beb2a83ad974091e1995",
+      "digest": "d08efb43e7c4a23bd53e1d9b76c89af810f3a971a5b4e4dd9ac58bbaaa803f33",
       "path": "interpreters/verbs/weigh.py"
     },
     {
@@ -1595,13 +1595,13 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "f06d3de67e5c64c6e0f1c98349be469fa07b157f93e80fb6ab649b6d6d33163c",
+      "digest": "ae516e202b9271ea8067d436f3c5755701210aad8d6593e55a06ba2d4c69a3ef",
       "path": "interpreters/weighing.py"
     },
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "9eb2e14cafe51b897f5084f41836929a324a0f27ec67bee6c06d9034d34d0a34",
+      "digest": "726bb643c181ee44633b0b02011c3e1c59e5996f2bac60c354b74512d1bece12",
       "path": "interpreters/workclass.py"
     },
     {
@@ -2148,5 +2148,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T08:55:20+00:00"
+  "taken_at": "2026-10-17T10:30:20+00:00"
 }

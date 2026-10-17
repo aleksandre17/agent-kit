@@ -52,3 +52,6 @@ KINDS = {
     "state-age-within-limit": _state_age_within_limit,
     "appetite-within-limit": _appetite_within_limit,
 }
+
+#: Every kind here judges by reading the governed records: none of them may prove one (ADR-025 decision 16).
+READS_THE_RECORDS = {kind: True for kind in KINDS}

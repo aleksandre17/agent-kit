@@ -71,8 +71,14 @@ def _floor(ctx, message: str) -> list:
     stood = workclass.accepted_areas(ctx, None)
     target = workclass.areas_target(ctx)
     left = workclass._parsed_any(index(target)[0]) if target else None
+    if left is not None:
+        try:  # the scale a commit leaves must be one the next commit can be weighed by
+            weighing.checked(classes_doc, left)
+        except weighing.WeighError as refused:
+            return [f"the areas this commit records cannot be weighed by: {refused}"]
     _sig, verdict = weighing.weigh(staged, classes_doc, stood or left or areas_doc,
-                                   weighing.loosened(classes_doc, stood, left))
+                                   weighing.loosened(classes_doc, stood, left),
+                                   weighing.loosened_areas(classes_doc, stood, left))
     doors, closed = workclass.lifecycle_flags(ctx)
     before, after = workclass.reshaped_cards(ctx, staged, index)
     return (weighing.commit_refusals(classes_doc, verdict, message, workclass.staged_cards(ctx, index),

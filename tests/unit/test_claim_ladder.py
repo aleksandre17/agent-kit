@@ -122,3 +122,31 @@ def test_the_owner_who_walked_the_door_may_still_review():
                        {"from": "bet", "to": "in-flight", "at": "t", "by": "dev"}]}
     assert review_record._review_approved(request({"r.json": review("owner")}, "r.json", bet)).holds is True
     assert review_record._review_approved(request({"r.json": review("dev")}, "r.json", bet)).holds is None
+
+
+def test_whoever_carried_a_card_through_a_door_is_still_its_author():
+    # Found by an audit: `move --by agent --approve owner` exempted the agent from authorship.
+    carried = {"id": "orders", "owner": "dev",
+               "history": [{"from": "shaped", "to": "bet", "at": "t", "by": "agent", "signed_by": "owner"}]}
+    assert review_record._review_approved(request({"r.json": review("agent")}, "r.json", carried)).holds is None
+    assert review_record._review_approved(request({"r.json": review("owner")}, "r.json", carried)).holds is True
+
+
+def test_a_root_that_says_nothing_of_skips_never_outvotes_children_that_skipped_everything():
+    jest = '<testsuites tests="5" failures="0" errors="0"><testsuite tests="5" skipped="5"/></testsuites>'
+    assert suite_report._test_report_passed(request({"r.xml": jest}, "r.xml")).holds is None
+    cases = ('<testsuite tests="3" failures="0" errors="0">'
+             + '<testcase name="a"><skipped/></testcase>' * 3 + '</testsuite>')
+    assert suite_report._test_report_passed(request({"r.xml": cases}, "r.xml")).holds is None
+    failed = ('<testsuite tests="2" failures="0" errors="0"><testcase name="a"/>'
+              '<testcase name="b"><failure message="x"/></testcase></testsuite>')
+    assert suite_report._test_report_passed(request({"r.xml": failed}, "r.xml")).holds is False
+
+
+def test_a_trx_run_holds_only_when_every_executed_test_passed():
+    timed_out = ('<TestRun><ResultSummary><Counters total="5" executed="5" passed="0" failed="0" error="0" '
+                 'timeout="5"/></ResultSummary></TestRun>')
+    assert suite_report._test_report_passed(request({"r.trx": timed_out}, "r.trx")).holds is False
+    inconclusive = ('<TestRun><ResultSummary><Counters total="5" executed="5" passed="3" failed="0" error="0" '
+                    'inconclusive="2"/></ResultSummary></TestRun>')
+    assert suite_report._test_report_passed(request({"r.trx": inconclusive}, "r.trx")).holds is False

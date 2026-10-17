@@ -144,5 +144,25 @@ class Norms(Fixtures, unittest.TestCase):
         self.assertEqual(1, red.returncode, said(red))
         self.assertIn("RED (exit 3)", red.stdout)
 
+    def test_505_a_must_whose_command_cannot_be_read_is_refused_never_read_as_nothing_to_run(self):
+        """Found by a second audit: a vouching declaration missing the command printed 'nothing to run'
+        and exited 0 -- the MUST was enforced by nobody, and the push went out."""
+        vouching = next(doc for d in TAKEN for doc in documents_of(d, norms.VOUCHED["validates"]))
+        must = _norm("our-must", DERIVES[1], derives_from=RULE["derives_from"], modality="MUST",
+                     subject="held-by-the-build-tool", enforced_by=[f"{vouching['prefix']}:test"])
+        host = self.host()
+        value = into = {}
+        *steps, last = vouching["pointer"].split(".")
+        for step in steps:
+            into = into.setdefault(step, {})
+        into[last] = {"build": "build it"}
+        (host / vouching["path"]).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
+        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
+        self.assertEqual(0, ran.returncode, said(ran))
+        self.write_norms(host, [must])
+        refused = self.run_kit(KIT, host, "prove")
+        self.assertEqual(1, refused.returncode, said(refused))
+        self.assertIn("cannot be run", refused.stdout)
+
 if __name__ == "__main__":
     unittest.main()

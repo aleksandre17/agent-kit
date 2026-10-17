@@ -5,13 +5,17 @@
     python .agents/kit/interpreters/cli.py weigh --root . --base <rev> --head <rev>
     python .agents/kit/interpreters/cli.py weigh --root . --class standard      # refuse a lighter claim
     python .agents/kit/interpreters/cli.py weigh --root . --base <rev> --head <rev> --each   # CI: every commit
+    python .agents/kit/interpreters/cli.py weigh --root . --head HEAD --each --published-as origin/<branch>
 
 The class is the lightest one whose envelope admits the change, raised by every touched area that
 asks more; `--class` names the class the change is declared as, and a declaration lighter than the
 computed floor is refused, naming what raised it. `--each` holds every commit of a range to the floor
 the commit hook holds -- weighed by the areas its parent held, its card read as the commit holds it --
-so a hook skipped with --no-verify, or a commit made where no hook runs, is caught in CI. Reading
-only: nothing is written.
+so a hook skipped with --no-verify, or a commit made where no hook runs, is caught in CI. A new
+branch's first push has no range: `--published-as <its remote ref>` weighs only the commits no OTHER
+remote-tracking ref carries -- the rest were weighed where they were made, and weighing them again by
+today's rules would turn every new branch red over history nobody can change. Reading only: nothing
+is written.
 """
 
 from __future__ import annotations
@@ -33,6 +37,9 @@ ARGUMENTS = [
                  "help": "the class the change is declared as: refused when lighter than the computed one"}),
     ("--each", {"action": "store_true",
                 "help": "hold every commit of the range (or of --head's history) to the commit floor"}),
+    ("--published-as", {"dest": "published_as", "default": None,
+                        "help": "with --each and no --base: the remote ref --head is pushed as; only the commits "
+                                "no other remote-tracking ref carries are weighed"}),
 ]
 
 
@@ -69,7 +76,12 @@ def _each(ctx, args, classes_doc: dict, areas_doc: dict) -> int:
     root, head = ctx.workspace.root, getattr(args, "head", None)
     if not head:
         raise WeighRefused("--each needs --head <rev>, and --base <rev> unless every commit is meant")
-    shas = workclass.paths(vcs.commits_between(root, getattr(args, "base", None), head), "which commits the range holds")
+    published = getattr(args, "published_as", None)
+    if published and getattr(args, "base", None):
+        raise WeighRefused("--published-as weighs a first push, which has no --base: give one or the other")
+    shas = workclass.paths(vcs.commits_unpublished(root, head, published) if published
+                           else vcs.commits_between(root, getattr(args, "base", None), head),
+                           "which commits the range holds")
     areas_rel, space = workclass.areas_target(ctx), workclass.card_space(ctx)
     keys = classes_doc["trailers"]
     doors, closed = workclass.lifecycle_flags(ctx)
@@ -82,7 +94,15 @@ def _each(ctx, args, classes_doc: dict, areas_doc: dict) -> int:
             continue
         paths = workclass.paths(vcs.commit_paths(root, sha), f"what {sha[:12]} changed")
         message, _why = vcs.commit_message(root, sha)
-        _sig, verdict = weighing.weigh(paths, classes_doc, stood or left, weighing.loosened(classes_doc, stood, left))
+        try:
+            if left is not None:
+                weighing.checked(classes_doc, left)
+            _sig, verdict = weighing.weigh(paths, classes_doc, stood or left, weighing.loosened(classes_doc, stood, left),
+                                           weighing.loosened_areas(classes_doc, stood, left))
+        except weighing.WeighError as error:
+            print(f"weigh: REFUSED [{WeighRefused.code}] {sha[:12]} -- the areas it stood on or left: {error}")
+            refused += 1
+            continue
         cards = {}
         listing = (vcs.run(root, ["ls-tree", "-r", "--name-only", sha, "--", space.rstrip("/")])[0] or "") if space else ""
         for rel in listing.splitlines():

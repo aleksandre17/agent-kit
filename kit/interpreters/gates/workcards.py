@@ -1,10 +1,10 @@
 """Gate kind: the work classes hold -- the host's areas use declared words, and every card that
 declares a class keeps what that class owes (ADR-025).
 
-A card that declares NO class is passed over: it is the ordinary way, and a gate that held every
-card in existence to a vocabulary that did not exist when it was written would be back-filling a
-declaration nobody made (ADR-020 decision 11). The moment a card names a class, the class is a
-promise this gate reads:
+A card that declares NO class and no uncertainty is passed over: it is the ordinary way, and a gate
+that held every card in existence to a vocabulary that did not exist when it was written would be
+back-filling a declaration nobody made (ADR-020 decision 11). The moment a card names a class -- or
+an uncertainty, which raises the class it is read as -- the class is a promise this gate reads:
 
   * the class and the uncertainty are words the catalogue declares;
   * the class is not lighter than its uncertainty asks;
@@ -63,7 +63,13 @@ def _work_classes_held(ctx, params):
                 failures.append(f"{card['id']}: the criterion {item.get('id')!r} needs {item[criteria.NEEDS]!r} "
                                 f"evidence, which the scale does not declare ({', '.join(sorted(known))})")
         if "class" not in card:
-            continue
+            # A card that says what kind of work it is (its uncertainty) and no class is read at the
+            # class that uncertainty asks -- a classless `chaotic` card is a `major` one, not a pass.
+            plain = weighing.lightest_with(classes_doc, "card")
+            raised, _why = weighing.card_floor(classes_doc, card, plain)
+            if raised == plain:
+                continue
+            card = dict(card, **{"class": raised})
         name, shaped = card["id"], card["class"]
         if shaped not in classes:
             failures.append(f"{name}: declares the class {shaped!r}, which the catalogue does not "
@@ -185,10 +191,49 @@ def _days_between(earlier: str, later: str):
         return None
 
 
+def _owed_by(ctx, classes_doc: dict, sha: str) -> dict:
+    """What an emergency commit owes afterwards: the verdict of its own change, weighed by the areas its
+    parent held -- the class it would have walked had there been time."""
+    rel = workclass.areas_target(ctx)
+    stood = workclass._parsed_any(ctx.workspace.file_at(f"{sha}^", rel)[0]) if rel else None
+    left = workclass._parsed_any(ctx.workspace.file_at(sha, rel)[0]) if rel else None
+    areas = stood or left or {"default_undo": classes_doc["undo"][0]["id"], "max_areas": {}, "areas": []}
+    paths = ctx.workspace.commit_paths(sha)[0] or []
+    try:
+        return weighing.weigh(paths, classes_doc, areas, weighing.loosened(classes_doc, stood, left),
+                              weighing.loosened_areas(classes_doc, stood, left))[1]
+    except weighing.WeighError:  # a scale nobody can read weighs as the heaviest class, never the lightest
+        row = [r for r in classes_doc["classes"] if not r.get("expedite")][-1]
+        return {"class": row, "requires": list(row["requires"]), "why": "its areas could not be read"}
+
+
+def _pays(classes_doc: dict, card: dict, owed: dict, cards: list, doors, decided) -> list:
+    """Why a card naming a debt does not pay it -- empty when it does: it is shaped at least as the
+    commit weighed, holds every record that weight owes, and passed the owner's door where its class
+    has one. A stub naming the commit is a promise, not the payment."""
+    rank = {row["id"]: row for row in classes_doc["classes"]}
+    shaped, _why = weighing.card_floor(classes_doc, card, weighing.lightest_with(classes_doc, "card"))
+    if shaped not in rank or rank[shaped].get("expedite"):
+        return [f"it is shaped {shaped!r}, which pays no debt"]
+    said = []
+    if not weighing.heavier_or_equal(classes_doc, shaped, owed["class"]["id"]):
+        said.append(f"it is shaped {shaped}, and the change weighs {owed['class']['id']} ({owed['why']})")
+    records = {row["id"]: row for row in classes_doc["records"]}
+    for record in owed["requires"]:
+        holder = records.get(record, {}).get("held_by")
+        if holder and not weighing.holds(card, holder, cards, decided):
+            said.append(f"it does not hold the {record} that weight owes")
+    if rank[shaped].get("doors") and doors and not weighing.bet(card, doors):
+        said.append(f"its class {shaped} has doors, and the owner never passed it through one")
+    return said
+
+
 def _emergencies_repaid(ctx, params):
-    """Every emergency commit is a debt with a clock: a card naming it in `repays` pays it; past the
-    host's declared days an unpaid one fails, before them it is reported with what is left. A host
-    that declares no days is told what it owes and is never failed (ADR-025 decision 6)."""
+    """Every emergency commit is a debt with a clock: a card naming it in `repays` pays it once the card
+    is the work the commit skipped -- shaped at least as the commit weighs by its parent's areas,
+    holding what that weight owes, bet where its class has doors. Past the host's declared days an
+    unpaid one fails; before them it is reported with what is left. A host that declares no days is
+    told what it owes and is never failed (ADR-025 decision 6)."""
     found = workclass.declarations(ctx)
     if found is None:
         return []
@@ -208,8 +253,9 @@ def _emergencies_repaid(ctx, params):
                         archived.append(ctx.workspace.read_json(rel))
                     except ValueError:
                         continue
-    repaid = {sha for card in [*governed.members.value, *archived] if isinstance(card, dict)
-              for sha in card.get("repays") or []}
+    every = [card for card in [*governed.members.value, *archived] if isinstance(card, dict)]
+    doors, _closed = workclass.lifecycle_flags(ctx)
+    decided = workclass.decided(ctx)
     limit = (governed.policy or {}).get("emergency_debt_days")
     now = ctx.clock.now()
     failures = []
@@ -219,15 +265,23 @@ def _emergencies_repaid(ctx, params):
             print(f"        emergencies: NOT MEASURED -- git could not list them: {why}")
             return []
         for sha, at in commits:
-            if any(sha.startswith(prefix) for prefix in repaid):
-                continue
+            naming = [card for card in every if any(sha.startswith(str(p)) for p in card.get("repays") or [] if p)]
+            short = []
+            if naming:
+                owed = _owed_by(ctx, classes_doc, sha)
+                verdicts = {card.get("id"): _pays(classes_doc, card, owed, every, doors, decided) for card in naming}
+                if any(not why for why in verdicts.values()):
+                    continue
+                short = [f"{identity_of}: {'; '.join(why)}" for identity_of, why in sorted(verdicts.items())]
+            unpaid = (f"the card(s) naming it do not pay it yet -- {' | '.join(short)}" if short
+                      else "no card repays it")
             age = _days_between(at, now)
             if limit is not None and age is not None and age > limit:
                 failures.append(f"{sha[:12]}: an {identity} change {age:.0f} day(s) old, past the {limit} this "
-                                f"host declares, and no card repays it -- name it in a card's `repays`")
+                                f"host declares, and {unpaid} -- name it in the `repays` of a card shaped as the work")
             else:
                 left = "" if limit is None or age is None else f", {max(0, limit - age):.0f} day(s) left"
-                print(f"        owed: {sha[:12]} ({identity}, {at}{left}) -- no card repays it yet")
+                print(f"        owed: {sha[:12]} ({identity}, {at}{left}) -- {unpaid}")
     return failures
 
 
@@ -263,3 +317,5 @@ def _ceremony_reported(ctx, params):
 
 KINDS = {"work-classes-held": _work_classes_held, "deferrals-held": _deferrals_held, "order-held": _order_held,
          "emergencies-repaid": _emergencies_repaid, "ceremony-reported": _ceremony_reported}
+#: Every kind here judges by reading the governed records: none of them may prove one (decision 16).
+READS_THE_RECORDS = {kind: True for kind in KINDS}

@@ -140,6 +140,16 @@ class Workspace:
             return None, why
         return [tuple(line.split(" ", 1)) for line in said.splitlines() if " " in line], None
 
+    def commit_paths(self, sha: str) -> tuple:
+        """(the paths one commit changed, None) or (None, why) -- a merge by what it itself introduced."""
+        import vcs
+        return vcs.commit_paths(self._root, sha)
+
+    def file_at(self, sha: str, rel: str) -> tuple:
+        """(the text of `rel` as a commit holds it, None) or (None, why) where it holds none."""
+        import vcs
+        return vcs.file_at(self._root, sha, rel)
+
     def accepted_listing(self, space: str) -> tuple:
         """(the file names under `space` at HEAD, None) or (None, why) -- the previous ACCEPTED state
         of a place, what HEAD holds and never what the tree holds now (ADR-019)."""

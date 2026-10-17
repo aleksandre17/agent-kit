@@ -69,8 +69,10 @@ jobs:
           }
           # Every pushed commit against its work-class floor (ADR-025): a commit hook skipped with
           # --no-verify, or a commit made where no hook runs, is weighed here, one commit at a time.
+          # A new branch's first push weighs only what no other branch on the remote already carries:
+          # those commits were weighed where they were made, and today's rules are not theirs.
           if [ "$base" = "$(git hash-object -t tree /dev/null)" ]; then
-            "$python" "{{vendor}}/interpreters/cli.py" weigh --root . --head HEAD --each || exit 1
+            "$python" "{{vendor}}/interpreters/cli.py" weigh --root . --head HEAD --each --published-as "origin/${GITHUB_REF_NAME}" || exit 1
           else
             "$python" "{{vendor}}/interpreters/cli.py" weigh --root . --base "$base" --head HEAD --each || exit 1
           fi

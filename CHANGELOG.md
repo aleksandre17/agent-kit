@@ -78,6 +78,17 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   every gate was green). Calibrated to pass public keys, header names, empty values and placeholders.
   1.4.1: narrowed after its first real host -- settings files only (a configuration CATALOGUE's
   lowercase `key` field is metadata, never a key), the name matched case-sensitively.
+- A second independent audit (ADR-025 amendment 2): a loosening walks the class of every area it
+  loosens, as it stood; an emergency debt is paid only by a card shaped and holding what the commit
+  weighs by its parent's areas; `weigh --each --published-as` weighs a first push by what no other
+  remote branch carries (github-actions 1.6.0); an area's card-held `requires` raises the class to a
+  card; uncertainty raises a classless card; test reports read the way that proves the least (JUnit
+  cases and roots, TRX passed == executed); a program's parts stay with it in the archive; a replayed
+  lowering approval, a door's carrier, a whitespace paragraph and a doubled trailer are no longer side
+  doors; a gate that reads the governed records never proves one (`READS_THE_RECORDS`); a decision is
+  what its front matter says; `prove` refuses a MUST whose command cannot be read. secrets 1.4.2:
+  snake and short secret names, `launchSettings.json`, and `no-committed-config-secret-in-properties`
+  for YAML and properties files.
 
 ## 0.2.0 — 2026-10-17
 

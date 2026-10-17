@@ -22,6 +22,9 @@ import gatekinds
 #: What a capability's declaration of a rule carries beside its name. Declaration vocabulary.
 OF_KIND = "kind"
 WITH = "params"
+#: The entry a gate module publishes beside `KINDS` for each kind whose verdict is read from the
+#: governed records: such a rule may judge them, and may never be the proof of one of them.
+READS_THE_RECORDS = "READS_THE_RECORDS"
 
 #: The rules being evaluated right now, in this process. A rule that reads the records whose criteria
 #: name it -- a gate over cards, proved by a card -- would otherwise evaluate itself forever: the
@@ -54,6 +57,11 @@ def _declared_rule_holds(request) -> criteria.Verdict:
             f"{request.ref!r} is declared by {capability.id!r} as kind {rule[OF_KIND]!r}, and no "
             f"module installed here evaluates that kind; the reading could not be taken"
         )
+    if criteria.PROVING in request.seen and rule[OF_KIND] in gatekinds.registry(READS_THE_RECORDS):
+        return criteria.Verdict.unreadable(
+            f"{request.ref!r} is a rule of kind {rule[OF_KIND]!r}, which judges by reading the governed "
+            f"records themselves -- this record among them. Evidence for a claim may not be the claim "
+            f"(ISO/IEC/IEEE 15026; ADR-025 decision 16): name a proof that does not read the record")
     if request.ref in _EVALUATING:
         return criteria.Verdict.unreadable(
             f"{request.ref!r} is being evaluated already, and this reading is part of that evaluation; "

@@ -149,6 +149,15 @@ def computed(sig: dict, classes_doc: dict, areas_doc: dict) -> dict:
         floor = hit["area"].get("at_least")
         if floor and _heavier(classes_doc, floor, identity) != identity:
             identity, why = floor, f"{why}; area {area_id} asks at least {floor}"
+    # A record an area asks that is held ON A CARD (a review, a decision) is owed by a class that
+    # keeps a card: a class whose whole record is its commit has nowhere to hold it, and the floor
+    # would show it owed and refuse nothing.
+    on_a_card = {row["id"] for row in classes_doc["records"] if row.get("held_by")}
+    for area_id, hit in sorted(sig["touched"].items()):
+        asked = [r for r in hit["area"].get("requires", []) if r in on_a_card]
+        floor = lightest_with(classes_doc, "card")
+        if asked and _heavier(classes_doc, floor, identity) != identity:
+            identity, why = floor, f"{why}; area {area_id} requires {', '.join(asked)}, held on a card"
     row = classes_doc["classes"][_rank(classes_doc)[identity]]
     owed = list(row["requires"])
     for hit in sig["touched"].values():
@@ -166,8 +175,8 @@ def loosened(classes_doc: dict, before, after) -> list:
     scale, rank = _scale(classes_doc), _rank(classes_doc)
     said = []
 
-    def lower(a, b, order):
-        return a in order and b in order and order[b] < order[a]
+    def lower(a, b, order):  # a word the scale does not declare is read as the cheapest: fail closed
+        return a in order and (b not in order or order[b] < order[a])
 
     if lower(before["default_undo"], after["default_undo"], scale):
         said.append(f"default_undo {before['default_undo']} -> {after['default_undo']}")
@@ -198,21 +207,70 @@ def loosened(classes_doc: dict, before, after) -> list:
     return said
 
 
-def weigh(paths, classes_doc: dict, areas_doc: dict, loosening=()) -> tuple:
+def loosened_areas(classes_doc: dict, before, after) -> list:
+    """The areas AS THEY STOOD that a change loosens -- what the loosening itself is weighed as.
+
+    Making irreversible paths cheap is itself the irreversible decision, taken once: whoever removes
+    or cheapens an area walks the class a change to that area asked, on the record, and every later
+    change is then weighed by the new scale honestly. The host's default stands as an area of its own
+    where it is lowered, where an added area undercuts it, or where the declaration goes; a loosened
+    breadth limit stands as the class a change beyond it computed."""
+    if not before:
+        return []
+    scale, rank = _scale(classes_doc), _rank(classes_doc)
+
+    def lower(a, b, order):
+        return a in order and (b not in order or order[b] < order[a])
+
+    old = {a["id"]: a for a in before.get("areas", [])}
+    new = {a["id"]: a for a in (after or {}).get("areas", [])}
+    lost = []
+    for identity, area in sorted(old.items()):
+        kept = new.get(identity)
+        if (kept is None or kept["paths"] != area["paths"] or lower(area["undo"], kept["undo"], scale)
+                or ("at_least" in area and ("at_least" not in kept or lower(area["at_least"], kept["at_least"], rank)))
+                or set(area.get("requires", [])) - set(kept.get("requires", []))):
+            lost.append(area)
+    if (not after or lower(before["default_undo"], after["default_undo"], scale)
+            or any(i not in old and lower(before["default_undo"], a["undo"], scale) for i, a in new.items())):
+        lost.append({"id": "default_undo", "paths": "", "undo": before["default_undo"],
+                     "because": "the cost every path no area claims stood at"})
+    rows = [row["id"] for row in classes_doc["classes"] if not row.get("expedite")]
+    now = (after or {}).get("max_areas", {})
+    for cls, limit in sorted(before.get("max_areas", {}).items()):
+        if (cls not in now or now[cls] > limit) and cls in rows and rows.index(cls) + 1 < len(rows):
+            lost.append({"id": f"max_areas of {cls}", "paths": "", "undo": classes_doc["undo"][0]["id"],
+                         "at_least": rows[rows.index(cls) + 1], "because": "the breadth a lighter class stopped at"})
+    return lost
+
+
+def _alone(area: dict) -> dict:
+    return {"touched": {area["id"]: {"area": area, "paths": []}}, "unclaimed": [], "undo": area["undo"]}
+
+
+def weigh(paths, classes_doc: dict, areas_doc: dict, loosening=(), lost=()) -> tuple:
     """(signals, verdict) for a set of paths -- the one entry every caller weighs through.
 
-    `loosening` names how the change loosens the areas it is weighed by (`loosened`). Such a change is
-    at least the lightest class that owes a card: whoever loosens the scale leaves a named,
-    criteria-bearing record of doing it -- and tightening it costs nothing."""
+    `loosening` names how the change loosens the areas it is weighed by (`loosened`), and `lost` the
+    areas as they stood that it loosens (`loosened_areas`). Such a change is at least the lightest
+    class that owes a card, and at least the class a change to each loosened area computed: whoever
+    loosens the scale walks what the scale asked -- and tightening it costs nothing."""
     sig = signals(list(paths), classes_doc, areas_doc)
     verdict = computed(sig, classes_doc, areas_doc)
-    floor = lightest_with(classes_doc, "card")
-    if loosening and _heavier(classes_doc, floor, verdict["class"]["id"]) != verdict["class"]["id"]:
-        row = classes_doc["classes"][_rank(classes_doc)[floor]]
-        owed = list(row["requires"]) + [r for r in verdict["requires"] if r not in row["requires"]]
-        verdict = {"class": row, "why": f"{verdict['why']}; it loosens the areas it is weighed by "
-                   f"({'; '.join(loosening)})", "requires": owed}
-    return sig, verdict
+    if not loosening:
+        return sig, verdict
+    rank = _rank(classes_doc)
+    plain = classes_doc["classes"][rank[lightest_with(classes_doc, "card")]]
+    weights = [verdict, {"class": plain, "requires": list(plain["requires"])}]
+    weights += [dict(computed(_alone(area), classes_doc, {"max_areas": {}}), area=area["id"]) for area in lost]
+    heaviest = max(weights, key=lambda w: rank[w["class"]["id"]])
+    owed = []
+    for weight in [heaviest, *weights]:
+        owed += [r for r in weight["requires"] if r not in owed]
+    asked = [w["area"] for w in weights if w.get("area") and w["class"]["id"] == heaviest["class"]["id"]]
+    return sig, {"class": heaviest["class"], "requires": owed,
+                 "why": f"{verdict['why']}; it loosens the areas it is weighed by ({'; '.join(loosening)})"
+                        + (f", and walks what {', '.join(asked)} asked as it stood" if asked else "")}
 
 
 def demotions(classes_doc: dict, before: dict, after: dict, closed=frozenset()) -> list:
@@ -250,7 +308,8 @@ def demotions(classes_doc: dict, before: dict, after: dict, closed=frozenset()) 
         if not lowered:
             continue
         last = (card.get("reshaped") or [{}])[-1]
-        if last.get("from") == was and last.get("to") == now and last.get("approved_by"):
+        fresh = last not in ((was_card or {}).get("reshaped") or [])  # an approval is a moment: this change's own
+        if fresh and last.get("from") == was and last.get("to") == now and last.get("approved_by"):
             continue
         refused.append(f"the card {identity} is shaped {now or 'with no class'} where it stood {was}: "
                        + ("an expedite class is declared in a commit's trailer, never as a card's" if crosses_expedite
@@ -261,17 +320,25 @@ def demotions(classes_doc: dict, before: dict, after: dict, closed=frozenset()) 
 
 # -- a commit, and the card it names ----------------------------------------------------------
 _TRAILER = re.compile(r"^([A-Za-z][A-Za-z0-9-]*)(\s*):\s*(\S.*?)\s*$")
+_BLANK = re.compile(r"\n[ \t]*\n")
+
+
+def _last_paragraph(message: str):
+    """The last paragraph of a message as git reads it after its cleanup -- a line of only blanks
+    separates paragraphs, comment lines are not the message -- or None for a one-paragraph message."""
+    lines = [line for line in message.replace("\r\n", "\n").split("\n") if not line.startswith("#")]
+    paragraphs = [p for p in _BLANK.split("\n".join(lines).strip()) if p.strip()]
+    return paragraphs[-1] if len(paragraphs) >= 2 else None
 
 
 def trailers(message: str) -> dict:
     """The trailers of a commit message, by lower-cased key: the `Key: value` lines of its last
     paragraph (git interpret-trailers). Comment lines are not the message and are dropped."""
-    lines = [line for line in message.replace("\r\n", "\n").split("\n") if not line.startswith("#")]
-    paragraphs = [p for p in "\n".join(lines).strip().split("\n\n") if p.strip()]
-    if len(paragraphs) < 2:
+    last = _last_paragraph(message)
+    if last is None:
         return {}
     found = {}
-    for line in paragraphs[-1].splitlines():
+    for line in last.splitlines():
         hit = _TRAILER.match(line)
         if hit:
             found.setdefault(hit.group(1).lower(), hit.group(3))
@@ -283,17 +350,23 @@ def miswritten(message: str, keys: dict) -> list:
     before the colon, or a key in another case. Every reader of trailers -- the hook, CI, the debt
     search -- reads the canonical form, so a variant is refused rather than read by some and not by
     others (the measured side door)."""
-    lines = [line for line in message.replace("\r\n", "\n").split("\n") if not line.startswith("#")]
-    paragraphs = [p for p in "\n".join(lines).strip().split("\n\n") if p.strip()]
-    if len(paragraphs) < 2:
+    last = _last_paragraph(message)
+    if last is None:
         return []
     wanted = {key.lower(): key for key in keys.values()}
-    said = []
-    for line in paragraphs[-1].splitlines():
+    said, seen = [], set()
+    for line in last.splitlines():
         hit = _TRAILER.match(line)
-        if hit and hit.group(1).lower() in wanted and (hit.group(2) or hit.group(1) != wanted[hit.group(1).lower()]):
-            said.append(f"the trailer {line.strip()!r} is not written `{wanted[hit.group(1).lower()]}: <value>`: "
+        if not hit or hit.group(1).lower() not in wanted:
+            continue
+        key = hit.group(1).lower()
+        if hit.group(2) or hit.group(1) != wanted[key]:
+            said.append(f"the trailer {line.strip()!r} is not written `{wanted[key]}: <value>`: "
                         f"every reader reads that form and no other")
+        if key in seen:
+            said.append(f"the trailer `{wanted[key]}` is written twice: one commit, one answer -- a reader "
+                        f"reads the first and never the second")
+        seen.add(key)
     return said
 
 
@@ -319,10 +392,16 @@ def bet(card: dict, door_states) -> bool:
 
 def card_floor(classes_doc: dict, card: dict, fallback: str) -> tuple:
     """(class, why) a card stands at: its declared class, else the fallback a card with none is read
-    as. Its uncertainty is reported, not merged -- a card lighter than its uncertainty is a defect of
-    the card, named by its gate."""
-    return card.get("class", fallback), ("declared on the card" if "class" in card
-                                         else f"no class on the card, read as {fallback}")
+    as -- raised to what its declared uncertainty asks, so no card stands lighter than the work it says
+    it is. A declared class lighter than its uncertainty is also a defect its gate names."""
+    shaped = card.get("class", fallback)
+    why = "declared on the card" if "class" in card else f"no class on the card, read as {fallback}"
+    asked = next((u["at_least"] for u in classes_doc["uncertainty"] if u["id"] == card.get("uncertainty")), None)
+    rank = _rank(classes_doc)
+    if (asked and shaped in rank and not classes_doc["classes"][rank[shaped]].get("expedite")
+            and rank[asked] > rank[shaped]):
+        return asked, f"{why}, raised to {asked} by its uncertainty {card['uncertainty']}"
+    return shaped, why
 
 
 def lightest_with(classes_doc: dict, record: str) -> str:

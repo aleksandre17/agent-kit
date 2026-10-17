@@ -133,3 +133,6 @@ CALIBRATIONS = {
     "schema-valid": _calibrate_schema_valid,
     "path-class-total": _calibrate_path_class_total,
 }
+
+#: A projection renders the governed records (the board among them): it may never prove one (ADR-025 decision 16).
+READS_THE_RECORDS = {"projection-reproducible": True}

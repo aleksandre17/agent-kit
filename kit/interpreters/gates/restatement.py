@@ -139,3 +139,6 @@ MEASURES = {"restated_record_fields": _restated}
 #: for the pairing. It is the only way an undertaking at the terminal value reaches this judgement;
 #: the consequence is settled where stances are, never here.
 JUDGED_BY = {"restated_record_fields": "section-restating-a-record"}
+
+#: Every kind here judges by reading the governed records: none of them may prove one (ADR-025 decision 16).
+READS_THE_RECORDS = {kind: True for kind in KINDS}

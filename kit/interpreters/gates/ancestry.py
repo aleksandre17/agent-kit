@@ -86,3 +86,6 @@ MEASURES = {lineage.UNJUSTIFIED: _without_origin}
 #: for the pairing. An undertaking at the terminal value reaches the judgement through this row,
 #: and what the maturation then costs is settled where every stance is.
 JUDGED_BY = {lineage.UNJUSTIFIED: "lineage-resolves"}
+
+#: Every kind here judges by reading the governed records: none of them may prove one (ADR-025 decision 16).
+READS_THE_RECORDS = {kind: True for kind in KINDS}

@@ -249,6 +249,8 @@ class Weigh(Fixtures, unittest.TestCase):
         card("next", "shaped", "2026-10-17T00:00:00+00:00", after=["old-needed"])
         card("old-chained", "landed", "2026-01-01T00:00:00+00:00")
         card("recent-after", "landed", "2099-01-01T00:00:00+00:00", after=["old-chained"])
+        card("program", "in-flight", "2026-10-17T00:00:00+00:00")
+        card("old-part", "landed", "2026-01-01T00:00:00+00:00", parent="program")
         nothing = self.run_kit(KIT, host, "archive", "--by", "dev")
         self.assertIn("declares no archive_after_days", nothing.stdout)
         policy = host / install_target("delivery", reads_as="policy")
@@ -264,6 +266,7 @@ class Weigh(Fixtures, unittest.TestCase):
         self.assertTrue((cards / "old-needed.json").exists(), "a card a working card names was archived")
         self.assertTrue((cards / "old-chained.json").exists(), "a card a staying finished card names was archived")
         self.assertTrue((cards / "new-done.json").exists())
+        self.assertTrue((cards / "old-part.json").exists(), "a finished part of a working program was archived")
         self.assertIn("PASS  FF-WORK-ORDER", self._failed(host))
 
     def test_a0_lowering_a_card_is_the_owners_door_and_raising_it_is_anyones(self):
@@ -340,6 +343,97 @@ class Weigh(Fixtures, unittest.TestCase):
         said = self._failed(host)
         self.assertIn("PASS  FF-WORK-ORDER", said)
         self.assertNotIn("RecursionError", said)
+
+    def test_a4_an_emergency_debt_is_paid_only_by_the_work_it_skipped(self):
+        """Found by a second audit: an emergency migration was 'repaid' by a classless stub naming its
+        sha -- a trailer and a stub skipped major's decision, bet and review entirely."""
+        host = self.installed()
+        self.declare(host, ("migrations", r"^db/migrations/", "irreversible"))
+        policy = host / install_target("delivery", reads_as="policy")
+        body = json.loads(policy.read_text(encoding="utf-8"))
+        policy.write_text(json.dumps({**body, "emergency_debt_days": 3}, indent=2) + "\n", encoding="utf-8", newline="\n")
+        env = dict(os.environ, GIT_AUTHOR_NAME="f", GIT_AUTHOR_EMAIL="f@example.invalid", GIT_COMMITTER_NAME="f",
+                   GIT_COMMITTER_EMAIL="f@example.invalid", GIT_COMMITTER_DATE="2026-01-01T00:00:00+00:00")
+        git = lambda *a: subprocess.run(["git", "-C", str(host), *a], check=True, capture_output=True, text=True, env=env)
+        git("add", "-A"); git("commit", "-q", "--no-verify", "-m", "chore: the installed host")
+        (host / "db" / "migrations").mkdir(parents=True)
+        (host / "db" / "migrations" / "0001.sql").write_text("drop table t;\n", encoding="utf-8")
+        git("add", "-A"); git("commit", "-q", "--no-verify", "-m", "fix: restore service\n\nWork-Class: emergency")
+        sha = git("rev-parse", "HEAD").stdout.strip()
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        stub = {"schema_version": 1, "id": "postmortem", "title": "pay the restore", "state": "intake",
+                "created_at": "2026-10-17T00:00:00+00:00", "repays": [sha[:10]]}
+
+        def card(body):
+            (cards / "postmortem.json").write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+        card(stub)
+        failed = self._failed(host)
+        self.assertIn(f"{sha[:12]}: an emergency change", failed)
+        self.assertIn("do not pay it yet", failed)
+        self.assertIn("the change weighs major", failed)
+        decision = host / "docs" / "decisions" / "ADR-001-restore.md"
+        decision.parent.mkdir(parents=True, exist_ok=True)
+        decision.write_text("---\nkind: decision\n---\n\n# restore\n", encoding="utf-8", newline="\n")
+        card({**stub, "state": "in-flight", "class": "major",
+              "origin": {"kind": "artifact-present", "ref": "docs/decisions/ADR-001-restore.md"},
+              "appetite": {"amount": 2, "unit": "day"},
+              "criteria": [{"id": "reviewed", "statement": "a peer approved it", "needs": "review",
+                            "proof": {"kind": "review-approved", "ref": "docs/work/evidence/postmortem/review.json"}}],
+              "history": [{"from": "shaped", "to": "bet", "at": "2026-10-17T00:00:00+00:00", "by": "owner",
+                           "signed_by": "owner", "signed_at": "2026-10-17T00:00:00+00:00"}]})
+        self.assertIn("PASS  FF-WORK-EMERGENCY", self._failed(host))
+
+    def test_a5_a_first_push_weighs_only_what_no_other_remote_branch_carries(self):
+        """Found by a second audit: a new branch's first push weighed the whole history by today's rules,
+        so one old commit that fails them turned every new branch red, forever."""
+        host = self.installed()
+        self.declare(host, ("migrations", r"^db/migrations/", "irreversible"))
+        env = dict(os.environ, GIT_AUTHOR_NAME="f", GIT_AUTHOR_EMAIL="f@example.invalid",
+                   GIT_COMMITTER_NAME="f", GIT_COMMITTER_EMAIL="f@example.invalid")
+        git = lambda *a: subprocess.run(["git", "-C", str(host), *a], check=True, capture_output=True, text=True, env=env)
+        git("add", "-A"); git("commit", "-q", "--no-verify", "-m", "chore: the installed host")
+        (host / "db" / "migrations").mkdir(parents=True)
+        (host / "db" / "migrations" / "0001.sql").write_text("drop table t;\n", encoding="utf-8")
+        git("add", "-A"); git("commit", "-q", "--no-verify", "-m", "feat: quietly, long ago")
+        git("update-ref", "refs/remotes/origin/main", "HEAD")
+        git("checkout", "-q", "-b", "feature")
+        (host / "notes.md").write_text("a note\n", encoding="utf-8")
+        git("add", "-A"); git("commit", "-q", "--no-verify", "-m", "docs: a note")
+        git("update-ref", "refs/remotes/origin/feature", "HEAD")
+        everything = self.run_kit(KIT, host, "weigh", "--head", "HEAD", "--each")
+        self.assertEqual(1, everything.returncode, "the old commit was meant to fail today's floor")
+        pushed = self.run_kit(KIT, host, "weigh", "--head", "HEAD", "--each", "--published-as", "origin/feature")
+        self.assertEqual(0, pushed.returncode, pushed.stdout + pushed.stderr)
+        self.assertIn("1 commit(s) held to the floor, 0 refused", pushed.stdout)
+
+    def test_a6_a_classless_card_that_names_its_uncertainty_is_held_to_the_class_it_asks(self):
+        host = self.installed()
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        (cards / "outage.json").write_text(json.dumps(
+            {"schema_version": 1, "id": "outage", "title": "outage", "state": "in-flight", "uncertainty": "chaotic",
+             "created_at": "2026-10-17T00:00:00+00:00"}, indent=2) + "\n", encoding="utf-8", newline="\n")
+        failed = self._failed(host)
+        self.assertIn("outage: is in-flight as major", failed)
+        self.assertIn("outage: a major card owes its criteria", failed)
+
+    def test_a7_a_card_is_never_proved_by_a_gate_that_reads_the_cards(self):
+        """Found by a second audit: the recursion guard made a card-reading gate's inner reading of its own
+        criterion unreadable, and the outer reading then HELD -- the card proved by its own reading."""
+        host = self.installed()
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        (cards / "orders.json").write_text(json.dumps(
+            {"schema_version": 1, "id": "orders", "title": "orders", "state": "in-flight",
+             "created_at": "2026-10-17T00:00:00+00:00",
+             "criteria": [{"id": "classes", "statement": "the work classes hold",
+                           "proof": {"kind": "declared-rule-holds", "ref": "FF-WORK-CLASSES"}}]},
+            indent=2) + "\n", encoding="utf-8", newline="\n")
+        refused = self.run_kit(KIT, host, "move", "--card", "orders", "--to", "verified", "--by", "dev")
+        self.assertNotEqual(0, refused.returncode, refused.stdout + refused.stderr)
+        self.assertIn("Evidence for a claim may not be the claim", refused.stdout + refused.stderr)
 
     def _failed(self, host) -> str:
         said = self.run_kit(KIT, host, "check")
@@ -452,6 +546,31 @@ class WorkClassFloor(commit_gate.CommitGate):
         sha = commit_gate._git(host, "rev-parse", "HEAD").stdout.strip()
         checked = self.run_kit(self.kit, host, "check")
         self.assertIn(f"owed: {sha[:12]}", checked.stdout, "the debt search missed the spelling the hook refuses")
+
+    def test_63_loosening_an_irreversible_area_walks_the_class_that_area_asked(self):
+        """Found by a second audit: emptying the areas under one normal card, then landing a migration
+        as standard -- two cheap commits, and the irreversible scale was gone."""
+        surface = self.activating[0]
+        host = self.repository()
+        self.assertEqual(0, self.activate(host, surface, "--approve", "fixture-owner").returncode)
+        areas = {"schema_version": 1, "default_undo": "reversible", "max_areas": {},
+                 "areas": [{"id": "migrations", "paths": "^db/migrations/", "undo": "irreversible",
+                            "because": "a fixture"}]}
+        (host / AREAS).write_text(json.dumps(areas, indent=2) + "\n", encoding="utf-8", newline="\n")
+        cards = host / install_target("delivery", reads_as="cards")
+        cards.mkdir(parents=True, exist_ok=True)
+        (cards / "tidy.json").write_text(json.dumps(
+            {"schema_version": 1, "id": "tidy", "title": "tidy", "state": "in-flight", "class": "normal",
+             "created_at": "2026-10-17T00:00:00+00:00",
+             "criteria": [{"id": "c", "statement": "it is there", "proof": {"kind": "artifact-present", "ref": "x"}}]},
+            indent=2) + "\n", encoding="utf-8", newline="\n")
+        commit_gate._git(host, "add", "-A")
+        self.assertEqual(0, commit_gate._git(host, "commit", "-m", "chore: weigh the work", check=False).returncode)
+        (host / AREAS).write_text(json.dumps({**areas, "areas": []}, indent=2) + "\n", encoding="utf-8", newline="\n")
+        commit_gate._git(host, "add", "-A")
+        loosened = commit_gate._git(host, "commit", "-m", "chore: tidy the areas\n\nCard: tidy", check=False)
+        self.assertNotEqual(0, loosened.returncode, loosened.stdout + loosened.stderr)
+        self.assertIn("walks what migrations asked", loosened.stderr)
 
 
 if __name__ == "__main__":

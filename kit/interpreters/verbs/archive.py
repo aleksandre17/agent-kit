@@ -61,10 +61,16 @@ def run(ctx, args) -> int:
     old = {c["id"] for c in governed.members.value if c.get(governed.state_field) in closed
            and lifecycle_module.days_between(lifecycle_module.entered_at(c), now) > days}
     # A card any STAYING card names stays too -- closed or not -- and so on, to a fixed point: an order
-    # or a parent that pointed into the archive would point at nothing.
+    # or a parent that pointed into the archive would point at nothing. And a part of a staying card
+    # stays with it: a program's card tree is read from the parts that name it, so a finished part
+    # that left would leave a working program with no tree.
     while True:
-        named = {t for c in governed.members.value if c["id"] not in old for t in names(c)}
-        kept = old & named
+        staying = [c for c in governed.members.value if c["id"] not in old]
+        named = {t for c in staying for t in names(c)}
+        ids = {c["id"] for c in staying}
+        under = {c["id"] for c in governed.members.value if c["id"] in old
+                 and any(t in ids for t in ([c["parent"]] if isinstance(c.get("parent"), str) else []))}
+        kept = old & (named | under)
         if not kept:
             break
         old -= kept

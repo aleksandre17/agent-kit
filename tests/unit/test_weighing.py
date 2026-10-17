@@ -252,3 +252,81 @@ def test_removing_an_unfinished_classed_card_is_a_demotion_and_dropping_a_plain_
 def test_a_new_area_cheaper_than_the_old_default_loosens():
     said = weighing.loosened(CLASSES, areas(default="costly"), areas(("all", ".*", "reversible"), default="costly"))
     assert said and "cheaper than the costly" in said[0]
+
+
+# -- the side doors a second audit found, each closed (ADR-025 amendment 2) -----------------------
+def test_loosening_an_irreversible_area_walks_the_class_that_area_asked():
+    # Found by an audit: emptying the areas cost one normal card, after which a migration landed standard.
+    before = areas(("migrations", r"^db/migrations/", "irreversible"), ("docs", r"^docs/", "reversible"))
+    after = areas(("docs", r"^docs/", "reversible"))
+    lost = weighing.loosened_areas(CLASSES, before, after)
+    assert [a["id"] for a in lost] == ["migrations"]
+    _sig, verdict = weighing.weigh([".agents/project/delivery/areas.json"], CLASSES, before,
+                                   weighing.loosened(CLASSES, before, after), lost)
+    assert verdict["class"]["id"] == "major" and "decision" in verdict["requires"]
+    assert "walks what migrations asked" in verdict["why"]
+    gone = weighing.loosened_areas(CLASSES, before, None)
+    assert {a["id"] for a in gone} == {"migrations", "docs", "default_undo"}
+    assert weighing.loosened_areas(CLASSES, after, before) == [], "tightening costs nothing"
+
+
+def test_a_loosened_breadth_limit_walks_the_class_beyond_it():
+    before, after = areas(max_areas={"standard": 1}), areas()
+    lost = weighing.loosened_areas(CLASSES, before, after)
+    _sig, verdict = weighing.weigh(["x"], CLASSES, before, weighing.loosened(CLASSES, before, after), lost)
+    assert verdict["class"]["id"] == "normal"
+
+
+def test_an_undo_cost_changed_to_a_word_nobody_declared_is_loosening():
+    before = areas(("m", r"^m/", "irreversible"))
+    after = areas(("m", r"^m/", "fatal"))
+    assert any("undo irreversible -> fatal" in s for s in weighing.loosened(CLASSES, before, after))
+    assert [a["id"] for a in weighing.loosened_areas(CLASSES, before, after)] == ["m"]
+
+
+def test_an_area_record_held_on_a_card_raises_a_standard_change_to_a_card():
+    # Found by an audit: a reversible area requiring review and a decision computed standard, owed
+    # both, and the commit floor refused nothing.
+    host = areas(("auth", r"^src/auth/", "reversible", {"requires": ["review", "decision"]}))
+    cls, _sig, verdict = weigh(["src/auth/login.py"], host)
+    assert cls == "normal" and "held on a card" in verdict["why"]
+    assert any("owes a card" in s for s in refusals(["src/auth/login.py"], "feat: a\n", {}, host))
+
+
+def test_a_classless_card_stands_at_least_where_its_uncertainty_asks():
+    raised, why = weighing.card_floor(CLASSES, {"id": "x", "uncertainty": "chaotic"}, "normal")
+    assert raised == "major" and "by its uncertainty chaotic" in why
+    chaotic = {**CARD, "uncertainty": "chaotic"}
+    said = refusals(["api/contracts/o.json"], "feat: o\n\nCard: orders\n", {"orders": chaotic})
+    assert any("never passed one" in s for s in said), "a chaotic card walked a normal change without the bet"
+    assert weighing.card_floor(CLASSES, {"id": "x", "class": "program", "uncertainty": "clear"}, "normal")[0] == "program"
+
+
+def test_an_old_lowering_approval_cannot_be_replayed():
+    entry = {"from": "major", "to": "normal", "at": "t", "by": "dev", "approved_by": "owner"}
+    before = {"o.json": {"id": "o", "class": "major", "reshaped": [entry]}}
+    replayed = {"o.json": {"id": "o", "class": "normal", "reshaped": [entry]}}
+    assert "owner's door" in weighing.demotions(CLASSES, before, replayed)[0]
+
+
+def test_a_blank_line_of_spaces_ends_a_paragraph_for_every_reader():
+    message = "fix\n\nWork-Class: emergency\n   \nprose"
+    assert weighing.trailers(message) == {}, "the hook read a trailer git's cleanup does not keep"
+
+
+def test_a_declared_trailer_written_twice_is_refused():
+    said = refusals(["db/migrations/1.sql"], "fix\n\nWork-Class: emergency\nWork-Class: major\n")
+    assert any("written twice" in s for s in said)
+
+
+def test_a_decision_is_what_its_front_matter_says_never_a_line_of_its_body():
+    from types import SimpleNamespace
+    import workclass
+    files = {"d.md": "---\nkind: decision\n---\n# d\n", "n.md": "---\ntitle: notes\n---\nkind: decision\n",
+             "open.md": "---\nkind: decision\n"}
+    ctx = SimpleNamespace(workspace=SimpleNamespace(exists=files.__contains__, read_text=files.__getitem__))
+    decided = workclass.decided(ctx)
+    holder = {"field": "origin", "kind_of_record": "decision"}
+    assert decided({"origin": {"ref": "d.md"}}, holder)
+    assert not decided({"origin": {"ref": "n.md"}}, holder), "a body line was read as front matter"
+    assert not decided({"origin": {"ref": "open.md"}}, holder), "front matter that never closes is none"
