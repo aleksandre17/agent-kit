@@ -1,0 +1,14 @@
+{
+  "id": "java-gradle",
+  "summary": "A Gradle project: a Groovy or Kotlin build script anywhere in the tree.",
+  "evidence": [
+    {
+      "kind": "glob_any",
+      "pattern": "**/build.gradle*"
+    }
+  ],
+  "emits": {
+    "stack.java": true,
+    "stack.java.gradle": "$1"
+  }
+}

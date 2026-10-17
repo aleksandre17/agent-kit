@@ -1,0 +1,60 @@
+{
+  "$id": "module-map",
+  "title": "Where a build tool's modules are declared, and what proves each (ADR-025 amendment 4)",
+  "description": "Published by a build tool's adapter. `areas` reads it to draft one area per module the host's manifest declares -- its path, and the vouched command that proves it -- and one area for the tool's own declarations; the owner approves the draft.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "path",
+    "pointer",
+    "path_field",
+    "proof"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "description": "the manifest that declares the modules"
+    },
+    "pointer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "where in it the modules are, by id"
+    },
+    "path_field": {
+      "type": "string",
+      "minLength": 1,
+      "description": "the field of a module that is its path"
+    },
+    "proof": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*:[^ ]*\\{id\\}[^ ]*$",
+      "description": "the vouched command that proves a module, `{id}` its id"
+    },
+    "declarations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "paths (regular expressions) holding the tool's own declarations"
+    },
+    "declarations_proof": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*:[A-Za-z0-9._-]+$"
+    }
+  }
+}

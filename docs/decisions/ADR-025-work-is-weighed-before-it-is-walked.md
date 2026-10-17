@@ -450,6 +450,16 @@ whether or not a MUST names it -- the area's declaration is the obligation; the 
 "everything" is. The kit proves itself so: its own areas map its interpreters, bundles and adapters to
 the suites that read them, and the rest of the kit is proved by everything.
 
+**Decision 4 -- a new host is weighed and proved from its first day** (found by adopting two foreign
+projects from zero: their areas were seeded empty, so a UI line and the deploy manifest weighed alike and
+were proved by nothing). A build tool's adapter publishes a MODULE MAP -- where its manifest declares
+the modules, the field that is a module's path, the vouched command that proves one -- and `areas`
+drafts from every map an enabled capability publishes: one area per module (a root module claims what
+no other area claims), one for the tool's own declarations (costly), and the host's prose (proved by
+`check` alone). It only adds, and writing is a door; `start` walks it. Where no area declares a proof
+and no MUST names a command, `prove` runs the test command the host's reading declares -- what the
+briefing already says proves a change is what proves it.
+
 **Decision 2 -- nothing is proved twice on the same bytes** (Cardinal IX). A command that went green on
 a clean tree is remembered in the observed plane by that tree's id and its own command string, and is
 not run again while both are the same: a second push of what was proved, a retry after a refused push.

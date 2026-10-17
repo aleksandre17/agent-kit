@@ -276,5 +276,71 @@ class Norms(Fixtures, unittest.TestCase):
         self.assertIn("proved by host:lib", proved.stdout)
         self.assertTrue((ran / "lib").exists(), "the host's own declared command ran")
 
+    def _pushed_host(self, manifest: dict):
+        """A started host with a build-tool manifest, committed and pushed -- so what follows is what a push
+        carries."""
+        import subprocess
+
+        host = self.started()
+        (host / "stack-kit.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+        def git(*argv):
+            done = subprocess.run(["git", "-C", str(host), "-c", "user.email=s@invalid", "-c", "user.name=suite",
+                                   "-c", "core.hooksPath=/dev/null", *argv], capture_output=True, text=True)
+            self.assertEqual(0, done.returncode, done.stdout + done.stderr)
+
+        remote = self._temp("remote-")
+        subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+        git("add", "-A")
+        git("commit", "-qm", "the host")
+        git("remote", "add", "origin", str(remote))
+        git("push", "-q", "-u", "origin", "HEAD")
+        return host, git
+
+    def _counting(self, ran, name):
+        return f'python -c "open(r\'{(ran / name).as_posix()}\', \'a\').write(\'x\')"'
+
+    def test_508_a_new_host_drafts_its_areas_from_its_modules_and_a_change_is_proved_by_its_own(self):
+        """Found by the foreign-project experiment: a new host's areas were empty, so a one-line UI change
+        and the deploy manifest weighed alike and were proved by nothing."""
+        ran = self._temp("ran-")
+        host, git = self._pushed_host({"modules": {"web": {"type": "node-vite", "path": "web"},
+                                                   "api": {"type": "java-boot", "path": "."}},
+                                       "commands": {"test": self._counting(ran, "all"),
+                                                    "test-web": self._counting(ran, "web"),
+                                                    "test-api": self._counting(ran, "api")}})
+        draft = self.run_kit(KIT, host, "areas")
+        self.assertEqual(0, draft.returncode, said(draft))
+        self.assertIn("module-web", draft.stdout)
+        self.assertIn("door", draft.stdout)
+        approved = self.run_kit(KIT, host, "areas", "--approve", "acceptance-suite")
+        self.assertEqual(0, approved.returncode, said(approved))
+        git("add", "-A")
+        git("commit", "-qm", "the drafted areas")
+        git("push", "-q")
+        (host / "web").mkdir(exist_ok=True)
+        (host / "web" / "main.tsx").write_text("export const a = 1;\n", encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-qm", "one line in the web app")
+        proved = self.run_kit(KIT, host, "prove")
+        self.assertEqual(0, proved.returncode, said(proved))
+        self.assertTrue((ran / "web").exists() and not (ran / "all").exists() and not (ran / "api").exists(),
+                        "a web change is proved by the web module's tests alone")
+        ui = self.run_kit(KIT, host, "weigh", "--path", "web/main.tsx")
+        deploy = self.run_kit(KIT, host, "weigh", "--path", "stack-kit.json")
+        self.assertNotEqual(ui.stdout.split("\n")[1:2], deploy.stdout.split("\n")[1:2],
+                            "a UI line and the deploy manifest weigh differently")
+
+    def test_509_with_no_area_and_no_must_a_push_is_proved_by_the_test_command_the_host_declares(self):
+        ran = self._temp("ran-")
+        host, git = self._pushed_host({"modules": {}, "commands": {"test": self._counting(ran, "all")}})
+        (host / "src.txt").write_text("a change\n", encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-qm", "a change")
+        proved = self.run_kit(KIT, host, "prove")
+        self.assertEqual(0, proved.returncode, said(proved))
+        self.assertIn("proved by the test command this host declares", proved.stdout)
+        self.assertTrue((ran / "all").exists(), "the host's declared test command ran")
+
 if __name__ == "__main__":
     unittest.main()

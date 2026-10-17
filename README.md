@@ -29,11 +29,11 @@ Python 3.10+ and git, and has no third-party dependency.
 ## Quick start
 
 ```sh
-git submodule add https://github.com/aleksandre17/agent-kit.git platform/kits/agent-kit
-python platform/kits/agent-kit/kit/interpreters/cli.py start --root . \
-    --path platform/kits/agent-kit/starters/standard.json --plan      # what it will do
-python platform/kits/agent-kit/kit/interpreters/cli.py start --root . \
-    --path platform/kits/agent-kit/starters/standard.json --approve "<your name>"
+git submodule add https://github.com/aleksandre17/agent-kit.git kits/agent-kit
+python kits/agent-kit/kit/interpreters/cli.py start --root . \
+    --path kits/agent-kit/starters/standard.json --plan      # what it will do
+python kits/agent-kit/kit/interpreters/cli.py start --root . \
+    --path kits/agent-kit/starters/standard.json --approve "<your name>"
 ```
 
 `start` walks a published **starter** (`starters/standard.json`: Claude Code, Codex/AGENTS.md and git served, the
@@ -43,11 +43,26 @@ the repository runs its own pinned copy:
 ```sh
 python .agents/kit/interpreters/cli.py check  --root .     # are the declared gates green?
 python .agents/kit/interpreters/cli.py render --root .     # rebuild every generated file
-python platform/kits/agent-kit/kit/interpreters/cli.py upgrade --root . --plan   # take a newer kit
+python kits/agent-kit/kit/interpreters/cli.py upgrade --root . --plan   # take a newer kit
+```
+
+### The first day: weighed by place, proved by what proves it
+
+`start` drafts the host's **areas** -- where a change lands, what undoing it costs, and what proves it -- from
+the modules its build tool declares (a module map its adapter publishes; stack-kit's does), plus its prose,
+which `check` alone proves. A one-line change in a web module is then proved by that module's tests, a change to
+the delivery declarations weighs heavier, and a push runs only what the change can affect (`prove`, the pre-push).
+Where no area declares a proof yet, `prove` runs the test command the host declares. Either kit may come first:
+after adding a build tool (or a module), re-read and re-draft, each a door you walk once:
+
+```sh
+python .agents/kit/interpreters/cli.py retake --root . --approve "<your name>"   # the reading sees the tool
+python .agents/kit/interpreters/cli.py areas  --root .                           # the draft, nothing written
+python .agents/kit/interpreters/cli.py areas  --root . --approve "<your name>"   # it only adds areas
 ```
 
 A host that keeps the kit as a submodule need not carry a second copy of it: `python
-platform/kits/agent-kit/kit/interpreters/cli.py upgrade --root . --mode referenced --approve "<you>"` runs it
+kits/agent-kit/kit/interpreters/cli.py upgrade --root . --mode referenced --approve "<you>"` runs it
 from the submodule at its pinned commit, and removes `.agents/kit/` once `check` is green.
 
 A kit can also be read straight from where it is published, at an exact revision, instead of a

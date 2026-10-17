@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 91,
+  "issued": 92,
   "codes": [
     {
       "code": "KIT0001",
@@ -548,6 +548,12 @@
       "status": "active",
       "title": "a signing setup that cannot be taken honestly",
       "explanation": "Setting up the owner's signing key is the owner's own act, in their own terminal: the kit refuses it without an interactive terminal, refuses a key without a passphrase (anything that can read it could sign as the owner), and refuses a git that cannot verify SSH signatures (ADR-025 amendment 3)."
+    },
+    {
+      "code": "KIT0092",
+      "status": "active",
+      "title": "an areas draft that cannot be taken honestly",
+      "explanation": "A host's areas are drafted from the module maps its build tool's adapter publishes, into the areas the delivery capability declares; the draft only adds, and writing it is the owner's door (ADR-025 amendment 4)."
     }
   ]
 }

@@ -122,8 +122,17 @@ def run(ctx, args) -> int:
             print("prove: nothing beyond `check` proves this change")
             return 0
     elif not wanted:
-        print("prove: no MUST names a command as its enforcer -- nothing to run")
-        return 0
+        declared_test = (ctx.take_reading().get("facts") or {}).get("quality.tests.command")
+        if not declared_test:
+            print("prove: no MUST names a command, no area declares a proof, and this host's reading declares no test "
+                  "command -- nothing to run")
+            return 0
+        # From the first day: what the host's briefing already says proves a change is what proves it here
+        # (`areas` refines it by module).
+        print(f"prove: no MUST names a command and no area declares a proof -- proved by the test command this "
+              f"host declares: {declared_test}")
+        commands = {**commands, "declared:test": declared_test}
+        wanted = {"declared:test": ["the host's declared test command"]}
     else:
         print(f"prove: {why}")
     if getattr(args, "plan", False):

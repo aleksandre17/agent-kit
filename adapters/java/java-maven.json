@@ -1,0 +1,14 @@
+{
+  "id": "java-maven",
+  "summary": "A Maven project: one or more pom.xml anywhere in the tree.",
+  "evidence": [
+    {
+      "kind": "glob_any",
+      "pattern": "**/pom.xml"
+    }
+  ],
+  "emits": {
+    "stack.java": true,
+    "stack.java.maven": "$1"
+  }
+}

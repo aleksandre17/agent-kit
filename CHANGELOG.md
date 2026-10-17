@@ -12,6 +12,12 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   `prove` weighs what the push carries and runs only what the touched areas declare -- `check` alone for
   prose. A change owing a decision, an area that declares no proof, a host that weighs nothing, or
   `--full` runs every command a MUST names; it says which, and why.
+- Verb `areas`: a host's areas drafted from the modules its build tool declares (a MODULE MAP its adapter
+  publishes: stack-kit's, 1.3.0) -- one per module, proved by its own tests; the tool's declarations
+  (costly); prose (check alone). It only adds; writing is a door; `start` walks it.
+- With no area's proof and no MUST, `prove` runs the test command the host's reading declares.
+- Adapter `java` 1.0.0: a Maven project (pom.xml) and a Gradle project (build.gradle*) are read as
+  `stack.java`; the standard starter takes it.
 - A host declares its own proof commands in its delivery policy (`commands`, vouched as `host:<key>`),
   and an area's `proved_by` runs whether or not a MUST names it; the kit proves itself with them.
 - `check` says what judging cost, every run: how many gates, how long, and the three slowest.

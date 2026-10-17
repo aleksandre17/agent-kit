@@ -1,17 +1,17 @@
 {
   "algorithm": "sha256",
-  "count": 360,
+  "count": 362,
   "files": [
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "654746fbebbec247c32679792fbb459a946a1abb33ba5db312781ce57175fdf6",
+      "digest": "c07538475a1028ee3159c08877cb5de33873864deea221b9973321dccff7bed3",
       "path": "MANIFEST.json"
     },
     {
       "accounted_by": "readme",
       "class": "prose",
-      "digest": "b0521cb620aaf053bea847efa008b1ca61295d0c587bdbeb35b31c3631ebe54e",
+      "digest": "89a6b1b3d8a87deaa616327b97d67ce6c4996a56f914cea9b65eb28094f0a8c6",
       "path": "README.md"
     },
     {
@@ -569,7 +569,7 @@
     {
       "accounted_by": "diagnostics",
       "class": "declaration",
-      "digest": "127316c91168c9bef8ac5b27fa556452eed3456bf7d6ad4e357d93f13122b8ff",
+      "digest": "eda7515d593226aa2d72732f6a52a2ab0e7015c79e943f2de93c32b5b5926434",
       "path": "diagnostics.json"
     },
     {
@@ -1391,6 +1391,12 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
+      "digest": "9d15e0d93e59ccecd5681aa023bb2f1cfdb5adafb3b775e66f543b46ccfb92a2",
+      "path": "interpreters/verbs/areas.py"
+    },
+    {
+      "accounted_by": "interpreter",
+      "class": "interpreter",
       "digest": "84914c2dc64d4c4b2e84b414d38adf177582526bd1430a9c36359bd85a85bd27",
       "path": "interpreters/verbs/audit.py"
     },
@@ -1511,7 +1517,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "847ec5ab2de061bac4062f52a5b72aa258e994386457d762d6e5db0f38bb2161",
+      "digest": "1472046a38a4c9bf762472143c89d2110d08fff59afa16101f0c7ba884064180",
       "path": "interpreters/verbs/prove.py"
     },
     {
@@ -1565,7 +1571,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "b8b319eaf93d8ed2636638b37803478b8673d9aabd36bdd23c276c375d23c4fa",
+      "digest": "caebdc59c1202bb7eed687b2198efa404ab235b437dac8435efbfa0f06312378",
       "path": "interpreters/verbs/start.py"
     },
     {
@@ -1937,6 +1943,12 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
+      "digest": "940dfc9a999655973f4b7a9795e98f2235b748baaf5f9889b5a28e84b0929e71",
+      "path": "schemas/module-map.schema.json"
+    },
+    {
+      "accounted_by": "declaration-closure",
+      "class": "declaration",
       "digest": "6f7abb18be8e1013b911853ec8c5c1ab1c46a50544752e1d4ce2fe6160142d60",
       "path": "schemas/obligation-markers.schema.json"
     },
@@ -2166,5 +2178,5 @@
   "kit_version": "0.2.0",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-17T13:42:10+00:00"
+  "taken_at": "2026-10-17T14:57:08+00:00"
 }

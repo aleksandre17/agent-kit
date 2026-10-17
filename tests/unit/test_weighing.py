@@ -371,3 +371,30 @@ def test_an_area_that_declares_no_proof_is_proved_by_everything_and_says_so():
     host["default_proved_by"] = []
     assert weighing.proof_for(["nowhere/x.txt", "web/a.ts"], CLASSES, host)[0] == ["kit:test-web"], \
         "a path no area claims is proved by the default"
+
+
+def test_a_hosts_areas_are_drafted_from_the_modules_its_build_tool_declares():
+    # Found by the foreign-project experiment: areas seeded empty weighed a UI string and the deploy
+    # manifest alike, and proved both by nothing.
+    import re
+    import sys as _sys
+    _sys.path.insert(0, str(KIT / "interpreters" / "verbs"))
+    import areas as areas_verb
+
+    mapdoc = {"id": "a-build-tool-modules", "path": "build.json", "pointer": "modules", "path_field": "path",
+              "proof": "tool:test-{id}", "declarations": ["^build\.json$", "^ops/"], "declarations_proof": "tool:validate"}
+    drafted = areas_verb.drafted([(mapdoc, {"web": {"path": "web"}, "api": {"path": "."}})],
+                                 {"tool:test-web", "tool:validate"})
+    by = {a["id"]: a for a in drafted}
+    assert by["module-web"]["proved_by"] == ["tool:test-web"] and by["module-web"]["paths"] == "^web/"
+    assert "proved_by" not in by["module-api"], "a module whose command nobody vouches is proved by everything"
+    assert by["a-build-tool-modules-declarations"]["undo"] == "costly"
+    assert by["prose"]["proved_by"] == []
+    root = re.compile(by["module-api"]["paths"])
+    assert root.search("src/main/java/App.java") and not root.search("web/src/main.tsx")
+    assert not root.search("ops/deploy/targets.json") and not root.search("docs/guide.md")
+    host = {"schema_version": 1, "default_undo": "reversible", "max_areas": {}, "areas": drafted}
+    ui = weighing.weigh(["web/src/main.tsx"], CLASSES, host)[1]["class"]["id"]
+    deploy = weighing.weigh(["ops/deploy/targets.json"], CLASSES, host)[1]["class"]["id"]
+    assert ui != deploy, "a UI string and the deploy manifest no longer weigh the same"
+    assert weighing.proof_for(["web/src/main.tsx"], CLASSES, host)[0] == ["tool:test-web"]

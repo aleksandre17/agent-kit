@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "stack-kit-modules",
+  "summary": "A stack-kit host declares its modules under `modules` in stack-kit.json, each with its `path`; stack-kit declares a test command per module (`commands.test-<id>`), so a module is proved by its own tests. Its own declarations -- the manifest and ops/ -- are proved by `validate`.",
+  "path": "stack-kit.json",
+  "pointer": "modules",
+  "path_field": "path",
+  "proof": "stack-kit:test-{id}",
+  "declarations": [
+    "^stack-kit\\.json$",
+    "^ops/"
+  ],
+  "declarations_proof": "stack-kit:validate"
+}
