@@ -14,4 +14,5 @@ starter. A host never edits a policy where it landed; its publisher replaces it 
 | policy | what it refuses |
 | --- | --- |
 | `secrets` | private keys; cloud access key ids; platform tokens (GitHub, GitLab, Slack, API keys of the `sk-` form) -- the one secrets catalogue other tools read by path (`secrets/README.md`) |
+| `declared-stopgaps` | a stopgap comment tag (`HACK:`, `WORKAROUND:`, `STOPGAP:`, `TEMPORARY:`, `FIXME:`, `XXX:`) that names no tracking record on its line -- the enforcer of engineering's `a-stopgap-is-declared-debt` |
 | `conventional-commits` | a commit message whose header is not Conventional Commits 1.0.0 (opt-in; the commit-message hook) |

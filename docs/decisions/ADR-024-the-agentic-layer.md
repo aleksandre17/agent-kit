@@ -211,3 +211,57 @@ NIST AI RMF rows beyond one `mapping` row (organisational standards). Each is a 
   documentation; the sub-agent transcript shape is measured) and of stack-kit's `scan` reading the
   secrets catalogue through `security.secretPatterns` (a claim in the stack-kit adapter).
 - More procedure skills (verify, refactor) beyond kit-skills and the record/review procedures.
+
+## Amendment 1 — a stopgap is declared debt; a gate is met at what it guards (2026-10-18, owner)
+
+**Context.** The owner asked whether the doctrine already says that a fix is never a trick or a
+temporary manoeuvre but the best-form solution. It says the principle -- Cardinal I (the best form the
+field knows), E4 ("a 'for now' is not an implementation; a missing external authority is an explicit
+bounded gate, never a hidden substitute"), `fix-at-the-owner` -- but as prose only: nothing refused an
+untracked stopgap, and nothing named the other way to a false green, deceiving the check instead of
+going around it. Both happened in the first adopting host's day: a legacy-TLS stopgap was needed
+because the database server was out of reach, and a gate could have been passed by moving files.
+
+**Decision.**
+1. *A stopgap is declared debt* (`engineering@1.2.0#a-stopgap-is-declared-debt`, MUST). Allowed only
+   where the best-form fix is out of reach now; then marked where it lives, approved by the owner,
+   held to the narrowest scope and tracked by a record that names the condition removing it -- never
+   presented as the fix. Enforced by a new policy, `declared-stopgaps`: an edit introducing one of the
+   stopgap comment tags its gate lists (the tags' one home) without a tracking reference on the same
+   line is refused.
+2. *A gate is met at what it guards* (`engineering@1.2.0#a-gate-is-met-at-what-it-guards`, MUST,
+   enforced by review): moving a finding where the gate does not reach, splitting or encoding a string,
+   renaming a marker, acknowledging a finding to pass or weakening the check is not a fix. It completes
+   `a-refusal-is-final`, which forbids going around a refusal.
+3. *Quality never regresses* (`engineering@1.2.0#quality-never-regresses`, MUST, enforced by review).
+   The owner's words: no trick, no low-quality code, no anti-pattern, no hardcoding, no tight coupling,
+   no regression, anywhere. A change is the best form for its problem and introduces no anti-pattern the
+   field names; it is judged against the engineering-standards catalogue, and a finding is fixed,
+   never waived for speed. Review, not a pattern, is the enforcer: an anti-pattern is a judgement about
+   structure that no text pattern can make without refusing good code.
+4. *A decision the work owes keeps the field's shape* (`engineering@1.2.0#decisions-recorded`, raised
+   from SHOULD to MUST, enforced by FF-WORK-CLASSES). Where the weighed class owes a decision (complex
+   or chaotic work, or work irreversible to undo -- the kit's existing Cynefin and undo-cost weighing, so
+   routine work owes nothing new), the card's decision record must keep its kind's declared shape: the
+   question, the options the field offers and why the rejected lost, the decision, its consequences, and
+   at least one source weighed. The shape is data in the record-keeping vocabulary (`kinds[].shape`); it
+   holds cards still in a working state, never a decision a card already landed on.
+
+**Rejected.** An absolute ban on temporary measures (the field's practice -- ITIL's known error and
+workaround, SRE's mitigate-then-fix, ISO/IEC 27001's documented risk acceptance -- admits a recorded
+workaround; a ban would either block containment or drive stopgaps out of sight); a new cardinal (the
+principle is already Cardinal I and E4: a second statement of it would be a second home, Cardinal
+III); a gate on every planned-work tag (a plan is not a substitute for a fix -- the tags chosen are the
+ones that mark code standing in for a solution).
+
+**Sources.** MADR, Markdown Architectural Decision Records (context, decision drivers, considered
+options, outcome, consequences); M. Nygard, "Documenting Architecture Decisions" (2011); ISO/IEC/IEEE
+42010:2022 (architecture rationale); Snowden and Boone, "A Leader's Framework for Decision Making",
+HBR 2007 (Cynefin, already the kit's uncertainty scale); ITIL 4 problem management (known error and
+workaround); Google SRE, "Managing Incidents" (mitigate, then fix); ISO/IEC 27001:2022 clause 6.1.3
+(risk treatment and acceptance).
+
+**Owed.** A decision's shape is read from its headings: an empty or hollow section past the count is
+review's to catch. The tracking reference is checked for form, not that the record exists and names an exit
+condition; that is the host's review and its work records.
+

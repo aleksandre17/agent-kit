@@ -1,7 +1,7 @@
 # Runs — what a run leaves behind, and how its record is read
 
 > PROJECTION. Do not edit: delete this whole plane and run `render`, and it comes back byte-identical.
-> Kit version 0.3.1 · project status accepted.
+> Kit version 0.4.0 · project status accepted.
 
 **No run is listed on this page, and that is deliberate.** A receipt changes after it is written —
 it begins holding a status that means *nothing has been concluded yet*, and is closed once when the

@@ -241,6 +241,7 @@ def decided(ctx):
         return places[kind]
 
     def read(card, holder):
+        read.missing.pop(card.get("id"), None)
         reference = card.get(holder["field"]) or {}
         ref = reference.get("ref") if isinstance(reference, dict) else None
         if not ref or not ctx.workspace.exists(ref):
@@ -254,5 +255,52 @@ def decided(ctx):
         end = next((i for i, line in enumerate(lines[1:], 1) if line.strip() == "---"), None)
         # Only the front matter -- between its two fences -- says what a document is: a body line that
         # reads `kind: decision` is prose about one.
-        return end is not None and any(line.strip() == f"kind: {holder['kind_of_record']}" for line in lines[1:end])
+        if end is None or not any(line.strip() == f"kind: {holder['kind_of_record']}" for line in lines[1:end]):
+            return False
+        # A kind may declare the shape its record keeps (`shape`, record-keeping's vocabulary). It holds
+        # the work still being done: a record a card landed on was written under the rule of its day.
+        shape = kind_shape(ctx, holder["kind_of_record"])
+        if shape and card.get("state") in working_states():
+            missing = shape_misses(shape, lines[end + 1:])
+            if missing:
+                read.missing[card.get("id")] = (ref, missing)
+                return False
+        return True
+
+    def working_states():
+        found = declarations(ctx)
+        return set(found[0].get("working_states") or []) if found else set()
+
+    read.missing = {}
     return read
+
+
+def kind_shape(ctx, kind: str) -> "dict | None":
+    """The shape a kind of record declares in the record-keeping vocabulary, or None."""
+    for capability in ctx.enabled_capabilities():
+        for doc in capability.documents.values():
+            for row in (doc.get("kinds") if isinstance(doc, dict) else None) or []:
+                if isinstance(row, dict) and row.get("id") == kind and isinstance(row.get("shape"), dict):
+                    return row["shape"]
+    return None
+
+
+def shape_misses(shape: dict, body: list) -> list:
+    """The sections a record's body lacks against its kind's shape: each declared section is a heading
+    naming one of its words (case-insensitive), with at least `entries_at_least` non-blank lines under it
+    before the next heading. Read from the markdown alone -- whether the content is good is review's."""
+    headings = [(i, line.lstrip("#").strip().lower()) for i, line in enumerate(body)
+                if line.startswith("#") and line.lstrip("#").startswith(" ")]
+    missing = []
+    for section in shape.get("sections") or []:
+        names = [n.lower() for n in section.get("names") or []]
+        at = next((k for k, (_i, text) in enumerate(headings) if any(n in text for n in names)), None)
+        if at is None:
+            missing.append(section.get("says") or " / ".join(names))
+            continue
+        start = headings[at][0] + 1
+        stop = headings[at + 1][0] if at + 1 < len(headings) else len(body)
+        entries = [line for line in body[start:stop] if line.strip()]
+        if len(entries) < int(section.get("entries_at_least") or 0):
+            missing.append(f"{section.get('says') or names[0]} (it is empty)")
+    return missing

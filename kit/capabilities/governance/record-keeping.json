@@ -181,7 +181,51 @@
     {
       "id": "decision",
       "plane": "rule",
-      "summary": "A binding choice with its context, the alternatives rejected and its consequences. Authoritative once accepted. The specification's DECISION, and its ARCHITECTURE class too: an architectural statement that BINDS is a decision, and one that merely describes the shape of the system is a `reference` -- the split is by authority, not by subject."
+      "summary": "A binding choice with its context, the alternatives rejected and its consequences. Authoritative once accepted. The specification's DECISION, and its ARCHITECTURE class too: an architectural statement that BINDS is a decision, and one that merely describes the shape of the system is a `reference` -- the split is by authority, not by subject.",
+      "shape": {
+        "summary": "What a decision keeps, after the field's decision-record forms (MADR's context, drivers, considered options, outcome and consequences; Nygard's ADR; ISO/IEC/IEEE 42010's rationale), held where the work owes a decision: the question, the options the field offers, the choice, what it costs, and the sources weighed.",
+        "sections": [
+          {
+            "says": "the question or context",
+            "names": [
+              "question",
+              "context",
+              "problem"
+            ]
+          },
+          {
+            "says": "the options considered and why the rejected ones lost",
+            "names": [
+              "alternative",
+              "option",
+              "rejected"
+            ]
+          },
+          {
+            "says": "the decision",
+            "names": [
+              "decision",
+              "outcome"
+            ]
+          },
+          {
+            "says": "the consequences",
+            "names": [
+              "consequence"
+            ]
+          },
+          {
+            "says": "the sources weighed (a standard, prior art, research)",
+            "names": [
+              "source",
+              "prior art",
+              "reference",
+              "evidence"
+            ],
+            "entries_at_least": 1
+          }
+        ]
+      }
     },
     {
       "id": "reference",

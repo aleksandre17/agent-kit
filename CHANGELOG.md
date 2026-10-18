@@ -5,6 +5,22 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade --plan`, which names every path that changes between the two.
 
+## 0.4.0 — 2026-10-18
+
+**Added — a stopgap is declared debt, a gate is met at what it guards (ADR-024 amendment 1)**
+- engineering 1.2.0: three MUST rules -- `a-stopgap-is-declared-debt` (enforced by the new policy's edit
+  gate), `a-gate-is-met-at-what-it-guards` and `quality-never-regresses` (both enforced by review against
+  the engineering-standards catalogue); `decisions-recorded` is raised to MUST, enforced by FF-WORK-CLASSES.
+- A decision a card owes keeps its kind's declared shape (`kinds[].shape` in the record-keeping vocabulary,
+  after MADR, Nygard and ISO/IEC/IEEE 42010): the question, the options and why the rejected lost, the
+  decision, its consequences and at least one source weighed. It holds cards in a working state, never a
+  decision a card already landed on; FF-WORK-CLASSES names what a short decision lacks. Every address moves to 1.2.0; a host
+  re-addresses its stances when it takes the bundle.
+- Policy `declared-stopgaps` 1.0.0: an edit introducing one of the stopgap comment tags its gate lists
+  (`policies/declared-stopgaps/payload/edit-gates.json`, the tags' one home) without a tracking reference
+  on the same line (`ABC-123`, `#123`, `card: <id>`) is refused; prose and code that only use the words
+  are admitted.
+
 ## 0.3.1 — 2026-10-17
 
 **Fixed — a hook's git environment no longer redirects the kit's reading of another repository**

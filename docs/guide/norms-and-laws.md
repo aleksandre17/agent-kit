@@ -33,7 +33,7 @@ The cardinals are:
 - E5: one owner per concept.
 - E6: whole-system integrity.
 
-Addresses carry the release, for example `engineering@1.1.1#fail-closed`.
+Addresses carry the release, for example `engineering@1.2.0#fail-closed`.
 
 ## Enforcers a MUST may name
 

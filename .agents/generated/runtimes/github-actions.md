@@ -3,7 +3,7 @@
 > **Generated. Do not edit.** This descriptor is composed from a runtime class and this host's
 > own declaration, and it is rebuilt from scratch on every render. An edit here is a change the
 > next render discards without asking.
-> Class: `a-batch-invocation` · kit 0.3.1
+> Class: `a-batch-invocation` · kit 0.4.0
 
 ## Reach — how an agent gets to this runtime at all
 

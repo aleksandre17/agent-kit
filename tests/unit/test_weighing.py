@@ -404,3 +404,24 @@ def test_a_dropped_feed_is_loosening():
     before = areas(("api", r"^api/", "costly", {"feeds": ["web"]}), ("web", r"^web/", "reversible"))
     after = areas(("api", r"^api/", "costly"), ("web", r"^web/", "reversible"))
     assert weighing.loosened(CLASSES, before, after) == ["area api no longer feeds web"]
+
+
+def test_a_decision_owed_by_work_in_flight_keeps_its_kinds_shape_and_a_landed_one_is_not_reopened(monkeypatch):
+    # ADR-024 amendment 1: the shape is the vocabulary's (data); it holds the work still being done.
+    from types import SimpleNamespace
+    import workclass
+    shape = {"sections": [{"says": "the decision", "names": ["decision"]},
+                          {"says": "the sources weighed", "names": ["source"], "entries_at_least": 1}]}
+    vocabulary = SimpleNamespace(documents={"record_keeping": {"kinds": [{"id": "decision", "shape": shape}]}})
+    files = {"short.md": "---\nkind: decision\n---\n# d\n## Decision\nOne queue.\n",
+             "whole.md": "---\nkind: decision\n---\n# d\n## Decision\nOne queue.\n## Sources\n- RFC 9110\n"}
+    ctx = SimpleNamespace(workspace=SimpleNamespace(exists=files.__contains__, read_text=files.__getitem__),
+                          enabled_capabilities=lambda: [vocabulary])
+    monkeypatch.setattr(workclass, "declarations", lambda _ctx: ({"working_states": ["in-flight", "verified"]}, {}))
+    decided = workclass.decided(ctx)
+    holder = {"field": "origin", "kind_of_record": "decision"}
+    short = {"id": "q", "state": "in-flight", "origin": {"ref": "short.md"}}
+    assert not decided(short, holder)
+    assert decided.missing["q"] == ("short.md", ["the sources weighed"])
+    assert decided({"id": "w", "state": "in-flight", "origin": {"ref": "whole.md"}}, holder)
+    assert decided(dict(short, state="landed"), holder), "a decision a card landed on was held to a later rule"
