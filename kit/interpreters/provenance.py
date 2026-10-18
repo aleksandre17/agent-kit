@@ -328,7 +328,7 @@ def authenticate(ctx, capability, measured: str, moment: str) -> dict:
     return found | {
         "state": VERIFIED if ran.returncode == 0 else REFUTED,
         "trust_root_digest": hashlib.sha256(root.read_bytes()).hexdigest(),
-        "evidence": (ran.stdout + ran.stderr).decode("utf-8", "replace").strip()[:400],
+        "evidence": (ran.stdout + ran.stderr).decode("utf-8", "replace").strip(),  # evidence, kept whole
     }
 
 

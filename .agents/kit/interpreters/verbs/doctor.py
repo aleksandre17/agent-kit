@@ -62,9 +62,16 @@ def run(ctx, args) -> int:
     dead = 0
     for surface in declared.rules(ctx, *hooks.SURFACES):
         hand = surface.get("hands")
-        if not hand or surface["id"] not in served:
+        if surface["id"] not in served:
             continue
-        ran = subprocess.run([sys.executable, "-I", "-B", str(cli if cli.is_file() else ctx.manifest.root / "interpreters" / "cli.py"),
+        if not hand:  # served with no hook hand: no canary can be fired through it, and that is said
+            print(f"  UNTESTED  {surface['id']}: served, and declares no hook hand a canary could be fired through")
+            continue
+        if not cli.is_file():  # the path the hook runs is the one judged -- never the kit's own in its place
+            dead += 1
+            print(f"  DEAD  {surface['id']}: the hook runs {cli}, which is not there")
+            continue
+        ran = subprocess.run([sys.executable, "-I", "-B", str(cli),
                               "judge", "--root", str(ctx.workspace.root), "--surface", surface["id"], "--canary"],
                              input=_stdin(hand, canary["proves"]["path"], canary["proves"]["text"]),
                              capture_output=True, text=True, encoding="utf-8")
@@ -74,5 +81,7 @@ def run(ctx, args) -> int:
         last = fired[-1]["at"] if fired else "never"
         print(f"  {'LIVE' if live else 'DEAD'}  {surface['id']}: {canary['id']} refused with exit {ran.returncode} "
               f"(expects {hand['refusal']['exit']}); {len(fired)} receipt(s), last {last}")
+        if not live and ran.stderr.strip():  # why it did not refuse, in its own words
+            print("        " + ran.stderr.strip().replace("\n", "\n        "))
     _controls(ctx, served)
     return 1 if dead else 0

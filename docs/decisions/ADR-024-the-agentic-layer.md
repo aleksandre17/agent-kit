@@ -265,3 +265,30 @@ workaround); Google SRE, "Managing Incidents" (mitigate, then fix); ISO/IEC 2700
 review's to catch. The tracking reference is checked for form, not that the record exists and names an exit
 condition; that is the host's review and its work records.
 
+## Amendment 2 — nothing is lost silently (2026-10-18, owner-delegated)
+
+**Context.** A run of the kit's own acceptance suite read as one failure when its module had two: the runner
+printed the first 6000 characters of a failed report and nothing said the rest was cut. An audit for that class
+-- information reduced, dropped or defaulted without saying so -- found it across the kit: a brief check that
+dropped every NOT MEASURED line of a passing gate, a walk that discarded every act's output and reported a
+checked install, an oracle that dropped the gates it could not apply, a cost read as zero where it was never
+reported, a test report whose unparseable counter read as no failure, a peer write skipped into an admission.
+The field names the class: CWE-222, CWE-223, CWE-390, CWE-636; OWASP Top 10:2025 A09 and A10.
+
+**Decision.**
+1. *A doctrine MUST, `nothing-is-lost-silently`*: what a change reports, records or decides never drops, cuts or
+   defaults information without saying so. Enforced by review against the engineering-standards catalogue,
+   whose security chapter names the standards and what each asks.
+2. *Each instance found is fixed where it lives*, with a test that fails without the fix: an unknown is
+   recorded as unknown (None, NOT MEASURED, NOT JUDGED, unmeasured), an input that cannot be read refuses
+   where reading it as absent would decide something (KIT0093, KIT0094), and a cut says what it cut.
+
+**Rejected.** An edit gate that refuses the swallowed-error shapes (`except ...: pass`, an empty `catch`,
+`ignore_errors`): the shapes are per language, a legitimate skip that is counted looks the same to a pattern, and
+a gate that refuses honest code teaches its readers to route around it -- the opposite of what the rule asks.
+Refusing every unreadable input: a host's corpus may hold a document no gate needs, and failing check on it
+would make a red that means nothing; such inputs are named, not failed.
+
+**Owed.** The agent-kit and stack-kit suites hold the instances found; an outside reading of the kit for the
+same class, at the next release, is how this amendment is kept honest.
+

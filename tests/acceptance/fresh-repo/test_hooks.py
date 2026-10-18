@@ -138,6 +138,12 @@ class Hooks(Fixtures, unittest.TestCase):
         broken = self.run_kit(KIT, host, "doctor")
         self.assertEqual(1, broken.returncode, said(broken))
         self.assertIn("DEAD", broken.stdout)
+        # The entry point the hook runs is the one judged: gone, the hook is dead -- never judged LIVE
+        # through the kit's own entry point in its place.
+        (pinned.parent.parent / "cli.py").unlink()
+        gone = self.run_kit(KIT, host, "doctor")
+        self.assertEqual(1, gone.returncode, said(gone))
+        self.assertIn("which is not there", gone.stdout)
 
     def test_483_the_push_gate_is_served_beside_the_commit_gate(self):
         host = self.started()

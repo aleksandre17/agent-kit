@@ -66,6 +66,15 @@ class Start(Fixtures, unittest.TestCase):
 
                 ran = self.start(host, path, "--approve", "acceptance-suite")
                 self.assertEqual(0, ran.returncode, said(ran))
+                # One line per act is printed and the rest is kept, never dropped (CWE-222): the walk
+                # names where, keeps every act's whole output there, and shows the closing check's own
+                # verdict -- which is the walk's one check, never repeated on the same bytes.
+                kept = ran.stdout.rsplit("Every act's whole output: ", 1)[1].strip()
+                log = (host / kept).read_text(encoding="utf-8")
+                self.assertIn("$ take --path", log)
+                self.assertTrue(log.rstrip().endswith("gate(s) failed"), log[-400:])
+                self.assertIn("  check: 0 gate(s) failed", ran.stdout)
+                self.assertNotIn("[check exit", ran.stdout)
                 checked = self.run_kit(KIT, host, "check")
                 self.assertEqual(0, checked.returncode, said(checked))
                 ids = sorted(json.loads((path.parent / rel / DECLARATION).read_text(
@@ -82,6 +91,11 @@ class Start(Fixtures, unittest.TestCase):
             ran = self.start(host, STARTERS[0], "--approve", "acceptance-suite")
             self.assertEqual(0, ran.returncode, said(ran))
         self.assertEqual(0, self.run_kit(KIT, host, "check").returncode)
+        # The second walk wrote no runtime over the host's own, and says so -- never as if it had.
+        runtimes = _starter(STARTERS[0])["runtimes"]
+        if runtimes:
+            self.assertIn(f"[runtimes written: none; the host's own kept: {', '.join(r['id'] for r in runtimes)}]",
+                          ran.stdout)
 
     def test_411_an_answered_host_whose_reading_moved_is_walked_to_green(self):
         # The opening acts are for a host with no kit; on one that has accepted its answer they would

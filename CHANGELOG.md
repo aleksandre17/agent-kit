@@ -21,6 +21,32 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   on the same line (`ABC-123`, `#123`, `card: <id>`) is refused; prose and code that only use the words
   are admitted.
 
+**Added — nothing is lost silently (ADR-024 amendment 2)**
+- engineering 1.2.0: MUST `nothing-is-lost-silently` -- a cut says how much and where the whole is kept, an
+  error is handled or propagated, an unreadable input is NOT MEASURED or refused, a step that ran nothing is
+  not counted as run (CWE-222, CWE-223, CWE-390, CWE-636; OWASP A09/A10:2025), enforced by review. The
+  engineering-standards security chapter names the standards and what each asks.
+- KIT0093 (a detector's evidence is there and cannot be read) and KIT0094 (a peer's recorded write cannot be
+  read): each refuses where the kit read the input as absent.
+
+**Fixed — found by an audit for that class**
+- `check --brief` names every passing gate whose lines it leaves out (NOT MEASURED, a reading's counts).
+- `start` keeps every act's whole output in the observed plane (`start.log`), shows the closing check's own
+  verdict, and checks once: the closing `init` already ends in `check`, and a second one on the same bytes
+  proved nothing new. It says which runtimes it wrote and which of the host's own it kept.
+- `trial` fails a run its oracle cannot judge (an uncalibrated gate), stops on a fixture act that fails, names
+  every failing gate of the fixture's check, and removes its scratch whole (git's read-only objects once
+  left it behind); `memory` names a note an uncalibrated gate could not judge.
+- The cost frontier counts a run that reported no token count as unmeasured, never as 0: the cost it shows is
+  a floor, and every budget measure is not measurable while any run or task record is unread.
+- A test report counter that does not parse is unreadable, never 0 failures; a malformed JSON file a detector
+  reads refuses the reading; ledger lines, transcript lines, route documents, context pages, budget rows and
+  module maps that cannot be read are counted or named; `doctor` judges a hook through the entry point the hook
+  runs, never the kit's own in its place, and prints why a dead one did not refuse.
+- `upgrade --mode laws` names every line the retired page holds outside its numbered laws before removing it.
+- Cuts state what they cut (`pin`, review errors, an eval's repeated task); signature evidence is kept whole.
+
+
 ## 0.3.1 — 2026-10-17
 
 **Fixed — a hook's git environment no longer redirects the kit's reading of another repository**

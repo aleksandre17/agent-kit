@@ -29,12 +29,16 @@ UNCLASSED = "unclassed"
 
 
 def _peak(ctx, params) -> "int | None":
+    if returns.unreadable(ctx):  # a record not read may hold the peak: a floor is not held to a ceiling
+        return None
     peaks = [r["economy"]["peak_context"] for r in returns.recorded(ctx)
              if isinstance(r.get("economy"), dict) and isinstance(r["economy"].get("peak_context"), int)]
     return max(peaks) if peaks else None
 
 
 def _calls(ctx, params) -> "int | None":
+    if returns.unreadable(ctx):
+        return None
     calls = [r["economy"]["calls"] for r in returns.recorded(ctx)
              if (r.get("deliverable") or {}).get("status") == "delivered"
              and isinstance((r.get("economy") or {}).get("calls"), int)]
@@ -47,19 +51,24 @@ def accepted(task) -> bool:
             and not task.get("escalate"))
 
 
-def _out_tokens(task) -> int:
+def _out_tokens(task) -> "int | None":
+    """The output tokens a run reported -- None when it reported none: unmeasured, never zero."""
     value = (task.get("telemetry") or {}).get(OUT_TOKENS)
-    return value if isinstance(value, int) else 0
+    return value if isinstance(value, int) else None
 
 
 def frontier(ctx) -> dict:
-    """task class -> (runs, first-pass accepted, output tokens, output tokens per accepted change)."""
+    """task class -> (runs, first-pass accepted, output tokens, output tokens per accepted change, runs
+    that reported no token count). While any run is unmeasured, the tokens are a floor, never the cost."""
     found = {}
     for task in returns.tasks(ctx):
         cls = (task.get("route") or {}).get("task_class") or UNCLASSED
-        runs, ok, out = found.get(cls, (0, 0, 0))[:3]
-        found[cls] = (runs + 1, ok + (1 if accepted(task) else 0), out + _out_tokens(task))
-    return {cls: (runs, ok, out, (out // ok) if ok else None) for cls, (runs, ok, out) in found.items()}
+        runs, ok, out, unmeasured = found.get(cls, (0, 0, 0, 0))
+        tokens = _out_tokens(task)
+        found[cls] = (runs + 1, ok + (1 if accepted(task) else 0), out + (tokens or 0),
+                      unmeasured + (1 if tokens is None else 0))
+    return {cls: (runs, ok, out, (out // ok) if ok else None, unmeasured)
+            for cls, (runs, ok, out, unmeasured) in found.items()}
 
 
 def candidates(ctx, times: int) -> list:
@@ -78,20 +87,30 @@ def _reported(ctx, params) -> list:
     and the output tokens each accepted change cost -- and the repeated work that should be a script.
     Reported, never failed: the cheapest route is kept while these numbers and the evals hold."""
     table = frontier(ctx)
-    if not table:
+    unread = returns.unreadable(ctx)
+    if unread:
+        print(f"        UNREADABLE  {len(unread)} task record(s), counted in no figure here: {', '.join(unread)}")
+    if not table and not unread:
         print("        NOTHING DISPATCHED -- no task record on this host, so no cost was measured")
-    for cls, (runs, ok, out, per) in sorted(table.items()):
+    for cls, (runs, ok, out, per, unmeasured) in sorted(table.items()):
+        floor = "at least " if unmeasured else ""
+        cost = f"{floor}{per} per accepted change" if per is not None else "n/a per accepted change"
         print(f"        FRONTIER {cls}: {runs} run(s), {ok} accepted on the first pass "
-              f"({(100 * ok) // runs}%), {out} output token(s), {per if per is not None else 'n/a'} per accepted change")
+              f"({(100 * ok) // runs}%), {floor}{out} output token(s), {cost}"
+              + (f" -- {unmeasured} run(s) reported no token count, so the cost is a floor" if unmeasured else ""))
     for said, n in candidates(ctx, params.get("repeated", 3)):
-        print(f"        CANDIDATE  the same task {n} times -- make it a verb or a script: {said[:100]}")
+        print(f"        CANDIDATE  the same task {n} times -- make it a verb or a script: {said[:100]}{'...' if len(said) > 100 else ''}")
     return []
 
 
 def _per_accepted(ctx, params) -> "int | None":
+    """The output tokens per accepted change -- not measurable (None) while any run reported no count: a
+    floor held to a budget would pass it for being blind (CWE-636)."""
     table = frontier(ctx)
     ok = sum(row[1] for row in table.values())
-    return (sum(row[2] for row in table.values()) // ok) if ok else None
+    if not ok or any(row[4] for row in table.values()) or returns.unreadable(ctx):
+        return None
+    return sum(row[2] for row in table.values()) // ok
 
 
 KINDS = {"frontier-reported": _reported}

@@ -37,6 +37,13 @@ CLAIM, ARBITRATION = "claim", "arbitration"
 WRITES = "writes"
 
 
+class PeerWriteUnreadable(KitError):
+    """A peer's recorded write that cannot be read: it may be the write that should refuse this edit, so no
+    edit is admitted past it (CWE-636)."""
+
+    code = "KIT0094"
+
+
 class ClaimRefused(KitError):
     """A claim asked for incompletely, or a release of a claim this principal does not hold."""
 
@@ -141,12 +148,15 @@ def _peer_writes(ctx, principals) -> list:
         owner = rel.rsplit("/", 1)[-1].rsplit(".", 1)[0]
         if owner in principals:
             continue
-        for line in ctx.workspace.read_text(rel).splitlines():
+        for number, line in enumerate(ctx.workspace.read_text(rel).splitlines(), start=1):
             try:
                 row = json.loads(line)
-            except ValueError:
-                continue
-            found.append((owner, row["path"], row["at"]))
+                found.append((owner, row["path"], row["at"]))
+            except (ValueError, KeyError, TypeError) as exc:
+                # A peer's write the judge cannot read may be the one that should refuse this edit: it is
+                # never skipped into an admission (CWE-636).
+                raise PeerWriteUnreadable(f"{rel}:{number}: a peer's recorded write cannot be read ({exc!r}) -- the "
+                                          f"window cannot be judged; repair or remove the line") from exc
     return found
 
 

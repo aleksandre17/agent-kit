@@ -21,11 +21,20 @@ def _local(tag: str) -> str:
     return tag.rsplit("}", 1)[-1]
 
 
+class _Uncounted(ValueError):
+    """A counting attribute that is there and is not a number: the report cannot be read as counting."""
+
+
 def _int(element, name: str) -> int:
-    try:
-        return int(float(element.get(name, "0") or 0))
-    except ValueError:
+    """An absent attribute counts 0; one that is there and is not a number is never read as 0 -- a
+    `failures` that does not parse would read as a suite that failed nothing (CWE-636)."""
+    value = element.get(name)
+    if value is None or value == "":
         return 0
+    try:
+        return int(float(value))
+    except ValueError as exc:
+        raise _Uncounted(f"<{_local(element.tag)} {name}=\"{value}\"> is not a count") from exc
 
 
 def _suite(suite) -> tuple:
@@ -81,7 +90,10 @@ def _test_report_passed(request) -> criteria.Verdict:
     if reader is None:
         return criteria.Verdict.unreadable(f"{ref} is a <{_local(root.tag)}> document, which is neither a "
                                            f"JUnit nor a TRX report")
-    total, failed, errored = reader(root)
+    try:
+        total, failed, errored = reader(root)
+    except _Uncounted as exc:
+        return criteria.Verdict.unreadable(f"{ref}: {exc}")
     if total <= 0:
         return criteria.Verdict.unreadable(f"{ref} counts no test that ran: a run that ran nothing proves nothing")
     if failed or errored:

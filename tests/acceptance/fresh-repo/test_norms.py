@@ -389,6 +389,11 @@ class Norms(Fixtures, unittest.TestCase):
         for i, line in enumerate(lines):
             if "READ the normative tree" in line:
                 self.assertIn("FF-NORMS", lines[i - 1], "a gate's own lines appear only with its header")
+        # What --brief leaves out of a passing gate is named, never dropped (CWE-222): the layout floor's
+        # NOT MEASURED lines are not shown, and the gate that said them is.
+        self.assertNotIn("NOT MEASURED", brief.stdout)
+        left_out = next(ln for ln in lines if "said more than PASS, left out by --brief: " in ln)
+        self.assertIn("FF-HOST-FLOOR", left_out)
 
         (host / "lib").mkdir()
         (host / "lib" / "a.py").write_text("A = 1\n", encoding="utf-8")

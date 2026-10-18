@@ -58,6 +58,11 @@ class SubagentLedger(unittest.TestCase):
                          (row[ledger.AGENT_ID], row[ledger.AGENT_NAME], row[ledger.PROVIDER]))
         self.assertIs(False, row["mismatch"])
         self.assertTrue(row["reported"])
+        self.assertEqual(0, row["unparsed"])
+
+    def test_a_transcript_line_that_cannot_be_read_is_counted_never_dropped_unseen(self):
+        row = ledger.read(HAND, self.event([_turn(1, "m-small", "m-small", 5, 1), "{torn"]), self.root)
+        self.assertEqual((1, 1), (row["turns"], row["unparsed"]))
 
     def test_a_requested_model_the_turns_did_not_run_on_is_named(self):
         row = ledger.read(HAND, self.event([_turn(1, "m-small", "m-large", 1, 1)]), self.root)

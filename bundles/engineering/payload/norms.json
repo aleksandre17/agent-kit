@@ -765,6 +765,21 @@
  },
  {
   "schema_version": 1,
+  "id": "engineering@1.2.0#nothing-is-lost-silently",
+  "genre": "rule",
+  "title": "Nothing is lost silently",
+  "says": "What a change reports, records or decides never drops, cuts or defaults information without saying so: a cut output says how much it cut and where the whole is kept; a detected error is handled or propagated, never swallowed; an input that cannot be read is NOT MEASURED or refused, never read as absent, empty or clean; a step that ran nothing is counted as not run; an unknown is recorded as unknown. The field's names for the failure are CWE-222 (truncation), CWE-223 (omission), CWE-390 (an error detected without action) and CWE-636 (failing open); OWASP Top 10:2025 A09 and A10. It is judged in review against the engineering-standards catalogue.",
+  "publisher": "agent-kit (generic engineering doctrine)",
+  "derives_from": "engineering@1.2.0#review",
+  "modality": "MUST",
+  "subject": "change-quality",
+  "procedure": "engineering-standards",
+  "enforced_by": [
+   "verb:review"
+  ]
+ },
+ {
+  "schema_version": 1,
   "id": "engineering@1.2.0#seam-tests",
   "genre": "rule",
   "title": "Every seam is tested",

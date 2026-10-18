@@ -40,7 +40,7 @@ def _review_approved(request) -> criteria.Verdict:
         return criteria.Verdict.unreadable(f"{ref} is not a readable review record -- {exc}")
     errors = ctx.manifest.validate(record, SCHEMA)
     if errors:
-        return criteria.Verdict.unreadable(f"{ref} is not a review record: {'; '.join(errors[:3])}")
+        return criteria.Verdict.unreadable(f"{ref} is not a review record: {'; '.join(errors)}")
     if isinstance(card, dict) and record["card"] != card.get("id"):
         return criteria.Verdict.unreadable(f"{ref} reviews {record['card']!r}, not {card.get('id')!r}")
     if isinstance(card, dict) and record["reviewer"] in _authors(card):

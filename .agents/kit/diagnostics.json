@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "prefix": "KIT",
-  "issued": 92,
+  "issued": 94,
   "codes": [
     {
       "code": "KIT0001",
@@ -554,6 +554,18 @@
       "status": "active",
       "title": "an areas draft that cannot be taken honestly",
       "explanation": "A host's areas are drafted from the module maps its build tool's adapter publishes, into the areas the delivery capability declares; the draft only adds, and writing it is the owner's door (ADR-025 amendment 4)."
+    },
+    {
+      "code": "KIT0093",
+      "status": "active",
+      "title": "a detector's evidence is there and cannot be read",
+      "explanation": "A file a detector reads exists and is not in the form its evidence kind reads (a JSON file that does not parse). It is not an absent file: a reading taken past it would say the host lacks what the file declares. Repair the named file, then take the reading again."
+    },
+    {
+      "code": "KIT0094",
+      "status": "active",
+      "title": "a peer's recorded write cannot be read",
+      "explanation": "The writes another principal recorded inside this host's window are what a judge reads to refuse a conflicting edit. A line that cannot be read may be the very write that should refuse it, so no edit is admitted past it. Repair or remove the named line."
     }
   ]
 }

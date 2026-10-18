@@ -370,7 +370,7 @@ def _verified(ctx, packet, tree, run) -> dict:
     done = run(profile["argv"], cwd=tree, stdin=None, timeout=profile["timeout_s"])
     said = ((done.stdout or "") + (done.stderr or "")).strip().splitlines()
     return {"profile": profile["id"], "exit": done.returncode, "passed": done.returncode == 0,
-            "tail": said[-20:]}
+            "tail": said[-20:], "lines": len(said)}  # the tail, and how much it is the tail of
 
 
 def _question(adapter: dict, asks: dict, artifacts: list, at: str) -> dict:

@@ -12,31 +12,32 @@ import dispatching
 import ephemeral
 
 
-def tasks(ctx) -> list:
-    """Every task record a dispatch on this host left -- its route, its ending, its admission and
-    what it cost (`telemetry`)."""
+def _read(ctx) -> tuple:
+    """(records, unreadable): every task record a dispatch on this host left, and the path of each one
+    that could not be read -- named by its reader, never skipped silently (CWE-223)."""
     home = ephemeral.place(ctx, dispatching.HOME)
-    found = []
-    for rel in ctx.workspace.files_under(home):
-        if rel.endswith("/task.json"):
-            try:
-                found.append(json.loads(ctx.workspace.read_text(rel)))
-            except (OSError, ValueError):
-                continue
-    return found
-
-
-def recorded(ctx) -> list:
-    """Every structured return a dispatch on this host recorded, read from its task record."""
-    home = ephemeral.place(ctx, dispatching.HOME)
-    found = []
+    found, unread = [], []
     for rel in ctx.workspace.files_under(home):
         if not rel.endswith("/task.json"):
             continue
         try:
-            record = json.loads(ctx.workspace.read_text(rel))
+            found.append(json.loads(ctx.workspace.read_text(rel)))
         except (OSError, ValueError):
-            continue
-        if isinstance(record.get("return"), dict):
-            found.append(record["return"])
-    return found
+            unread.append(rel)
+    return found, unread
+
+
+def tasks(ctx) -> list:
+    """Every readable task record a dispatch on this host left -- its route, its ending, its admission
+    and what it cost (`telemetry`). The ones that cannot be read are `unreadable`."""
+    return _read(ctx)[0]
+
+
+def unreadable(ctx) -> list:
+    """The task records that exist and cannot be read: no figure counts them, so every figure says so."""
+    return _read(ctx)[1]
+
+
+def recorded(ctx) -> list:
+    """Every structured return a dispatch on this host recorded, read from its task record."""
+    return [record["return"] for record in tasks(ctx) if isinstance(record.get("return"), dict)]

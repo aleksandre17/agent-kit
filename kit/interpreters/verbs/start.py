@@ -26,6 +26,7 @@ import sys
 from pathlib import Path
 
 import doors
+import ephemeral
 import hostlock
 import take as take_verb
 import serving
@@ -95,9 +96,10 @@ def run(ctx, args) -> int:
             # the areas are drafted from the modules a build tool declares (only added, never rewritten).
             ("areas", ["--approve", who or "<who>"])]
     # Activation precedes the attesting init: that init ends in `check`, and a served setting not
-    # yet pointed at what it serves is a failure `check` must report, not one to walk past.
+    # yet pointed at what it serves is a failure `check` must report, not one to walk past. That check
+    # is the walk's last: a second one on the same bytes would prove nothing new (Cardinal IX).
     walk += [("activate", ["--surface", s, "--approve", who or "<who>"]) for s in starter["activate"]]
-    walk += [("init", ["--approve", who or "<who>"]), ("check", [])]
+    walk += [("init", ["--approve", who or "<who>"])]
     print(f"start: {starter['id']} -- {starter['summary']}")
     for verb, words in walk:
         print(f"  {verb}  {' '.join(words)}")
@@ -110,19 +112,38 @@ def run(ctx, args) -> int:
                      "Starting a host decides what it runs; the record of every act names who decided.")
 
     host, kit = ctx.workspace.root, ctx.manifest.root
-    for verb, words in walk:
-        if verb == "enable":
-            _enable(kit, host, ctx.clock, words)
-        elif verb == "runtimes":
-            _runtimes(kit, host, ctx.clock, starter["runtimes"])
-        else:
-            _act(kit, host, verb, words, args)
+    said: list = []
+    try:
+        for verb, words in walk:
+            if verb == "enable":
+                _enable(kit, host, ctx.clock, words)
+            elif verb == "runtimes":
+                _runtimes(kit, host, ctx.clock, starter["runtimes"])
+            else:
+                said.append(_act(kit, host, verb, words, args))
+    finally:
+        kept = _keep(ctx, said)
+    # The closing check's own verdict, as it said it -- a failure held under a stance that does not fail
+    # check is still a failure, and a walk that ends green never reads as one that ended clean (CWE-223).
+    for line in (said[-1][2].splitlines() if said else []):
+        if line.startswith("check:"):
+            print(f"  {line}")
     print(f"start: {starter['id']} carried this host to a served, checked install by {who}; "
-          f"what it HOLDS -- each stance, each law -- is still the host's to answer")
+          f"what it HOLDS -- each stance, each law -- is still the host's to answer. Every act's whole "
+          f"output: {kept}")
     return 0
 
 
-def _act(kit: Path, host: Path, verb: str, words: list, args) -> None:
+def _keep(ctx, said: list) -> str:
+    """Every act's whole output, in the plane that holds what a run leaves behind: a walk prints one line
+    per act, and the rest is kept, never dropped (CWE-222)."""
+    rel = ephemeral.place(ctx, "start.log")
+    ephemeral.scope(ctx).write_text(rel, "".join(
+        f"$ {verb} {' '.join(words)}\n{output}\n" for verb, words, output in said))
+    return rel
+
+
+def _act(kit: Path, host: Path, verb: str, words: list, args) -> tuple:
     argv = [sys.executable, "-I", "-B", str(Path(__file__).resolve().parent.parent / "cli.py"), verb,
             "--root", str(host), "--kit", args.kit, *words]
     ran = subprocess.run(argv, capture_output=True, text=True, encoding="utf-8")
@@ -131,6 +152,7 @@ def _act(kit: Path, host: Path, verb: str, words: list, args) -> None:
     if ran.returncode != 0 and not drafted:
         raise StartError(f"the walk stopped at `{verb} {' '.join(words)}` (exit {ran.returncode}):\n"
                          + (ran.stdout + ran.stderr).strip())
+    return verb, words, ran.stdout + ran.stderr
 
 
 def _answers(kit: Path, host: Path, clock) -> tuple:
@@ -157,9 +179,11 @@ def _runtimes(kit: Path, host: Path, clock, runtimes: list) -> None:
                   if any(i.get("shape") == serving.SHAPE for i in c.installs))
     item = next(i for i in server.installs if i.get("reads_as") == server.raw["composes"]["instances"])
     ws = ctx.workspace.scoped(server.targets())
+    written, kept = [], []
     for row in runtimes:
         rel = f"{item['target'].rstrip('/')}/{row['id']}.json"
-        if ctx.workspace.exists(rel):
+        if ctx.workspace.exists(rel):  # the host's own instance stands: kept, and said to be
+            kept.append(row["id"])
             continue
         document = {"schema_version": ctx.manifest.version_of(item["validates"]), **row}
         errors = ctx.manifest.validate(document, item["validates"])
@@ -167,4 +191,6 @@ def _runtimes(kit: Path, host: Path, clock, runtimes: list) -> None:
             raise StartError(f"the starter's runtime {row['id']!r} does not honour "
                              f"{item['validates']!r}:\n  " + "\n  ".join(errors))
         ws.write_json(rel, document)
-    print(f"  [runtimes {', '.join(r['id'] for r in runtimes)}]")
+        written.append(row["id"])
+    print(f"  [runtimes written: {', '.join(written) or 'none'}"
+          + (f"; the host's own kept: {', '.join(kept)}" if kept else "") + "]")

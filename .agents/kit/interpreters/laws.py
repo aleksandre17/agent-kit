@@ -42,6 +42,18 @@ def items(text: str) -> list:
     return found
 
 
+def outside(text: str) -> list:
+    """Every non-blank line the page holds outside its numbered laws -- a heading, a preface, a law written
+    in another form. Retiring the page removes them with it, so each is named first (CWE-223)."""
+    covered = [match.span() for match in _ITEM.finditer(text)]
+    found, at = [], 0
+    for line in text.splitlines(keepends=True):
+        if line.strip() and not any(start <= at < end for start, end in covered):
+            found.append(line.strip())
+        at += len(line)
+    return found
+
+
 def rules(text: str, address: str, publisher: str, genre: str, version: int) -> list:
     """The page's laws as host rules the host then completes (`derives_from`, `modality`, `subject`):
     `address` is the `<id>@<semver>` they are published under, `publisher` who moved them, `genre`

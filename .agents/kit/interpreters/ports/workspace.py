@@ -13,6 +13,7 @@ import json
 import os
 import stat
 import shutil
+import sys
 import time
 from pathlib import Path, PurePosixPath
 
@@ -44,6 +45,27 @@ def _replace(source: Path, target: Path) -> None:
             if attempt == _REPLACE_ATTEMPTS - 1:
                 raise
             time.sleep(_REPLACE_PAUSE)
+
+
+def remove_tree(path: Path) -> list:
+    """Remove a tree whole and return what could not be removed. git writes its objects read-only, which a
+    plain removal cannot delete on Windows, so a read-only file is made writable first; anything still left
+    is RETURNED for the caller to name -- a removal that ignored its errors leaves trees nobody sees."""
+    left: list = []
+
+    def unlock(func, target, _exc):
+        try:
+            os.chmod(target, stat.S_IWRITE)
+            func(target)
+        except OSError as exc:
+            left.append(f"{target} ({exc})")
+
+    if Path(path).exists():
+        if sys.version_info >= (3, 12):
+            shutil.rmtree(path, onexc=unlock)
+        else:
+            shutil.rmtree(path, onerror=unlock)
+    return left
 
 
 class WorkspaceError(KitError):
@@ -310,11 +332,12 @@ class Workspace:
                 _replace(target, aside)
             _replace(stage, target)
         except BaseException:
-            shutil.rmtree(stage, ignore_errors=True)
+            remove_tree(stage)  # the write failed and is raised; a stage left behind is the lesser fault
             if aside.exists() and not target.exists():
                 _replace(aside, target)
             raise
-        shutil.rmtree(aside, ignore_errors=True)
+        for left in remove_tree(aside):
+            print(f"workspace: the replaced copy was NOT removed: {left}", file=sys.stderr)
 
     def write_json(self, rel: str, value) -> None:
         self.write_text(rel, json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n")

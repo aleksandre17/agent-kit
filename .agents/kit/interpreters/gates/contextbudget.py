@@ -100,8 +100,9 @@ def _ceilings(ctx) -> dict:
             if gate["kind"] in readers:
                 try:
                     found.update(readers[gate["kind"]](ctx, gate.get("params", {})))
-                except KitError:
-                    pass
+                except KitError as exc:  # its row holds no ceiling here: said, so a default is never misread
+                    print(f"        UNREAD  {gate['id']}: this host's budget row could not be read ({exc}) -- "
+                          f"the kit's default holds where it would have")
     return found
 
 
@@ -131,6 +132,8 @@ def readings(ctx) -> dict:
                     text = ctx.workspace.read_text(page)
                 if text is not None:
                     pages.append((page, len(text.encode("utf-8")), row))
+                else:  # pointed to and not there: no bytes to count, and that is said, not summed as zero
+                    print(f"        NOT COUNTED  {page}: pointed to by the context map and not there")
         per_token = (surfaces.get(surface, {}).get("tokens") or estimator)["bytes_per_token"]
         measured = {}
         for measure, (_layer, count) in COUNTS.items():

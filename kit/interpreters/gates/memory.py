@@ -69,8 +69,10 @@ def _held(ctx, params) -> list:
                     continue
         for note in notes:
             text = note.read_text(encoding="utf-8", errors="replace")
-            refused, _blind = judgement.refusals(ctx, [(f"{surface['id']}-memory/{note.name}", text)])
+            refused, blind = judgement.refusals(ctx, [(f"{surface['id']}-memory/{note.name}", text)])
             failures += [f"{note}: {gate} -- {because}" for _p, gate, because, _i in refused]
+            if blind:  # an uncalibrated gate fails check where it is declared; here it is named, not counted
+                print(f"        NOT JUDGED  {note.name}: {', '.join(sorted(set(blind)))} (uncalibrated)")
             failures += [f"{note}: copies {where} ({line[:60]}...) -- point to it instead"
                          for line, where in copies(text, carried, shortest)]
         print(f"        MEASURED  {surface['id']}: {len(notes)} memory file(s) at {home}")

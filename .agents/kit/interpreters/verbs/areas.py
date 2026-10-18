@@ -162,7 +162,10 @@ def marked(doc: dict, carried: list, read_json, excluded=()) -> tuple:
 def run(ctx, args) -> int:
     hostlock.arrive(ctx, args)
     import prove  # the vouched commands are prove's reading, held once
-    vouched, _unread = prove._commands(ctx)
+    vouched, unread = prove._commands(ctx)
+    if unread:  # an area such a command would prove is drafted as proved by everything: why is said
+        print("areas: commands not read -- " + "; ".join(f"{prefix} ({why})" for prefix, why in sorted(unread.items()))
+              + " -- an area one of them would prove is drafted as proved by everything")
     capabilities = ctx.enabled_capabilities()
     try:
         kit_dir = ctx.manifest.root.resolve().relative_to(ctx.workspace.root.resolve()).as_posix()
@@ -196,6 +199,7 @@ def run(ctx, args) -> int:
             maps.append((dict(document, path_field="path"), modules))
             continue
         if not ctx.workspace.exists(document["path"]):
+            print(f"areas: {document['id']} reads {document['path']}, which is not here -- no module drafted from it")
             continue
         value = ctx.workspace.read_json(document["path"])
         for step in document["pointer"].split("."):

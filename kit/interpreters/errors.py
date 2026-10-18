@@ -34,6 +34,14 @@ class KitError(Exception):
             )
 
 
+class EvidenceUnreadable(KitError):
+    """A file a detector reads is there and cannot be read in the form its evidence kind reads. Not an
+    absent one: a reading taken past it would read the host as lacking what the file declares (CWE-636),
+    so the reading is refused and the file named."""
+
+    code = "KIT0093"
+
+
 class PendingApproval(KitError):
     """Not a failure -- a DECLARED STATE. The host was measured, a set was resolved and an answer
     was drafted, and the one human door in the whole design has not been walked through. It gets

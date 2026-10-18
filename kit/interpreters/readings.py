@@ -69,21 +69,29 @@ def _place(ctx) -> str:
     return ephemeral.place(ctx, LEDGER)
 
 
-def readings(ctx) -> dict:
-    """{key: the last reading recorded under it}. Lines that do not honour the kind are skipped and
-    COUNTED, never silently dropped."""
+def _read(ctx) -> tuple:
+    """({key: the last reading recorded under it}, how many lines did not honour the kind): a line that
+    cannot be read is skipped and COUNTED, never silently dropped."""
     rel = _place(ctx)
     if not ctx.workspace.exists(rel):
-        return {}
-    found = {}
+        return {}, 0
+    found, skipped = {}, 0
     for line in ctx.workspace.read_text(rel).splitlines():
         try:
             row = json.loads(line)
         except ValueError:
+            skipped += 1
             continue
-        if not ctx.manifest.validate(row, KIND):
+        if ctx.manifest.validate(row, KIND):
+            skipped += 1
+        else:
             found[row["key"]] = row
-    return found
+    return found, skipped
+
+
+def readings(ctx) -> dict:
+    """{key: the last reading recorded under it} -- the lines that cannot be read are counted by `_read`."""
+    return _read(ctx)[0]
 
 
 def record(ctx, key: str, fact: str, instrument: str, paths, at: str, by: str = None) -> dict:
@@ -114,9 +122,12 @@ def record(ctx, key: str, fact: str, instrument: str, paths, at: str, by: str = 
 
 def get(ctx, key: str) -> dict:
     """The reading under `key` while its paths still digest the same -- or a declared MISS."""
-    row = readings(ctx).get(key)
+    found, skipped = _read(ctx)
+    row = found.get(key)
     if row is None:
-        raise GroundMiss(f"{key!r} has never been measured on this host. Measure it, then record it "
+        unread = (f" -- or it was, on one of the {skipped} ledger line(s) that cannot be read ({_place(ctx)})"
+                  if skipped else "")
+        raise GroundMiss(f"{key!r} has never been measured on this host{unread}. Measure it, then record it "
                          f"with the instrument that produced it.")
     now = digest(ctx, row["paths"])
     moved = sorted(p for p in row["paths"] if now.get(p) != row["digest"].get(p))

@@ -53,11 +53,12 @@ def read(hand: dict, event, root: Path) -> dict:
         path = root / path
     if path is None or not path.is_file():
         return {**row, "reported": False, "turns": 0}
-    entries, turns = spec["entries"], {}
+    entries, turns, unparsed = spec["entries"], {}, 0
     for text in path.read_text(encoding="utf-8", errors="replace").splitlines():
         try:
             line = json.loads(text)
-        except ValueError:
+        except ValueError:  # counted: sums over the rest are sums over what could be read
+            unparsed += 1
             continue
         if isinstance(line, dict) and all(line.get(k) == v for k, v in (entries.get("where") or {}).items()):
             key = _at(line, entries["key"])
@@ -73,7 +74,7 @@ def read(hand: dict, event, root: Path) -> dict:
     asked, ran = row.get(REQUESTED), row.get(RESPONDED)
     if asked is not None and ran is not None:
         row["mismatch"] = asked != ran
-    return {**row, "reported": bool(turns), "turns": len(turns)}
+    return {**row, "reported": bool(turns), "turns": len(turns), "unparsed": unparsed}
 
 
 def _files(ctx) -> list:

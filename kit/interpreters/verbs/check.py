@@ -71,6 +71,10 @@ def run(ctx, args) -> int:
     stances, unbound = stance_of.resolve(ctx.manifest, ctx.host_answers(), enabled, matured)
     failed = 0
     observed, clean = [], []
+    # A passing gate whose own lines `--brief` leaves out -- NOT MEASURED, a reading's counts -- is named,
+    # so a brief check never reads as one that measured everything (CWE-222).
+    unshown = []
+    brief = getattr(args, "brief", False)
     timed, began = [], time.perf_counter()
     for capability in enabled:
         for gate in capability.gates:
@@ -96,7 +100,9 @@ def run(ctx, args) -> int:
                 crashed = True
                 failures = [f"the gate kind {kind!r} crashed ({type(exc).__name__}: {exc}) -- an "
                             f"unjudged gate is not a passed one"]
-            if failures or not getattr(args, "brief", False):
+            if not failures and brief and (said.getvalue().strip() or (kind in reports and not crashed)):
+                unshown.append(gate["id"])
+            if failures or not brief:
                 print(f"  {'FAIL' if failures else 'PASS'}  {gate['id']}  ({kind})  {held.label()}")
                 if said.getvalue():
                     print(said.getvalue().rstrip("\n"))
@@ -124,5 +130,8 @@ def run(ctx, args) -> int:
     # What judging cost, every time (Cardinal IX): a check that grows slow says which gates made it so.
     slowest = ", ".join(f"{gid} {spent:.1f} s" for spent, gid in sorted(timed, reverse=True)[:3])
     print(f"check: {len(timed)} gate(s) judged in {time.perf_counter() - began:.1f} s -- the slowest: {slowest}")
+    if unshown:
+        print(f"check: {len(unshown)} passing gate(s) said more than PASS, left out by --brief: "
+              f"{', '.join(unshown)} -- `check` shows each of their lines")
     print(f"check: {failed} gate(s) failed")
     return 1 if failed else 0

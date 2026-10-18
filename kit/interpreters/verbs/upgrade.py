@@ -276,7 +276,8 @@ def _laws(ctx, args) -> int:
         print(f"upgrade: {page} is absent; this host's laws already have one source")
         return 0
     norms = next(iter(declared.sources(ctx, [reads]).values()))
-    moved = laws.rules(ctx.workspace.read_text(page), HOST_ADDRESS, args.approve or "<who>",
+    text = ctx.workspace.read_text(page)
+    moved = laws.rules(text, HOST_ADDRESS, args.approve or "<who>",
                        gate["params"]["genre"], ctx.manifest.version_of(laws.CONTRACT))
     taken = {n["id"] for n in norms} & {r["id"] for r in moved}
     if laws.numbered(norms) or taken:
@@ -284,6 +285,8 @@ def _laws(ctx, args) -> int:
                              f"a law moved over one would be a law with two homes. Reconcile {page} by hand")
     for rule in moved:
         print(f"upgrade: law {rule['law']} -> {target} as {rule['id']} ({rule['title']})")
+    for line in laws.outside(text):  # removed with the page and carried by no rule: named, every one
+        print(f"upgrade: NOT MOVED (removed with {page}): {line}")
     print(f"upgrade: {page} is removed once its {len(moved)} law(s) are rules; complete each rule's "
           f"derives_from, modality and subject where `check` names it")
     if getattr(args, "plan", False):

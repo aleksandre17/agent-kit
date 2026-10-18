@@ -102,7 +102,7 @@ def calibrated(rows: list) -> tuple:
     return usable, findings
 
 
-def _owed(ctx, resident, marks: list) -> list:
+def _owed(ctx, resident, marks: list) -> "list | None":
     """The obligations one document carries: `(the mark, the line number, the line)`.
 
     Read line by line over the WHOLE document, fenced blocks included -- the opposite choice from
@@ -112,7 +112,7 @@ def _owed(ctx, resident, marks: list) -> list:
     try:
         text = ctx.workspace.read_text(resident.path)
     except (OSError, ValueError, UnicodeDecodeError):
-        return []
+        return None  # unread is not "owes nothing": the caller names it
     found = []
     for number, line in enumerate(text.split("\n"), start=1):
         for identity, pattern in marks:
@@ -149,6 +149,9 @@ def _unreached(ctx, params) -> tuple:
     owed = {}
     for resident in reading.residents:
         carried = _owed(ctx, resident, marks)
+        if carried is None:
+            print(f"        NOT JUDGED  {resident.path}: it cannot be read as text, so what it owes is unknown")
+            continue
         if carried:
             owed[resident.path] = carried
 

@@ -154,6 +154,7 @@ def _require_shippable(manifest, seen: dict) -> None:
             f"{manifest.root.as_posix()}: this kit cannot state what it is, so it cannot be "
             f"pinned -- " + ", ".join(f"{row['path']} ({row['state']})"
                                       for row in seen["unresolved"][:8])
+            + (f", and {len(seen['unresolved']) - 8} more" if len(seen["unresolved"]) > 8 else "")
             + ". A pinned copy lacking a file runs until the day it needs it; fix the kit, "
             "then deliver it again")
 

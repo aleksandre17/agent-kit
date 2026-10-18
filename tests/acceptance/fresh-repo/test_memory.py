@@ -13,6 +13,8 @@ Every path and rule is read from the surface, the policy and the module that own
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import os
 import unittest
@@ -56,6 +58,13 @@ class Memory(Fixtures, unittest.TestCase):
             (home / "copy.md").write_text(fact + "\n", encoding="utf-8")
             (home / "secret.md").write_text(SECRET + "\n", encoding="utf-8")
             refused = memory_gate.KINDS[memory_gate.KIND](ctx, PARAMS)
+            # An edit gate that cannot be applied to a note is named there, never silently skipped
+            # (an uncalibrated gate fails check where it is declared; here it is not counted twice).
+            said_now = io.StringIO()
+            with mock.patch.object(memory_gate.judgement, "refusals", lambda _c, _e: ([], ["a-blind-gate"])), \
+                    contextlib.redirect_stdout(said_now):
+                memory_gate.KINDS[memory_gate.KIND](ctx, PARAMS)
+            self.assertIn("NOT JUDGED  pointer.md: a-blind-gate (uncalibrated)", said_now.getvalue())
         self.assertTrue(any("copy.md" in r and "docs/fact.md" in r for r in refused), refused)
         self.assertTrue(any("secret.md" in r for r in refused), refused)
         self.assertFalse(any("pointer.md" in r for r in refused), refused)
