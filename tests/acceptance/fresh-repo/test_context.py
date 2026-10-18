@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 import unittest
 
-from harness import KIT, REPO, Fixtures
+from harness import KIT, Fixtures
 
 import contextbudget
 import serving
@@ -35,16 +35,9 @@ BRIEFING = next(v["id"] for v in SPEC["views"] if v.get("sections") and "scopes"
 LAYER = next(r["layer"] for a in ADAPTERS for s in surfaces_of(a) for r in s["renders"]
              if r["view"] == BRIEFING and r.get("layer"))
 ALWAYS = next(m for m, (layer, _count) in contextbudget.COUNTS.items() if layer == LAYER)
-STARTER = REPO / "starters" / "standard.json"
 
 
 class Context(Fixtures, unittest.TestCase):
-
-    def started(self):
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
-        return host
 
     def test_440_every_served_layer_is_measured_and_a_started_host_is_within_the_defaults(self):
         host = self.started()

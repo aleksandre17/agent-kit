@@ -19,7 +19,6 @@ import contextbudget
 import derivation
 from manifest import Manifest
 from test_adapters import ADAPTERS, surfaces_of
-from test_pinned_kit import said
 
 CORE = Manifest(KIT)
 STARTER = REPO / "starters" / "standard.json"
@@ -41,9 +40,7 @@ def _sections(text: str, span: str) -> str:
 class Router(Fixtures, unittest.TestCase):
 
     def test_540_a_router_reaches_every_entry_and_every_entry_says_the_same(self):
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
+        host = self.started()
         (host / SEED).write_text(json.dumps({"schema_version": 1, "sections": [
             {"id": "task-router", "heading": "Task router", "text": "When a schema changes, read `docs/fixture.md` and nothing else."}]}) + "\n",
             encoding="utf-8", newline="\n")

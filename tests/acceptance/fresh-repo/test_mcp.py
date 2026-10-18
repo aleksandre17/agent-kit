@@ -75,17 +75,15 @@ def _parsed(text: str, target: str, span, comment):
 
 class Mcp(Fixtures, unittest.TestCase):
 
-    def started(self, servers):
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
+    def serving(self, servers):
+        host = self.started()
         (host / HOST_SERVERS).write_text(json.dumps({"schema_version": 1, "servers": servers}, indent=2) + "\n",
                                          encoding="utf-8", newline="\n")
         return host
 
     def test_430_every_server_reaches_every_product_and_an_untrusted_effect_is_denied(self):
         self.assertTrue(FILES, "the standard starter serves at least one product that reads MCP servers")
-        host = self.started(SERVERS)
+        host = self.serving(SERVERS)
         self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
         for target, span, comment in FILES:
             with self.subTest(file=target):
@@ -98,7 +96,7 @@ class Mcp(Fixtures, unittest.TestCase):
         self.assertIn({"server": "fixture-local", "tool": "drop"}, seen["allowed"])
 
     def test_431_an_undeclared_level_and_a_written_value_are_refused(self):
-        host = self.started([{**SERVERS[1], "trust": "a-level-nobody-declares"}])
+        host = self.serving([{**SERVERS[1], "trust": "a-level-nobody-declares"}])
         refused = self.run_kit(KIT, host, "render")
         self.assertIn(f"[{mcp_resolver.TrustError.code}]", said(refused))
         (host / HOST_SERVERS).write_text(json.dumps({"schema_version": 1, "servers": [

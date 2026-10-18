@@ -15,10 +15,12 @@ import sys as _sys
 #: condition its own lockfile refuses.
 _sys.dont_write_bytecode = True
 
+import atexit
 import hashlib
 import json
 import os
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -102,6 +104,33 @@ def ship(dest: Path) -> Path:
 
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
+
+
+def remove(path: Path) -> None:
+    """A scratch tree removed whole. git writes its objects read-only, which a plain removal cannot delete
+    on Windows; one left behind anyway is SAID, never hidden -- a removal that ignored its errors once left
+    thousands of trees in the temporary directory, unseen."""
+    def unlock(func, target, _exc):
+        os.chmod(target, stat.S_IWRITE)
+        func(target)
+
+    if not Path(path).exists():
+        return
+    try:
+        if sys.version_info >= (3, 12):
+            shutil.rmtree(path, onexc=unlock)
+        else:
+            shutil.rmtree(path, onerror=unlock)
+    except OSError as exc:
+        print(f"harness: a scratch tree was NOT removed: {path} ({exc})", file=sys.stderr)
+
+#: The hosts the real kit installed, one per set of `init` flags, built once in this process and
+#: copied for every test that asks for one (`Fixtures._copy_of`).
+_TEMPLATES: dict = {}
+
+#: The starters the kit publishes, and the one a host takes when nothing else is asked for.
+STARTERS = REPO / "starters"
+STANDARD = STARTERS / "standard.json"
 
 
 #: The capability that pins the kit, and the two modes of that one act -- read from the kit.
@@ -206,7 +235,7 @@ class Fixtures:
     @classmethod
     def tearDownClass(cls):
         for path in cls._trash:
-            shutil.rmtree(path, ignore_errors=True)
+            remove(path)
 
     @classmethod
     def _temp(cls, prefix: str) -> Path:
@@ -269,12 +298,51 @@ class Fixtures:
     @classmethod
     def installed(cls, kit: Path = KIT, *flags) -> Path:
         """A host that has walked the whole door: drafted, then approved. Every P4-and-later
-        assertion runs against an APPROVED host, because that is the only kind that exists."""
-        host = cls.host()
+        assertion runs against an APPROVED host, because that is the only kind that exists.
+        A fixture kit is a kit of its own and walks its own door every time; the real kit's host
+        is a copy of its template (`_copy_of`)."""
+        if Path(kit).resolve() != KIT:
+            return cls._walk_the_door(cls.host(), kit, *flags)
+        return cls._copy_of(("init", *flags), lambda host: cls._walk_the_door(host, KIT, *flags))
+
+    @classmethod
+    def started(cls, starter: Path = STANDARD) -> Path:
+        """A blank host that took a starter through its door (`start --approve`). A starter the
+        kit PUBLISHES is read-only to this suite, so its host is a copy of its template; one a test
+        wrote is its own and is started every time."""
+        starter = Path(starter).resolve()
+        if starter.parent != STARTERS:
+            return cls._start(cls.host(), starter)
+        return cls._copy_of(("start", starter.name), lambda host: cls._start(host, starter))
+
+    @classmethod
+    def _walk_the_door(cls, host: Path, kit: Path, *flags) -> Path:
         drafted = cls.run_kit(kit, host, "init", *flags)
         assert drafted.returncode == 3, f"init did not stall at the door: {drafted.stderr}"
         approved = cls.run_kit(kit, host, "init", "--approve", "acceptance-suite")
         assert approved.returncode == 0, f"an approved init did not install: {approved.stderr}"
         return host
 
+    @classmethod
+    def _start(cls, host: Path, starter: Path) -> Path:
+        ran = cls.run_kit(KIT, host, "start", "--path", str(starter), "--approve", "acceptance-suite")
+        assert ran.returncode == 0, f"an approved start did not install: {ran.stdout}{ran.stderr}"
+        return host
 
+    @classmethod
+    def _copy_of(cls, key: tuple, build) -> Path:
+        """A host made from the real kit by the same verbs is the same host every time -- the kit
+        and its published starters are read-only to this suite and pinned by its lock -- so it is
+        built once per process into a template and every test receives its own COPY (a template
+        database, as PostgreSQL's CREATE DATABASE ... TEMPLATE and Django's parallel test runner
+        make one). Isolation is what it was: no two tests share a host, and a test may change its
+        copy freely. The copy's reading records the template's root as the place it was taken,
+        which it was; no fact in it names a path."""
+        if key not in _TEMPLATES:
+            made = Path(tempfile.mkdtemp(prefix="kit-template-")).resolve()
+            atexit.register(remove, made)
+            subprocess.run(["git", "init", "--quiet", str(made)], check=True, capture_output=True, text=True)
+            _TEMPLATES[key] = build(made)
+        host = cls._temp("kit-host-")
+        shutil.copytree(_TEMPLATES[key], host, symlinks=True, dirs_exist_ok=True)
+        return host

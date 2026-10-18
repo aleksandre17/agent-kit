@@ -25,6 +25,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 RAN = re.compile(r"^Ran (\d+) tests? in", re.M)
+#: Every test unittest names as failed or errored, by its own banner.
+FAILURE = re.compile(r"^(?:FAIL|ERROR): (\S+)", re.M)
 #: The most of one failed module's report printed, in characters: enough for a traceback, never a flood.
 REPORT = 6000
 
@@ -55,8 +57,13 @@ def main(argv=None) -> int:
         or sorted(HERE.glob("test_*.py"))
     started = time.monotonic()
     failed, total = [], 0
+    # Longest first (Graham's LPT rule): a long module started last is the whole run's tail. A
+    # module's size is the stateless stand-in for its length -- the runner keeps no prior timings.
+    modules.sort(key=lambda m: m.stat().st_size, reverse=True)
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
-        for name, code, ran, took in pool.map(lambda m: _one(m, logs), modules):
+        # Printed as each module ENDS, so a finished module is never held behind a slower one.
+        for done in concurrent.futures.as_completed([pool.submit(_one, m, logs) for m in modules]):
+            name, code, ran, took = done.result()
             total += ran
             print(f"  {'OK  ' if code == 0 else 'FAIL'}  {name:<28} {ran:>3} test(s)  {took:6.1f}s", flush=True)
             if code != 0:
@@ -69,7 +76,11 @@ def main(argv=None) -> int:
         for name in failed:
             said = (logs / f"{name}.log").read_text(encoding="utf-8")
             start = said.find("=" * 70)
-            print(f"\n----- {name} -----\n{(said[start:] if start >= 0 else said)[:REPORT]}")
+            # Every failed test by name, before a report that may be cut: one cut report must not
+            # read as one failure.
+            names = FAILURE.findall(said)
+            print(f"\n----- {name} -- {len(names)} failed: {', '.join(names) or 'see the log'} -----\n"
+                  f"{(said[start:] if start >= 0 else said)[:REPORT]}")
         print(f"acceptance: FAILED in {len(failed)} module(s): {', '.join(failed)}")
         return 1
     print("acceptance: OK")

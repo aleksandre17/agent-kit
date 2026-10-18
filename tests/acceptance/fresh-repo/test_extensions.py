@@ -27,16 +27,9 @@ from manifest import Manifest
 from test_pinned_kit import said
 
 CORE = Manifest(KIT)
-STARTER = REPO / "starters" / "standard.json"
 
 
 class Extensions(Fixtures, unittest.TestCase):
-
-    def started(self):
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
-        return host
 
     def registry(self, host):
         return extensions.registry(Context(kit_root=KIT, host_root=host))

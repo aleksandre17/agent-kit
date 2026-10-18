@@ -24,7 +24,6 @@ import edits
 import manifest as manifest_port
 import messages
 from manifest import Manifest
-from test_pinned_kit import said
 from verbs import guard, message, spawn
 
 CORE = Manifest(KIT)
@@ -96,9 +95,7 @@ class Policies(Fixtures, unittest.TestCase):
                               for rel in json.loads(s.read_text(encoding="utf-8"))["takes"]))
         taken = [p for p in POLICIES if any((starter.parent / rel).resolve() == p.resolve()
                                             for rel in json.loads(starter.read_text(encoding="utf-8"))["takes"])]
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(starter), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
+        host = self.started(starter)
         _git(host, "add", "-A")
         installed = _git(host, "commit", "-m", "the install")
         self.assertEqual(0, installed.returncode, installed.stdout + installed.stderr)

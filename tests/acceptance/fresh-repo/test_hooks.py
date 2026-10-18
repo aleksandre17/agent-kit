@@ -66,12 +66,6 @@ def _event(keys, value):
 
 class Hooks(Fixtures, unittest.TestCase):
 
-    def started(self):
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
-        return host
-
     def started_with_capsule(self):
         return self.started_taking(CAPSULE)
 

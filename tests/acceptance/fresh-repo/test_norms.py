@@ -47,12 +47,6 @@ def _norm(identity, genre, **fields):
 
 class Norms(Fixtures, unittest.TestCase):
 
-    def started(self):
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
-        return host
-
     def write_norms(self, host, rows):
         (host / HOST_NORMS).write_text(json.dumps(rows, indent=2) + "\n", encoding="utf-8", newline="\n")
 

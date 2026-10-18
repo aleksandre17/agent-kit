@@ -10,14 +10,12 @@ from __future__ import annotations
 import json
 import unittest
 
-from harness import KIT, REPO, Fixtures
+from harness import KIT, Fixtures
 
 import conformance
 from manifest import Manifest
-from test_pinned_kit import said
 
 CORE = Manifest(KIT)
-STARTER = REPO / "starters" / "standard.json"
 SEAT = next(i["target"] for c in CORE.capabilities for i in c.installs if i.get("validates") == conformance.MAP[0]["validates"])
 
 
@@ -29,9 +27,7 @@ def _row(identity, status, *evidence):
 class Conformance(Fixtures, unittest.TestCase):
 
     def test_550_a_conformant_row_needs_evidence_that_exists_and_a_gap_is_an_honest_row(self):
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
+        host = self.started()
         (host / "evidence.txt").write_text("measured\n", encoding="utf-8")
         rows = [_row("held", conformance.CONFORMANT, "path:evidence.txt"), _row("an-honest-gap", "gap"),
                 _row("organisational", "mapping"), _row("not-worth-it", "non-goal")]

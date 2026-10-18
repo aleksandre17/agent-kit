@@ -45,12 +45,6 @@ PUBLISHED = [skill for d in TAKEN for document in documents_of(d, skills_resolve
 
 class Skills(Fixtures, unittest.TestCase):
 
-    def started(self):
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
-        return host
-
     def declare(self, host, skills, files):
         for rel, text in files.items():
             (host / HOST_BASE / rel).parent.mkdir(parents=True, exist_ok=True)

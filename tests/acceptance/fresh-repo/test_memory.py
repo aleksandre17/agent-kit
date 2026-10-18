@@ -25,7 +25,6 @@ from harness import KIT, REPO, Fixtures
 import memory as memory_gate
 from context import Context
 from test_adapters import ADAPTERS, documents_of, surfaces_of
-from test_pinned_kit import said
 
 STARTER = REPO / "starters" / "standard.json"
 TAKEN = [(STARTER.parent / rel).resolve() for rel in json.loads(STARTER.read_text(encoding="utf-8"))["takes"]]
@@ -41,9 +40,7 @@ SECRET = next(g["proves"]["text"] for d in TAKEN for doc in documents_of(d, "edi
 class Memory(Fixtures, unittest.TestCase):
 
     def test_450_a_copying_or_secret_note_is_refused_and_a_pointer_admitted(self):
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
+        host = self.started()
         fact = "A fixture fact this repository holds in exactly one file, at full length, for the test."
         (host / "docs").mkdir(exist_ok=True)
         (host / "docs" / "fact.md").write_text(fact + "\n", encoding="utf-8")

@@ -20,7 +20,6 @@ from harness import KIT, REPO, Fixtures
 
 from manifest import Manifest
 from test_adapters import ADAPTERS, surfaces_of
-from test_pinned_kit import said
 
 CORE = Manifest(KIT)
 ARCHETYPES = json.loads((KIT / "roles" / "archetypes.json").read_text(encoding="utf-8"))["archetypes"]
@@ -42,9 +41,7 @@ class RoleProfiles(Fixtures, unittest.TestCase):
         self.assertTrue(any(set(p["tools"]) <= {"read", "search"} for p in profiles), "an exploring one")
 
     def test_521_a_hired_roles_runtime_rows_reach_every_product_definition(self):
-        host = self.host()
-        ran = self.run_kit(KIT, host, "start", "--path", str(STARTER), "--approve", "acceptance-suite")
-        self.assertEqual(0, ran.returncode, said(ran))
+        host = self.started()
         archetype = next(a for a in ARCHETYPES if a["profile"]["may_change"] == "nothing" and "run" in a["profile"]["tools"])
         (host / OVERLAYS / "a-verifier.json").write_text(json.dumps({
             "schema_version": 1, "id": "a-verifier", "archetype": archetype["id"],
