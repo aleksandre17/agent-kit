@@ -27,6 +27,8 @@ HERE = Path(__file__).resolve().parent
 RAN = re.compile(r"^Ran (\d+) tests? in", re.M)
 #: Every test unittest names as failed or errored, by its own banner.
 FAILURE = re.compile(r"^(?:FAIL|ERROR): (\S+)", re.M)
+#: The tests unittest skipped, from its closing line (`OK (skipped=2)`): a skipped test proved nothing.
+SKIPPED = re.compile(r"^(?:OK|FAILED) \(.*?skipped=(\d+)", re.M)
 #: The most of one failed module's report printed, in characters: enough for a traceback, never a flood.
 REPORT = 6000
 
@@ -42,7 +44,9 @@ def _one(module: Path, logs: Path) -> tuple:
     # A module that deliberately holds no test (a shim discovery imports) ends `NO TESTS RAN`, exit 5:
     # an honest zero, not a failure -- and only when the output says exactly that.
     code = 0 if done.returncode == 5 and "NO TESTS RAN" in said else done.returncode
-    return module.stem, code, int(ran.group(1)) if ran else 0, time.monotonic() - started
+    skipped = SKIPPED.search(said)
+    return (module.stem, code, int(ran.group(1)) if ran else 0, int(skipped.group(1)) if skipped else 0,
+            time.monotonic() - started)
 
 
 def main(argv=None) -> int:
@@ -56,19 +60,20 @@ def main(argv=None) -> int:
     modules = [HERE / (m if m.endswith(".py") else f"{m}.py") for m in args.modules] \
         or sorted(HERE.glob("test_*.py"))
     started = time.monotonic()
-    failed, total = [], 0
+    failed, total, skipped_total = [], 0, 0
     # Longest first (Graham's LPT rule): a long module started last is the whole run's tail. A
     # module's size is the stateless stand-in for its length -- the runner keeps no prior timings.
     modules.sort(key=lambda m: m.stat().st_size, reverse=True)
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
         # Printed as each module ENDS, so a finished module is never held behind a slower one.
         for done in concurrent.futures.as_completed([pool.submit(_one, m, logs) for m in modules]):
-            name, code, ran, took = done.result()
-            total += ran
-            print(f"  {'OK  ' if code == 0 else 'FAIL'}  {name:<28} {ran:>3} test(s)  {took:6.1f}s", flush=True)
+            name, code, ran, skipped, took = done.result()
+            total, skipped_total = total + ran, skipped_total + skipped
+            print(f"  {'OK  ' if code == 0 else 'FAIL'}  {name:<28} {ran:>3} test(s)  {took:6.1f}s"
+                  + (f"  {skipped} skipped" if skipped else ""), flush=True)
             if code != 0:
                 failed.append(name)
-    print(f"acceptance: {total} test(s) in {len(modules)} module(s), {time.monotonic() - started:.0f}s, "
+    print(f"acceptance: {total} test(s), {skipped_total} skipped, in {len(modules)} module(s), {time.monotonic() - started:.0f}s, "
           f"{args.workers} worker(s); logs at {logs}")
     if failed:
         # A log kept on a machine nobody can open (a CI runner) is not read where the failure happened:
