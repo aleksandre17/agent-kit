@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "standard",
-  "summary": "Claude Code, Codex (AGENTS.md, read by most other agents too) and git served, stack-kit commands read, the cardinals, the conduct and the secrets policy taken, the commit gate active",
+  "summary": "Claude Code, Codex (AGENTS.md, read by most other agents too) and git served, stack-kit commands read, the cardinals, the conduct, the secrets and the declared-stopgaps policies taken, the commit gate active",
   "takes": [
     "../adapters/claude-code",
     "../adapters/codex",
@@ -19,6 +19,7 @@
     "../bundles/kit-skills",
     "../bundles/engineering-standards",
     "../policies/secrets",
+    "../policies/declared-stopgaps",
     "../policies/untrusted-content",
     "../policies/memory",
     "../policies/recovery-points",

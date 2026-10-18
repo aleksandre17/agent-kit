@@ -37,7 +37,7 @@ python kits/agent-kit/kit/interpreters/cli.py start --root . \
 ```
 
 `start` walks a published **starter** (`starters/standard.json`: Claude Code, Codex/AGENTS.md and git served, the
-cardinals, the conduct and the secrets policy taken, the commit gate active) and ends with `check` green. From then on
+cardinals, the conduct, the secrets and the declared-stopgaps policies taken, the commit gate active) and ends with `check` green. From then on
 the repository runs its own pinned copy:
 
 ```sh
