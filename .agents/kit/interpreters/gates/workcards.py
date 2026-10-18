@@ -99,7 +99,10 @@ def _work_classes_held(ctx, params):
                 where = ("a card hanging under it" if holder.get("children")
                          else f"a criterion that needs {holder['criterion_needs']}" if "criterion_needs" in holder
                          else f"`{holder['field']}`")
-                failures.append(f"{name}: a {shaped} card owes its {record} from {holder['from']} on, "
+                short = getattr(decided, "missing", {}).get(name)
+                failures.append(f"{name}: a {shaped} card's {record} ({short[0]}) does not keep its kind's shape -- "
+                                f"it lacks: {'; '.join(short[1])}" if short and holder.get("kind_of_record") else
+                                f"{name}: a {shaped} card owes its {record} from {holder['from']} on, "
                                 f"held by {where}, and it has none")
     return failures
 
