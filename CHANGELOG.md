@@ -5,6 +5,15 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade --plan`, which names every path that changes between the two.
 
+## 0.4.1 — 2026-10-18
+
+**Fixed — a release that changed a bundle moves its version**
+- engineering-standards 1.3.0: 0.4.0 added the security chapter's silent-loss standards (OWASP A09/A10:2025,
+  CWE-222/223/390/636) and kept the bundle at 1.2.0, so a host that held 1.2.0 could not take it -- a take
+  refuses changed bytes under a pinned version (KIT0032), as it must.
+- A test holds every published capability to this before release: one whose bytes moved since the last
+  release tag and whose version did not is refused (`tests/unit/test_release_versions.py`).
+
 ## 0.4.0 — 2026-10-18
 
 **Added — a stopgap is declared debt, a gate is met at what it guards (ADR-024 amendment 1)**

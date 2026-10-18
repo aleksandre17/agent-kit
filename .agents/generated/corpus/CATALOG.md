@@ -1,7 +1,7 @@
 # Catalog — what this corpus is made of
 
 > **Generated. Do not edit.** Rebuilt from scratch on every render, from this host's corpus map and
-> from what the documents resident in it declare about themselves. Kit 0.4.0. An edit here
+> from what the documents resident in it declare about themselves. Kit 0.4.1. An edit here
 > is erased by the next render and reported by `check` under `FF-KIT-PROJECTION`.
 >
 > Every row below is a PLACE somebody declared, and every number is a count of documents found in

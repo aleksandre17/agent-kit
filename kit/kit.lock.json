@@ -5,7 +5,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "6d1894d633abacf1fa3b48b38d4a86ca084b8d41f4fa89ffac2d0e983ba69333",
+      "digest": "dba01ffc1e7e6ae75852e0378e8fe9758019fa467155ac6ee686b2041f3e213e",
       "path": "MANIFEST.json"
     },
     {
@@ -17,7 +17,7 @@
     {
       "accounted_by": "version",
       "class": "declaration",
-      "digest": "40b8eb4000a913a7791090535f291d3d369874162a89ef3c9e3d4e887a1b9e79",
+      "digest": "f62184cee8787f2f6941c82041a5725d4edc9aa293ebe5dbf664406e82ec1fe1",
       "path": "VERSION"
     },
     {
@@ -2175,8 +2175,8 @@
       "path": "seeds/taken.json"
     }
   ],
-  "kit_version": "0.4.0",
+  "kit_version": "0.4.1",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-18T15:39:02+00:00"
+  "taken_at": "2026-10-18T16:08:08+00:00"
 }

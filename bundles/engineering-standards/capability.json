@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "engineering-standards",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "summary": "The BASE engineering-standards skill, published beside the kit: a generic, domain-free catalog of architecture styles, principles, patterns, quality attributes and the standards a choice is measured against, read one chapter at a time. A host extends it by declaration -- its own chapters (its stack, its domain) and its stances -- never by editing this copy (ADR-024).",
   "requires": [
     {

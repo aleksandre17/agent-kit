@@ -11,7 +11,7 @@
 > work nobody has shaped yet, and a criterion whose reference could not be read at all is not
 > among the proved -- it is not claimed in either direction.
 
-kit 0.4.0
+kit 0.4.1
 
 ## Intake — 0 card(s), limit -
 

@@ -1,7 +1,7 @@
 # Routes — how a reader reaches what they need
 
 > **Generated. Do not edit.** Rebuilt from scratch on every render, from the corpus map's own rows
-> and from the route graph those rows imply. Kit 0.4.0. An edit here is erased by the next
+> and from the route graph those rows imply. Kit 0.4.1. An edit here is erased by the next
 > render and reported by `check` under `FF-KIT-PROJECTION`.
 >
 > The triggers below are quoted from the `read_when` field the map rows already carry. No question
