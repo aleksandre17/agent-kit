@@ -385,7 +385,11 @@ class Weigh(Fixtures, unittest.TestCase):
         self.assertIn("the change weighs major", failed)
         decision = host / "docs" / "decisions" / "ADR-001-restore.md"
         decision.parent.mkdir(parents=True, exist_ok=True)
-        decision.write_text("---\nkind: decision\n---\n\n# restore\n", encoding="utf-8", newline="\n")
+        # A decision the work in flight owes keeps its kind's shape (record-keeping: `decision`).
+        decision.write_text("---\nkind: decision\n---\n\n# restore\n\n## Question\n\nHow is the service restored?\n\n"
+                            "## Options\n\nRoll back: it loses what was written since.\n\n## Decision\n\nDrop the table.\n\n"
+                            "## Consequences\n\nThe table is rebuilt.\n\n## Sources\n\nThe runbook.\n",
+                            encoding="utf-8", newline="\n")
         card({**stub, "state": "in-flight", "class": "major",
               "origin": {"kind": "artifact-present", "ref": "docs/decisions/ADR-001-restore.md"},
               "appetite": {"amount": 2, "unit": "day"},
@@ -483,7 +487,11 @@ class WorkClassFloor(commit_gate.CommitGate):
         cards.mkdir(parents=True, exist_ok=True)
         decision = host / "docs" / "decisions" / "ADR-001-the-first-table.md"
         decision.parent.mkdir(parents=True, exist_ok=True)
-        decision.write_text("---\nkind: decision\n---\n\n# the first table\n", encoding="utf-8", newline="\n")
+        # A decision the work in flight owes keeps its kind's shape (record-keeping: `decision`).
+        decision.write_text("---\nkind: decision\n---\n\n# the first table\n\n## Question\n\nWhere do orders live?\n\n"
+                            "## Options\n\nA document store: it lost on the joins reports need.\n\n## Decision\n\n"
+                            "A table.\n\n## Consequences\n\nA migration owns it.\n\n## Sources\n\nThe schema guide.\n",
+                            encoding="utf-8", newline="\n")
         card = {"schema_version": 1, "id": "first-table", "title": "the first table", "state": "in-flight",
                 "class": "major", "created_at": "2026-10-17T00:00:00+00:00",
                 "criteria": [{"id": "reviewed", "statement": "a peer approved it", "needs": "review",

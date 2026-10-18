@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "declared-stopgaps",
   "version": "1.0.0",
-  "summary": "A POLICY published beside the kit: a stopgap is declared debt, never the solution. An edit that introduces a stopgap comment tag (HACK:, WORKAROUND:, STOPGAP:, TEMPORARY:, FIXME:, XXX:) without naming, on the same line, the tracking record that removes it is refused at the edit and at the commit. It enforces the engineering doctrine's MUST a-stopgap-is-declared-debt; the doctrine says when a stopgap is allowed at all. An ordinary capability: the enforcement capability reads every document that keeps the edit-gate contract.",
+  "summary": "A POLICY published beside the kit: a stopgap is declared debt, never the solution. An edit that introduces a stopgap comment tag (HACK, WORKAROUND, STOPGAP, TEMPORARY, FIXME or XXX, followed by a colon or a parenthesis) without naming, on the same line, the tracking record that removes it is refused at the edit and at the commit. It enforces the engineering doctrine's MUST a-stopgap-is-declared-debt; the doctrine says when a stopgap is allowed at all. An ordinary capability: the enforcement capability reads every document that keeps the edit-gate contract.",
   "requires": [
     {
       "kind": "capability",

@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "summary": "A stopgap is declared debt, never the solution (engineering 1.2.0, a-stopgap-is-declared-debt): a line that marks itself a stopgap with a comment tag -- HACK:, WORKAROUND:, STOPGAP:, TEMPORARY:, FIXME:, XXX: (or the tag followed by a parenthesis) -- names, on the same line, the tracking record that removes it. Each gate judges only the text an edit introduces and carries its own calibration. The tags are the widely used comment-tag convention, upper case and followed by ':' or '(', so prose ('a temporary table') and code ('CREATE TEMPORARY TABLE') are not stopgaps.",
+ "summary": "A stopgap is declared debt, never the solution (engineering 1.2.0, a-stopgap-is-declared-debt): a line that marks itself a stopgap with a comment tag -- HACK, WORKAROUND, STOPGAP, TEMPORARY, FIXME or XXX, followed by a colon or a parenthesis -- names, on the same line, the tracking record that removes it. Each gate judges only the text an edit introduces and carries its own calibration. The tags are the widely used comment-tag convention, upper case and followed by ':' or '(', so prose ('a temporary table') and code ('CREATE TEMPORARY TABLE') are not stopgaps.",
  "gates": [
   {
    "id": "stopgap-names-its-tracking",
