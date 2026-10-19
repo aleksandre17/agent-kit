@@ -1,7 +1,7 @@
 # Roles — what this host runs, and what it has not taken up
 
 > **Generated. Do not edit.** Recomputed from the archetypes declared and the overlays this host
-> authored. Kit 0.4.1.
+> authored. Kit 0.4.2.
 
 A role definition is a PROJECTION. The kit ships archetypes — what is true of a role as a KIND,
 in no repository's vocabulary — and this host authors overlays, which say only what a host

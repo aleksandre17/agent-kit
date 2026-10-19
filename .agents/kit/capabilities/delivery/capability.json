@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "delivery",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "summary": "Declares the task lifecycle as data: cards are BINDING and carry exactly one state, the board is a PROJECTION of them, the owner's acceptance is a declared door no machine may open, and capacity and staleness are limits the host declares. It requires no provision, and the emptiness is deliberate: everything it reads -- its lifecycle, its policy, its cards -- it declares itself, and a capability that listed a dependency it never consumes would be promising a coupling nobody keeps. That the kit cannot stand without governance is the KIT's statement, made once on the manifest entry as never_disabled; restating it here would be a second home for it.",
   "doctrine": "capabilities/delivery/payload/delivery.md",
   "requires": [],

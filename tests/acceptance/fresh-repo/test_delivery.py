@@ -343,18 +343,27 @@ class Delivery(Fixtures, unittest.TestCase):
         not mentioned, which is every card in existence on the day this ships.
         """
         unit = sorted(appetite_module.registry())[0]
-        state, began = state_ids()[0], datetime.now(timezone.utc) - timedelta(days=4)
+        began = datetime.now(timezone.utc) - timedelta(days=4)
+        waiting = state_ids()[0]
+        # Work spends only while it stands in a state its lifecycle marks as spending (ADR-020 amendment 2):
+        # the cards that spend are walked into one, four days ago, by a passage they record.
+        spending = next(s["id"] for s in LIFECYCLE["states"] if s.get("spends"))
+        walked = [{"at": began.isoformat(timespec="seconds"), "by": "the-doer", "from": waiting, "to": spending}]
         host = self.installed()
 
-        self.card(host, "no-limit-at-all", state)
-        self.card(host, "well-within-it", state, created_at=began.isoformat(timespec="seconds"),
-                  appetite={"amount": 400, "unit": unit})
+        self.card(host, "no-limit-at-all", waiting)
+        self.card(host, "well-within-it", spending, created_at=began.isoformat(timespec="seconds"),
+                  history=walked, appetite={"amount": 400, "unit": unit})
+        # Captured four days ago with a one-day limit and never chosen: it has spent nothing, because
+        # the time a card waits to be chosen is not the time its work takes.
+        self.card(host, "still-waiting", waiting, created_at=began.isoformat(timespec="seconds"),
+                  appetite={"amount": 1, "unit": unit})
         self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
         self.assertEqual(0, self.run_kit(KIT, host, "check").returncode,
-                         "a limit nobody has spent, and a card that declared none, are green")
+                         "a limit nobody has spent, a card that declared none, and one never chosen are green")
 
-        self.card(host, "spent-it", state, owner="the-owner",
-                  created_at=began.isoformat(timespec="seconds"),
+        self.card(host, "spent-it", spending, owner="the-owner",
+                  created_at=began.isoformat(timespec="seconds"), history=walked,
                   appetite={"amount": 1, "unit": unit})
         before = self.read_card(host, "spent-it")
         self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
@@ -367,6 +376,7 @@ class Delivery(Fixtures, unittest.TestCase):
         self.assertIn("decision by", result.stdout)
         self.assertNotIn("'no-limit-at-all'", result.stdout, "a card that bet nothing was judged")
         self.assertNotIn("'well-within-it'", result.stdout)
+        self.assertNotIn("'still-waiting'", result.stdout, "the days a card waited to be chosen were charged")
         self.assertEqual(before, self.read_card(host, "spent-it"),
                          "the reading raised a limit, moved a card or wrote a spend")
 

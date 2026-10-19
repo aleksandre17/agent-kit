@@ -22,6 +22,10 @@ from errors import KitError
 HISTORY = "history"
 CREATED_AT = "created_at"
 
+#: The field a state declares when work SPENDS its appetite while it stands there (ADR-020
+#: amendment 2). The states that carry it are the lifecycle's to name; this is only the FIELD.
+SPENDS = "spends"
+
 #: The two modes a passage may declare, as the grammar carries them: the principal who holds a
 #: judgement, and the reference that decides a computation. The words themselves are the host's
 #: vocabulary; these are the FIELDS the declaration puts them in.
@@ -83,6 +87,19 @@ def governed_of(capability, readings):
         readings[spec["collection"]],
         readings[spec["policy"]].value,
     )
+
+
+def declared_states(capabilities) -> list:
+    """The states of the one governed lifecycle among these capabilities, read from its declaration
+    alone -- no record is opened, so a reading that needs only the vocabulary of states (which ones
+    spend, which ones close) does not pay for reading every card to learn it."""
+    found = [c.documents[c.governs["lifecycle"]]["states"] for c in capabilities if c.governs]
+    if len(found) != 1:
+        raise LifecycleError(
+            f"{len(found)} enabled capability/capabilities declare a governed collection; "
+            f"exactly one is required to know which states it declares"
+        )
+    return found[0]
 
 
 def the_governed(capabilities, readings) -> Governed:

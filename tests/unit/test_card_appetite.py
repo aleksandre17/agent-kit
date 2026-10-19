@@ -222,3 +222,74 @@ def test_every_unit_comes_from_a_module_in_the_directory_and_the_interpreter_spe
     for unit in published:
         assert f"'{unit}'" not in source and f'"{unit}"' not in source, \
             "the interpreter spells a unit it is supposed to discover"
+
+
+# == 8. the lifecycle says which stays spend (ADR-020 amendment 2) =============================
+#: The states the shipped lifecycle marks as spending -- read from its declaration, so this file
+#: spells none of them and a lifecycle that renamed them would still be the one tested.
+SPENDING = sorted(s["id"] for s in GOVERNING.documents[GOVERNING.governs["lifecycle"]]["states"]
+                  if s.get("spends"))
+WAITING = next(s["id"] for s in GOVERNING.documents[GOVERNING.governs["lifecycle"]]["states"]
+               if not s.get("spends") and not s.get("closed") and not s.get("defers"))
+PARKED = next(s["id"] for s in GOVERNING.documents[GOVERNING.governs["lifecycle"]]["states"]
+              if s.get("defers"))
+CLOSED = next(s["id"] for s in GOVERNING.documents[GOVERNING.governs["lifecycle"]]["states"]
+              if s.get("closed"))
+
+
+class _Governed(_Ctx):
+    """A world that can read the shipped lifecycle, as `check` and `move` can."""
+
+    def enabled_capabilities(self):
+        return [GOVERNING]
+
+
+def _walked(*passages) -> dict:
+    """A card captured at BEGAN that then moved through these (state, moment) pairs."""
+    state, history = WAITING, []
+    for to, at in passages:
+        history.append({"at": at, "by": "test", "from": state, "to": to})
+        state = to
+    return dict(GOOD_CARD, state=state, history=history)
+
+
+def test_the_shipped_lifecycle_marks_where_work_spends_and_closing_is_not_one_of_them():
+    assert SPENDING, "a lifecycle that marks no spending state measures nothing it means"
+    closed = [s["id"] for s in GOVERNING.documents[GOVERNING.governs["lifecycle"]]["states"] if s.get("closed")]
+    assert not set(SPENDING) & set(closed), "finished work does not go on spending"
+    assert PARKED not in SPENDING, "work deliberately not being done is not spending its appetite"
+
+
+def test_a_card_that_waited_to_be_chosen_has_spent_nothing_until_it_was():
+    card = _walked()  # captured 23 days ago and never moved past where cards wait
+    reading = appetite.spent(_Governed(), card, READABLE)
+    assert reading.amount == 0.0, "the time a card waited to be chosen was charged to its appetite"
+    assert "has not entered" in reading.reading
+
+
+def test_the_spend_starts_when_the_work_enters_a_state_that_spends():
+    card = _walked((SPENDING[0], "2026-09-22T00:00:00+00:00"))  # two days before NOW
+    reading = appetite.spent(_Governed(), card, READABLE)
+    assert reading.amount == pytest.approx(2.0)
+    said = appetite.unkept(_Governed(), [dict(card, appetite={"amount": 3, "unit": READABLE})])
+    assert said == [], "a card two days into a three-day limit was reported spent"
+
+
+def test_a_card_that_closed_stops_spending_the_moment_it_closed():
+    card = _walked((SPENDING[0], "2026-09-02T00:00:00+00:00"), (CLOSED, "2026-09-02T00:05:13+00:00"))
+    reading = appetite.spent(_Governed(), card, READABLE)
+    assert reading.amount < 0.01, "a card kept spending after its work was finished"
+    said = appetite.unkept(_Governed(), [dict(card, appetite={"amount": 1, "unit": READABLE})])
+    assert said == [], "a card that landed five minutes in was reported past a one-day limit"
+
+
+def test_a_card_parked_on_purpose_does_not_spend_while_it_waits():
+    card = _walked((SPENDING[0], "2026-09-10T00:00:00+00:00"), (PARKED, "2026-09-11T00:00:00+00:00"))
+    reading = appetite.spent(_Governed(), card, READABLE)
+    assert reading.amount == pytest.approx(1.0), "the days a card stood parked were charged to it"
+
+
+def test_without_a_lifecycle_to_read_the_older_reading_stands_and_says_so(ctx):
+    reading = appetite.spent(ctx, _walked((SPENDING[0], "2026-09-22T00:00:00+00:00")), READABLE)
+    assert reading.amount == pytest.approx(23.0)
+    assert "the whole life of the record" in reading.reading

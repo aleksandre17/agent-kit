@@ -28,6 +28,11 @@
             "type": "boolean",
             "const": true
           },
+          "spends": {
+            "description": "Work SPENDS its declared appetite while it stands in this state (ADR-020 amendment 2). The spend of a record is the sum of its stays in such states, read from its own passages: a record not yet bet has spent nothing, a record that closed stops spending, and a record parked on purpose does not spend while it waits. A lifecycle that marks no state keeps the older reading -- the whole life of the record -- and the reading says which it took.",
+            "type": "boolean",
+            "const": true
+          },
           "closed": {
             "description": "This state holds work that is FINISHED (ADR-025 decision 13). The board shows it as a count and its most recent few, by the host's number, and the archive passage starts here: a project's age never grows the surface anyone reads to work.",
             "type": "boolean",

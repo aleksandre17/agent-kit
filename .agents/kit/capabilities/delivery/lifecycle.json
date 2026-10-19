@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "delivery",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "summary": "intake -> shaped -> bet -> in-flight -> verified -> landed -> learned, with parked and blocked beside it. A folder can never force a decision; a column can.",
   "initial": "intake",
   "states": [
@@ -19,18 +19,21 @@
     },
     {
       "id": "bet",
+      "spends": true,
       "title": "Bet",
       "owner": "owner",
       "intent": "The owner has accepted this work. Nothing reaches this column without a human passing the door."
     },
     {
       "id": "in-flight",
+      "spends": true,
       "title": "In flight",
       "owner": "doer",
       "intent": "Being built right now, inside the capacity this host declared."
     },
     {
       "id": "verified",
+      "spends": true,
       "title": "Verified",
       "owner": "verifier",
       "intent": "Evidence exists that the exit criterion is met. A claim of green is not green."
@@ -58,6 +61,7 @@
     },
     {
       "id": "blocked",
+      "spends": true,
       "title": "Blocked",
       "owner": "doer",
       "intent": "Waiting on something outside this board, named."

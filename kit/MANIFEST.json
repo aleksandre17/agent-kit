@@ -2,7 +2,7 @@
   "schema_version": 1,
   "kit": {
     "id": "agent-kit",
-    "version": "0.4.1"
+    "version": "0.4.2"
   },
   "ships": {
     "lock": "kit.lock.json",

@@ -5,7 +5,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "dba01ffc1e7e6ae75852e0378e8fe9758019fa467155ac6ee686b2041f3e213e",
+      "digest": "e7f6c5780d15e6e2118edf9fc75622ce5ed130f021fa0b3dac18b11a7c055e53",
       "path": "MANIFEST.json"
     },
     {
@@ -17,13 +17,13 @@
     {
       "accounted_by": "version",
       "class": "declaration",
-      "digest": "f62184cee8787f2f6941c82041a5725d4edc9aa293ebe5dbf664406e82ec1fe1",
+      "digest": "e2f7bb608ebc9e24092ffcb796ad0aa83f0015afe23635f017df52273150f00d",
       "path": "VERSION"
     },
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "520738bc0551092c488b009a87d5bf653892f821c18a8364e7d8a443400ccf6b",
+      "digest": "cc6b5792e45256a7467f3fb294f19b4abc092043d11f068b96f93785e5d5e534",
       "path": "capabilities/delivery/capability.json"
     },
     {
@@ -41,7 +41,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "31f36ae33fd95fa7e08df9fc2ab38d5a3b374f79edca5f103cff8f43719246d2",
+      "digest": "af5cc4770c3be238afcf1857f51b88ac25287ba0c68d1311445f3dec719a1de0",
       "path": "capabilities/delivery/lifecycle.json"
     },
     {
@@ -1001,7 +1001,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "dbc7ff0af85ef06f8bec396ac6162ec45d29e382f55a195b610427c2ba91ce5f",
+      "digest": "8d99888d42d466f8a57075fbee7d4726ed2e15578668c4381925cf19080b72bd",
       "path": "interpreters/lifecycle.py"
     },
     {
@@ -1331,7 +1331,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "a5c594f68c6368a6ae49b3ab100bd90246094b3557ad88eb7f19eb5093b569d9",
+      "digest": "e67abea01a48b432c412db9e1325fd88b78655c2e15e43cd233b2e65f2b2e087",
       "path": "interpreters/spend/elapsed.py"
     },
     {
@@ -1901,7 +1901,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "cb6ec08846808de92f7060edeafa3ea4b5eaeb8e3634843e9d1025c3006164bd",
+      "digest": "1df9250140ef54cbce43d18953f4752357feb4b16f2a22783482ec9f2014bb85",
       "path": "schemas/lifecycle.schema.json"
     },
     {
@@ -2175,8 +2175,8 @@
       "path": "seeds/taken.json"
     }
   ],
-  "kit_version": "0.4.1",
+  "kit_version": "0.4.2",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-18T16:08:08+00:00"
+  "taken_at": "2026-10-19T21:10:04+00:00"
 }

@@ -445,3 +445,34 @@ over-reached.** S0 therefore declared no proof-reference words, correctly, and S
 the DECISION governs and the table is corrected — a summary never legislates. Recorded here rather
 than edited into the table above, because an amendment that rewrote the sentence it amends leaves a
 doctrine whose clauses nobody can date (Cardinal VI).
+
+## Amendment 2 — an appetite is spent while the work is, and the lifecycle says when that is (2026-10-20)
+
+**Context.** Decision 9 declares a limit and reads its spend; it never said which stretch of a record's
+life the spend covers. The reading took the only window it could name without naming a state -- from
+the record's capture to now -- and said so in its own docstring. In use that window was wrong at both
+ends. A card captured days before it was bet began over its limit (a host had to declare 7 days for 3
+of work, because 3.3 had already passed in intake). And a card that finished went on spending forever:
+one that landed five minutes after it was captured, inside a one-day limit, held the gate red from the
+next day on, which taught the host that the board's one red light could be explained away.
+
+**Decision.** The window is the lifecycle's to declare, as a property of its states. A state that
+carries `spends: true` is one in which work consumes its appetite; the spend of a record is the sum of
+its stays in such states, read from the passages it already records. The stay a record is in now runs
+to the moment of the reading. The delivery lifecycle marks `bet`, `in-flight`, `verified` and
+`blocked`: the bet is where Shape Up starts the clock, blocked time still burns the cycle, and neither
+`parked` nor a closed state spends. A lifecycle that marks none keeps the whole-life reading, and every
+reading names the window it used.
+
+**Rejected.** *From the first spending passage to the first closing one* -- simpler, but it charges a
+card for every day it stood parked between, and parked is the one state whose meaning is "not now".
+*Naming the states in the reading module* -- the module would then know the delivery vocabulary, which
+is exactly what the registry of units exists to keep it out of; a host with its own lifecycle could not
+use it. *A field on the record saying when its clock started* -- a second home for a moment the history
+already holds, and one a principal under pressure could edit. *Subtracting blocked time* -- a blocked
+cycle is still a cycle spent; the appetite is a limit on calendar the host is willing to give, not on
+effort.
+
+**Consequence.** No host has to re-declare a limit: the same amount now measures what it was always
+meant to. A host whose own lifecycle marks no spending state sees no change at all, and is told so in
+every reading.

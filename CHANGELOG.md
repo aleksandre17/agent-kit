@@ -5,6 +5,20 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade --plan`, which names every path that changes between the two.
 
+## 0.4.2 — 2026-10-20
+
+**Fixed — an appetite is spent only while the work is (ADR-020 amendment 2)**
+- `FF-DELIVERY-APPETITE` counted a record's whole life, from its capture to the moment of reading. That
+  charged the time a card waited to be chosen to its appetite, and it never stopped: a card that landed
+  five minutes after it was captured, inside a one-day limit, turned the gate red a day later and stayed
+  red. Found by a host whose only red gate was exactly that.
+- A lifecycle now marks the states in which work SPENDS (`spends: true` in the lifecycle grammar); the
+  spend is the sum of the record's stays in those states, read from its own passages. delivery 0.3.0
+  marks `bet`, `in-flight`, `verified` and `blocked`: a card not yet bet has spent nothing, a card that
+  landed stopped spending when it landed, and a card parked on purpose does not spend while it waits.
+- A lifecycle that marks no such state keeps the older reading, and the reading says which one it took.
+- Every reading of a limit states its window, so a number can be contradicted rather than believed.
+
 ## 0.4.1 — 2026-10-18
 
 **Fixed — a release that changed a bundle moves its version**
