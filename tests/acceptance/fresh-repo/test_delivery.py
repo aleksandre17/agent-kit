@@ -380,7 +380,37 @@ class Delivery(Fixtures, unittest.TestCase):
         self.assertEqual(before, self.read_card(host, "spent-it"),
                          "the reading raised a limit, moved a card or wrote a spend")
 
-    def test_62_a_limit_in_a_unit_nothing_here_reads_is_said_out_loud_not_passed_over(self):
+    def test_62_verified_and_landed_cards_stop_spending_appetite(self):
+        """Verification is evidence, not ongoing work: time after the verified passage must not
+        keep an appetite red, whether the card is waiting to land or has already landed."""
+        unit = sorted(appetite_module.registry())[0]
+        now = datetime.now(timezone.utc)
+        began = now - timedelta(days=4)
+        entered_flight = now - timedelta(days=3, hours=23)
+        verified = now - timedelta(days=3, hours=22)
+        landed = now - timedelta(hours=1)
+
+        history = [
+            {"at": entered_flight.isoformat(timespec="seconds"), "by": "the-doer",
+             "from": "bet", "to": "in-flight"},
+            {"at": verified.isoformat(timespec="seconds"), "by": "the-verifier",
+             "from": "in-flight", "to": "verified"},
+        ]
+        host = self.installed()
+        self.card(host, "verified-stops", "verified", created_at=began.isoformat(timespec="seconds"),
+                  history=history, appetite={"amount": 1, "unit": unit})
+        self.card(host, "landed-stops", "landed", created_at=began.isoformat(timespec="seconds"),
+                  history=history + [{"at": landed.isoformat(timespec="seconds"), "by": "the-doer",
+                                      "from": "verified", "to": "landed"}],
+                  appetite={"amount": 1, "unit": unit})
+
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+        result = self.run_kit(KIT, host, "check")
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertNotIn("'verified-stops'", result.stdout)
+        self.assertNotIn("'landed-stops'", result.stdout)
+
+    def test_63_a_limit_in_a_unit_nothing_here_reads_is_said_out_loud_not_passed_over(self):
         """The other half of the same honesty. A limit this host cannot measure reads exactly
         like a limit that is being kept -- the one failure invisible from where the reader stands
         -- so it is reported, and reported DIFFERENTLY from an overrun, because the cure is a

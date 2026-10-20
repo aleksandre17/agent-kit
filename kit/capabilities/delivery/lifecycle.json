@@ -33,7 +33,6 @@
     },
     {
       "id": "verified",
-      "spends": true,
       "title": "Verified",
       "owner": "verifier",
       "intent": "Evidence exists that the exit criterion is met. A claim of green is not green."

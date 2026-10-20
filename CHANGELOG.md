@@ -5,6 +5,14 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade --plan`, which names every path that changes between the two.
 
+## 0.4.3 — 2026-10-20
+
+**Fixed — appetite stops when verification is complete (kit-appetite-clock-runs-in-verified)**
+- `FF-DELIVERY-APPETITE` no longer counts time spent in `verified`; the delivery lifecycle's
+  appetite-spending states end with `in-flight`, while `landed` remains closed and non-spending.
+- Acceptance coverage proves both a card waiting in `verified` and a card already `landed` remain
+  within appetite when only their `bet` and `in-flight` stays are within the declared limit.
+
 ## 0.4.2 — 2026-10-20
 
 **Fixed — an appetite is spent only while the work is (ADR-020 amendment 2)**
