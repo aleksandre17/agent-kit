@@ -5,7 +5,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "42f74aa090fb0786b7bde8c211bd73c7926dd044f0e0fedab483cc6f20b5ef06",
+      "digest": "0e2670a2c0dfbbb9966f8925deabd163f394db1c07c4d99356c58bb035657927",
       "path": "MANIFEST.json"
     },
     {
@@ -17,7 +17,7 @@
     {
       "accounted_by": "version",
       "class": "declaration",
-      "digest": "520a19075780a38b440395e2c70e20d7cddd96b8c2e2c2403b265cbb74a1b333",
+      "digest": "175307e07ac7f0bdc0f3dba371ba3a202aaf3c0117368a93d2331e1bea4af4f3",
       "path": "VERSION"
     },
     {
@@ -593,7 +593,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "301ab50f4e94d81e7b1c3cea1b03e9535b10329a4d634a87869b76ab6ccea56f",
+      "digest": "2b5e9a27eb2ab1687280717e6eabade82b9157fe2b72e612d0042bcb38c36d5f",
       "path": "interpreters/appetite.py"
     },
     {
@@ -797,7 +797,7 @@
     {
       "accounted_by": "interpreter",
       "class": "interpreter",
-      "digest": "54d8d3ee294e55e3def5cca3181177ddbe0654ad83a22b5afac0b88a43459bc4",
+      "digest": "a0587edb676dfc3cd3adae361cf40d8490a317b2c3c13fcbdc107f8c4bee7fdb",
       "path": "interpreters/gates/delivery.py"
     },
     {
@@ -2175,8 +2175,8 @@
       "path": "seeds/taken.json"
     }
   ],
-  "kit_version": "0.4.3",
+  "kit_version": "0.4.4",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-21T05:42:11+00:00"
+  "taken_at": "2026-10-21T05:58:20+00:00"
 }

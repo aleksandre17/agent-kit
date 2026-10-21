@@ -43,8 +43,21 @@ def _appetite_within_limit(ctx, params):
     a machine that extended the limit would have granted the extension the owner never gave, and a
     machine that ended the work would have decided it was not worth finishing. A record that
     declares no limit is passed over, which is every record in existence on the day this ships.
+
+    One answer the owner may give is honoured (ADR-020 amendment 4): a card whose CURRENT state
+    defers -- the lifecycle's own `defers`, never a name spelled here -- has had its overrun
+    answered by parking it. Its spend is still reported, as a note. Only the current state is
+    judged, so a card resumed into a state that spends is judged by its whole spend again.
     """
-    return appetite_module.unkept(ctx, _governed(ctx).members.value)
+    governed = _governed(ctx)
+    deferring = {s["id"] for s in governed.states if s.get("defers")}
+    notes = []
+    failures = appetite_module.unkept(
+        ctx, governed.members.value,
+        answered=lambda record: record.get(governed.state_field) in deferring, notes=notes)
+    for note in notes:
+        print(f"        {note}")
+    return failures
 
 
 KINDS = {

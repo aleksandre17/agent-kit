@@ -410,7 +410,7 @@ class Delivery(Fixtures, unittest.TestCase):
         self.assertNotIn("'verified-stops'", result.stdout)
         self.assertNotIn("'landed-stops'", result.stdout)
 
-    def test_62_a_blocked_card_still_spends_appetite_and_goes_red(self):
+    def test_63_a_blocked_card_still_spends_appetite_and_goes_red(self):
         """A blocked cycle is still a cycle spent (ADR-020 amendment 2): a card that goes in-flight,
         is blocked and stays blocked past its limit turns the gate red, with its owner named."""
         unit = sorted(appetite_module.registry())[0]
@@ -432,7 +432,38 @@ class Delivery(Fixtures, unittest.TestCase):
         self.assertIn("FAIL  FF-DELIVERY-APPETITE", result.stdout)
         self.assertIn("'blocked-spends'", result.stdout)
 
-    def test_63_a_limit_in_a_unit_nothing_here_reads_is_said_out_loud_not_passed_over(self):
+    def test_64_parking_an_overrun_card_answers_it_and_resuming_it_asks_again(self):
+        """ADR-020 amendment 4: a card overran while blocked, and its owner moved it on the record to
+        parked. The spend stays reported but the gate is green, naming the overrun as answered. The
+        same card moved back to in-flight spends again, and its earlier overrun counts again."""
+        unit = sorted(appetite_module.registry())[0]
+        now = datetime.now(timezone.utc)
+        at = lambda **ago: (now - timedelta(**ago)).isoformat(timespec="seconds")
+        history = [
+            {"at": at(days=3), "by": "the-doer", "from": "bet", "to": "blocked"},
+            {"at": at(days=1, hours=18), "by": "the-owner", "from": "blocked", "to": "in-flight"},
+            {"at": at(days=1, hours=17), "by": "the-owner", "from": "in-flight", "to": "parked"},
+        ]
+        host = self.installed()
+        path = self.card(host, "parked-answers", "parked", owner="the-owner", created_at=at(days=4),
+                         history=history, appetite={"amount": 1, "unit": unit})
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+        result = self.run_kit(KIT, host, "check")
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("'parked-answers'", result.stdout, "the spend was not reported")
+        self.assertIn("answered", result.stdout)
+
+        body = json.loads(path.read_text(encoding="utf-8"))
+        body["state"] = "in-flight"
+        body["history"].append({"at": at(minutes=1), "by": "the-owner", "from": "parked", "to": "in-flight"})
+        path.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8")
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+        result = self.run_kit(KIT, host, "check")
+        self.assertEqual(1, result.returncode, result.stdout + result.stderr)
+        self.assertIn("FAIL  FF-DELIVERY-APPETITE", result.stdout)
+        self.assertIn("'parked-answers'", result.stdout)
+
+    def test_65_a_limit_in_a_unit_nothing_here_reads_is_said_out_loud_not_passed_over(self):
         """The other half of the same honesty. A limit this host cannot measure reads exactly
         like a limit that is being kept -- the one failure invisible from where the reader stands
         -- so it is reported, and reported DIFFERENTLY from an overrun, because the cure is a
@@ -452,7 +483,7 @@ class Delivery(Fixtures, unittest.TestCase):
         for unit in appetite_module.registry():
             self.assertIn(unit, result.stdout, "the report did not say what this host CAN read")
 
-    def test_63_the_boards_counts_are_computed_from_the_cards_and_survive_no_hand_edit(self):
+    def test_66_the_boards_counts_are_computed_from_the_cards_and_survive_no_hand_edit(self):
         """The board's N/M. Every number on the board is resolved at the moment the surface is
         written, from the cards and the tree they point at -- never read off a field, because
         there is no field to read it off. Changing what a card points at changes the count with

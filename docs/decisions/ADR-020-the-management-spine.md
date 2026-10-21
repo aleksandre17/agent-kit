@@ -499,7 +499,36 @@ spend at `landed` only* -- the gate would stay red for the whole of a wait the d
 *A new non-spending state between `in-flight` and `verified`* -- a state for a distinction the
 `spends` flag already carries.
 
-**Owed.** A card that is sent back from `verified` to `in-flight` spends again from that passage; this
-follows from the sum of stays and is held by the lifecycle test, not by a new rule. Release 0.4.2's
-changelog entry and amendment 2's text still name `verified`; both are released records and are
-corrected here, not edited.
+**Owed.** A card that leaves a non-spending state for a spending one spends again from that passage;
+this follows from the sum of stays and is not a new rule. (The delivery lifecycle declares no passage
+from `verified` back to `in-flight`; the sentence that said a lifecycle test held that one named a
+transition that does not exist, and is corrected here.) Release 0.4.2's changelog entry and
+amendment 2's text still name `verified`; both are released records and are corrected here, not
+edited.
+
+## Amendment 4 -- parking an overrun card answers the overrun (2026-10-21)
+
+**Context.** Decision 9 says an overrun stops the line at a door whose exit is the owner's decision,
+and that a waiting card expires by a declared, dated passage to `parked`. In a host two cards overran
+while `blocked` (1.3 days against a limit of 1) and the owner moved them, on the record, from
+`blocked` to `in-flight` to `parked`. `FF-DELIVERY-APPETITE` stayed red, because the spend made before
+parking never goes away: `archive` takes only cards finished more than 90 days ago, and re-betting a
+card that was never meant to be bet again would be a lie. The owner's declared answer was not honoured.
+
+**Decision.** A record whose CURRENT state defers (`defers: true` in the lifecycle -- `parked` in the
+delivery lifecycle, never named in code) is not failed for an overrun. Its spend is still read and is
+reported as a note on the gate, saying the overrun was answered by parking. Only the current state is
+judged: a card parked and later resumed into a state that spends is failed again by its whole spend,
+earlier overrun included, until the owner answers again. Closed states stay as amendment 3 left them.
+A limit nothing here can measure is not answered by parking.
+
+**Rejected.** *Excluding the spend made before parking* -- it would let a card be parked and resumed to
+shed its overrun, and the reading would stop saying what the work cost. *Ignoring a parked card's limit
+entirely* -- the spend would vanish from the report. *A new `answered` field on the card* -- a second
+home for what the passage into `parked` already records. *Moving the card to the archive sooner* -- the
+archive is for finished work, and the rule is about the owner's answer, not its age.
+
+**Owed.** The change is in the interpreter (`appetite.py`, `gates/delivery.py`); no declaration's bytes
+change, so the lifecycle stays 0.3.0 and the capability 0.4.0, and the kit moves to 0.4.4. A host that wants a card to stop
+being reported at all declares it closed or archives it; parking answers the overrun and does not
+erase it.

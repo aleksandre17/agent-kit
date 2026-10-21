@@ -305,6 +305,33 @@ def test_a_card_parked_on_purpose_does_not_spend_while_it_waits():
     assert reading.amount == pytest.approx(1.0), "the days a card stood parked were charged to it"
 
 
+def test_an_overrun_answered_by_parking_is_noted_and_never_failed_but_only_while_parked():
+    """ADR-020 amendment 4. The spend before parking stays reported; the failure does not, because
+    the owner's declared answer is the door the overrun stops at."""
+    limit = {"amount": 1, "unit": READABLE}
+    card = dict(_walked((SPENDING[0], "2026-09-10T00:00:00+00:00"), (PARKED, "2026-09-13T00:00:00+00:00")),
+                appetite=limit)
+    notes = []
+    said = appetite.unkept(_Governed(), [card], answered=lambda r: r["state"] == PARKED, notes=notes)
+    assert said == []
+    note, = notes
+    assert "answered" in note and "parked" in note and "3.0" in note, "the spend was not reported"
+    # Resumed into a spending state, the same history is judged again, by the whole spend.
+    resumed = dict(card, state=SPENDING[0],
+                   history=card["history"] + [{"at": "2026-09-14T00:00:00+00:00", "by": "test",
+                                               "from": PARKED, "to": SPENDING[0]}])
+    notes = []
+    said, = appetite.unkept(_Governed(), [resumed], answered=lambda r: r["state"] == PARKED, notes=notes)
+    assert "decision by" in said and notes == []
+
+
+def test_a_limit_nothing_can_measure_is_not_answered_by_parking():
+    card = dict(_walked((PARKED, "2026-09-13T00:00:00+00:00")),
+                appetite={"amount": 1, "unit": UNREADABLE})
+    said, = appetite.unkept(_Governed(), [card], answered=lambda r: True, notes=[])
+    assert "Nothing was observed" in said
+
+
 def test_without_a_lifecycle_to_read_the_older_reading_stands_and_says_so(ctx):
     reading = appetite.spent(ctx, _walked((SPENDING[0], "2026-09-22T00:00:00+00:00")), READABLE)
     assert reading.amount == pytest.approx(23.0)

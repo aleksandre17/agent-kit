@@ -126,7 +126,16 @@ def _cannot_be_measured(record: dict, limit: dict, reading: Spend) -> str:
     )
 
 
-def unkept(ctx, records) -> list:
+def _answered_by_parking(record: dict, limit: dict, reading: Spend) -> str:
+    return (
+        f"record {record[collection.IDENTITY]!r} declared a limit of {limit[AMOUNT]} "
+        f"{limit[UNIT]!r} and {reading.reading} -- past it, and answered: its owner, "
+        f"{record.get(OWNER)!r}, parked it, said out loud and on the record. The spend stays "
+        f"reported and nothing is forgiven; the answer holds only while the card stands parked"
+    )
+
+
+def unkept(ctx, records, answered=None, notes=None) -> list:
     """Every declared limit this reading cannot stand behind, in the words of what was found.
 
     Two different facts, and they stay two. A limit measurably spent is a fact about the WORK and
@@ -137,6 +146,12 @@ def unkept(ctx, records) -> list:
     A record that declares no limit is passed over in silence, and that is not forbearance: there
     is nothing to read, nothing was undertaken, and a reading that said something about it would
     be inventing a limit on the record's behalf.
+
+    `answered` is the caller's judgement of the record's CURRENT state alone (ADR-020 amendment 4):
+    where it says yes -- the owner has parked the card -- an overrun is not a failure, it is said in
+    `notes` instead, with the spend. This module names no state; the lifecycle declares which defer.
+    A limit that cannot be measured is never answered by parking: that is a fact about the
+    declaration, and parking the card does not change it.
     """
     said = []
     for record in sorted(records, key=lambda r: r[collection.IDENTITY]):
@@ -147,5 +162,9 @@ def unkept(ctx, records) -> list:
         if reading.amount is None:
             said.append(_cannot_be_measured(record, limit, reading))
         elif reading.amount > limit[AMOUNT]:
-            said.append(_past_it(record, limit, reading))
+            if answered is not None and answered(record):
+                if notes is not None:
+                    notes.append(_answered_by_parking(record, limit, reading))
+            else:
+                said.append(_past_it(record, limit, reading))
     return said

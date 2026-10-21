@@ -5,6 +5,22 @@ the framework's age rather than the host's needs. A host's legitimate question i
 changed between the version I have and the version I am moving to* — and it is answered at the
 moment of need by `upgrade --plan`, which names every path that changes between the two.
 
+## 0.4.4 — 2026-10-21
+
+**Fixed — parking an overrun card answers the overrun (ADR-020 amendment 4)**
+- `FF-DELIVERY-APPETITE` stayed red forever after the owner parked a card that had overrun, because
+  the spend before parking never goes away. A record whose current state defers (`defers: true`) is
+  no longer failed for an overrun; its spend is reported as a note saying the overrun was answered by
+  parking. Only the current state is judged: a card resumed into a spending state is failed again.
+  The gate reads `defers` from the lifecycle and names no state.
+- ADR-020 amendment 3's "Owed" sentence claimed a `verified` to `in-flight` transition was held by a
+  lifecycle test; no such transition exists. Reworded.
+- No declaration changed (the fix is in `appetite.py` and `gates/delivery.py`), so the lifecycle and
+  capability versions stay; the kit moves to 0.4.4 and the lock is re-taken.
+- Tests: unit (answered while parked, failed again once resumed, unmeasurable never answered) and
+  acceptance (blocked overrun, parked is green and named, resumed is red). Acceptance appetite tests
+  renumbered so each `test_6N` is unique.
+
 ## 0.4.3 — 2026-10-20
 
 **Fixed — appetite stops when verification is complete (kit-appetite-clock-runs-in-verified)**
