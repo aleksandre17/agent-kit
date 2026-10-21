@@ -260,6 +260,22 @@ def test_the_shipped_lifecycle_marks_where_work_spends_and_closing_is_not_one_of
     assert PARKED not in SPENDING, "work deliberately not being done is not spending its appetite"
 
 
+def test_the_shipped_delivery_lifecycle_spends_in_exactly_bet_in_flight_and_blocked():
+    """Verification is evidence, not work: `verified` must not spend (ADR-020 amendment 3), and
+    `blocked` must (a blocked cycle is still a cycle spent). The declaration itself is pinned here,
+    so re-marking either way fails in the unit suite and not only in the slow acceptance run."""
+    assert SPENDING == sorted(["bet", "in-flight", "blocked"])
+    assert "verified" not in SPENDING
+
+
+def test_a_card_that_goes_in_flight_then_blocked_and_stays_there_goes_red():
+    card = _walked(("in-flight", "2026-09-10T00:00:00+00:00"), ("blocked", "2026-09-11T00:00:00+00:00"))
+    reading = appetite.spent(_Governed(), card, READABLE)
+    assert reading.amount == pytest.approx(14.0), "blocked time was not charged to the appetite"
+    said, = appetite.unkept(_Governed(), [dict(card, appetite={"amount": 5, "unit": READABLE})])
+    assert "decision by" in said
+
+
 def test_a_card_that_waited_to_be_chosen_has_spent_nothing_until_it_was():
     card = _walked()  # captured 23 days ago and never moved past where cards wait
     reading = appetite.spent(_Governed(), card, READABLE)

@@ -23,7 +23,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "cc6b5792e45256a7467f3fb294f19b4abc092043d11f068b96f93785e5d5e534",
+      "digest": "f04191ca393485fbc31290375f44d8d8da6d3db29955b3565675211f66fcbed9",
       "path": "capabilities/delivery/capability.json"
     },
     {
@@ -41,7 +41,7 @@
     {
       "accounted_by": "declaration-closure",
       "class": "declaration",
-      "digest": "8e3634782b4915d6a68e84394a4389482e30a1c83d576396d606a8d246eae542",
+      "digest": "0594d551ae1ee884bf4fe3ec14c656257d3f803d13d7caee6a0f5b006e49c58f",
       "path": "capabilities/delivery/lifecycle.json"
     },
     {
@@ -2178,5 +2178,5 @@
   "kit_version": "0.4.3",
   "newline": "lf",
   "schema_version": 1,
-  "taken_at": "2026-10-20T18:46:57+00:00"
+  "taken_at": "2026-10-21T05:42:11+00:00"
 }

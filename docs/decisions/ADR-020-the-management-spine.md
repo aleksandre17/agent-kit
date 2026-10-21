@@ -476,3 +476,30 @@ effort.
 **Consequence.** No host has to re-declare a limit: the same amount now measures what it was always
 meant to. A host whose own lifecycle marks no spending state sees no change at all, and is told so in
 every reading.
+
+## Amendment 3 — verification is evidence, not work, so `verified` does not spend (2026-10-20)
+
+**Context.** Amendment 2 marked `bet`, `in-flight`, `verified` and `blocked` as the states in which
+work spends its appetite. In use, `verified` was the wrong member. A card was verified, then waited
+two days for the owner's acceptance; the time it stood there was charged to its appetite, the gate
+went red, and it stayed red after the card landed. The wait was not work: the work had finished and
+its evidence existed. The defect was found by that card, not by a test.
+
+**Decision.** `verified` does not spend. Verification is evidence that the exit criterion is met, not
+more work toward it, so the spend of a card stops when it enters `verified`. The delivery lifecycle
+now marks `bet`, `in-flight` and `blocked` -- exactly those -- and amendment 2's sentence naming
+`verified` is superseded by this one. The rest of amendment 2 stands: `parked` and the closed states
+do not spend, a blocked cycle is still a cycle spent, and a lifecycle that marks none keeps the
+whole-life reading. The delivery lifecycle moves to 0.3.0 and the capability to 0.4.0, so a host that
+holds the 0.4.2 reading can tell its copy is stale.
+
+**Rejected.** *Keeping `verified` as spending and asking hosts to land quickly* -- it charges the
+card for the owner's queue, the same fault amendment 2 cured for the intake queue. *Stopping the
+spend at `landed` only* -- the gate would stay red for the whole of a wait the doer cannot shorten.
+*A new non-spending state between `in-flight` and `verified`* -- a state for a distinction the
+`spends` flag already carries.
+
+**Owed.** A card that is sent back from `verified` to `in-flight` spends again from that passage; this
+follows from the sum of stays and is held by the lifecycle test, not by a new rule. Release 0.4.2's
+changelog entry and amendment 2's text still name `verified`; both are released records and are
+corrected here, not edited.

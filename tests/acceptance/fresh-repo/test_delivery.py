@@ -410,6 +410,28 @@ class Delivery(Fixtures, unittest.TestCase):
         self.assertNotIn("'verified-stops'", result.stdout)
         self.assertNotIn("'landed-stops'", result.stdout)
 
+    def test_62_a_blocked_card_still_spends_appetite_and_goes_red(self):
+        """A blocked cycle is still a cycle spent (ADR-020 amendment 2): a card that goes in-flight,
+        is blocked and stays blocked past its limit turns the gate red, with its owner named."""
+        unit = sorted(appetite_module.registry())[0]
+        now = datetime.now(timezone.utc)
+        began = now - timedelta(days=4)
+        history = [
+            {"at": (now - timedelta(days=3, hours=23)).isoformat(timespec="seconds"), "by": "the-doer",
+             "from": "bet", "to": "in-flight"},
+            {"at": (now - timedelta(days=3)).isoformat(timespec="seconds"), "by": "the-doer",
+             "from": "in-flight", "to": "blocked"},
+        ]
+        host = self.installed()
+        self.card(host, "blocked-spends", "blocked", owner="the-owner",
+                  created_at=began.isoformat(timespec="seconds"), history=history,
+                  appetite={"amount": 1, "unit": unit})
+        self.assertEqual(0, self.run_kit(KIT, host, "render").returncode)
+        result = self.run_kit(KIT, host, "check")
+        self.assertEqual(1, result.returncode, result.stdout + result.stderr)
+        self.assertIn("FAIL  FF-DELIVERY-APPETITE", result.stdout)
+        self.assertIn("'blocked-spends'", result.stdout)
+
     def test_63_a_limit_in_a_unit_nothing_here_reads_is_said_out_loud_not_passed_over(self):
         """The other half of the same honesty. A limit this host cannot measure reads exactly
         like a limit that is being kept -- the one failure invisible from where the reader stands

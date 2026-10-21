@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "delivery",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "summary": "intake -> shaped -> bet -> in-flight -> verified -> landed -> learned, with parked and blocked beside it. A folder can never force a decision; a column can.",
   "initial": "intake",
   "states": [

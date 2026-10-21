@@ -12,6 +12,17 @@ moment of need by `upgrade --plan`, which names every path that changes between 
   appetite-spending states end with `in-flight`, while `landed` remains closed and non-spending.
 - Acceptance coverage proves both a card waiting in `verified` and a card already `landed` remain
   within appetite when only their `bet` and `in-flight` stays are within the declared limit.
+- ADR-020 amendment 3 records the reversal: verification is evidence, not work. It supersedes the
+  words of amendment 2 and of the 0.4.2 entry below that list `verified` among the spending states;
+  0.4.2 is a released record and is not edited.
+- Version honesty: the delivery lifecycle moves 0.2.0 to 0.3.0 and the delivery capability 0.3.0 to
+  0.4.0 (the 0.4.2 bytes of both said `verified` spends), and the lock is re-taken. (0.4.2's "delivery
+  0.3.0" meant the capability; its lifecycle was 0.2.0.) `test_release_versions` now also scans
+  `kit/capabilities` and each declaration beside a capability, so changed bytes under an unmoved
+  version fail before release.
+- Tests: the shipped lifecycle is pinned to spend in exactly `bet`, `in-flight` and `blocked`; a card
+  that goes in-flight, is blocked and stays there past its appetite turns `FF-DELIVERY-APPETITE` red
+  (unit and acceptance).
 
 ## 0.4.2 — 2026-10-20
 

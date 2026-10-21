@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 REPO = Path(__file__).resolve().parents[2]
-PUBLISHED = ("adapters", "bundles", "policies")
+PUBLISHED = ("adapters", "bundles", "policies", "kit/capabilities")
 
 
 def _git(*argv) -> subprocess.CompletedProcess:
@@ -47,4 +47,20 @@ def test_a_capability_whose_bytes_moved_since_the_last_release_moved_its_version
         now = json.loads(declaration.read_text(encoding="utf-8"))["version"]
         if before == now:
             unmoved.append(f"{home}: changed since {previous} and still {now}")
+        # A declaration a capability points at (its lifecycle, a policy) carries its own version: the
+        # bytes of it moving under the same version is the same refusal one file down.
+        for sibling in sorted(declaration.parent.glob("*.json")):
+            if sibling.name == "capability.json":
+                continue
+            rel = sibling.relative_to(REPO).as_posix()
+            old = _git("show", f"{previous}:{rel}")
+            if old.returncode != 0 or _git("diff", "--quiet", previous, "--", rel).returncode == 0:
+                continue
+            try:
+                old_v = json.loads(old.stdout).get("version")
+                new_v = json.loads(sibling.read_text(encoding="utf-8")).get("version")
+            except (ValueError, AttributeError):
+                continue
+            if old_v is not None and old_v == new_v:
+                unmoved.append(f"{rel}: changed since {previous} and still {new_v}")
     assert unmoved == [], unmoved
